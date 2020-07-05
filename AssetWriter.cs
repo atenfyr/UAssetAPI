@@ -40,9 +40,6 @@ namespace UAssetAPI
             writer.Seek(169, SeekOrigin.Begin); // 169
             writer.Write(data.fileSize - 4);
 
-            /*writer.Seek(189, SeekOrigin.Begin); // 189
-            writer.Write(data.sectionSixOffset);*/
-
             return stre.ToArray();
         }
 
@@ -77,13 +74,83 @@ namespace UAssetAPI
                     writer.Write(data.links[i].property);
                 }
             }
+            else
+            {
+                data.sectionTwoOffset = 0;
+            }
 
             // Section 3
             if (data.categories.Count > 0)
             {
-                int additionalOffset = (int)writer.BaseStream.Position - data.sectionThreeOffset;
                 data.sectionThreeOffset = (int)writer.BaseStream.Position;
                 data.dataCategoryCount = data.categories.Count;
+                for (int i = 0; i < data.categories.Count; i++)
+                {
+                    Category us = data.categories[i];
+                    writer.Write(us.connection);
+                    writer.Write(us.connect);
+                    writer.Write(us.category);
+                    writer.Write(us.link);
+                    writer.Write(us.typeIndex);
+                    writer.Write(us.garbage1);
+                    writer.Write(us.type);
+                    writer.Write(us.lengthV);
+                    writer.Write(us.garbage2);
+                    writer.Write(us.startV);
+                    writer.Write(us.garbage3);
+                }
+            }
+            else
+            {
+                data.sectionThreeOffset = 0;
+            }
+
+            // Section 4
+            if (data.categoryIntReference.Count > 0)
+            {
+                data.sectionFourOffset = (int)writer.BaseStream.Position;
+                for (int i = 0; i < data.categories.Count; i++)
+                {
+                    int[] currentData = data.categoryIntReference[i];
+                    writer.Write(currentData.Length);
+                    for (int j = 0; j < currentData.Length; j++)
+                    {
+                        writer.Write(currentData[j]);
+                    }
+                }
+            }
+            else
+            {
+                data.sectionFourOffset = 0;
+            }
+
+            // Section 5
+            if (data.categoryStringReference.Count > 0)
+            {
+                data.sectionFiveOffset = (int)writer.BaseStream.Position;
+                data.sectionFiveStringCount = data.categoryStringReference.Count;
+                for (int i = 0; i < data.categoryStringReference.Count; i++)
+                {
+                    writer.WriteUString(data.categoryStringReference[i]);
+                }
+            }
+            else
+            {
+                data.sectionFiveOffset = 0;
+            }
+
+            // Section 6
+            writer.Write((int)0);
+            int oldOffset = data.sectionSixOffset;
+            data.sectionSixOffset = (int)writer.BaseStream.Position;
+            reader.BaseStream.Seek(oldOffset, SeekOrigin.Begin);
+            writer.Write(reader.ReadBytes((int)reader.BaseStream.Length - oldOffset));
+
+            // Rewrite Section 3
+            if (data.categories.Count > 0)
+            {
+                int additionalOffset = data.sectionSixOffset - oldOffset;
+                writer.Seek(data.sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < data.categories.Count; i++)
                 {
                     Category us = data.categories[i];
@@ -101,37 +168,7 @@ namespace UAssetAPI
                 }
             }
 
-            // Section 4
-            if (data.categoryIntReference.Count > 0)
-            {
-                data.sectionFourOffset = (int)writer.BaseStream.Position;
-                for (int i = 0; i < data.categories.Count; i++)
-                {
-                    int[] currentData = data.categoryIntReference[i];
-                    writer.Write(currentData.Length);
-                    for (int j = 0; j < currentData.Length; j++)
-                    {
-                        writer.Write(currentData[j]);
-                    }
-                }
-            }
-
-            // Section 5
-            if (data.categoryStringReference.Count > 0)
-            {
-                data.sectionFiveOffset = (int)writer.BaseStream.Position;
-                for (int i = 0; i < data.headerIndexList.Count; i++)
-                {
-                    writer.WriteUString(data.headerIndexList[i].Item1);
-                }
-            }
-
-            writer.Write((int)0);
-            int oldOffset = data.sectionSixOffset;
-            data.sectionSixOffset = (int)writer.BaseStream.Position;
-            reader.BaseStream.Seek(oldOffset, SeekOrigin.Begin);
-            writer.Write(reader.ReadBytes((int)reader.BaseStream.Length - oldOffset));
-
+            // Rewrite Header
             data.fileSize = (int)stre.Length;
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write(MakeHeader(reader));

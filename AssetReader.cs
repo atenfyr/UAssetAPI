@@ -27,10 +27,6 @@ namespace UAssetAPI
 
         private void ReadHeader(BinaryReader reader)
         {
-            /*reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
-            sectionSixOffset = reader.ReadInt32();
-            Console.WriteLine(sectionSixOffset);*/
-
             reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
             sectionOneStringCount = reader.ReadInt32();
 
@@ -132,7 +128,7 @@ namespace UAssetAPI
             if (sectionFiveOffset > 0)
             {
                 reader.BaseStream.Seek(sectionFiveOffset, SeekOrigin.Begin);
-                for (int i = 0; i < dataCategoryCount; i++)
+                for (int i = 0; i < sectionFiveStringCount; i++)
                 {
                     categoryStringReference.Add(reader.ReadUString());
                 }
