@@ -31,7 +31,7 @@ namespace UAssetAPI
         public static string ReadUStringWithGUID(this BinaryReader reader, out int guid)
         {
             string str = reader.ReadUString();
-            if (string.IsNullOrEmpty(str))
+            if (!string.IsNullOrEmpty(str))
             {
                 guid = reader.ReadInt32();
             }
