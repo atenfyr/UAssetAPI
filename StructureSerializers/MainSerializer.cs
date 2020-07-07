@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UAssetAPI.StructureSerializers
 {
@@ -47,7 +43,6 @@ namespace UAssetAPI.StructureSerializers
                     data = new StructPropertyData(name, asset, forceReadNull);
                     break;
                 default:
-                    Console.WriteLine(reader.BaseStream.Position);
                     throw new FormatException("Invalid property type: " + type);
             }
             data.Read(reader);
