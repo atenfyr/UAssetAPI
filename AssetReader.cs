@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UAssetAPI.StructureSerializers;
 
 namespace UAssetAPI
@@ -26,6 +27,13 @@ namespace UAssetAPI
         public IList<int[]> categoryIntReference;
         public IList<string> categoryStringReference;
         public IList<Category> categoryData;
+
+        private int[] understoodSectionSixTypes = new int[]
+        {
+            41,
+            49,
+            57
+        };
 
         private void ReadHeader(BinaryReader reader)
         {
@@ -142,7 +150,7 @@ namespace UAssetAPI
                 categoryData = new List<Category>();
                 for (int i = 0; i < categories.Count; i++)
                 {
-                    if (categories[i].type != 41 && categories[i].type != 57)
+                    if (!understoodSectionSixTypes.Contains(categories[i].type))
                     {
                         categoryData.Add(new Category(reader.ReadBytes(categories[i].lengthV)));
                         continue;
