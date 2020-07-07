@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using UAssetAPI.StructureSerializers;
 
 namespace UAssetAPI
 {
@@ -21,9 +22,10 @@ namespace UAssetAPI
 
         public IList<Tuple<string, int>> headerIndexList; // string, GUID
         public IList<Link> links; // base, class, link, connection
-        public IList<Category> categories; // connection, connect, category, link, typeIndex, type, length, start, garbage data
+        public IList<CategoryReference> categories; // connection, connect, category, link, typeIndex, type, length, start, garbage data
         public IList<int[]> categoryIntReference;
         public IList<string> categoryStringReference;
+        public IList<Category> categoryData;
 
         private void ReadHeader(BinaryReader reader)
         {
@@ -85,7 +87,7 @@ namespace UAssetAPI
             }
 
             // Section 3
-            categories = new List<Category>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
+            categories = new List<CategoryReference>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
             if (sectionThreeOffset > 0)
             {
                 reader.BaseStream.Seek(sectionThreeOffset, SeekOrigin.Begin);
@@ -102,7 +104,7 @@ namespace UAssetAPI
                     int garbage2 = reader.ReadInt32();
                     int startV = reader.ReadInt32(); // !!!
 
-                    categories.Add(new Category(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, reader.ReadBytes(104 - (10 * 4))));
+                    categories.Add(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, reader.ReadBytes(104 - (10 * 4))));
                 }
             }
 
@@ -133,16 +135,43 @@ namespace UAssetAPI
                     categoryStringReference.Add(reader.ReadUString());
                 }
             }
+
+            // Section 6
+            if (sectionSixOffset > 0)
+            {
+                categoryData = new List<Category>();
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    if (categories[i].type != 41 && categories[i].type != 57)
+                    {
+                        categoryData.Add(new Category(reader.ReadBytes(categories[i].lengthV)));
+                        continue;
+                    }
+                    reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
+
+                    Category us = new Category();
+
+                    PropertyData data;
+                    while ((data = MainSerializer.Read(this, reader)) != null)
+                    {
+                        us.Data.Add(data);
+                    }
+
+                    categoryData.Add(us);
+                }
+            }
         }
 
         public string GetHeaderReference(int index)
         {
+            if (index <= 0) return Convert.ToString(-index);
+            if (index > headerIndexList.Count) return Convert.ToString(index);
             return headerIndexList[index].Item1;
         }
 
         public int GetLinkReference(int index)
         {
-            return (int)(index < 0 ? links[Utils.UIndexToIndex(index)].property : index);
+            return (int)(index < 0 ? links[Utils.IndexToUIndex(index)].property : -index);
         }
 
         public AssetReader(BinaryReader reader)

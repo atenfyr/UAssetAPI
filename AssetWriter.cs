@@ -86,7 +86,7 @@ namespace UAssetAPI
                 data.dataCategoryCount = data.categories.Count;
                 for (int i = 0; i < data.categories.Count; i++)
                 {
-                    Category us = data.categories[i];
+                    CategoryReference us = data.categories[i];
                     writer.Write(us.connection);
                     writer.Write(us.connect);
                     writer.Write(us.category);
@@ -153,7 +153,7 @@ namespace UAssetAPI
                 writer.Seek(data.sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < data.categories.Count; i++)
                 {
-                    Category us = data.categories[i];
+                    CategoryReference us = data.categories[i];
                     writer.Write(us.connection);
                     writer.Write(us.connect);
                     writer.Write(us.category);

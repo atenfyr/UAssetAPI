@@ -44,8 +44,11 @@
     <Compile Include="AssetReader.cs" />
     <Compile Include="AssetWriter.cs" />
     <Compile Include="Category.cs" />
+    <Compile Include="CategoryReference.cs" />
+    <Compile Include="StructureSerializers\MainSerializer.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructureSerializers\PropertyData.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
