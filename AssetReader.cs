@@ -167,7 +167,7 @@ namespace UAssetAPI
                             us.Data.Add(data);
                         }
 
-                        int nextStarting = (int)reader.BaseStream.Length - 8;
+                        int nextStarting = (int)reader.BaseStream.Length - 4;
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].startV;
                         us.NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
                         Debug.Assert(us.NumExtraZeros == 0 || us.NumExtraZeros == 4);
