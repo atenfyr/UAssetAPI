@@ -8,6 +8,7 @@ namespace UAssetAPI
         public bool IsRaw = false;
         public IList<PropertyData> Data;
         public byte[] RawData;
+        public int NumExtraZeros = 0;
 
         public Category(byte[] data)
         {
@@ -15,10 +16,11 @@ namespace UAssetAPI
             RawData = data;
         }
 
-        public Category(IList<PropertyData> data)
+        public Category(IList<PropertyData> data, int numExtraZeros)
         {
             IsRaw = false;
             Data = data;
+            NumExtraZeros = numExtraZeros;
         }
 
         public Category()

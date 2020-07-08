@@ -150,22 +150,38 @@ namespace UAssetAPI
                 categoryData = new List<Category>();
                 for (int i = 0; i < categories.Count; i++)
                 {
+                    reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
                     if (!understoodSectionSixTypes.Contains(categories[i].type))
                     {
                         categoryData.Add(new Category(reader.ReadBytes(categories[i].lengthV)));
                         continue;
                     }
-                    reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
 
                     Category us = new Category();
 
-                    PropertyData data;
-                    while ((data = MainSerializer.Read(this, reader)) != null)
+                    try
                     {
-                        us.Data.Add(data);
-                    }
+                        PropertyData data;
+                        while ((data = MainSerializer.Read(this, reader)) != null)
+                        {
+                            us.Data.Add(data);
+                        }
 
-                    categoryData.Add(us);
+                        int nextStarting = (int)reader.BaseStream.Length - 8;
+                        if ((categories.Count - 1) > i) nextStarting = categories[i + 1].startV;
+                        us.NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
+                        Debug.Assert(us.NumExtraZeros == 0 || us.NumExtraZeros == 4);
+                    }
+                    catch (FormatException)
+                    {
+                        //Console.WriteLine("Failed to parse category " + i + ": " + ex.ToString());
+                        reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
+                        us = new Category(reader.ReadBytes(categories[i].lengthV));
+                    }
+                    finally
+                    {
+                        categoryData.Add(us);
+                    }
                 }
             }
         }
@@ -175,6 +191,15 @@ namespace UAssetAPI
             if (index <= 0) return Convert.ToString(-index);
             if (index > headerIndexList.Count) return Convert.ToString(index);
             return headerIndexList[index].Item1;
+        }
+
+        public int SearchHeaderReference(string search)
+        {
+            for (int i = 0; i < headerIndexList.Count; i++)
+            {
+                if (headerIndexList[i].Item1.Equals(search)) return i;
+            }
+            return -1;
         }
 
         public int GetLinkReference(int index)

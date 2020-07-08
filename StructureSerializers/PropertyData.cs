@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace UAssetAPI.StructureSerializers
 {
+    /*
+        Lengths tend to include null bytes in the center of the element, but not ones at the very beginning
+    */
+
     public abstract class PropertyData
     {
         public string Name;
+        public string Type;
         public AssetReader Asset;
         public object RawValue;
         internal bool ForceReadNull = true;
@@ -33,6 +39,11 @@ namespace UAssetAPI.StructureSerializers
         {
 
         }
+
+        public virtual int Write(BinaryWriter writer)
+        {
+            return 0;
+        }
     }
 
     public abstract class PropertyData<T> : PropertyData
@@ -53,12 +64,18 @@ namespace UAssetAPI.StructureSerializers
     {
         public BoolPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-            
+            Type = "BoolProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
             Value = reader.ReadInt16() > 0;
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            writer.Write((short)(Value ? 1 : 0));
+            return 0;
         }
 
         public override string ToString()
@@ -71,13 +88,20 @@ namespace UAssetAPI.StructureSerializers
     {
         public IntPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-
+            Type = "IntProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = reader.ReadInt32();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Value);
+            return 4;
         }
 
         public override string ToString()
@@ -90,13 +114,20 @@ namespace UAssetAPI.StructureSerializers
     {
         public FloatPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-
+            Type = "FloatProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = reader.ReadSingle();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Value);
+            return 4;
         }
 
         public override string ToString()
@@ -112,15 +143,60 @@ namespace UAssetAPI.StructureSerializers
 
         public TextPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-
+            Type = "TextProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
             Garbage1 = reader.ReadBytes(4);
             if (ForceReadNull) reader.ReadByte(); // null byte
+            if (reader.ReadByte() == 0xFF)
+            {
+                Value = null;
+                Garbage2 = new byte[] { 0xFF };
+                return;
+            }
+            reader.BaseStream.Position -= 1;
             Garbage2 = reader.ReadBytes(9);
             Value = reader.ReadUString();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(Garbage1);
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Garbage2);
+            if (Garbage2.Length == 1 && Garbage2[0] == 0xFF) return 5;
+            writer.WriteUString(Value);
+            return (int)writer.BaseStream.Position - here - 1;
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+    }
+
+    public class StrPropertyData : PropertyData<string>
+    {
+        public StrPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "StrProperty";
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = reader.ReadUString();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            int here = (int)writer.BaseStream.Position;
+            writer.WriteUString(Value);
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
@@ -133,13 +209,20 @@ namespace UAssetAPI.StructureSerializers
     {
         public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-
+            Type = "ObjectProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = reader.ReadInt32(); // link reference
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Value);
+            return 4;
         }
 
         public override string ToString()
@@ -154,7 +237,7 @@ namespace UAssetAPI.StructureSerializers
 
         public EnumPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-
+            Type = "EnumProperty";
         }
 
         public override void Read(BinaryReader reader)
@@ -162,6 +245,14 @@ namespace UAssetAPI.StructureSerializers
             Value = (int)reader.ReadInt64();
             if (ForceReadNull) reader.ReadByte(); // null byte
             FullEnum = (int)reader.ReadInt64();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            writer.Write((long)Value);
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write((long)FullEnum);
+            return 8;
         }
 
         public string DecodeEnumBase()
@@ -180,32 +271,161 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class ArrayPropertyData : PropertyData<PropertyData[]> // Array
+    public class BytePropertyData : PropertyData<int>
     {
-        public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
-        {
+        public int FullEnum;
 
+        public BytePropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "ByteProperty";
         }
 
         public override void Read(BinaryReader reader)
         {
-            string arrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
+            Value = (int)reader.ReadInt64();
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            FullEnum = (int)reader.ReadInt64();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            writer.Write((long)Value);
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write((long)FullEnum);
+            return 8;
+        }
+
+        public string DecodeEnumBase()
+        {
+            return Asset.GetHeaderReference(Value);
+        }
+
+        public string DecodeEnum()
+        {
+            return Asset.GetHeaderReference(FullEnum);
+        }
+
+        public override string ToString()
+        {
+            return DecodeEnum();
+        }
+    }
+
+    public class GuidPropertyData : PropertyData<Guid>
+    {
+        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "Guid";
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new Guid(reader.ReadBytes(16));
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Value.ToByteArray());
+            return 16;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Value);
+        }
+    }
+
+    public class LinearColorPropertyData : PropertyData<float[]>
+    {
+        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "LinearColor";
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new float[4];
+            for (int i = 0; i < 4; i++)
+            {
+                Value[i] = reader.ReadSingle();
+            }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 4; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            return 16;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Value);
+        }
+    }
+
+    public class NamePropertyData : PropertyData<string>
+    {
+        public NamePropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "NameProperty";
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = Asset.GetHeaderReference((int)reader.ReadInt64());
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write((long)Asset.SearchHeaderReference(Value));
+            return 8;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Value);
+        }
+    }
+
+    public class ArrayPropertyData : PropertyData<PropertyData[]> // Array
+    {
+        public string ArrayType;
+
+        public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        {
+            Type = "ArrayProperty";
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
             if (ForceReadNull) reader.ReadByte(); // null byte
             int numEntries = reader.ReadInt32();
-            if (arrayType == "StructProperty")
+            if (ArrayType == "StructProperty")
             {
+                string fullType = "";
                 var results = new PropertyData[numEntries];
                 for (int i = 0; i < numEntries; i++)
                 {
-                    if (i > 0)
+                    if (i > 0) // without name etc.
                     {
-                        var data = new StructPropertyData(Name, Asset, true, arrayType);
+                        var data = new StructPropertyData(Name, Asset, true, fullType);
                         data.Read(reader);
                         results[i] = data;
                     }
-                    else
+                    else // with name etc.
                     {
                         results[i] = MainSerializer.Read(Asset, reader, true);
+                        fullType = ((StructPropertyData)results[i]).GetStructType();
                     }
                 }
                 Value = results;
@@ -215,20 +435,106 @@ namespace UAssetAPI.StructureSerializers
                 var results = new PropertyData[numEntries];
                 for (int i = 0; i < numEntries; i++)
                 {
-                    results[i] = MainSerializer.Read(Asset, reader, false);
+                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset, reader, false);
                 }
                 Value = results;
             }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            writer.Write((long)Asset.SearchHeaderReference(ArrayType));
+            if (ForceReadNull) writer.Write((byte)0);
+
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(Value.Length);
+            if (ArrayType == "StructProperty")
+            {
+                int lengthLoc = 0;
+                for (int i = 0; i < Value.Length; i++)
+                {
+                    Value[i].ForceReadNull = true;
+                    if (i > 0)
+                    {
+                        ((StructPropertyData)Value[i]).SetForced(((StructPropertyData)Value[0]).GetStructType());
+                        Value[i].Write(writer);
+                    }
+                    else
+                    {
+                        lengthLoc = MainSerializer.Write(Value[i], Asset, writer);
+                    }
+                }
+
+                int fullLen = (int)writer.BaseStream.Position - lengthLoc;
+                int newLoc = (int)writer.BaseStream.Position;
+                writer.Seek(lengthLoc, SeekOrigin.Begin);
+                writer.Write(fullLen - 32 - (ForceReadNull ? 1 : 0));
+                writer.Seek(newLoc, SeekOrigin.Begin);
+            }
+            else
+            {
+                for (int i = 0; i < Value.Length; i++)
+                {
+                    Value[i].ForceReadNull = false;
+                    Value[i].Write(writer);
+                }
+            }
+
+            return (int)writer.BaseStream.Position - here;
         }
     }
 
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
-        private string ForcedType = null;
+#pragma warning disable IDE0044 // Add readonly modifier
+        private bool IsForced = false;
+#pragma warning restore IDE0044 // Add readonly modifier
+        private string StructType = null;
 
-        public StructPropertyData(string name, AssetReader asset, bool forceReadNull, string forcedType = null) : base(name, asset, forceReadNull)
+        public StructPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
         {
-            ForcedType = forcedType;
+            IsForced = false;
+            Type = "StructProperty";
+        }
+
+        public StructPropertyData(string name, AssetReader asset, bool forceReadNull, string forcedType) : base(name, asset, forceReadNull)
+        {
+            IsForced = true;
+            StructType = forcedType;
+            Type = "StructProperty";
+        }
+
+        public string GetStructType()
+        {
+            return StructType;
+        }
+
+        public void SetForced(string type)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                IsForced = false;
+                StructType = null;
+            }
+            else
+            {
+                IsForced = true;
+                StructType = type;
+            }
+        }
+
+        private void ReadGuid(BinaryReader reader)
+        {
+            GuidPropertyData data = new GuidPropertyData(Name, Asset, false);
+            data.Read(reader);
+            Value = new List<PropertyData> { data };
+        }
+
+        private void ReadLinearColor(BinaryReader reader)
+        {
+            LinearColorPropertyData data = new LinearColorPropertyData(Name, Asset, false);
+            data.Read(reader);
+            Value = new List<PropertyData> { data };
         }
 
         private void ReadNormal(BinaryReader reader)
@@ -245,17 +551,56 @@ namespace UAssetAPI.StructureSerializers
 
         public override void Read(BinaryReader reader)
         {
-            string structType = ForcedType != null ? (string)ForcedType.Clone() : null;
-            if (structType == null)
+            if (!IsForced)
             {
-                structType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                StructType = Asset.GetHeaderReference((int)reader.ReadInt64());
                 reader.ReadBytes(17);
             }
-            switch (structType)
+            switch (StructType)
             {
+                case "Guid": // 16 byte GUID
+                    ReadGuid(reader);
+                    break;
+                case "LinearColor": // 4 floats
+                    ReadLinearColor(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
+            }
+        }
+
+        private void WriteOnce(BinaryWriter writer)
+        {
+            Value[0].Write(writer);
+        }
+
+        private int WriteNormal(BinaryWriter writer)
+        {
+            int here = (int)writer.BaseStream.Position;
+            for (int i = 0; i < Value.Count; i++)
+            {
+                MainSerializer.Write(Value[i], Asset, writer);
+            }
+            writer.Write((long)Asset.SearchHeaderReference("None"));
+            return (int)writer.BaseStream.Position - here;
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (!IsForced)
+            {
+                writer.Write((long)Asset.SearchHeaderReference(StructType));
+                writer.Write(Enumerable.Repeat((byte)0, 17).ToArray());
+            }
+            switch(StructType)
+            {
+                case "Guid":
+                case "LinearColor":
+                    WriteOnce(writer);
+                    return 16;
+                default:
+                    return WriteNormal(writer);
             }
         }
     }

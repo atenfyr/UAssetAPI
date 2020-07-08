@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using UAssetAPI.StructureSerializers;
 
 namespace UAssetAPI
 {
@@ -143,17 +145,49 @@ namespace UAssetAPI
             writer.Write((int)0);
             int oldOffset = data.sectionSixOffset;
             data.sectionSixOffset = (int)writer.BaseStream.Position;
-            reader.BaseStream.Seek(oldOffset, SeekOrigin.Begin);
-            writer.Write(reader.ReadBytes((int)reader.BaseStream.Length - oldOffset));
+            int[] categoryStarts = new int[data.categoryData.Count];
+            if (data.categoryData.Count > 0)
+            {
+                for (int i = 0; i < data.categoryData.Count; i++)
+                {
+                    categoryStarts[i] = (int)writer.BaseStream.Position;
+                    Category us = data.categoryData[i];
+                    if (us.IsRaw)
+                    {
+                        writer.Write(us.RawData);
+                        continue;
+                    }
+
+                    for (int j = 0; j < us.Data.Count; j++)
+                    {
+                        PropertyData current = us.Data[j];
+                        MainSerializer.Write(current, data, writer);
+                    }
+                    writer.Write((long)data.SearchHeaderReference("None"));
+                    writer.Write(Enumerable.Repeat((byte)0, us.NumExtraZeros).ToArray());
+                }
+            }
+            writer.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0xC1, 0x83, 0x2A, 0x9E });
+
+            // Old Behavior
+            /*reader.BaseStream.Seek(oldOffset, SeekOrigin.Begin);
+            writer.Write(reader.ReadBytes((int)reader.BaseStream.Length - oldOffset));*/
 
             // Rewrite Section 3
             if (data.categories.Count > 0)
             {
-                int additionalOffset = data.sectionSixOffset - oldOffset;
                 writer.Seek(data.sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < data.categories.Count; i++)
                 {
                     CategoryReference us = data.categories[i];
+                    if (categoryStarts[i] == 0)
+                    {
+                        categoryStarts[i] = us.startV;
+                    }
+                    else
+                    {
+                        us.startV = categoryStarts[i];
+                    }
                     writer.Write(us.connection);
                     writer.Write(us.connect);
                     writer.Write(us.category);
@@ -163,7 +197,7 @@ namespace UAssetAPI
                     writer.Write(us.type);
                     writer.Write(us.lengthV); // !!!
                     writer.Write(us.garbage2);
-                    writer.Write(us.startV + additionalOffset); // !!!
+                    writer.Write(categoryStarts[i]); // !!!
                     writer.Write(us.garbage3);
                 }
             }
