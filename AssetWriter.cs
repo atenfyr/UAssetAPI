@@ -185,6 +185,8 @@ namespace UAssetAPI
                 }
             }
 
+            data.fileSize = (int)stre.Length;
+
             // Rewrite Section 3
             if (data.categories.Count > 0)
             {
@@ -192,7 +194,12 @@ namespace UAssetAPI
                 for (int i = 0; i < data.categories.Count; i++)
                 {
                     CategoryReference us = data.categories[i];
+                    int nextLoc = data.fileSize - 4;
+                    if ((data.categories.Count - 1) > i) nextLoc = categoryStarts[i + 1];
+
                     us.startV = categoryStarts[i];
+                    us.lengthV = nextLoc - categoryStarts[i];
+
                     writer.Write(us.connection);
                     writer.Write(us.connect);
                     writer.Write(us.category);
@@ -208,11 +215,34 @@ namespace UAssetAPI
             }
 
             // Rewrite Header
-            data.fileSize = (int)stre.Length;
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write(MakeHeader(reader));
 
             return stre.ToArray();
+        }
+
+        public bool VerifyParsing()
+        {
+            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
+            {
+                f.Seek(0, SeekOrigin.Begin);
+                byte[] newData = WriteData(new BinaryReader(f));
+                var newDataStream = new MemoryStream(newData);
+
+                f.Seek(0, SeekOrigin.Begin);
+                const int CHUNK_SIZE = 1024;
+                byte[] buffer = new byte[CHUNK_SIZE];
+                byte[] buffer2 = new byte[CHUNK_SIZE];
+                int lastRead1 = 0; int lastRead2 = 0;
+                while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
+                    if (lastRead1 != lastRead2) return false;
+                    if (!buffer.SequenceEqual(buffer2)) return false;
+                }
+            }
+
+            return true;
         }
 
         public void Write(string output)

@@ -49,12 +49,12 @@ namespace UAssetAPI
             writer.Write((byte)0);
         }
 
-        public static int IndexToUIndex(int index)
+        public static int IndexToUIndex(int index) // Unreal index
         {
             return -(index + 1);
         }
 
-        public static int UIndexToIndex(int uindex)
+        public static int UIndexToIndex(int uindex) // Unreal index
         {
             return -(uindex + 1);
         }

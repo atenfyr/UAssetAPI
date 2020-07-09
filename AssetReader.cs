@@ -204,7 +204,19 @@ namespace UAssetAPI
 
         public int GetLinkReference(int index)
         {
-            return (int)(index < 0 ? links[Utils.IndexToUIndex(index)].property : -index);
+            return (int)(index < 0 ? links[Utils.UIndexToIndex(index)].property : -index);
+        }
+
+        public int AddHeaderReference(string name, int guid)
+        {
+            headerIndexList.Add(Tuple.Create(name, guid));
+            return headerIndexList.Count - 1;
+        }
+
+        public int AddLink(Link li)
+        {
+            links.Add(li);
+            return Utils.IndexToUIndex(links.Count - 1);
         }
 
         public AssetReader(BinaryReader reader)
