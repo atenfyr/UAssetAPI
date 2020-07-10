@@ -16,7 +16,7 @@ namespace UAssetAPI.StructureSerializers
         public string Type;
         public AssetReader Asset;
         public object RawValue;
-        internal bool ForceReadNull = true;
+        public bool ForceReadNull = true;
 
         public void SetObject(object value)
         {
@@ -136,9 +136,9 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class TextPropertyData : PropertyData<string>
+    public class TextPropertyData : PropertyData<string[]>
     {
-        public byte[] Garbage1;
+        public int StringType;
         public byte[] Garbage2;
 
         public TextPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
@@ -146,10 +146,24 @@ namespace UAssetAPI.StructureSerializers
             Type = "TextProperty";
         }
 
+        private void ReadNormal(BinaryReader reader)
+        {
+            Garbage2 = reader.ReadBytes(8);
+            if (ForceReadNull) reader.ReadByte();
+            Value = new string[] { reader.ReadUString() };
+        }
+
+        private void ReadEight(BinaryReader reader)
+        {
+            Garbage2 = reader.ReadBytes(4);
+            if (ForceReadNull) reader.ReadByte();
+            Value = new string[] { reader.ReadUString(), reader.ReadUString() };
+        }
+
         public override void Read(BinaryReader reader)
         {
-            Garbage1 = reader.ReadBytes(4);
             if (ForceReadNull) reader.ReadByte(); // null byte
+            StringType = reader.ReadInt32();
             if (reader.ReadByte() == 0xFF)
             {
                 Value = null;
@@ -157,24 +171,41 @@ namespace UAssetAPI.StructureSerializers
                 return;
             }
             reader.BaseStream.Position -= 1;
-            Garbage2 = reader.ReadBytes(9);
-            Value = reader.ReadUString();
+
+            switch(StringType)
+            {
+                case 0:
+                    ReadNormal(reader);
+                    break;
+                case 8:
+                    ReadEight(reader);
+                    break;
+            }
         }
 
         public override int Write(BinaryWriter writer)
         {
-            int here = (int)writer.BaseStream.Position;
-            writer.Write(Garbage1);
             if (ForceReadNull) writer.Write((byte)0);
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(StringType);
             writer.Write(Garbage2);
             if (Garbage2.Length == 1 && Garbage2[0] == 0xFF) return 5;
-            writer.WriteUString(Value);
-            return (int)writer.BaseStream.Position - here - 1;
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < Value.Length; i++)
+            {
+                writer.WriteUString(Value[i]);
+            }
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
         {
-            return Value;
+            string oup = "";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Value[i] + " ";
+            }
+            return oup.TrimEnd(' ');
         }
     }
 
@@ -509,7 +540,12 @@ namespace UAssetAPI.StructureSerializers
             return StructType;
         }
 
-        public void SetForced(string type)
+        public void SetStructType(string type)
+        {
+            SetForced(type);
+        }
+
+        internal void SetForced(string type)
         {
             if (string.IsNullOrEmpty(type))
             {

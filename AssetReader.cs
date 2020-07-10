@@ -10,16 +10,18 @@ namespace UAssetAPI
     public class AssetReader
     {
         public string path;
-        internal int sectionSixOffset;
-        internal int sectionOneStringCount;
-        internal int dataCategoryCount;
-        internal int sectionThreeOffset;
-        internal int sectionTwoLinkCount;
-        internal int sectionTwoOffset;
-        internal int sectionFourOffset;
-        internal int sectionFiveStringCount;
-        internal int sectionFiveOffset;
-        internal int fileSize;
+
+        /* These are public for debugging, eventually they will not be */
+        public int sectionSixOffset;
+        public int sectionOneStringCount;
+        public int dataCategoryCount;
+        public int sectionThreeOffset;
+        public int sectionTwoLinkCount;
+        public int sectionTwoOffset;
+        public int sectionFourOffset;
+        public int sectionFiveStringCount;
+        public int sectionFiveOffset;
+        public int fileSize;
 
         public IList<Tuple<string, int>> headerIndexList; // string, GUID
         public IList<Link> links; // base, class, link, connection
