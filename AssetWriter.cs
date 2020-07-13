@@ -71,10 +71,10 @@ namespace UAssetAPI
                 data.sectionTwoLinkCount = data.links.Count;
                 for (int i = 0; i < data.links.Count; i++)
                 {
-                    writer.Write(data.links[i].bbase);
-                    writer.Write(data.links[i].bclass);
-                    writer.Write(data.links[i].link);
-                    writer.Write(data.links[i].property);
+                    writer.Write(data.links[i].Base);
+                    writer.Write(data.links[i].Class);
+                    writer.Write(data.links[i].Linkage);
+                    writer.Write(data.links[i].Property);
                 }
             }
             else

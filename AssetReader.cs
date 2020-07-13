@@ -23,7 +23,7 @@ namespace UAssetAPI
         public int sectionFiveOffset;
         public int fileSize;
 
-        public IList<Tuple<string, int>> headerIndexList; // string, GUID
+        public IList<Tuple<string, uint>> headerIndexList; // string, GUID
         public IList<Link> links; // base, class, link, connection
         public IList<int[]> categoryIntReference;
         public IList<string> categoryStringReference;
@@ -73,10 +73,10 @@ namespace UAssetAPI
             // Section 1
             reader.BaseStream.Position += 8;
 
-            headerIndexList = new List<Tuple<string, int>>();
+            headerIndexList = new List<Tuple<string, uint>>();
             for (int i = 0; i < sectionOneStringCount; i++)
             {
-                var str = reader.ReadUStringWithGUID(out int guid);
+                var str = reader.ReadUStringWithGUID(out uint guid);
                 headerIndexList.Add(Tuple.Create(str, guid));
             }
 
@@ -87,11 +87,11 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(sectionTwoOffset, SeekOrigin.Begin);
                 for (int i = 0; i < sectionTwoLinkCount; i++)
                 {
-                    long bbase = reader.ReadInt64();
-                    long bclass = reader.ReadInt64();
+                    ulong bbase = reader.ReadUInt64();
+                    ulong bclass = reader.ReadUInt64();
                     int link = reader.ReadInt32();
-                    long property = reader.ReadInt64();
-                    links.Add(new Link(bbase, bclass, link, property));
+                    ulong property = reader.ReadUInt64();
+                    links.Add(new Link(bbase, bclass, link, property, Utils.GetLinkIndex(i)));
                 }
             }
 
@@ -172,7 +172,7 @@ namespace UAssetAPI
                         categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
                         Debug.Assert(categories[i].NumExtraZeros == 0 || categories[i].NumExtraZeros == 4);
                     }
-                    catch (FormatException)
+                    catch
                     {
                         //Console.WriteLine("Failed to parse category " + i + ": " + ex.ToString());
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
@@ -209,20 +209,27 @@ namespace UAssetAPI
 
         public int GetLinkReference(int index)
         {
-            return (int)(index < 0 ? links[Utils.UIndexToIndex(index)].property : -index);
+            return (int)(index < 0 ? (long)links[Utils.GetNormalIndex(index)].Property : -index);
         }
 
-        public int AddHeaderReference(string name, int guid)
+        public int AddHeaderReference(string name, uint guid)
         {
             if (ExistsInHeaderReference(name)) return SearchHeaderReference(name);
             headerIndexList.Add(Tuple.Create(name, guid));
             return headerIndexList.Count - 1;
         }
 
+        public Link AddLink(string bbase, string bclass, int link, string property)
+        {
+            Link nuevo = new Link(bbase, bclass, link, property, Utils.GetLinkIndex(links.Count), this);
+            links.Add(nuevo);
+            return nuevo;
+        }
+
         public int AddLink(Link li)
         {
             links.Add(li);
-            return Utils.IndexToUIndex(links.Count - 1);
+            return Utils.GetLinkIndex(links.Count - 1);
         }
 
         public AssetReader(BinaryReader reader)

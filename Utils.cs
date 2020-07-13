@@ -28,12 +28,12 @@ namespace UAssetAPI
             }
         }
 
-        public static string ReadUStringWithGUID(this BinaryReader reader, out int guid)
+        public static string ReadUStringWithGUID(this BinaryReader reader, out uint guid)
         {
             string str = reader.ReadUString();
             if (!string.IsNullOrEmpty(str))
             {
-                guid = reader.ReadInt32();
+                guid = reader.ReadUInt32();
             }
             else
             {
@@ -49,14 +49,14 @@ namespace UAssetAPI
             writer.Write((byte)0);
         }
 
-        public static int IndexToUIndex(int index) // Unreal index
+        public static int GetLinkIndex(int index)
         {
             return -(index + 1);
         }
 
-        public static int UIndexToIndex(int uindex) // Unreal index
+        public static int GetNormalIndex(int index)
         {
-            return -(uindex + 1);
+            return -(index + 1);
         }
     }
 }

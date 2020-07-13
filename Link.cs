@@ -2,17 +2,28 @@
 {
     public class Link
     {
-        public long bbase;
-        public long bclass;
-        public int link;
-        public long property;
+        public ulong Base;
+        public ulong Class;
+        public int Linkage;
+        public ulong Property;
+        public int Index;
 
-        public Link(long bbase, long bclass, int link, long property)
+        public Link(string bbase, string bclass, int link, string property, int index, AssetReader asset)
         {
-            this.bbase = bbase;
-            this.bclass = bclass;
-            this.link = link;
-            this.property = property;
+            Base = (ulong)asset.SearchHeaderReference(bbase);
+            Class = (ulong)asset.SearchHeaderReference(bclass);
+            Linkage = link;
+            Property = (ulong)asset.SearchHeaderReference(property);
+            Index = index;
+        }
+
+        public Link(ulong bbase, ulong bclass, int link, ulong property, int index)
+        {
+            Base = bbase;
+            Class = bclass;
+            Linkage = link;
+            Property = property;
+            Index = index;
         }
 
         public Link()
