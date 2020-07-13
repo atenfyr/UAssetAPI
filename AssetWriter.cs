@@ -89,7 +89,7 @@ namespace UAssetAPI
                 data.dataCategoryCount = data.categories.Count;
                 for (int i = 0; i < data.categories.Count; i++)
                 {
-                    CategoryReference us = data.categories[i];
+                    CategoryReference us = data.categories[i].ReferenceData;
                     writer.Write(us.connection);
                     writer.Write(us.connect);
                     writer.Write(us.category);
@@ -146,15 +146,15 @@ namespace UAssetAPI
             writer.Write((int)0);
             int oldOffset = data.sectionSixOffset;
             data.sectionSixOffset = (int)writer.BaseStream.Position;
-            int[] categoryStarts = new int[data.categoryData.Count];
+            int[] categoryStarts = new int[data.categories.Count];
             if (WillWriteSectionSix)
             {
-                if (data.categoryData.Count > 0)
+                if (data.categories.Count > 0)
                 {
-                    for (int i = 0; i < data.categoryData.Count; i++)
+                    for (int i = 0; i < data.categories.Count; i++)
                     {
                         categoryStarts[i] = (int)writer.BaseStream.Position;
-                        Category us = data.categoryData[i];
+                        Category us = data.categories[i];
                         if (us.IsRaw)
                         {
                             writer.Write(us.RawData);
@@ -180,7 +180,7 @@ namespace UAssetAPI
                 int additionalOffset = data.sectionSixOffset - oldOffset;
                 for (int i = 0; i < data.categories.Count; i++)
                 {
-                    CategoryReference us = data.categories[i];
+                    CategoryReference us = data.categories[i].ReferenceData;
                     categoryStarts[i] = us.startV + additionalOffset;
                 }
             }
@@ -193,7 +193,7 @@ namespace UAssetAPI
                 writer.Seek(data.sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < data.categories.Count; i++)
                 {
-                    CategoryReference us = data.categories[i];
+                    CategoryReference us = data.categories[i].ReferenceData;
                     int nextLoc = data.fileSize - 4;
                     if ((data.categories.Count - 1) > i) nextLoc = categoryStarts[i + 1];
 

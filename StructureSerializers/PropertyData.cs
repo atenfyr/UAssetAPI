@@ -7,7 +7,7 @@ using System.Linq;
 namespace UAssetAPI.StructureSerializers
 {
     /*
-        Lengths tend to include null bytes in the center of the element, but not ones at the very beginning
+        ForceReadNull should pretty much always be set to true for API usage
     */
 
     public abstract class PropertyData
@@ -28,7 +28,7 @@ namespace UAssetAPI.StructureSerializers
             return (T)RawValue;
         }
 
-        public PropertyData(string name, AssetReader asset, bool forceReadNull = true)
+        public PropertyData(string name, AssetReader asset, bool forceReadNull)
         {
             Name = name;
             Asset = asset;
@@ -62,7 +62,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class BoolPropertyData : PropertyData<bool>
     {
-        public BoolPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public BoolPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "BoolProperty";
         }
@@ -86,7 +86,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class IntPropertyData : PropertyData<int>
     {
-        public IntPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public IntPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "IntProperty";
         }
@@ -112,7 +112,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class FloatPropertyData : PropertyData<float>
     {
-        public FloatPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public FloatPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "FloatProperty";
         }
@@ -136,50 +136,57 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
+    public enum TextHistoryType
+    {
+        None = -1,
+        Base = 0,
+        NamedFormat,
+        OrderedFormat,
+        ArgumentFormat,
+        AsNumber,
+        AsPercent,
+        AsCurrency,
+        AsDate,
+        AsTime,
+        AsDateTime,
+        Transform,
+        StringTableEntry,
+        TextGenerator
+    }
+
     public class TextPropertyData : PropertyData<string[]>
     {
-        public int StringType;
-        public byte[] Garbage2;
+        public int Flag;
+        public TextHistoryType HistoryType;
+        public byte[] Extras;
 
-        public TextPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public TextPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "TextProperty";
-        }
-
-        private void ReadNormal(BinaryReader reader)
-        {
-            Garbage2 = reader.ReadBytes(8);
-            if (ForceReadNull) reader.ReadByte();
-            Value = new string[] { reader.ReadUString() };
-        }
-
-        private void ReadEight(BinaryReader reader)
-        {
-            Garbage2 = reader.ReadBytes(4);
-            if (ForceReadNull) reader.ReadByte();
-            Value = new string[] { reader.ReadUString(), reader.ReadUString() };
         }
 
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            StringType = reader.ReadInt32();
-            if (reader.ReadByte() == 0xFF)
-            {
-                Value = null;
-                Garbage2 = new byte[] { 0xFF };
-                return;
-            }
-            reader.BaseStream.Position -= 1;
+            Flag = reader.ReadInt32();
+            HistoryType = (TextHistoryType)reader.ReadByte();
 
-            switch(StringType)
+            switch(HistoryType)
             {
-                case 0:
-                    ReadNormal(reader);
+                case TextHistoryType.None:
+                    Extras = new byte[0];
+                    Value = null;
                     break;
-                case 8:
-                    ReadEight(reader);
+                case TextHistoryType.Base:
+                    Extras = reader.ReadBytes(4);
+                    Value = new string[] { reader.ReadUString(), reader.ReadUString() };
                     break;
+                case TextHistoryType.StringTableEntry:
+                    Extras = reader.ReadBytes(8);
+                    Value = new string[] { reader.ReadUString() };
+                    break;
+                default:
+                    throw new FormatException("Unimplemented reader for " + HistoryType.ToString());
             }
         }
 
@@ -187,14 +194,28 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             int here = (int)writer.BaseStream.Position;
-            writer.Write(StringType);
-            writer.Write(Garbage2);
-            if (Garbage2.Length == 1 && Garbage2[0] == 0xFF) return 5;
-            if (ForceReadNull) writer.Write((byte)0);
-            for (int i = 0; i < Value.Length; i++)
+            writer.Write(Flag);
+            writer.Write((byte)HistoryType);
+            writer.Write(Extras);
+
+            switch(HistoryType)
             {
-                writer.WriteUString(Value[i]);
+                case TextHistoryType.None:
+                    Value = null;
+                    break;
+                case TextHistoryType.Base:
+                    for (int i = 0; i < 2; i++)
+                    {
+                        writer.WriteUString(Value[i]);
+                    }
+                    break;
+                case TextHistoryType.StringTableEntry:
+                    writer.WriteUString(Value[0]);
+                    break;
+                default:
+                    throw new FormatException("Unimplemented writer for " + HistoryType.ToString());
             }
+
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -211,7 +232,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class StrPropertyData : PropertyData<string>
     {
-        public StrPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public StrPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "StrProperty";
         }
@@ -238,7 +259,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class ObjectPropertyData : PropertyData<int>
     {
-        public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ObjectProperty";
         }
@@ -266,7 +287,7 @@ namespace UAssetAPI.StructureSerializers
     {
         public int FullEnum;
 
-        public EnumPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public EnumPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "EnumProperty";
         }
@@ -306,7 +327,7 @@ namespace UAssetAPI.StructureSerializers
     {
         public int FullEnum;
 
-        public BytePropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public BytePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ByteProperty";
         }
@@ -344,7 +365,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class GuidPropertyData : PropertyData<Guid>
     {
-        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "Guid";
         }
@@ -370,7 +391,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class LinearColorPropertyData : PropertyData<float[]>
     {
-        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "LinearColor";
         }
@@ -397,13 +418,18 @@ namespace UAssetAPI.StructureSerializers
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            string oup = "";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + " ";
+            }
+            return oup.TrimEnd(' ');
         }
     }
 
     public class NamePropertyData : PropertyData<string>
     {
-        public NamePropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public NamePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "NameProperty";
         }
@@ -431,7 +457,7 @@ namespace UAssetAPI.StructureSerializers
     {
         public string ArrayType;
 
-        public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ArrayProperty";
         }
@@ -522,7 +548,7 @@ namespace UAssetAPI.StructureSerializers
 #pragma warning restore IDE0044 // Add readonly modifier
         private string StructType = null;
 
-        public StructPropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public StructPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             IsForced = false;
             Type = "StructProperty";

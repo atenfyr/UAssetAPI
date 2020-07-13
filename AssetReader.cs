@@ -25,10 +25,9 @@ namespace UAssetAPI
 
         public IList<Tuple<string, int>> headerIndexList; // string, GUID
         public IList<Link> links; // base, class, link, connection
-        public IList<CategoryReference> categories; // connection, connect, category, link, typeIndex, type, length, start, garbage data
         public IList<int[]> categoryIntReference;
         public IList<string> categoryStringReference;
-        public IList<Category> categoryData;
+        public IList<Category> categories;
 
         private int[] understoodSectionSixTypes = new int[]
         {
@@ -97,7 +96,7 @@ namespace UAssetAPI
             }
 
             // Section 3
-            categories = new List<CategoryReference>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
+            categories = new List<Category>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
             if (sectionThreeOffset > 0)
             {
                 reader.BaseStream.Seek(sectionThreeOffset, SeekOrigin.Begin);
@@ -114,7 +113,7 @@ namespace UAssetAPI
                     int garbage2 = reader.ReadInt32();
                     int startV = reader.ReadInt32(); // !!!
 
-                    categories.Add(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, reader.ReadBytes(104 - (10 * 4))));
+                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, reader.ReadBytes(104 - (10 * 4)))));
                 }
             }
 
@@ -149,40 +148,35 @@ namespace UAssetAPI
             // Section 6
             if (sectionSixOffset > 0)
             {
-                categoryData = new List<Category>();
                 for (int i = 0; i < categories.Count; i++)
                 {
-                    reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
-                    if (!understoodSectionSixTypes.Contains(categories[i].type))
+                    CategoryReference refData = categories[i].ReferenceData;
+                    reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
+                    if (!understoodSectionSixTypes.Contains(refData.type))
                     {
-                        categoryData.Add(new Category(reader.ReadBytes(categories[i].lengthV)));
+                        categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
                         continue;
                     }
 
-                    Category us = new Category();
-
                     try
                     {
+                        categories[i].Data = new List<PropertyData>();
                         PropertyData data;
                         while ((data = MainSerializer.Read(this, reader)) != null)
                         {
-                            us.Data.Add(data);
+                            categories[i].Data.Add(data);
                         }
 
                         int nextStarting = (int)reader.BaseStream.Length - 4;
-                        if ((categories.Count - 1) > i) nextStarting = categories[i + 1].startV;
-                        us.NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
-                        Debug.Assert(us.NumExtraZeros == 0 || us.NumExtraZeros == 4);
+                        if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
+                        categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
+                        Debug.Assert(categories[i].NumExtraZeros == 0 || categories[i].NumExtraZeros == 4);
                     }
                     catch (FormatException)
                     {
                         //Console.WriteLine("Failed to parse category " + i + ": " + ex.ToString());
-                        reader.BaseStream.Seek(categories[i].startV, SeekOrigin.Begin);
-                        us = new Category(reader.ReadBytes(categories[i].lengthV));
-                    }
-                    finally
-                    {
-                        categoryData.Add(us);
+                        reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
+                        categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
                     }
                 }
             }
@@ -195,13 +189,22 @@ namespace UAssetAPI
             return headerIndexList[index].Item1;
         }
 
+        public bool ExistsInHeaderReference(string search)
+        {
+            for (int i = 0; i < headerIndexList.Count; i++)
+            {
+                if (headerIndexList[i].Item1.Equals(search)) return true;
+            }
+            return false;
+        }
+
         public int SearchHeaderReference(string search)
         {
             for (int i = 0; i < headerIndexList.Count; i++)
             {
                 if (headerIndexList[i].Item1.Equals(search)) return i;
             }
-            return -1;
+            throw new FormatException("Requested string \"" + search + "\" not found in header list");
         }
 
         public int GetLinkReference(int index)
@@ -211,6 +214,7 @@ namespace UAssetAPI
 
         public int AddHeaderReference(string name, int guid)
         {
+            if (ExistsInHeaderReference(name)) return SearchHeaderReference(name);
             headerIndexList.Add(Tuple.Create(name, guid));
             return headerIndexList.Count - 1;
         }
