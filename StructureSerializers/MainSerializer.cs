@@ -38,13 +38,6 @@ namespace UAssetAPI.StructureSerializers
                 case "ByteProperty":
                     data = new BytePropertyData(name, asset, forceReadNull);
                     break;
-                case "GUID":
-                case "Guid":
-                    data = new GuidPropertyData(name, asset, forceReadNull);
-                    break;
-                case "LinearColor":
-                    data = new LinearColorPropertyData(name, asset, forceReadNull);
-                    break;
                 case "NameProperty":
                     data = new NamePropertyData(name, asset, forceReadNull);
                     break;
@@ -53,6 +46,19 @@ namespace UAssetAPI.StructureSerializers
                     break;
                 case "StructProperty":
                     data = new StructPropertyData(name, asset, forceReadNull);
+                    break;
+                case "GUID":
+                case "Guid":
+                    data = new GuidPropertyData(name, asset, forceReadNull);
+                    break;
+                case "LinearColor":
+                    data = new LinearColorPropertyData(name, asset, forceReadNull);
+                    break;
+                case "Vector":
+                    data = new VectorPropertyData(name, asset, forceReadNull);
+                    break;
+                case "Rotator":
+                    data = new RotatorPropertyData(name, asset, forceReadNull);
                     break;
                 default:
                     throw new FormatException("Invalid property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
@@ -65,7 +71,11 @@ namespace UAssetAPI.StructureSerializers
         {
             string name = asset.GetHeaderReference((int)reader.ReadInt64());
             if (name == "None") return null;
-            string type = asset.GetHeaderReference((int)reader.ReadInt64());
+
+            int typeNum = (int)reader.ReadInt64();
+            string type = name;
+            if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
+
             long leng = reader.ReadInt64();
             return TypeToClass(type, name, asset, reader, forceReadNull);
         }

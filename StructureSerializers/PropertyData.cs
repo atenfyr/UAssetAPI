@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -35,6 +34,11 @@ namespace UAssetAPI.StructureSerializers
             ForceReadNull = forceReadNull;
         }
 
+        public PropertyData()
+        {
+
+        }
+
         public virtual void Read(BinaryReader reader)
         {
 
@@ -58,6 +62,11 @@ namespace UAssetAPI.StructureSerializers
         {
 
         }
+
+        public PropertyData()
+        {
+
+        }
     }
 
     public class BoolPropertyData : PropertyData<bool>
@@ -65,6 +74,11 @@ namespace UAssetAPI.StructureSerializers
         public BoolPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "BoolProperty";
+        }
+
+        public BoolPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -91,6 +105,11 @@ namespace UAssetAPI.StructureSerializers
             Type = "IntProperty";
         }
 
+        public IntPropertyData()
+        {
+
+        }
+
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
@@ -115,6 +134,11 @@ namespace UAssetAPI.StructureSerializers
         public FloatPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "FloatProperty";
+        }
+
+        public FloatPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -157,12 +181,17 @@ namespace UAssetAPI.StructureSerializers
     public class TextPropertyData : PropertyData<string[]>
     {
         public int Flag;
-        public TextHistoryType HistoryType;
+        public TextHistoryType HistoryType = TextHistoryType.Base;
         public byte[] Extras;
 
         public TextPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "TextProperty";
+        }
+
+        public TextPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -237,6 +266,11 @@ namespace UAssetAPI.StructureSerializers
             Type = "StrProperty";
         }
 
+        public StrPropertyData()
+        {
+
+        }
+
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
@@ -262,6 +296,11 @@ namespace UAssetAPI.StructureSerializers
         public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ObjectProperty";
+        }
+
+        public ObjectPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -290,6 +329,11 @@ namespace UAssetAPI.StructureSerializers
         public EnumPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "EnumProperty";
+        }
+
+        public EnumPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -332,6 +376,11 @@ namespace UAssetAPI.StructureSerializers
             Type = "ByteProperty";
         }
 
+        public BytePropertyData()
+        {
+
+        }
+
         public override void Read(BinaryReader reader)
         {
             Value = (int)reader.ReadInt64();
@@ -370,6 +419,11 @@ namespace UAssetAPI.StructureSerializers
             Type = "Guid";
         }
 
+        public GuidPropertyData()
+        {
+
+        }
+
         public override void Read(BinaryReader reader)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
@@ -394,6 +448,11 @@ namespace UAssetAPI.StructureSerializers
         public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "LinearColor";
+        }
+
+        public LinearColorPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -427,11 +486,102 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
+    public class VectorPropertyData : PropertyData<float[]> // X, Y, Z
+    {
+        public VectorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "Vector";
+        }
+
+        public VectorPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new float[3];
+            for (int i = 0; i < 3; i++)
+            {
+                Value[i] = reader.ReadSingle();
+            }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 3; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + ", ";
+            }
+            return oup.Remove(oup.Length - 2) + ")";
+        }
+    }
+
+    public class RotatorPropertyData : PropertyData<float[]> // Pitch, Yaw, Roll
+    {
+        public RotatorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "Rotator";
+        }
+
+        public RotatorPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new float[3];
+            for (int i = 0; i < 3; i++)
+            {
+                Value[i] = reader.ReadSingle();
+            }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 3; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + ", ";
+            }
+            return oup.Remove(oup.Length - 2) + ")";
+        }
+    }
+
     public class NamePropertyData : PropertyData<string>
     {
         public NamePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "NameProperty";
+        }
+
+        public NamePropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -460,6 +610,11 @@ namespace UAssetAPI.StructureSerializers
         public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ArrayProperty";
+        }
+
+        public ArrayPropertyData()
+        {
+
         }
 
         public override void Read(BinaryReader reader)
@@ -561,6 +716,11 @@ namespace UAssetAPI.StructureSerializers
             Type = "StructProperty";
         }
 
+        public StructPropertyData()
+        {
+
+        }
+
         public string GetStructType()
         {
             return StructType;
@@ -585,16 +745,9 @@ namespace UAssetAPI.StructureSerializers
             }
         }
 
-        private void ReadGuid(BinaryReader reader)
+        private void ReadOnce<T>(BinaryReader reader) where T: PropertyData, new()
         {
-            GuidPropertyData data = new GuidPropertyData(Name, Asset, false);
-            data.Read(reader);
-            Value = new List<PropertyData> { data };
-        }
-
-        private void ReadLinearColor(BinaryReader reader)
-        {
-            LinearColorPropertyData data = new LinearColorPropertyData(Name, Asset, false);
+            T data = (T)Activator.CreateInstance(typeof(T), Name, Asset, false);
             data.Read(reader);
             Value = new List<PropertyData> { data };
         }
@@ -621,10 +774,16 @@ namespace UAssetAPI.StructureSerializers
             switch (StructType)
             {
                 case "Guid": // 16 byte GUID
-                    ReadGuid(reader);
+                    ReadOnce<GuidPropertyData>(reader);
                     break;
                 case "LinearColor": // 4 floats
-                    ReadLinearColor(reader);
+                    ReadOnce<LinearColorPropertyData>(reader);
+                    break;
+                case "Vector": // 3 floats
+                    ReadOnce<VectorPropertyData>(reader);
+                    break;
+                case "Rotator": // 3 floats
+                    ReadOnce<RotatorPropertyData>(reader);
                     break;
                 default:
                     ReadNormal(reader);
@@ -661,6 +820,10 @@ namespace UAssetAPI.StructureSerializers
                 case "LinearColor":
                     WriteOnce(writer);
                     return 16;
+                case "Vector":
+                case "Rotator":
+                    WriteOnce(writer);
+                    return 12;
                 default:
                     return WriteNormal(writer);
             }
