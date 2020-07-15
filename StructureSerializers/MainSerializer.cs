@@ -9,7 +9,7 @@ namespace UAssetAPI.StructureSerializers
 
     public static class MainSerializer
     {
-        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader, bool forceReadNull = true)
+        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader, long leng = 0, bool forceReadNull = true)
         {
             PropertyData data = null;
             switch (type)
@@ -17,8 +17,26 @@ namespace UAssetAPI.StructureSerializers
                 case "BoolProperty":
                     data = new BoolPropertyData(name, asset, forceReadNull);
                     break;
+                case "Int8Property":
+                    data = new Int8PropertyData(name, asset, forceReadNull);
+                    break;
+                case "Int16Property":
+                    data = new Int16PropertyData(name, asset, forceReadNull);
+                    break;
                 case "IntProperty":
                     data = new IntPropertyData(name, asset, forceReadNull);
+                    break;
+                case "Int64Property":
+                    data = new Int64PropertyData(name, asset, forceReadNull);
+                    break;
+                case "UInt16Property":
+                    data = new UInt16PropertyData(name, asset, forceReadNull);
+                    break;
+                case "UInt32Property":
+                    data = new UInt32PropertyData(name, asset, forceReadNull);
+                    break;
+                case "UInt64Property":
+                    data = new UInt64PropertyData(name, asset, forceReadNull);
                     break;
                 case "FloatProperty":
                     data = new FloatPropertyData(name, asset, forceReadNull);
@@ -61,9 +79,9 @@ namespace UAssetAPI.StructureSerializers
                     data = new RotatorPropertyData(name, asset, forceReadNull);
                     break;
                 default:
-                    throw new FormatException("Invalid property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
+                    throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
-            data.Read(reader);
+            data.Read(reader, leng);
             return data;
         }
 
@@ -77,7 +95,7 @@ namespace UAssetAPI.StructureSerializers
             if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
 
             long leng = reader.ReadInt64();
-            return TypeToClass(type, name, asset, reader, forceReadNull);
+            return TypeToClass(type, name, asset, reader, leng, forceReadNull);
         }
 
         public static int Write(PropertyData property, AssetReader asset, BinaryWriter writer) // Returns location of the length

@@ -7,15 +7,16 @@
         public int category;
         public int link;
         public int typeIndex;
-        public int type;
+        public ushort type;
         public int lengthV;
         public int startV;
 
         public int garbage1;
         public int garbage2;
+        public ushort garbageNew;
         public byte[] garbage3;
 
-        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, int type, int lengthV, int startV, int garbage1, int garbage2, byte[] garbage3)
+        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV, int garbage1, int garbage2, ushort garbageNew, byte[] garbage3)
         {
             this.connection = connection;
             this.connect = connect;
@@ -28,10 +29,11 @@
 
             this.garbage1 = garbage1;
             this.garbage2 = garbage2;
+            this.garbageNew = garbageNew;
             this.garbage3 = garbage3;
         }
 
-        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, int type, int lengthV, int startV)
+        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV)
         {
             this.connection = connection;
             this.connect = connect;

@@ -31,6 +31,7 @@ namespace UAssetAPI
 
         private int[] understoodSectionSixTypes = new int[]
         {
+            11,
             41,
             49,
             57
@@ -64,7 +65,7 @@ namespace UAssetAPI
             fileSize = reader.ReadInt32() + 4;
         }
 
-        private void Read(BinaryReader reader)
+        private void Read(BinaryReader reader, int[] manualSkips = null)
         {
             // Header
             byte[] header = reader.ReadBytes(185);
@@ -108,12 +109,13 @@ namespace UAssetAPI
                     int link = reader.ReadInt32();
                     int typeIndex = reader.ReadInt32();
                     int garbage1 = reader.ReadInt32();
-                    int type = reader.ReadInt32();
+                    ushort type = reader.ReadUInt16();
+                    ushort garbageNew = reader.ReadUInt16();
                     int lengthV = reader.ReadInt32(); // !!!
                     int garbage2 = reader.ReadInt32();
                     int startV = reader.ReadInt32(); // !!!
 
-                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, reader.ReadBytes(104 - (10 * 4)))));
+                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4)))));
                 }
             }
 
@@ -152,7 +154,7 @@ namespace UAssetAPI
                 {
                     CategoryReference refData = categories[i].ReferenceData;
                     reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
-                    if (!understoodSectionSixTypes.Contains(refData.type))
+                    if (!understoodSectionSixTypes.Contains(refData.type) || (manualSkips != null && manualSkips.Contains(i)))
                     {
                         categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
                         continue;
@@ -170,7 +172,6 @@ namespace UAssetAPI
                         int nextStarting = (int)reader.BaseStream.Length - 4;
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
                         categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
-                        Debug.Assert(categories[i].NumExtraZeros == 0 || categories[i].NumExtraZeros == 4);
                     }
                     catch
                     {
@@ -228,21 +229,22 @@ namespace UAssetAPI
 
         public int AddLink(Link li)
         {
+            li.Index = Utils.GetLinkIndex(links.Count - 1);
             links.Add(li);
-            return Utils.GetLinkIndex(links.Count - 1);
+            return li.Index;
         }
 
-        public AssetReader(BinaryReader reader)
+        public AssetReader(BinaryReader reader, int[] manualSkips = null)
         {
-            Read(reader);
+            Read(reader, manualSkips);
         }
 
-        public AssetReader(string path)
+        public AssetReader(string path, int[] manualSkips = null)
         {
             this.path = path;
             using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
             {
-                Read(reader);
+                Read(reader, manualSkips);
             }
         }
     }

@@ -39,7 +39,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public virtual void Read(BinaryReader reader)
+        public virtual void Read(BinaryReader reader, long leng)
         {
 
         }
@@ -81,7 +81,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             Value = reader.ReadInt16() > 0;
         }
@@ -90,37 +90,6 @@ namespace UAssetAPI.StructureSerializers
         {
             writer.Write((short)(Value ? 1 : 0));
             return 0;
-        }
-
-        public override string ToString()
-        {
-            return Convert.ToString(Value);
-        }
-    }
-
-    public class IntPropertyData : PropertyData<int>
-    {
-        public IntPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
-        {
-            Type = "IntProperty";
-        }
-
-        public IntPropertyData()
-        {
-
-        }
-
-        public override void Read(BinaryReader reader)
-        {
-            if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = reader.ReadInt32();
-        }
-
-        public override int Write(BinaryWriter writer)
-        {
-            if (ForceReadNull) writer.Write((byte)0);
-            writer.Write(Value);
-            return 4;
         }
 
         public override string ToString()
@@ -141,7 +110,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = reader.ReadSingle();
@@ -194,7 +163,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Flag = reader.ReadInt32();
@@ -271,7 +240,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = reader.ReadUString();
@@ -291,8 +260,10 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class ObjectPropertyData : PropertyData<int>
+    public class ObjectPropertyData : PropertyData<Link>
     {
+        private int LinkValue = 0;
+
         public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ObjectProperty";
@@ -303,22 +274,32 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = reader.ReadInt32(); // link reference
+            LinkValue = reader.ReadInt32();
+            if (LinkValue < 0 && Utils.GetNormalIndex(LinkValue) >= 0)
+            {
+                Value = Asset.links[Utils.GetNormalIndex(LinkValue)]; // link reference
+            }
+            else
+            {
+                Value = null;
+            }
         }
 
         public override int Write(BinaryWriter writer)
         {
             if (ForceReadNull) writer.Write((byte)0);
-            writer.Write(Value);
+            if (Value != null) LinkValue = Value.Index;
+            writer.Write(LinkValue);
             return 4;
         }
 
         public override string ToString()
         {
-            return Asset.GetHeaderReference(Asset.GetLinkReference(Value));
+            if (Value == null) return "null";
+            return Asset.GetHeaderReference((int)Value.Property);
         }
     }
 
@@ -336,7 +317,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             Value = (int)reader.ReadInt64();
             if (ForceReadNull) reader.ReadByte(); // null byte
@@ -381,10 +362,15 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             Value = (int)reader.ReadInt64();
             if (ForceReadNull) reader.ReadByte(); // null byte
+            if (Asset.GetHeaderReference(Value) == "None")
+            {
+                FullEnum = (int)reader.ReadByte();
+                return;
+            }
             FullEnum = (int)reader.ReadInt64();
         }
 
@@ -392,6 +378,11 @@ namespace UAssetAPI.StructureSerializers
         {
             writer.Write((long)Value);
             if (ForceReadNull) writer.Write((byte)0);
+            if (Asset.GetHeaderReference(Value) == "None")
+            {
+                writer.Write((byte)FullEnum);
+                return 1;
+            }
             writer.Write((long)FullEnum);
             return 8;
         }
@@ -408,6 +399,7 @@ namespace UAssetAPI.StructureSerializers
 
         public override string ToString()
         {
+            if (DecodeEnumBase() == "None") return Convert.ToString(FullEnum);
             return DecodeEnum();
         }
     }
@@ -424,7 +416,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = new Guid(reader.ReadBytes(16));
@@ -455,7 +447,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = new float[4];
@@ -498,7 +490,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = new float[3];
@@ -541,7 +533,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = new float[3];
@@ -584,7 +576,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Value = Asset.GetHeaderReference((int)reader.ReadInt64());
@@ -617,7 +609,7 @@ namespace UAssetAPI.StructureSerializers
 
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
             if (ForceReadNull) reader.ReadByte(); // null byte
@@ -631,7 +623,7 @@ namespace UAssetAPI.StructureSerializers
                     if (i > 0) // without name etc.
                     {
                         var data = new StructPropertyData(Name, Asset, true, fullType);
-                        data.Read(reader);
+                        data.Read(reader, 0);
                         results[i] = data;
                     }
                     else // with name etc.
@@ -647,7 +639,7 @@ namespace UAssetAPI.StructureSerializers
                 var results = new PropertyData[numEntries];
                 for (int i = 0; i < numEntries; i++)
                 {
-                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset, reader, false);
+                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset, reader, 0, false);
                 }
                 Value = results;
             }
@@ -655,6 +647,8 @@ namespace UAssetAPI.StructureSerializers
 
         public override int Write(BinaryWriter writer)
         {
+            ArrayType = Value[0].Type;
+
             writer.Write((long)Asset.SearchHeaderReference(ArrayType));
             if (ForceReadNull) writer.Write((byte)0);
 
@@ -701,7 +695,7 @@ namespace UAssetAPI.StructureSerializers
 #pragma warning disable IDE0044 // Add readonly modifier
         private bool IsForced = false;
 #pragma warning restore IDE0044 // Add readonly modifier
-        private string StructType = null;
+        public string StructType = null;
 
         public StructPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -728,7 +722,7 @@ namespace UAssetAPI.StructureSerializers
 
         public void SetStructType(string type)
         {
-            SetForced(type);
+            StructType = type;
         }
 
         internal void SetForced(string type)
@@ -748,7 +742,7 @@ namespace UAssetAPI.StructureSerializers
         private void ReadOnce<T>(BinaryReader reader) where T: PropertyData, new()
         {
             T data = (T)Activator.CreateInstance(typeof(T), Name, Asset, false);
-            data.Read(reader);
+            data.Read(reader, 0);
             Value = new List<PropertyData> { data };
         }
 
@@ -764,7 +758,7 @@ namespace UAssetAPI.StructureSerializers
             Value = resultingList;
         }
 
-        public override void Read(BinaryReader reader)
+        public override void Read(BinaryReader reader, long leng)
         {
             if (!IsForced)
             {
@@ -799,9 +793,12 @@ namespace UAssetAPI.StructureSerializers
         private int WriteNormal(BinaryWriter writer)
         {
             int here = (int)writer.BaseStream.Position;
-            for (int i = 0; i < Value.Count; i++)
+            if (Value != null)
             {
-                MainSerializer.Write(Value[i], Asset, writer);
+                for (int i = 0; i < Value.Count; i++)
+                {
+                    MainSerializer.Write(Value[i], Asset, writer);
+                }
             }
             writer.Write((long)Asset.SearchHeaderReference("None"));
             return (int)writer.BaseStream.Position - here;

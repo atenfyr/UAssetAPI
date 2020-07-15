@@ -97,6 +97,7 @@ namespace UAssetAPI
                     writer.Write(us.typeIndex);
                     writer.Write(us.garbage1);
                     writer.Write(us.type);
+                    writer.Write(us.garbageNew);
                     writer.Write(us.lengthV);
                     writer.Write(us.garbage2);
                     writer.Write(us.startV);
@@ -207,6 +208,7 @@ namespace UAssetAPI
                     writer.Write(us.typeIndex);
                     writer.Write(us.garbage1);
                     writer.Write(us.type);
+                    writer.Write(us.garbageNew);
                     writer.Write(us.lengthV); // !!!
                     writer.Write(us.garbage2);
                     writer.Write(us.startV); // !!!
@@ -260,12 +262,12 @@ namespace UAssetAPI
             }
         }
 
-        public AssetWriter(string input)
+        public AssetWriter(string input, int[] manualSkips = null)
         {
             this.path = input;
             using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
             {
-                data = new AssetReader(new BinaryReader(f));
+                data = new AssetReader(new BinaryReader(f), manualSkips);
             }
         }
     }
