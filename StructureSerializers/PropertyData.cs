@@ -262,7 +262,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class ObjectPropertyData : PropertyData<Link>
     {
-        private int LinkValue = 0;
+        public int LinkValue = 0;
 
         public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -298,6 +298,7 @@ namespace UAssetAPI.StructureSerializers
 
         public override string ToString()
         {
+            if (LinkValue > 0) return Convert.ToString(LinkValue);
             if (Value == null) return "null";
             return Asset.GetHeaderReference((int)Value.Property);
         }
@@ -480,7 +481,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class VectorPropertyData : PropertyData<float[]> // X, Y, Z
     {
-        public VectorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public VectorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "Vector";
         }
@@ -523,7 +524,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class RotatorPropertyData : PropertyData<float[]> // Pitch, Yaw, Roll
     {
-        public RotatorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public RotatorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "Rotator";
         }
@@ -561,6 +562,54 @@ namespace UAssetAPI.StructureSerializers
                 oup += Convert.ToString(Value[i]) + ", ";
             }
             return oup.Remove(oup.Length - 2) + ")";
+        }
+    }
+
+    public class MulticastDelegatePropertyData : PropertyData<int[]> // Pitch, Yaw, Roll
+    {
+        public string Value2;
+
+        public MulticastDelegatePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "MulticastDelegateProperty";
+        }
+
+        public MulticastDelegatePropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new int[2];
+            for (int i = 0; i < 2; i++)
+            {
+                Value[i] = reader.ReadInt32();
+            }
+            Value2 = Asset.GetHeaderReference((int)reader.ReadUInt64());
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 2; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            writer.Write((long)Asset.SearchHeaderReference(Value2));
+            return 16;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + ", ";
+            }
+            oup += Value2;
+            return oup + ")";
         }
     }
 
@@ -693,7 +742,7 @@ namespace UAssetAPI.StructureSerializers
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
 #pragma warning disable IDE0044 // Add readonly modifier
-        private bool IsForced = false;
+        public bool IsForced = false;
 #pragma warning restore IDE0044 // Add readonly modifier
         public string StructType = null;
 
@@ -725,7 +774,7 @@ namespace UAssetAPI.StructureSerializers
             StructType = type;
         }
 
-        internal void SetForced(string type)
+        public void SetForced(string type)
         {
             if (string.IsNullOrEmpty(type))
             {

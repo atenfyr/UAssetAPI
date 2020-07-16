@@ -78,6 +78,9 @@ namespace UAssetAPI.StructureSerializers
                 case "Rotator":
                     data = new RotatorPropertyData(name, asset, forceReadNull);
                     break;
+                case "MulticastDelegateProperty":
+                    data = new MulticastDelegatePropertyData(name, asset, forceReadNull);
+                    break;
                 default:
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }

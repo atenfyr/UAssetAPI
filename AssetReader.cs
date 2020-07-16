@@ -175,7 +175,7 @@ namespace UAssetAPI
                     }
                     catch
                     {
-                        //Console.WriteLine("Failed to parse category " + i + ": " + ex.ToString());
+                        //Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
                         categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
                     }
@@ -234,6 +234,7 @@ namespace UAssetAPI
             return li.Index;
         }
 
+        // manualSkips is an array of category indexes (starting from 1) to skip
         public AssetReader(BinaryReader reader, int[] manualSkips = null)
         {
             Read(reader, manualSkips);
