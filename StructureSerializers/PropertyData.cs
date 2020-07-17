@@ -741,10 +741,9 @@ namespace UAssetAPI.StructureSerializers
 
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
-#pragma warning disable IDE0044 // Add readonly modifier
         public bool IsForced = false;
-#pragma warning restore IDE0044 // Add readonly modifier
         public string StructType = null;
+        public Guid StructGUID = Guid.Empty; // usually set to 0
 
         public StructPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -812,7 +811,8 @@ namespace UAssetAPI.StructureSerializers
             if (!IsForced)
             {
                 StructType = Asset.GetHeaderReference((int)reader.ReadInt64());
-                reader.ReadBytes(17);
+                StructGUID = new Guid(reader.ReadBytes(16));
+                if (ForceReadNull) reader.ReadByte();
             }
             switch (StructType)
             {
@@ -858,7 +858,8 @@ namespace UAssetAPI.StructureSerializers
             if (!IsForced)
             {
                 writer.Write((long)Asset.SearchHeaderReference(StructType));
-                writer.Write(Enumerable.Repeat((byte)0, 17).ToArray());
+                writer.Write(StructGUID.ToByteArray());
+                writer.Write((byte)0);
             }
             switch(StructType)
             {

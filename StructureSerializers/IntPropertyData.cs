@@ -25,7 +25,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 1;
+            return sizeof(sbyte);
         }
 
         public override string ToString()
@@ -56,7 +56,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 2;
+            return sizeof(short);
         }
 
         public override string ToString()
@@ -87,7 +87,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 4;
+            return sizeof(int);
         }
 
         public override string ToString()
@@ -118,7 +118,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 8;
+            return sizeof(long);
         }
 
         public override string ToString()
@@ -149,7 +149,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 2;
+            return sizeof(ushort);
         }
 
         public override string ToString()
@@ -180,7 +180,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 4;
+            return sizeof(uint);
         }
 
         public override string ToString()
@@ -211,7 +211,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write(Value);
-            return 8;
+            return sizeof(ulong);
         }
 
         public override string ToString()
