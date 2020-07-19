@@ -81,6 +81,12 @@ namespace UAssetAPI.StructureSerializers
                 case "Rotator":
                     data = new RotatorPropertyData(name, asset, forceReadNull);
                     break;
+                case "Quat":
+                    data = new QuatPropertyData(name, asset, forceReadNull);
+                    break;
+                case "SoftObjectProperty":
+                    data = new SoftObjectPropertyData(name, asset, forceReadNull);
+                    break;
                 case "MulticastDelegateProperty":
                     data = new MulticastDelegatePropertyData(name, asset, forceReadNull);
                     break;
@@ -94,7 +100,7 @@ namespace UAssetAPI.StructureSerializers
         public static PropertyData Read(AssetReader asset, BinaryReader reader, bool forceReadNull = true)
         {
             string name = asset.GetHeaderReference((int)reader.ReadInt64());
-            if (name == "None") return null;
+            if (name.Equals("None")) return null;
 
             int typeNum = (int)reader.ReadInt64();
             string type = name;

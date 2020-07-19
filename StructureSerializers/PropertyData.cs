@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Drawing;
 
 namespace UAssetAPI.StructureSerializers
 {
@@ -441,7 +442,7 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class LinearColorPropertyData : PropertyData<float[]>
+    public class LinearColorPropertyData : PropertyData<Color> // R, G, B, A
     {
         public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -456,31 +457,27 @@ namespace UAssetAPI.StructureSerializers
         public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = new float[4];
+            var data = new float[4];
             for (int i = 0; i < 4; i++)
             {
-                Value[i] = reader.ReadSingle();
+                data[i] = reader.ReadSingle();
             }
+            Value = Color.FromArgb((int)(data[3] * 255), (int)(data[0] * 255), (int)(data[1] * 255), (int)(data[2] * 255));
         }
 
         public override int Write(BinaryWriter writer)
         {
             if (ForceReadNull) writer.Write((byte)0);
-            for (int i = 0; i < 4; i++)
-            {
-                writer.Write(Value[i]);
-            }
+            writer.Write((float)Value.R / 255);
+            writer.Write((float)Value.G / 255);
+            writer.Write((float)Value.B / 255);
+            writer.Write((float)Value.A / 255);
             return 16;
         }
 
         public override string ToString()
         {
-            string oup = "";
-            for (int i = 0; i < Value.Length; i++)
-            {
-                oup += Convert.ToString(Value[i]) + " ";
-            }
-            return oup.TrimEnd(' ');
+            return Value.ToString();
         }
     }
 
@@ -570,7 +567,85 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class MulticastDelegatePropertyData : PropertyData<int[]> // Pitch, Yaw, Roll
+    public class QuatPropertyData : PropertyData<float[]>
+    {
+        public QuatPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        {
+            Type = "Quat";
+        }
+
+        public QuatPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new float[4];
+            for (int i = 0; i < 4; i++)
+            {
+                Value[i] = reader.ReadSingle();
+            }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 4; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + ", ";
+            }
+            return oup.Remove(oup.Length - 2) + ")";
+        }
+    }
+
+    public class SoftObjectPropertyData : PropertyData<string>
+    {
+        public int Value2;
+
+        public SoftObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "SoftObjectProperty";
+        }
+
+        public SoftObjectPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = Asset.GetHeaderReference((int)reader.ReadInt64()); // a header reference that isn't a long!? wow!
+            Value2 = reader.ReadInt32();
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write((long)Asset.SearchHeaderReference(Value));
+            writer.Write(Value2);
+            return sizeof(long) + sizeof(int);
+        }
+
+        public override string ToString()
+        {
+            return "(" + Value + ", " + Value2 + ")";
+        }
+    }
+
+    public class MulticastDelegatePropertyData : PropertyData<int[]>
     {
         public string Value2;
 
@@ -603,7 +678,7 @@ namespace UAssetAPI.StructureSerializers
                 writer.Write(Value[i]);
             }
             writer.Write((long)Asset.SearchHeaderReference(Value2));
-            return 16;
+            return (sizeof(int) * 2) + sizeof(long);
         }
 
         public override string ToString()
@@ -640,7 +715,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) writer.Write((byte)0);
             writer.Write((long)Asset.SearchHeaderReference(Value));
-            return 8;
+            return sizeof(long);
         }
 
         public override string ToString()
@@ -758,6 +833,20 @@ namespace UAssetAPI.StructureSerializers
             Type = "MapProperty";
         }
 
+        private PropertyData MapTypeToClass(string type, string name, AssetReader asset, BinaryReader reader, long leng = 0, bool forceReadNull = true)
+        {
+            switch (type)
+            {
+                case "StructProperty":
+                    StructPropertyData data = new StructPropertyData(name, asset, forceReadNull);
+                    data.SetForced("Generic");
+                    data.Read(reader, leng);
+                    return data;
+                default:
+                    return MainSerializer.TypeToClass(type, name, asset, reader, leng, forceReadNull);
+            }
+        }
+
         private OrderedDictionary ReadRawMap(BinaryReader reader, string type1, string type2, int numEntries)
         {
             var resultingDict = new OrderedDictionary();
@@ -766,8 +855,9 @@ namespace UAssetAPI.StructureSerializers
             PropertyData data2 = null;
             for (int i = 0; i < numEntries; i++)
             {
-                data1 = MainSerializer.TypeToClass(type1, Name, Asset, reader, 0, false);
-                data2 = MainSerializer.TypeToClass(type2, Name, Asset, reader, 0, false);
+                data1 = MapTypeToClass(type1, Name, Asset, reader, 0, false);
+                data2 = MapTypeToClass(type2, Name, Asset, reader, 0, false);
+
                 resultingDict.Add(data1, data2);
             }
 
@@ -891,7 +981,7 @@ namespace UAssetAPI.StructureSerializers
             {
                 StructType = Asset.GetHeaderReference((int)reader.ReadInt64());
                 StructGUID = new Guid(reader.ReadBytes(16));
-                if (ForceReadNull) reader.ReadByte();
+                reader.ReadByte();
             }
             switch (StructType)
             {
@@ -906,6 +996,9 @@ namespace UAssetAPI.StructureSerializers
                     break;
                 case "Rotator": // 3 floats
                     ReadOnce<RotatorPropertyData>(reader);
+                    break;
+                case "Quat": // 4 floats
+                    ReadOnce<QuatPropertyData>(reader);
                     break;
                 default:
                     ReadNormal(reader);
@@ -944,6 +1037,7 @@ namespace UAssetAPI.StructureSerializers
             {
                 case "Guid":
                 case "LinearColor":
+                case "Quat":
                     WriteOnce(writer);
                     return 16;
                 case "Vector":

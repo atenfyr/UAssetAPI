@@ -1,7 +1,7 @@
 # UAsset API
-A little UAsset API. Intended for Astroneer, but might work for other stuff, who knows?
+A .uasset API written in C# to facilitate reading and modifying game assets.
 
-## A very rudimentary example
+## A small example
 ```cs
 var y = new AssetWriter(@"OLD.uasset");
 for (int i = 0; i < y.data.headerIndexList.Count; i++)
