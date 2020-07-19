@@ -262,12 +262,12 @@ namespace UAssetAPI
             }
         }
 
-        public AssetWriter(string input, int[] manualSkips = null)
+        public AssetWriter(string input, int[] manualSkips = null, int[] forceReads = null)
         {
             this.path = input;
             using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
             {
-                data = new AssetReader(new BinaryReader(f), manualSkips);
+                data = new AssetReader(new BinaryReader(f), manualSkips, forceReads);
             }
         }
     }

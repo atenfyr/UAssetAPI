@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
@@ -304,9 +306,9 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
-    public class EnumPropertyData : PropertyData<int>
+    public class EnumPropertyData : PropertyData<string>
     {
-        public int FullEnum;
+        public string FullEnum = string.Empty;
 
         public EnumPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -320,32 +322,35 @@ namespace UAssetAPI.StructureSerializers
 
         public override void Read(BinaryReader reader, long leng)
         {
-            Value = (int)reader.ReadInt64();
+            Value = Asset.GetHeaderReference((int)reader.ReadInt64());
+            if (Value.Contains("::") || Value.Equals("None")) return;
             if (ForceReadNull) reader.ReadByte(); // null byte
-            FullEnum = (int)reader.ReadInt64();
+            FullEnum = Asset.GetHeaderReference((int)reader.ReadInt64());
         }
 
         public override int Write(BinaryWriter writer)
         {
-            writer.Write((long)Value);
+            writer.Write((long)Asset.SearchHeaderReference(Value));
+            if (Value.Contains("::") || Value.Equals("None")) return sizeof(long);
             if (ForceReadNull) writer.Write((byte)0);
-            writer.Write((long)FullEnum);
-            return 8;
+            writer.Write((long)Asset.SearchHeaderReference(FullEnum));
+            return sizeof(long);
         }
 
-        public string DecodeEnumBase()
+        public string GetEnumBase()
         {
-            return Asset.GetHeaderReference(Value);
+            return Value;
         }
 
-        public string DecodeEnum()
+        public string GetEnumFull()
         {
-            return Asset.GetHeaderReference(FullEnum);
+            return FullEnum;
         }
 
         public override string ToString()
         {
-            return DecodeEnum();
+            if (Value.Contains("::") || Value.Equals("None")) return Value;
+            return FullEnum;
         }
     }
 
@@ -696,7 +701,7 @@ namespace UAssetAPI.StructureSerializers
 
         public override int Write(BinaryWriter writer)
         {
-            ArrayType = Value[0].Type;
+            if (Value.Length > 0) ArrayType = Value[0].Type;
 
             writer.Write((long)Asset.SearchHeaderReference(ArrayType));
             if (ForceReadNull) writer.Write((byte)0);
@@ -736,6 +741,80 @@ namespace UAssetAPI.StructureSerializers
             }
 
             return (int)writer.BaseStream.Position - here;
+        }
+    }
+
+    public class MapPropertyData : PropertyData<OrderedDictionary> // Map
+    {
+        OrderedDictionary KeysToRemove = null;
+
+        public MapPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "MapProperty";
+        }
+
+        public MapPropertyData()
+        {
+            Type = "MapProperty";
+        }
+
+        private OrderedDictionary ReadRawMap(BinaryReader reader, string type1, string type2, int numEntries)
+        {
+            var resultingDict = new OrderedDictionary();
+
+            PropertyData data1 = null;
+            PropertyData data2 = null;
+            for (int i = 0; i < numEntries; i++)
+            {
+                data1 = MainSerializer.TypeToClass(type1, Name, Asset, reader, 0, false);
+                data2 = MainSerializer.TypeToClass(type2, Name, Asset, reader, 0, false);
+                resultingDict.Add(data1, data2);
+            }
+
+            return resultingDict;
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            string type1 = Asset.GetHeaderReference((int)reader.ReadInt64());
+            string type2 = Asset.GetHeaderReference((int)reader.ReadInt64());
+
+            int numKeysToRemove = reader.ReadInt32();
+            if (numKeysToRemove > 0) // i haven't ever actually seen this case but the engine has it so here's an untested implementation of it for now
+            {
+                KeysToRemove = ReadRawMap(reader, type1, type2, numKeysToRemove);
+            }
+            if (ForceReadNull) reader.ReadByte();
+
+            int numEntries = reader.ReadInt32();
+            Value = ReadRawMap(reader, type1, type2, numEntries);
+        }
+
+        private int WriteRawMap(BinaryWriter writer, OrderedDictionary map)
+        {
+            int here = (int)writer.BaseStream.Position;
+            foreach (DictionaryEntry entry in map)
+            {
+                ((PropertyData)entry.Key).Write(writer);
+                ((PropertyData)entry.Value).Write(writer);
+            }
+            return (int)writer.BaseStream.Position - here;
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            var firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
+            writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Key).Type));
+            writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Value).Type));
+            writer.Write(KeysToRemove != null ? KeysToRemove.Count : 0);
+            if (KeysToRemove != null && KeysToRemove.Count > 0)
+            {
+                WriteRawMap(writer, KeysToRemove);
+            }
+            if (ForceReadNull) writer.Write((byte)0);
+
+            writer.Write(Value.Count);
+            return WriteRawMap(writer, Value) + 8;
         }
     }
 
@@ -859,7 +938,7 @@ namespace UAssetAPI.StructureSerializers
             {
                 writer.Write((long)Asset.SearchHeaderReference(StructType));
                 writer.Write(StructGUID.ToByteArray());
-                writer.Write((byte)0);
+                if (ForceReadNull) writer.Write((byte)0);
             }
             switch(StructType)
             {

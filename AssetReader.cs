@@ -31,6 +31,7 @@ namespace UAssetAPI
 
         private int[] understoodSectionSixTypes = new int[]
         {
+            8,
             11,
             41,
             49,
@@ -65,7 +66,7 @@ namespace UAssetAPI
             fileSize = reader.ReadInt32() + 4;
         }
 
-        private void Read(BinaryReader reader, int[] manualSkips = null)
+        private void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
             byte[] header = reader.ReadBytes(185);
@@ -156,8 +157,11 @@ namespace UAssetAPI
                     reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
                     if (!understoodSectionSixTypes.Contains(refData.type) || (manualSkips != null && manualSkips.Contains(i)))
                     {
-                        categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
-                        continue;
+                        if (forceReads == null || !forceReads.Contains(i))
+                        {
+                            categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
+                            continue;
+                        }
                     }
 
                     try
@@ -172,8 +176,10 @@ namespace UAssetAPI
                         int nextStarting = (int)reader.BaseStream.Length - 4;
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
                         categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
+
+                        if (categories[i].NumExtraZeros < 0 || categories[i].NumExtraZeros % 4 != 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + categories[i].NumExtraZeros + " null bytes");
                     }
-                    catch
+                    catch (Exception)
                     {
                         //Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
@@ -235,17 +241,17 @@ namespace UAssetAPI
         }
 
         // manualSkips is an array of category indexes (starting from 1) to skip
-        public AssetReader(BinaryReader reader, int[] manualSkips = null)
+        public AssetReader(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
-            Read(reader, manualSkips);
+            Read(reader, manualSkips, forceReads);
         }
 
-        public AssetReader(string path, int[] manualSkips = null)
+        public AssetReader(string path, int[] manualSkips = null, int[] forceReads = null)
         {
             this.path = path;
             using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
             {
-                Read(reader, manualSkips);
+                Read(reader, manualSkips, forceReads);
             }
         }
     }

@@ -62,6 +62,9 @@ namespace UAssetAPI.StructureSerializers
                 case "ArrayProperty":
                     data = new ArrayPropertyData(name, asset, forceReadNull);
                     break;
+                case "MapProperty":
+                    data = new MapPropertyData(name, asset, forceReadNull);
+                    break;
                 case "StructProperty":
                     data = new StructPropertyData(name, asset, forceReadNull);
                     break;
