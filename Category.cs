@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UAssetAPI.StructureSerializers;
 
 namespace UAssetAPI
@@ -6,46 +9,143 @@ namespace UAssetAPI
     public class Category
     {
         public CategoryReference ReferenceData;
-        public bool IsRaw = false;
-        public IList<PropertyData> Data;
-        public byte[] RawData;
-        public int NumExtraZeros = 0;
+        public int NumExtraZeros;
+        public AssetReader Asset;
 
-        public void SetRawData(byte[] data)
+        public Category(CategoryReference reference, AssetReader asset, int numExtraZeros = 0)
         {
-            IsRaw = true;
-            RawData = data;
-        }
-
-        public void SetData(IList<PropertyData> data, int numExtraZeros = 0)
-        {
-            IsRaw = false;
-            Data = data;
+            ReferenceData = reference;
+            Asset = asset;
             NumExtraZeros = numExtraZeros;
-        }
-
-        public Category(CategoryReference reference, byte[] data)
-        {
-            ReferenceData = reference;
-            SetRawData(data);
-        }
-
-        public Category(CategoryReference reference, IList<PropertyData> data, int numExtraZeros)
-        {
-            ReferenceData = reference;
-            SetData(data, numExtraZeros);
-        }
-
-        public Category(CategoryReference reference)
-        {
-            ReferenceData = reference;
-            Data = new List<PropertyData>();
         }
 
         public Category()
         {
             ReferenceData = new CategoryReference();
+        }
+
+        public virtual void Read(BinaryReader reader)
+        {
+
+        }
+
+        public virtual void Write(BinaryWriter writer)
+        {
+
+        }
+    }
+
+    public class NormalCategory : Category
+    {
+        public IList<PropertyData> Data;
+
+        public NormalCategory(Category super)
+        {
+            ReferenceData = super.ReferenceData;
+            Asset = super.Asset;
+            NumExtraZeros = super.NumExtraZeros;
+        }
+
+        public NormalCategory(IList<PropertyData> data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        {
+            Data = data;
+        }
+
+        public override void Read(BinaryReader reader)
+        {
             Data = new List<PropertyData>();
+            PropertyData bit;
+            while ((bit = MainSerializer.Read(Asset, reader)) != null)
+            {
+                Data.Add(bit);
+            }
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            for (int j = 0; j < Data.Count; j++)
+            {
+                PropertyData current = Data[j];
+                MainSerializer.Write(current, Asset, writer);
+            }
+            writer.Write((long)Asset.SearchHeaderReference("None"));
+        }
+    }
+
+    public class RawCategory : Category
+    {
+        public byte[] Data;
+
+        public RawCategory(Category super)
+        {
+            ReferenceData = super.ReferenceData;
+            Asset = super.Asset;
+            NumExtraZeros = super.NumExtraZeros;
+        }
+
+        public RawCategory(byte[] data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        {
+            Data = data;
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            writer.Write(Data);
+        }
+    }
+
+    public class StringTable : List<string>
+    {
+        public string Name;
+
+        public StringTable(string name) : base()
+        {
+            Name = name;
+        }
+    }
+
+    public class StringTableCategory : Category
+    {
+        public StringTable Data;
+
+        public StringTableCategory(Category super)
+        {
+            ReferenceData = super.ReferenceData;
+            Asset = super.Asset;
+            NumExtraZeros = super.NumExtraZeros;
+        }
+
+        public StringTableCategory(StringTable data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        {
+            Data = data;
+        }
+
+        public override void Read(BinaryReader reader)
+        {
+            Debug.Assert(Asset.GetHeaderReference((int)reader.ReadInt64()).Equals("None"));
+            reader.ReadInt32();
+
+            Data = new StringTable(reader.ReadUString());
+
+            int numEntries = reader.ReadInt32() * 2;
+            for (int i = 0; i < numEntries; i++)
+            {
+                Data.Add(reader.ReadUString());
+            }
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            writer.Write((long)Asset.SearchHeaderReference("None"));
+            writer.Write((int)0);
+
+            writer.WriteUString(Data.Name);
+
+            writer.Write(Data.Count / 2);
+            for (int i = 0; i < Data.Count; i++)
+            {
+                writer.WriteUString(Data[i]);
+            }
         }
     }
 }

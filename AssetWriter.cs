@@ -156,18 +156,7 @@ namespace UAssetAPI
                     {
                         categoryStarts[i] = (int)writer.BaseStream.Position;
                         Category us = data.categories[i];
-                        if (us.IsRaw)
-                        {
-                            writer.Write(us.RawData);
-                            continue;
-                        }
-
-                        for (int j = 0; j < us.Data.Count; j++)
-                        {
-                            PropertyData current = us.Data[j];
-                            MainSerializer.Write(current, data, writer);
-                        }
-                        writer.Write((long)data.SearchHeaderReference("None"));
+                        us.Write(writer);
                         writer.Write(Enumerable.Repeat((byte)0, us.NumExtraZeros).ToArray());
                     }
                 }

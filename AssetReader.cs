@@ -116,7 +116,7 @@ namespace UAssetAPI
                     int garbage2 = reader.ReadInt32();
                     int startV = reader.ReadInt32(); // !!!
 
-                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4)))));
+                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4))), this));
                 }
             }
 
@@ -159,24 +159,30 @@ namespace UAssetAPI
                     {
                         if (forceReads == null || !forceReads.Contains(i))
                         {
-                            categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
+                            categories[i] = new RawCategory(categories[i]);
+                            ((RawCategory)categories[i]).Data = reader.ReadBytes(refData.lengthV);
                             continue;
                         }
                     }
 
                     try
                     {
-                        categories[i].Data = new List<PropertyData>();
-                        PropertyData data;
-                        while ((data = MainSerializer.Read(this, reader)) != null)
+                        switch (GetHeaderReference(GetLinkReference(refData.connection)))
                         {
-                            categories[i].Data.Add(data);
+                            case "StringTable":
+                                categories[i] = new StringTableCategory(categories[i]);
+                                categories[i].Read(reader);
+                                break;
+                            default:
+                                categories[i] = new NormalCategory(categories[i]);
+                                categories[i].Read(reader);
+                                break;
                         }
 
                         int nextStarting = (int)reader.BaseStream.Length - 4;
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
-                        categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
 
+                        categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
                         if (categories[i].NumExtraZeros < 0 || categories[i].NumExtraZeros % 4 != 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + categories[i].NumExtraZeros + " null bytes");
                     }
                     catch (Exception ex)
@@ -185,7 +191,8 @@ namespace UAssetAPI
                         Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
 #endif
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
-                        categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
+                        categories[i] = new RawCategory(categories[i]);
+                        ((RawCategory)categories[i]).Data = reader.ReadBytes(refData.lengthV);
                     }
                 }
             }
