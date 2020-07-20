@@ -612,7 +612,7 @@ namespace UAssetAPI.StructureSerializers
 
     public class SoftObjectPropertyData : PropertyData<string>
     {
-        public int Value2;
+        public long Value2 = 0;
 
         public SoftObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -627,16 +627,16 @@ namespace UAssetAPI.StructureSerializers
         public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = Asset.GetHeaderReference((int)reader.ReadInt64()); // a header reference that isn't a long!? wow!
-            Value2 = reader.ReadInt32();
+            Value = Asset.GetHeaderReference(reader.ReadInt32()); // a header reference that isn't a long!? wow!
+            Value2 = reader.ReadInt64();
         }
 
         public override int Write(BinaryWriter writer)
         {
             if (ForceReadNull) writer.Write((byte)0);
-            writer.Write((long)Asset.SearchHeaderReference(Value));
+            writer.Write(Asset.SearchHeaderReference(Value));
             writer.Write(Value2);
-            return sizeof(long) + sizeof(int);
+            return sizeof(int) + sizeof(long);
         }
 
         public override string ToString()

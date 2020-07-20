@@ -60,8 +60,8 @@ namespace UAssetAPI
             data.sectionOneStringCount = data.headerIndexList.Count;
             for (int i = 0; i < data.headerIndexList.Count; i++)
             {
-                writer.WriteUString(data.headerIndexList[i].Item1);
-                writer.Write(data.headerIndexList[i].Item2);
+                writer.WriteUString(data.headerIndexList[i]);
+                writer.Write(CRCGenerator.GenerateHash(data.headerIndexList[i]));
             }
 
             // Section 2

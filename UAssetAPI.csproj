@@ -46,6 +46,7 @@
     <Compile Include="AssetWriter.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="CategoryReference.cs" />
+    <Compile Include="CRCGenerator.cs" />
     <Compile Include="StructureSerializers\IntPropertyData.cs" />
     <Compile Include="StructureSerializers\MainSerializer.cs" />
     <Compile Include="Link.cs" />

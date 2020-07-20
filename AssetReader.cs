@@ -23,7 +23,7 @@ namespace UAssetAPI
         public int sectionFiveOffset;
         public int fileSize;
 
-        public IList<Tuple<string, uint>> headerIndexList; // string, GUID
+        public IList<string> headerIndexList;
         public IList<Link> links; // base, class, link, connection
         public IList<int[]> categoryIntReference;
         public IList<string> categoryStringReference;
@@ -75,11 +75,11 @@ namespace UAssetAPI
             // Section 1
             reader.BaseStream.Position += 8;
 
-            headerIndexList = new List<Tuple<string, uint>>();
+            headerIndexList = new List<string>();
             for (int i = 0; i < sectionOneStringCount; i++)
             {
                 var str = reader.ReadUStringWithGUID(out uint guid);
-                headerIndexList.Add(Tuple.Create(str, guid));
+                headerIndexList.Add(str);
             }
 
             // Section 2
@@ -179,9 +179,11 @@ namespace UAssetAPI
 
                         if (categories[i].NumExtraZeros < 0 || categories[i].NumExtraZeros % 4 != 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + categories[i].NumExtraZeros + " null bytes");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        //Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
+#if DEBUG
+                        Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
+#endif
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
                         categories[i].SetRawData(reader.ReadBytes(refData.lengthV));
                     }
@@ -193,14 +195,14 @@ namespace UAssetAPI
         {
             if (index <= 0) return Convert.ToString(-index);
             if (index > headerIndexList.Count) return Convert.ToString(index);
-            return headerIndexList[index].Item1;
+            return headerIndexList[index];
         }
 
         public bool ExistsInHeaderReference(string search)
         {
             for (int i = 0; i < headerIndexList.Count; i++)
             {
-                if (headerIndexList[i].Item1.Equals(search)) return true;
+                if (headerIndexList[i].Equals(search)) return true;
             }
             return false;
         }
@@ -209,7 +211,7 @@ namespace UAssetAPI
         {
             for (int i = 0; i < headerIndexList.Count; i++)
             {
-                if (headerIndexList[i].Item1.Equals(search)) return i;
+                if (headerIndexList[i].Equals(search)) return i;
             }
             throw new FormatException("Requested string \"" + search + "\" not found in header list");
         }
@@ -219,10 +221,10 @@ namespace UAssetAPI
             return (int)(index < 0 ? (long)links[Utils.GetNormalIndex(index)].Property : -index);
         }
 
-        public int AddHeaderReference(string name, uint guid)
+        public int AddHeaderReference(string name)
         {
             if (ExistsInHeaderReference(name)) return SearchHeaderReference(name);
-            headerIndexList.Add(Tuple.Create(name, guid));
+            headerIndexList.Add(name);
             return headerIndexList.Count - 1;
         }
 
