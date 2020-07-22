@@ -8,6 +8,9 @@ namespace UAssetAPI
     public class AssetWriter
     {
         public bool WillWriteSectionSix = true;
+        public bool WillStoreOriginalCopyInMemory = false;
+        private readonly byte[] OriginalCopy;
+
         public string path;
         public AssetReader data;
 
@@ -157,7 +160,7 @@ namespace UAssetAPI
                         categoryStarts[i] = (int)writer.BaseStream.Position;
                         Category us = data.categories[i];
                         us.Write(writer);
-                        writer.Write(Enumerable.Repeat((byte)0, us.NumExtraZeros).ToArray());
+                        writer.Write(us.Extras);
                     }
                 }
                 writer.Write(new byte[] { 0xC1, 0x83, 0x2A, 0x9E });
@@ -239,10 +242,17 @@ namespace UAssetAPI
         public void Write(string output)
         {
             byte[] newData;
-            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
+            if (WillStoreOriginalCopyInMemory)
             {
-                f.Seek(0, SeekOrigin.Begin);
-                newData = WriteData(new BinaryReader(f));
+                newData = WriteData(new BinaryReader(new MemoryStream(OriginalCopy)));
+            }
+            else
+            {
+                using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
+                {
+                    f.Seek(0, SeekOrigin.Begin);
+                    newData = WriteData(new BinaryReader(f));
+                }
             }
 
             using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
@@ -251,12 +261,32 @@ namespace UAssetAPI
             }
         }
 
+        // willStoreOriginalCopyInMemory uses double the memory (!) but allows saving even after the original file on disk has been deleted
+        public AssetWriter(string input, bool willStoreOriginalCopyInMemory = false, bool willWriteSectionSix = true, int[] manualSkips = null, int[] forceReads = null)
+        {
+            this.path = input;
+            this.WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            this.WillWriteSectionSix = willWriteSectionSix;
+            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
+            {
+                var ourReader = new BinaryReader(f);
+                data = new AssetReader(ourReader, manualSkips, forceReads);
+
+                if (WillStoreOriginalCopyInMemory)
+                {
+                    ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                    OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
+                }
+            }
+        }
+
         public AssetWriter(string input, int[] manualSkips = null, int[] forceReads = null)
         {
             this.path = input;
             using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
             {
-                data = new AssetReader(new BinaryReader(f), manualSkips, forceReads);
+                var ourReader = new BinaryReader(f);
+                data = new AssetReader(ourReader, manualSkips, forceReads);
             }
         }
     }

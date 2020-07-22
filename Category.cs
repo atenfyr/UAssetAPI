@@ -9,14 +9,14 @@ namespace UAssetAPI
     public class Category
     {
         public CategoryReference ReferenceData;
-        public int NumExtraZeros;
+        public byte[] Extras;
         public AssetReader Asset;
 
-        public Category(CategoryReference reference, AssetReader asset, int numExtraZeros = 0)
+        public Category(CategoryReference reference, AssetReader asset, byte[] extras)
         {
             ReferenceData = reference;
             Asset = asset;
-            NumExtraZeros = numExtraZeros;
+            Extras = extras;
         }
 
         public Category()
@@ -43,10 +43,10 @@ namespace UAssetAPI
         {
             ReferenceData = super.ReferenceData;
             Asset = super.Asset;
-            NumExtraZeros = super.NumExtraZeros;
+            Extras = super.Extras;
         }
 
-        public NormalCategory(IList<PropertyData> data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        public NormalCategory(IList<PropertyData> data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -80,10 +80,10 @@ namespace UAssetAPI
         {
             ReferenceData = super.ReferenceData;
             Asset = super.Asset;
-            NumExtraZeros = super.NumExtraZeros;
+            Extras = super.Extras;
         }
 
-        public RawCategory(byte[] data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        public RawCategory(byte[] data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -112,10 +112,10 @@ namespace UAssetAPI
         {
             ReferenceData = super.ReferenceData;
             Asset = super.Asset;
-            NumExtraZeros = super.NumExtraZeros;
+            Extras = super.Extras;
         }
 
-        public StringTableCategory(StringTable data, CategoryReference reference, AssetReader asset, int numExtraZeros = 0) : base(reference, asset, numExtraZeros)
+        public StringTableCategory(StringTable data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }

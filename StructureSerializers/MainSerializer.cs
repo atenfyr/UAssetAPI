@@ -9,7 +9,7 @@ namespace UAssetAPI.StructureSerializers
 
     public static class MainSerializer
     {
-        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader, long leng = 0, bool forceReadNull = true)
+        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool forceReadNull = true)
         {
             PropertyData data = null;
             switch (type)
@@ -93,7 +93,7 @@ namespace UAssetAPI.StructureSerializers
                 default:
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
-            data.Read(reader, leng);
+            if (reader != null) data.Read(reader, leng);
             return data;
         }
 

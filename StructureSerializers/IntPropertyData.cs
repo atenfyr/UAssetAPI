@@ -32,6 +32,12 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (sbyte.TryParse(d, out sbyte res)) Value = res;
+        }
     }
 
     public class Int16PropertyData : PropertyData<short>
@@ -62,6 +68,12 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Convert.ToString(Value);
+        }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (short.TryParse(d, out short res)) Value = res;
         }
     }
 
@@ -94,6 +106,12 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (int.TryParse(d, out int res)) Value = res;
+        }
     }
 
     public class Int64PropertyData : PropertyData<long>
@@ -124,6 +142,12 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Convert.ToString(Value);
+        }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (long.TryParse(d, out long res)) Value = res;
         }
     }
 
@@ -156,6 +180,12 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (ushort.TryParse(d, out ushort res)) Value = res;
+        }
     }
 
     public class UInt32PropertyData : PropertyData<uint>
@@ -187,6 +217,12 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (uint.TryParse(d, out uint res)) Value = res;
+        }
     }
 
     public class UInt64PropertyData : PropertyData<ulong>
@@ -217,6 +253,12 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Convert.ToString(Value);
+        }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (ulong.TryParse(d, out ulong res)) Value = res;
         }
     }
 }

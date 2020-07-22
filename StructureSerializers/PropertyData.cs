@@ -51,6 +51,26 @@ namespace UAssetAPI.StructureSerializers
         {
             return 0;
         }
+
+        public virtual void FromString(string d)
+        {
+
+        }
+
+        public virtual void FromString(string d, string d2)
+        {
+            FromString(d);
+        }
+
+        public virtual void FromString(string d, string d2, string d3)
+        {
+            FromString(d, d2);
+        }
+
+        public virtual void FromString(string d, string d2, string d3, string d4)
+        {
+            FromString(d, d2, d3);
+        }
     }
 
     public abstract class PropertyData<T> : PropertyData
@@ -99,6 +119,11 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            Value = d.Equals("1") || d.ToLower().Equals("true");
+        }
     }
 
     public class FloatPropertyData : PropertyData<float>
@@ -129,6 +154,12 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Convert.ToString(Value);
+        }
+
+        public override void FromString(string d)
+        {
+            Value = 0;
+            if (float.TryParse(d, out float res)) Value = res;
         }
     }
 
@@ -170,7 +201,7 @@ namespace UAssetAPI.StructureSerializers
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
             Flag = reader.ReadInt32();
-            HistoryType = (TextHistoryType)reader.ReadByte();
+            HistoryType = (TextHistoryType)reader.ReadSByte();
 
             switch(HistoryType)
             {
@@ -222,12 +253,33 @@ namespace UAssetAPI.StructureSerializers
 
         public override string ToString()
         {
+            if (Value == null) return "null";
+
             string oup = "";
             for (int i = 0; i < Value.Length; i++)
             {
                 oup += Value[i] + " ";
             }
             return oup.TrimEnd(' ');
+        }
+
+        public override void FromString(string d)
+        {
+            if (d.Equals("null"))
+            {
+                HistoryType = TextHistoryType.None;
+                Value = null;
+                return;
+            }
+
+            HistoryType = TextHistoryType.StringTableEntry;
+            Value = new string[] { d };
+        }
+
+        public override void FromString(string d, string d2)
+        {
+            HistoryType = TextHistoryType.Base;
+            Value = new string[] { d, d2 };
         }
     }
 
@@ -260,6 +312,11 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Value;
+        }
+
+        public override void FromString(string d)
+        {
+            Value = d;
         }
     }
 
@@ -304,6 +361,24 @@ namespace UAssetAPI.StructureSerializers
             if (LinkValue > 0) return Convert.ToString(LinkValue);
             if (Value == null) return "null";
             return Asset.GetHeaderReference((int)Value.Property);
+        }
+
+        public override void FromString(string d)
+        {
+            if (int.TryParse(d, out int res))
+            {
+                LinkValue = res;
+                return;
+            }
+
+            for (int i = 0; i < Asset.links.Count; i++)
+            {
+                if (Asset.GetHeaderReference((int)Asset.links[i].Property).Equals(d))
+                {
+                    Value = Asset.links[i];
+                    return;
+                }
+            }
         }
     }
 
@@ -352,6 +427,14 @@ namespace UAssetAPI.StructureSerializers
         {
             if (Value.Contains("::") || Value.Equals("None")) return Value;
             return FullEnum;
+        }
+
+        public override void FromString(string d, string d2)
+        {
+            Asset.AddHeaderReference(d);
+            Asset.AddHeaderReference(d2);
+            Value = d;
+            FullEnum = d2;
         }
     }
 
@@ -408,6 +491,14 @@ namespace UAssetAPI.StructureSerializers
         {
             if (DecodeEnumBase() == "None") return Convert.ToString(FullEnum);
             return DecodeEnum();
+        }
+
+        public override void FromString(string d, string d2)
+        {
+            Asset.AddHeaderReference(d);
+            Asset.AddHeaderReference(d2);
+            Value = Asset.SearchHeaderReference(d);
+            FullEnum = Asset.SearchHeaderReference(d2);
         }
     }
 
@@ -643,6 +734,13 @@ namespace UAssetAPI.StructureSerializers
         {
             return "(" + Value + ", " + Value2 + ")";
         }
+
+        public override void FromString(string d)
+        {
+            Asset.AddHeaderReference(d);
+            Value = d;
+            Value2 = 0;
+        }
     }
 
     public class MulticastDelegatePropertyData : PropertyData<int[]>
@@ -691,6 +789,16 @@ namespace UAssetAPI.StructureSerializers
             oup += Value2;
             return oup + ")";
         }
+
+        public override void FromString(string d, string d2, string d3)
+        {
+            Value = new int[] { 0, 0 };
+            if (int.TryParse(d, out int res)) Value[0] = res;
+            if (int.TryParse(d2, out int res2)) Value[1] = res2;
+
+            Asset.AddHeaderReference(d3);
+            Value2 = d3;
+        }
     }
 
     public class NamePropertyData : PropertyData<string>
@@ -721,6 +829,11 @@ namespace UAssetAPI.StructureSerializers
         public override string ToString()
         {
             return Convert.ToString(Value);
+        }
+
+        public override void FromString(string d)
+        {
+            Value = d;
         }
     }
 

@@ -116,7 +116,7 @@ namespace UAssetAPI
                     int garbage2 = reader.ReadInt32();
                     int startV = reader.ReadInt32(); // !!!
 
-                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4))), this));
+                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4))), this, new byte[0]));
                 }
             }
 
@@ -182,8 +182,9 @@ namespace UAssetAPI
                         int nextStarting = (int)reader.BaseStream.Length - 4;
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
 
-                        categories[i].NumExtraZeros = nextStarting - (int)reader.BaseStream.Position;
-                        if (categories[i].NumExtraZeros < 0 || categories[i].NumExtraZeros % 4 != 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + categories[i].NumExtraZeros + " null bytes");
+                        int extrasLen = nextStarting - (int)reader.BaseStream.Position;
+                        categories[i].Extras = reader.ReadBytes(extrasLen);
+                        if (extrasLen < 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + extrasLen + " bytes");
                     }
                     catch (Exception ex)
                     {
