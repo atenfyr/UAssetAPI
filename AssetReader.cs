@@ -29,14 +29,14 @@ namespace UAssetAPI
         public IList<string> categoryStringReference;
         public IList<Category> categories;
 
-        private int[] understoodSectionSixTypes = new int[]
+        /*private int[] understoodSectionSixTypes = new int[]
         {
             8,
             11,
             41,
             49,
             57
-        };
+        };*/
 
         private void ReadHeader(BinaryReader reader)
         {
@@ -155,7 +155,7 @@ namespace UAssetAPI
                 {
                     CategoryReference refData = categories[i].ReferenceData;
                     reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
-                    if (!understoodSectionSixTypes.Contains(refData.type) || (manualSkips != null && manualSkips.Contains(i)))
+                    if (manualSkips != null && manualSkips.Contains(i))
                     {
                         if (forceReads == null || !forceReads.Contains(i))
                         {
@@ -210,7 +210,7 @@ namespace UAssetAPI
         {
             for (int i = 0; i < headerIndexList.Count; i++)
             {
-                if (headerIndexList[i].Equals(search)) return true;
+                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return true;
             }
             return false;
         }
@@ -219,7 +219,7 @@ namespace UAssetAPI
         {
             for (int i = 0; i < headerIndexList.Count; i++)
             {
-                if (headerIndexList[i].Equals(search)) return i;
+                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return i;
             }
             throw new FormatException("Requested string \"" + search + "\" not found in header list");
         }

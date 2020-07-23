@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace UAssetAPI.StructureSerializers
 {
@@ -858,21 +859,31 @@ namespace UAssetAPI.StructureSerializers
             int numEntries = reader.ReadInt32();
             if (ArrayType == "StructProperty")
             {
-                string fullType = "";
                 var results = new PropertyData[numEntries];
+                string name = Asset.GetHeaderReference((int)reader.ReadInt64());
+                if (name.Equals("None"))
+                {
+                    Value = results;
+                    return;
+                }
+
+                int typeNum = (int)reader.ReadInt64();
+                string thisIsStructProperty = name;
+                if (typeNum > 0) thisIsStructProperty = Asset.GetHeaderReference(typeNum);
+                Debug.Assert(thisIsStructProperty == ArrayType);
+
+                reader.ReadInt64();
+
+                string fullType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                Guid structGUID = new Guid(reader.ReadBytes(16));
+                reader.ReadByte();
+
                 for (int i = 0; i < numEntries; i++)
                 {
-                    if (i > 0) // without name etc.
-                    {
-                        var data = new StructPropertyData(Name, Asset, true, fullType);
-                        data.Read(reader, 0);
-                        results[i] = data;
-                    }
-                    else // with name etc.
-                    {
-                        results[i] = MainSerializer.Read(Asset, reader, true);
-                        fullType = ((StructPropertyData)results[i]).GetStructType();
-                    }
+                    var data = new StructPropertyData(name, Asset, true, fullType);
+                    data.Read(reader, 0);
+                    data.StructGUID = structGUID;
+                    results[i] = data;
                 }
                 Value = results;
             }
@@ -898,19 +909,22 @@ namespace UAssetAPI.StructureSerializers
             writer.Write(Value.Length);
             if (ArrayType == "StructProperty")
             {
-                int lengthLoc = 0;
+                StructPropertyData firstElem = ((StructPropertyData)Value[0]);
+                string fullType = firstElem.GetStructType();
+
+                writer.Write((long)Asset.SearchHeaderReference(firstElem.Name));
+                writer.Write((long)Asset.SearchHeaderReference("StructProperty"));
+                int lengthLoc = (int)writer.BaseStream.Position;
+                writer.Write((long)0);
+                writer.Write((long)Asset.SearchHeaderReference(fullType));
+                writer.Write(firstElem.StructGUID.ToByteArray());
+                writer.Write((byte)0);
+
                 for (int i = 0; i < Value.Length; i++)
                 {
                     Value[i].ForceReadNull = true;
-                    if (i > 0)
-                    {
-                        ((StructPropertyData)Value[i]).SetForced(((StructPropertyData)Value[0]).GetStructType());
-                        Value[i].Write(writer);
-                    }
-                    else
-                    {
-                        lengthLoc = MainSerializer.Write(Value[i], Asset, writer);
-                    }
+                    ((StructPropertyData)Value[i]).SetForced(fullType);
+                    Value[i].Write(writer);
                 }
 
                 int fullLen = (int)writer.BaseStream.Position - lengthLoc;

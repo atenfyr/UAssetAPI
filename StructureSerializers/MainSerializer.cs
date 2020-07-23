@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace UAssetAPI.StructureSerializers
@@ -91,6 +92,7 @@ namespace UAssetAPI.StructureSerializers
                     data = new MulticastDelegatePropertyData(name, asset, forceReadNull);
                     break;
                 default:
+                    if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
             if (reader != null) data.Read(reader, leng);
