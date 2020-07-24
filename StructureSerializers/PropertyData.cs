@@ -532,6 +532,11 @@ namespace UAssetAPI.StructureSerializers
         {
             return Convert.ToString(Value);
         }
+
+        public override void FromString(string d)
+        {
+            if (Guid.TryParse(d, out Guid res)) Value = res;
+        }
     }
 
     public class LinearColorPropertyData : PropertyData<Color> // R, G, B, A
@@ -605,6 +610,14 @@ namespace UAssetAPI.StructureSerializers
             return 0;
         }
 
+        public override void FromString(string d, string d2, string d3)
+        {
+            Value = new float[3];
+            if (float.TryParse(d, out float res1)) Value[0] = res1;
+            if (float.TryParse(d2, out float res2)) Value[1] = res2;
+            if (float.TryParse(d2, out float res3)) Value[2] = res3;
+        }
+
         public override string ToString()
         {
             string oup = "(";
@@ -648,6 +661,14 @@ namespace UAssetAPI.StructureSerializers
             return 0;
         }
 
+        public override void FromString(string d, string d2, string d3)
+        {
+            Value = new float[3];
+            if (float.TryParse(d, out float res1)) Value[0] = res1;
+            if (float.TryParse(d2, out float res2)) Value[1] = res2;
+            if (float.TryParse(d2, out float res3)) Value[2] = res3;
+        }
+
         public override string ToString()
         {
             string oup = "(";
@@ -689,6 +710,15 @@ namespace UAssetAPI.StructureSerializers
                 writer.Write(Value[i]);
             }
             return 0;
+        }
+
+        public override void FromString(string d, string d2, string d3, string d4)
+        {
+            Value = new float[4];
+            if (float.TryParse(d, out float res1)) Value[0] = res1;
+            if (float.TryParse(d2, out float res2)) Value[1] = res2;
+            if (float.TryParse(d2, out float res3)) Value[2] = res3;
+            if (float.TryParse(d3, out float res4)) Value[3] = res4;
         }
 
         public override string ToString()
@@ -804,6 +834,8 @@ namespace UAssetAPI.StructureSerializers
 
     public class NamePropertyData : PropertyData<string>
     {
+        public int Value2 = 0;
+
         public NamePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "NameProperty";
@@ -817,14 +849,16 @@ namespace UAssetAPI.StructureSerializers
         public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = Asset.GetHeaderReference((int)reader.ReadInt64());
+            Value = Asset.GetHeaderReference(reader.ReadInt32());
+            Value2 = reader.ReadInt32();
         }
 
         public override int Write(BinaryWriter writer)
         {
             if (ForceReadNull) writer.Write((byte)0);
-            writer.Write((long)Asset.SearchHeaderReference(Value));
-            return sizeof(long);
+            writer.Write((int)Asset.SearchHeaderReference(Value));
+            writer.Write(Value2);
+            return sizeof(int) * 2;
         }
 
         public override string ToString()
@@ -835,12 +869,21 @@ namespace UAssetAPI.StructureSerializers
         public override void FromString(string d)
         {
             Value = d;
+            Value2 = 0;
+        }
+
+        public override void FromString(string d, string d2)
+        {
+            Value = d;
+            Value2 = 0;
+            if (int.TryParse(d2, out int res)) Value2 = res;
         }
     }
 
     public class ArrayPropertyData : PropertyData<PropertyData[]> // Array
     {
         public string ArrayType;
+        public StructPropertyData DummyStruct;
 
         public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -878,12 +921,22 @@ namespace UAssetAPI.StructureSerializers
                 Guid structGUID = new Guid(reader.ReadBytes(16));
                 reader.ReadByte();
 
-                for (int i = 0; i < numEntries; i++)
+                if (numEntries == 0)
                 {
-                    var data = new StructPropertyData(name, Asset, true, fullType);
-                    data.Read(reader, 0);
-                    data.StructGUID = structGUID;
-                    results[i] = data;
+                    DummyStruct = new StructPropertyData(name, Asset, true, fullType)
+                    {
+                        StructGUID = structGUID
+                    };
+                }
+                else
+                {
+                    for (int i = 0; i < numEntries; i++)
+                    {
+                        var data = new StructPropertyData(name, Asset, true, fullType);
+                        data.Read(reader, 0);
+                        data.StructGUID = structGUID;
+                        results[i] = data;
+                    }
                 }
                 Value = results;
             }
@@ -909,7 +962,7 @@ namespace UAssetAPI.StructureSerializers
             writer.Write(Value.Length);
             if (ArrayType == "StructProperty")
             {
-                StructPropertyData firstElem = ((StructPropertyData)Value[0]);
+                StructPropertyData firstElem = Value.Length == 0 ? DummyStruct : (StructPropertyData)Value[0];
                 string fullType = firstElem.GetStructType();
 
                 writer.Write((long)Asset.SearchHeaderReference(firstElem.Name));
