@@ -33,10 +33,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (sbyte.TryParse(d, out sbyte res)) Value = res;
+            if (sbyte.TryParse(d[0], out sbyte res)) Value = res;
         }
     }
 
@@ -70,10 +70,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (short.TryParse(d, out short res)) Value = res;
+            if (short.TryParse(d[0], out short res)) Value = res;
         }
     }
 
@@ -107,10 +107,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (int.TryParse(d, out int res)) Value = res;
+            if (int.TryParse(d[0], out int res)) Value = res;
         }
     }
 
@@ -144,10 +144,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (long.TryParse(d, out long res)) Value = res;
+            if (long.TryParse(d[0], out long res)) Value = res;
         }
     }
 
@@ -181,10 +181,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (ushort.TryParse(d, out ushort res)) Value = res;
+            if (ushort.TryParse(d[0], out ushort res)) Value = res;
         }
     }
 
@@ -218,10 +218,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (uint.TryParse(d, out uint res)) Value = res;
+            if (uint.TryParse(d[0], out uint res)) Value = res;
         }
     }
 
@@ -255,10 +255,10 @@ namespace UAssetAPI.StructureSerializers
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string d)
+        public override void FromString(string[] d)
         {
             Value = 0;
-            if (ulong.TryParse(d, out ulong res)) Value = res;
+            if (ulong.TryParse(d[0], out ulong res)) Value = res;
         }
     }
 }
