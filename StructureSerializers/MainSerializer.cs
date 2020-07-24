@@ -76,8 +76,14 @@ namespace UAssetAPI.StructureSerializers
                 case "LinearColor":
                     data = new LinearColorPropertyData(name, asset, forceReadNull);
                     break;
+                case "Color":
+                    data = new ColorPropertyData(name, asset, forceReadNull);
+                    break;
                 case "Vector":
                     data = new VectorPropertyData(name, asset, forceReadNull);
+                    break;
+                case "Vector2D":
+                    data = new Vector2DPropertyData(name, asset, forceReadNull);
                     break;
                 case "Rotator":
                     data = new RotatorPropertyData(name, asset, forceReadNull);

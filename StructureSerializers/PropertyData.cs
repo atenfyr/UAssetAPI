@@ -580,6 +580,53 @@ namespace UAssetAPI.StructureSerializers
         }
     }
 
+    public class ColorPropertyData : PropertyData<Color> // R, G, B, A
+    {
+        public ColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        {
+            Type = "Color";
+        }
+
+        public ColorPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            byte R = reader.ReadByte();
+            byte G = reader.ReadByte();
+            byte B = reader.ReadByte();
+            byte A = reader.ReadByte();
+            Value = Color.FromArgb(A, R, G, B);
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            writer.Write(Value.R);
+            writer.Write(Value.G);
+            writer.Write(Value.B);
+            writer.Write(Value.A);
+            return 4;
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public override void FromString(string[] d)
+        {
+            if (!int.TryParse(d[0], out int colorR)) return;
+            if (!int.TryParse(d[1], out int colorG)) return;
+            if (!int.TryParse(d[2], out int colorB)) return;
+            if (!int.TryParse(d[3], out int colorA)) return;
+            Value = Color.FromArgb(colorA, colorR, colorG, colorB);
+        }
+    }
+
     public class VectorPropertyData : PropertyData<float[]> // X, Y, Z
     {
         public VectorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
@@ -618,6 +665,56 @@ namespace UAssetAPI.StructureSerializers
             if (float.TryParse(d[0], out float res1)) Value[0] = res1;
             if (float.TryParse(d[1], out float res2)) Value[1] = res2;
             if (float.TryParse(d[2], out float res3)) Value[2] = res3;
+        }
+
+        public override string ToString()
+        {
+            string oup = "(";
+            for (int i = 0; i < Value.Length; i++)
+            {
+                oup += Convert.ToString(Value[i]) + ", ";
+            }
+            return oup.Remove(oup.Length - 2) + ")";
+        }
+    }
+
+    public class Vector2DPropertyData : PropertyData<float[]> // X, Y
+    {
+        public Vector2DPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        {
+            Type = "Vector2D";
+        }
+
+        public Vector2DPropertyData()
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, long leng)
+        {
+            if (ForceReadNull) reader.ReadByte(); // null byte
+            Value = new float[2];
+            for (int i = 0; i < 2; i++)
+            {
+                Value[i] = reader.ReadSingle();
+            }
+        }
+
+        public override int Write(BinaryWriter writer)
+        {
+            if (ForceReadNull) writer.Write((byte)0);
+            for (int i = 0; i < 2; i++)
+            {
+                writer.Write(Value[i]);
+            }
+            return 0;
+        }
+
+        public override void FromString(string[] d)
+        {
+            Value = new float[2];
+            if (float.TryParse(d[0], out float res1)) Value[0] = res1;
+            if (float.TryParse(d[1], out float res2)) Value[1] = res2;
         }
 
         public override string ToString()
@@ -1171,8 +1268,14 @@ namespace UAssetAPI.StructureSerializers
                 case "LinearColor": // 4 floats
                     ReadOnce<LinearColorPropertyData>(reader);
                     break;
+                case "Color":
+                    ReadOnce<ColorPropertyData>(reader);
+                    break;
                 case "Vector": // 3 floats
                     ReadOnce<VectorPropertyData>(reader);
+                    break;
+                case "Vector2D": // 2 floats
+                    ReadOnce<Vector2DPropertyData>(reader);
                     break;
                 case "Rotator": // 3 floats
                     ReadOnce<RotatorPropertyData>(reader);
@@ -1224,6 +1327,12 @@ namespace UAssetAPI.StructureSerializers
                 case "Rotator":
                     WriteOnce(writer);
                     return 12;
+                case "Vector2D":
+                    WriteOnce(writer);
+                    return 8;
+                case "Color":
+                    WriteOnce(writer);
+                    return 4;
                 default:
                     return WriteNormal(writer);
             }
