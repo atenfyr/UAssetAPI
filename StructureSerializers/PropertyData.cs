@@ -464,20 +464,20 @@ namespace UAssetAPI.StructureSerializers
             return 8;
         }
 
-        public string DecodeEnumBase()
+        public string GetEnumBase()
         {
             return Asset.GetHeaderReference(Value);
         }
 
-        public string DecodeEnum()
+        public string GetEnumFull()
         {
             return Asset.GetHeaderReference(FullEnum);
         }
 
         public override string ToString()
         {
-            if (DecodeEnumBase() == "None") return Convert.ToString(FullEnum);
-            return DecodeEnum();
+            if (GetEnumBase() == "None") return Convert.ToString(FullEnum);
+            return GetEnumFull();
         }
 
         public override void FromString(string[] d)
@@ -485,7 +485,14 @@ namespace UAssetAPI.StructureSerializers
             Asset.AddHeaderReference(d[0]);
             Asset.AddHeaderReference(d[1]);
             Value = Asset.SearchHeaderReference(d[0]);
-            FullEnum = Asset.SearchHeaderReference(d[1]);
+            if (d[0].Equals("None"))
+            {
+                if (byte.TryParse(d[1], out byte res)) FullEnum = res;
+            }
+            else
+            {
+                FullEnum = Asset.SearchHeaderReference(d[1]);
+            }
         }
     }
 
@@ -907,12 +914,8 @@ namespace UAssetAPI.StructureSerializers
                     return;
                 }
 
-                int typeNum = (int)reader.ReadInt64();
-                string thisIsStructProperty = name;
-                if (typeNum > 0) thisIsStructProperty = Asset.GetHeaderReference(typeNum);
-                Debug.Assert(thisIsStructProperty == ArrayType);
-
-                reader.ReadInt64();
+                Debug.Assert(Asset.GetHeaderReference((int)reader.ReadInt64()) == ArrayType);
+                reader.ReadInt64(); // length value
 
                 string fullType = Asset.GetHeaderReference((int)reader.ReadInt64());
                 Guid structGUID = new Guid(reader.ReadBytes(16));

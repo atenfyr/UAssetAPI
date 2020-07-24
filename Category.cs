@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using UAssetAPI.StructureSerializers;
 
 namespace UAssetAPI
@@ -94,7 +95,24 @@ namespace UAssetAPI
         }
     }
 
-    public class StringTable : List<string>
+    public class UString
+    {
+        public string Value;
+        public Encoding Encoding;
+
+        public UString(string value, Encoding encoding)
+        {
+            Value = value;
+            Encoding = encoding;
+        }
+
+        public UString()
+        {
+
+        }
+    }
+
+    public class StringTable : List<UString>
     {
         public string Name;
 
@@ -130,7 +148,8 @@ namespace UAssetAPI
             int numEntries = reader.ReadInt32() * 2;
             for (int i = 0; i < numEntries; i++)
             {
-                Data.Add(reader.ReadUString());
+                UString x = reader.ReadUStringWithEncoding();
+                Data.Add(x);
             }
         }
 
