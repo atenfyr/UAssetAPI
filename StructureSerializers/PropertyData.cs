@@ -87,7 +87,7 @@ namespace UAssetAPI.StructureSerializers
 
         public BoolPropertyData()
         {
-
+            Type = "BoolProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -121,7 +121,7 @@ namespace UAssetAPI.StructureSerializers
 
         public FloatPropertyData()
         {
-
+            Type = "FloatProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -180,7 +180,7 @@ namespace UAssetAPI.StructureSerializers
 
         public TextPropertyData()
         {
-
+            Type = "TextProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -279,7 +279,7 @@ namespace UAssetAPI.StructureSerializers
 
         public StrPropertyData()
         {
-
+            Type = "StrProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -318,7 +318,7 @@ namespace UAssetAPI.StructureSerializers
 
         public ObjectPropertyData()
         {
-
+            Type = "ObjectProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -380,7 +380,7 @@ namespace UAssetAPI.StructureSerializers
 
         public EnumPropertyData()
         {
-
+            Type = "EnumProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -436,7 +436,7 @@ namespace UAssetAPI.StructureSerializers
 
         public BytePropertyData()
         {
-
+            Type = "ByteProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -498,14 +498,14 @@ namespace UAssetAPI.StructureSerializers
 
     public class GuidPropertyData : PropertyData<Guid>
     {
-        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "Guid";
         }
 
         public GuidPropertyData()
         {
-
+            Type = "Guid";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -534,14 +534,14 @@ namespace UAssetAPI.StructureSerializers
 
     public class LinearColorPropertyData : PropertyData<Color> // R, G, B, A
     {
-        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "LinearColor";
         }
 
         public LinearColorPropertyData()
         {
-
+            Type = "LinearColor";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -582,14 +582,14 @@ namespace UAssetAPI.StructureSerializers
 
     public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
-        public ColorPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public ColorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "Color";
         }
 
         public ColorPropertyData()
         {
-
+            Type = "Color";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -636,7 +636,7 @@ namespace UAssetAPI.StructureSerializers
 
         public VectorPropertyData()
         {
-
+            Type = "Vector";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -687,7 +687,7 @@ namespace UAssetAPI.StructureSerializers
 
         public Vector2DPropertyData()
         {
-
+            Type = "Vector2D";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -737,7 +737,7 @@ namespace UAssetAPI.StructureSerializers
 
         public RotatorPropertyData()
         {
-
+            Type = "Rotator";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -788,7 +788,7 @@ namespace UAssetAPI.StructureSerializers
 
         public QuatPropertyData()
         {
-
+            Type = "Quat";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -842,7 +842,7 @@ namespace UAssetAPI.StructureSerializers
 
         public SoftObjectPropertyData()
         {
-
+            Type = "SoftObjectProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -892,7 +892,7 @@ namespace UAssetAPI.StructureSerializers
 
         public MulticastDelegatePropertyData()
         {
-
+            Type = "MulticastDelegateProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -950,7 +950,7 @@ namespace UAssetAPI.StructureSerializers
 
         public NamePropertyData()
         {
-
+            Type = "NameProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -989,11 +989,13 @@ namespace UAssetAPI.StructureSerializers
         public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "ArrayProperty";
+            Value = new PropertyData[0];
         }
 
         public ArrayPropertyData()
         {
-
+            Type = "ArrayProperty";
+            Value = new PropertyData[0];
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -1094,6 +1096,11 @@ namespace UAssetAPI.StructureSerializers
 
             return (int)writer.BaseStream.Position - here;
         }
+
+        public override void FromString(string[] d)
+        {
+            if (d[4] != null) ArrayType = d[4];
+        }
     }
 
     public class MapPropertyData : PropertyData<OrderedDictionary> // Map
@@ -1103,11 +1110,13 @@ namespace UAssetAPI.StructureSerializers
         public MapPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
             Type = "MapProperty";
+            Value = new OrderedDictionary();
         }
 
         public MapPropertyData()
         {
             Type = "MapProperty";
+            Value = new OrderedDictionary();
         }
 
         private PropertyData MapTypeToClass(string type, string name, AssetReader asset, BinaryReader reader, long leng = 0, bool forceReadNull = true)
@@ -1195,6 +1204,7 @@ namespace UAssetAPI.StructureSerializers
         {
             IsForced = false;
             Type = "StructProperty";
+            Value = new List<PropertyData>();
         }
 
         public StructPropertyData(string name, AssetReader asset, bool forceReadNull, string forcedType) : base(name, asset, forceReadNull)
@@ -1202,6 +1212,7 @@ namespace UAssetAPI.StructureSerializers
             IsForced = true;
             StructType = forcedType;
             Type = "StructProperty";
+            Value = new List<PropertyData>();
         }
 
         public StructPropertyData()
@@ -1336,6 +1347,11 @@ namespace UAssetAPI.StructureSerializers
                 default:
                     return WriteNormal(writer);
             }
+        }
+
+        public override void FromString(string[] d)
+        {
+            if (d[4] != null) StructType = d[4];
         }
     }
 }

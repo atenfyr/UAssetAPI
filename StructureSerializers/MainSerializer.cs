@@ -16,92 +16,96 @@ namespace UAssetAPI.StructureSerializers
             switch (type)
             {
                 case "BoolProperty":
-                    data = new BoolPropertyData(name, asset, forceReadNull);
+                    data = new BoolPropertyData(name, asset);
                     break;
                 case "Int8Property":
-                    data = new Int8PropertyData(name, asset, forceReadNull);
+                    data = new Int8PropertyData(name, asset);
                     break;
                 case "Int16Property":
-                    data = new Int16PropertyData(name, asset, forceReadNull);
+                    data = new Int16PropertyData(name, asset);
                     break;
                 case "IntProperty":
-                    data = new IntPropertyData(name, asset, forceReadNull);
+                    data = new IntPropertyData(name, asset);
                     break;
                 case "Int64Property":
-                    data = new Int64PropertyData(name, asset, forceReadNull);
+                    data = new Int64PropertyData(name, asset);
                     break;
                 case "UInt16Property":
-                    data = new UInt16PropertyData(name, asset, forceReadNull);
+                    data = new UInt16PropertyData(name, asset);
                     break;
                 case "UInt32Property":
-                    data = new UInt32PropertyData(name, asset, forceReadNull);
+                    data = new UInt32PropertyData(name, asset);
                     break;
                 case "UInt64Property":
-                    data = new UInt64PropertyData(name, asset, forceReadNull);
+                    data = new UInt64PropertyData(name, asset);
                     break;
                 case "FloatProperty":
-                    data = new FloatPropertyData(name, asset, forceReadNull);
+                    data = new FloatPropertyData(name, asset);
                     break;
                 case "TextProperty":
-                    data = new TextPropertyData(name, asset, forceReadNull);
+                    data = new TextPropertyData(name, asset);
                     break;
                 case "StrProperty":
-                    data = new StrPropertyData(name, asset, forceReadNull);
+                    data = new StrPropertyData(name, asset);
                     break;
                 case "ObjectProperty":
-                    data = new ObjectPropertyData(name, asset, forceReadNull);
+                    data = new ObjectPropertyData(name, asset);
                     break;
                 case "EnumProperty":
-                    data = new EnumPropertyData(name, asset, forceReadNull);
+                    data = new EnumPropertyData(name, asset);
                     break;
                 case "ByteProperty":
-                    data = new BytePropertyData(name, asset, forceReadNull);
+                    data = new BytePropertyData(name, asset);
                     break;
                 case "NameProperty":
-                    data = new NamePropertyData(name, asset, forceReadNull);
+                    data = new NamePropertyData(name, asset);
                     break;
                 case "ArrayProperty":
-                    data = new ArrayPropertyData(name, asset, forceReadNull);
+                    data = new ArrayPropertyData(name, asset);
                     break;
                 case "MapProperty":
-                    data = new MapPropertyData(name, asset, forceReadNull);
+                    data = new MapPropertyData(name, asset);
                     break;
                 case "StructProperty":
-                    data = new StructPropertyData(name, asset, forceReadNull);
+                    data = new StructPropertyData(name, asset);
                     break;
                 case "GUID":
                 case "Guid":
-                    data = new GuidPropertyData(name, asset, forceReadNull);
+                    data = new GuidPropertyData(name, asset);
                     break;
                 case "LinearColor":
-                    data = new LinearColorPropertyData(name, asset, forceReadNull);
+                    data = new LinearColorPropertyData(name, asset);
                     break;
                 case "Color":
-                    data = new ColorPropertyData(name, asset, forceReadNull);
+                    data = new ColorPropertyData(name, asset);
                     break;
                 case "Vector":
-                    data = new VectorPropertyData(name, asset, forceReadNull);
+                    data = new VectorPropertyData(name, asset);
                     break;
                 case "Vector2D":
-                    data = new Vector2DPropertyData(name, asset, forceReadNull);
+                    data = new Vector2DPropertyData(name, asset);
                     break;
                 case "Rotator":
-                    data = new RotatorPropertyData(name, asset, forceReadNull);
+                    data = new RotatorPropertyData(name, asset);
                     break;
                 case "Quat":
-                    data = new QuatPropertyData(name, asset, forceReadNull);
+                    data = new QuatPropertyData(name, asset);
                     break;
                 case "SoftObjectProperty":
-                    data = new SoftObjectPropertyData(name, asset, forceReadNull);
+                    data = new SoftObjectPropertyData(name, asset);
                     break;
                 case "MulticastDelegateProperty":
-                    data = new MulticastDelegatePropertyData(name, asset, forceReadNull);
+                    data = new MulticastDelegatePropertyData(name, asset);
                     break;
                 default:
                     if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
-            if (reader != null) data.Read(reader, leng);
+            if (reader != null)
+            {
+                if (forceReadNull == false) data.ForceReadNull = forceReadNull;
+                data.Read(reader, leng);
+            }
             return data;
         }
 

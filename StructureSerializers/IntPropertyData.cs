@@ -12,7 +12,7 @@ namespace UAssetAPI.StructureSerializers
 
         public Int8PropertyData()
         {
-
+            Type = "Int8Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -49,7 +49,7 @@ namespace UAssetAPI.StructureSerializers
 
         public Int16PropertyData()
         {
-
+            Type = "Int16Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -86,7 +86,7 @@ namespace UAssetAPI.StructureSerializers
 
         public IntPropertyData()
         {
-
+            Type = "IntProperty";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -123,7 +123,7 @@ namespace UAssetAPI.StructureSerializers
 
         public Int64PropertyData()
         {
-
+            Type = "Int64Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -160,7 +160,7 @@ namespace UAssetAPI.StructureSerializers
 
         public UInt16PropertyData()
         {
-
+            Type = "UInt16Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -197,7 +197,7 @@ namespace UAssetAPI.StructureSerializers
 
         public UInt32PropertyData()
         {
-
+            Type = "UInt32Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
@@ -234,7 +234,7 @@ namespace UAssetAPI.StructureSerializers
 
         public UInt64PropertyData()
         {
-
+            Type = "UInt64Property";
         }
 
         public override void Read(BinaryReader reader, long leng)
