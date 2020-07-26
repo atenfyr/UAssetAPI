@@ -47,15 +47,45 @@
     <Compile Include="Category.cs" />
     <Compile Include="CategoryReference.cs" />
     <Compile Include="CRCGenerator.cs" />
-    <Compile Include="StructureSerializers\IntPropertyData.cs" />
-    <Compile Include="StructureSerializers\MainSerializer.cs" />
+    <Compile Include="PropertyTypes\ArrayPropertyData.cs" />
+    <Compile Include="PropertyTypes\BoolPropertyData.cs" />
+    <Compile Include="PropertyTypes\BytePropertyData.cs" />
+    <Compile Include="StructTypes\ColorPropertyData.cs" />
+    <Compile Include="StructTypes\DateTimePropertyData.cs" />
+    <Compile Include="PropertyTypes\EnumPropertyData.cs" />
+    <Compile Include="PropertyTypes\FloatPropertyData.cs" />
+    <Compile Include="StructTypes\GuidPropertyData.cs" />
+    <Compile Include="PropertyTypes\Int16PropertyData.cs" />
+    <Compile Include="PropertyTypes\Int64PropertyData.cs" />
+    <Compile Include="PropertyTypes\Int8PropertyData.cs" />
+    <Compile Include="StructTypes\IntPointPropertyData.cs" />
+    <Compile Include="PropertyTypes\IntPropertyData.cs" />
+    <Compile Include="StructTypes\LinearColorPropertyData.cs" />
+    <Compile Include="MainSerializer.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StructureSerializers\PropertyData.cs" />
+    <Compile Include="PropertyTypes\MapPropertyData.cs" />
+    <Compile Include="PropertyTypes\MulticastDelegatePropertyData.cs" />
+    <Compile Include="PropertyTypes\NamePropertyData.cs" />
+    <Compile Include="PropertyTypes\ObjectPropertyData.cs" />
+    <Compile Include="PropertyTypes\PropertyData.cs" />
+    <Compile Include="StructTypes\QuatPropertyData.cs" />
+    <Compile Include="StructTypes\RotatorPropertyData.cs" />
+    <Compile Include="PropertyTypes\SoftObjectPropertyData.cs" />
+    <Compile Include="PropertyTypes\StrPropertyData.cs" />
+    <Compile Include="StructTypes\StructPropertyData.cs" />
+    <Compile Include="PropertyTypes\TextHistoryType.cs" />
+    <Compile Include="PropertyTypes\TextPropertyData.cs" />
+    <Compile Include="PropertyTypes\UInt16PropertyData.cs" />
+    <Compile Include="PropertyTypes\UInt32PropertyData.cs" />
+    <Compile Include="PropertyTypes\UInt64PropertyData.cs" />
+    <Compile Include="StructTypes\Vector2DPropertyData.cs" />
+    <Compile Include="StructTypes\VectorPropertyData.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

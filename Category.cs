@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using UAssetAPI.StructureSerializers;
+using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
 {

@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using UAssetAPI.PropertyTypes;
+using UAssetAPI.StructTypes;
 
-namespace UAssetAPI.StructureSerializers
+namespace UAssetAPI
 {
     /*
         Main serializer for most category types
@@ -12,7 +13,7 @@ namespace UAssetAPI.StructureSerializers
     {
         public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool forceReadNull = true)
         {
-            PropertyData data = null;
+            PropertyData data;
             switch (type)
             {
                 case "BoolProperty":
@@ -85,6 +86,12 @@ namespace UAssetAPI.StructureSerializers
                 case "Vector2D":
                     data = new Vector2DPropertyData(name, asset);
                     break;
+                case "IntPoint":
+                    data = new IntPointPropertyData(name, asset);
+                    break;
+                case "DateTime":
+                    data = new DateTimePropertyData(name, asset);
+                    break;
                 case "Rotator":
                     data = new RotatorPropertyData(name, asset);
                     break;
@@ -103,7 +110,7 @@ namespace UAssetAPI.StructureSerializers
             }
             if (reader != null)
             {
-                if (forceReadNull == false) data.ForceReadNull = forceReadNull;
+                if (forceReadNull == false) data.ForceReadNull = false;
                 data.Read(reader, leng);
             }
             return data;
