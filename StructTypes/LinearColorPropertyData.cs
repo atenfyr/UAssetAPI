@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.IO;
+using System;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
@@ -24,7 +25,7 @@ namespace UAssetAPI.StructTypes
             {
                 data[i] = reader.ReadSingle();
             }
-            Value = Color.FromArgb((int)(data[3] * 255), (int)(data[0] * 255), (int)(data[1] * 255), (int)(data[2] * 255));
+            Value = Color.FromArgb((int)(Math.Min(data[3] * 255, 255)), (int)(Math.Min(data[0] * 255, 255)), (int)(Math.Min(data[1] * 255, 255)), (int)(Math.Min(data[2] * 255, 255)));
         }
 
         public override int Write(BinaryWriter writer)

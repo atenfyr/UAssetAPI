@@ -19,7 +19,7 @@ namespace UAssetAPI.StructTypes
         public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            Value = new DateTime(reader.ReadInt64());
+            Value = new DateTime(reader.ReadInt64()); // number of ticks since January 1, 0001
         }
 
         public override int Write(BinaryWriter writer)

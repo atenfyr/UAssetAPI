@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -29,6 +30,13 @@ namespace UAssetAPI.PropertyTypes
             FullEnum = (int)reader.ReadInt64();
         }
 
+        public override void ReadInMap(BinaryReader reader, long leng)
+        {
+            Value = (int)reader.ReadInt64();
+            if (ForceReadNull) reader.ReadByte();
+            FullEnum = 0;
+        }
+
         public override int Write(BinaryWriter writer)
         {
             writer.Write((long)Value);
@@ -40,6 +48,12 @@ namespace UAssetAPI.PropertyTypes
             }
             writer.Write((long)FullEnum);
             return 8;
+        }
+
+        public override void WriteInMap(BinaryWriter writer)
+        {
+            writer.Write((long)Value);
+            if (ForceReadNull) writer.Write((byte)0);
         }
 
         public string GetEnumBase()

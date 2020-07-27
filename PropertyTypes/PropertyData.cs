@@ -41,9 +41,19 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
+        public virtual void ReadInMap(BinaryReader reader, long leng)
+        {
+            Read(reader, leng);
+        }
+
         public virtual int Write(BinaryWriter writer)
         {
             return 0;
+        }
+
+        public virtual void WriteInMap(BinaryWriter writer)
+        {
+            Write(writer);
         }
 
         public virtual void FromString(string[] d)

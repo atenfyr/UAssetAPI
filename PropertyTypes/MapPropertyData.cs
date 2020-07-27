@@ -32,7 +32,10 @@ namespace UAssetAPI.PropertyTypes
                     data.Read(reader, leng);
                     return data;
                 default:
-                    return MainSerializer.TypeToClass(type, name, asset, reader, leng, forceReadNull);
+                    var res = MainSerializer.TypeToClass(type, name, asset, null, leng);
+                    res.ForceReadNull = forceReadNull;
+                    res.ReadInMap(reader, leng);
+                    return res;
             }
         }
 
@@ -74,8 +77,8 @@ namespace UAssetAPI.PropertyTypes
             int here = (int)writer.BaseStream.Position;
             foreach (DictionaryEntry entry in map)
             {
-                ((PropertyData)entry.Key).Write(writer);
-                ((PropertyData)entry.Value).Write(writer);
+                ((PropertyData)entry.Key).WriteInMap(writer);
+                ((PropertyData)entry.Value).WriteInMap(writer);
             }
             return (int)writer.BaseStream.Position - here;
         }

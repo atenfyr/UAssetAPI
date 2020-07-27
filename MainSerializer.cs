@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
@@ -70,7 +71,6 @@ namespace UAssetAPI
                 case "StructProperty":
                     data = new StructPropertyData(name, asset);
                     break;
-                case "GUID":
                 case "Guid":
                     data = new GuidPropertyData(name, asset);
                     break;

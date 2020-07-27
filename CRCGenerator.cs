@@ -15,13 +15,13 @@ namespace UAssetAPI
 
         private static uint Strihash_DEPRECATED(byte[] stream)
         {
-            uint Hash = 0;
+            uint hash = 0;
             for (int i = 0; i < stream.Length; i++)
             {
                 char B = char.ToUpper((char)stream[i]);
-                Hash = ((Hash >> 8) & 0x00FFFFFF) ^ CRCTable_DEPRECATED[(Hash ^ B) & 0x000000FF];
+                hash = ((hash >> 8) & 0x00FFFFFF) ^ CRCTable_DEPRECATED[(hash ^ B) & 0x000000FF];
             }
-            return Hash;
+            return hash;
         }
 
         private static uint StrCrc32(byte[] stream, uint CRC = 0)
