@@ -80,6 +80,7 @@
     <Compile Include="PropertyTypes\UInt32PropertyData.cs" />
     <Compile Include="PropertyTypes\UInt64PropertyData.cs" />
     <Compile Include="StructTypes\Vector2DPropertyData.cs" />
+    <Compile Include="StructTypes\BoxPropertyData.cs" />
     <Compile Include="StructTypes\VectorPropertyData.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

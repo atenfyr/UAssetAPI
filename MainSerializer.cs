@@ -86,6 +86,9 @@ namespace UAssetAPI
                 case "Vector2D":
                     data = new Vector2DPropertyData(name, asset);
                     break;
+                case "Box":
+                    data = new BoxPropertyData(name, asset);
+                    break;
                 case "IntPoint":
                     data = new IntPointPropertyData(name, asset);
                     break;

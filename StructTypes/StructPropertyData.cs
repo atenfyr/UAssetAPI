@@ -99,6 +99,9 @@ namespace UAssetAPI.StructTypes
                 case "Vector2D": // 2 floats
                     ReadOnce<Vector2DPropertyData>(reader);
                     break;
+                case "Box": // 2 Vectors
+                    ReadOnce<BoxPropertyData>(reader);
+                    break;
                 case "IntPoint": // 2 ints
                     ReadOnce<IntPointPropertyData>(reader);
                     break;
@@ -163,6 +166,9 @@ namespace UAssetAPI.StructTypes
                 case "Color":
                     WriteOnce(writer);
                     return 4;
+                case "Box":
+                    WriteOnce(writer);
+                    return 25;
                 default:
                     return WriteNormal(writer);
             }

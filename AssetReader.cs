@@ -200,7 +200,7 @@ namespace UAssetAPI
 
         public string GetHeaderReference(int index)
         {
-            if (index <= 0) return Convert.ToString(-index);
+            if (index < 0) return Convert.ToString(-index);
             if (index > headerIndexList.Count) return Convert.ToString(index);
             return headerIndexList[index];
         }
