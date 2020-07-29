@@ -108,6 +108,9 @@ namespace UAssetAPI.StructTypes
                 case "DateTime": // 1 long
                     ReadOnce<DateTimePropertyData>(reader);
                     break;
+                case "Timespan": // 1 long
+                    ReadOnce<TimespanPropertyData>(reader);
+                    break;
                 case "Rotator": // 3 floats
                     ReadOnce<RotatorPropertyData>(reader);
                     break;
@@ -161,6 +164,7 @@ namespace UAssetAPI.StructTypes
                 case "Vector2D":
                 case "IntPoint":
                 case "DateTime":
+                case "Timespan":
                     WriteOnce(writer);
                     return 8;
                 case "Color":

@@ -1,12 +1,17 @@
 ﻿using System.Drawing;
 using System.IO;
 using System;
+using System.Diagnostics;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
     public class LinearColorPropertyData : PropertyData<Color> // R, G, B, A
     {
+        // These fields are used to ensure that identical floats are written if the color is unchanged
+        private float[] originalData;
+        private Color initialColor;
+
         public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
         {
             Type = "LinearColor";
@@ -20,21 +25,31 @@ namespace UAssetAPI.StructTypes
         public override void Read(BinaryReader reader, long leng)
         {
             if (ForceReadNull) reader.ReadByte(); // null byte
-            var data = new float[4];
+            originalData = new float[4];
             for (int i = 0; i < 4; i++)
             {
-                data[i] = reader.ReadSingle();
+                originalData[i] = reader.ReadSingle();
             }
-            Value = Color.FromArgb((int)(Math.Min(data[3] * 255, 255)), (int)(Math.Min(data[0] * 255, 255)), (int)(Math.Min(data[1] * 255, 255)), (int)(Math.Min(data[2] * 255, 255)));
+
+            Value = Color.FromArgb((int)(Math.Min(originalData[3] * 255, 255)), (int)(Math.Min(originalData[0] * 255, 255)), (int)(Math.Min(originalData[1] * 255, 255)), (int)(Math.Min(originalData[2] * 255, 255)));
+            initialColor = Color.FromArgb(Value.ToArgb());
         }
 
         public override int Write(BinaryWriter writer)
         {
             if (ForceReadNull) writer.Write((byte)0);
-            writer.Write((float)Value.R / 255);
-            writer.Write((float)Value.G / 255);
-            writer.Write((float)Value.B / 255);
-            writer.Write((float)Value.A / 255);
+
+            if (initialColor.ToArgb() == Value.ToArgb())
+            {
+                for (int i = 0; i < 4; i++) writer.Write(originalData[i]);
+            }
+            else
+            {
+                writer.Write((float)Value.R / 255);
+                writer.Write((float)Value.G / 255);
+                writer.Write((float)Value.B / 255);
+                writer.Write((float)Value.A / 255);
+            }
             return 16;
         }
 

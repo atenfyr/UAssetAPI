@@ -13,8 +13,6 @@ namespace UAssetAPI
             {
                 case 0:
                     return null;
-                case 1:
-                    return new UString("", Encoding.UTF8);
                 default:
                     if (length < 0)
                     {
@@ -31,7 +29,7 @@ namespace UAssetAPI
 
         public static string ReadUString(this BinaryReader reader)
         {
-            return ReadUStringWithEncoding(reader).Value;
+            return ReadUStringWithEncoding(reader)?.Value;
         }
 
         public static string ReadUStringWithGUID(this BinaryReader reader, out uint guid)
@@ -52,14 +50,26 @@ namespace UAssetAPI
         {
             if (encoding == null) encoding = Encoding.UTF8;
 
-            int realLen = str.Length + 1;
-            if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;
-
-            writer.Write(realLen);
-            writer.Write(encoding.GetBytes(str));
-            for (int k = 0; k < encoding.GetByteCount(new char[] { 'a' }); k++)
+            switch (str)
             {
-                writer.Write((byte)0);
+                case null:
+                    writer.Write((int)0);
+                    break;
+                case "":
+                    writer.Write((int)1);
+                    break;
+                default:
+                    int realLen = str.Length + 1;
+                    if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;
+
+                    writer.Write(realLen);
+                    writer.Write(encoding.GetBytes(str));
+                    for (int k = 0; k < encoding.GetByteCount(new char[] { 'a' }); k++)
+                    {
+                        writer.Write((byte)0);
+                    }
+
+                    break;
             }
         }
 

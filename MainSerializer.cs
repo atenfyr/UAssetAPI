@@ -95,6 +95,9 @@ namespace UAssetAPI
                 case "DateTime":
                     data = new DateTimePropertyData(name, asset);
                     break;
+                case "Timespan":
+                    data = new TimespanPropertyData(name, asset);
+                    break;
                 case "Rotator":
                     data = new RotatorPropertyData(name, asset);
                     break;
