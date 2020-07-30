@@ -9,6 +9,8 @@ namespace UAssetAPI
     public class AssetReader
     {
         public string path;
+        public bool UseSeparateBulkDataFiles = false;
+        public List<int> UExpData;
 
         /* These are public for debugging, eventually they will not be */
         public int sectionSixOffset;
@@ -20,6 +22,7 @@ namespace UAssetAPI
         public int sectionFourOffset;
         public int sectionFiveStringCount;
         public int sectionFiveOffset;
+        public int uexpDataOffset;
         public int fileSize;
 
         public List<string> headerIndexList;
@@ -39,6 +42,9 @@ namespace UAssetAPI
 
         private void ReadHeader(BinaryReader reader)
         {
+            reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
+            sectionSixOffset = reader.ReadInt32();
+
             reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
             sectionOneStringCount = reader.ReadInt32();
 
@@ -59,13 +65,13 @@ namespace UAssetAPI
             Debug.Assert(reader.ReadInt32() == sectionOneStringCount); // 117
 
             reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
-            sectionSixOffset = reader.ReadInt32() + 4;
+            uexpDataOffset = reader.ReadInt32();
 
             reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
             fileSize = reader.ReadInt32() + 4;
         }
 
-        private void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
+        public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
             byte[] header = reader.ReadBytes(185);
@@ -148,8 +154,19 @@ namespace UAssetAPI
             }
 
             // Section 6
-            if (sectionSixOffset > 0)
+            if (sectionSixOffset > 0 && categories.Count > 0)
             {
+                if (UseSeparateBulkDataFiles)
+                {
+                    reader.BaseStream.Seek(uexpDataOffset, SeekOrigin.Begin);
+                    UExpData = new List<int>();
+                    int firstStart = categories[0].ReferenceData.startV;
+                    while (reader.BaseStream.Position < firstStart)
+                    {
+                        UExpData.Add(reader.ReadInt32());
+                    }
+                }
+
                 for (int i = 0; i < categories.Count; i++)
                 {
                     CategoryReference refData = categories[i].ReferenceData;
@@ -246,6 +263,36 @@ namespace UAssetAPI
             return li.Index;
         }
 
+        public MemoryStream PathToStream(string p)
+        {
+            using (FileStream origStream = File.Open(p, FileMode.Open))
+            {
+                MemoryStream completeStream = new MemoryStream();
+                origStream.CopyTo(completeStream);
+                try
+                {
+                    using (FileStream newStream = File.Open(Path.ChangeExtension(p, "uexp"), FileMode.Open))
+                    {
+                        completeStream.Seek(0, SeekOrigin.End);
+                        newStream.CopyTo(completeStream);
+                        UseSeparateBulkDataFiles = true;
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    UseSeparateBulkDataFiles = false;
+                }
+
+                completeStream.Seek(0, SeekOrigin.Begin);
+                return completeStream;
+            }
+        }
+
+        public BinaryReader PathToReader(string p)
+        {
+            return new BinaryReader(PathToStream(p));
+        }
+
         // manualSkips is an array of category indexes (starting from 1) to skip
         public AssetReader(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
@@ -255,10 +302,12 @@ namespace UAssetAPI
         public AssetReader(string path, int[] manualSkips = null, int[] forceReads = null)
         {
             this.path = path;
-            using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
-            {
-                Read(reader, manualSkips, forceReads);
-            }
+            Read(PathToReader(this.path), manualSkips, forceReads);
+        }
+
+        public AssetReader()
+        {
+
         }
     }
 }

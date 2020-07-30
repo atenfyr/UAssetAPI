@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -40,7 +41,7 @@ namespace UAssetAPI
             writer.Write(data.headerIndexList.Count); // 117
 
             writer.Seek(165, SeekOrigin.Begin); // 165
-            writer.Write(data.sectionSixOffset - 4);
+            writer.Write(data.uexpDataOffset);
 
             writer.Seek(169, SeekOrigin.Begin); // 169
             writer.Write(data.fileSize - 4);
@@ -48,7 +49,7 @@ namespace UAssetAPI
             return stre.ToArray();
         }
 
-        public byte[] WriteData(BinaryReader reader)
+        public MemoryStream WriteData(BinaryReader reader)
         {
             var stre = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stre);
@@ -145,8 +146,21 @@ namespace UAssetAPI
                 data.sectionFiveOffset = 0;
             }
 
+            // Uexp Data
+            data.uexpDataOffset = (int)stre.Position;
+            if (data.UseSeparateBulkDataFiles)
+            {
+                foreach (int part in data.UExpData)
+                {
+                    writer.Write(part);
+                }
+            }
+            else
+            {
+                writer.Write((int)0);
+            }
+
             // Section 6
-            writer.Write((int)0);
             int oldOffset = data.sectionSixOffset;
             data.sectionSixOffset = (int)writer.BaseStream.Position;
             int[] categoryStarts = new int[data.categories.Count];
@@ -211,36 +225,50 @@ namespace UAssetAPI
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write(MakeHeader(reader));
 
-            return stre.ToArray();
+            writer.Seek(0, SeekOrigin.Begin);
+            return stre;
         }
 
         public bool VerifyParsing()
         {
-            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
-            {
-                f.Seek(0, SeekOrigin.Begin);
-                byte[] newData = WriteData(new BinaryReader(f));
-                var newDataStream = new MemoryStream(newData);
+            MemoryStream f = data.PathToStream(path);
+            f.Seek(0, SeekOrigin.Begin);
+            MemoryStream newDataStream = WriteData(new BinaryReader(f));
+            f.Seek(0, SeekOrigin.Begin);
 
-                f.Seek(0, SeekOrigin.Begin);
-                const int CHUNK_SIZE = 1024;
-                byte[] buffer = new byte[CHUNK_SIZE];
-                byte[] buffer2 = new byte[CHUNK_SIZE];
-                int lastRead1 = 0; int lastRead2 = 0;
-                while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
-                    if (lastRead1 != lastRead2) return false;
-                    if (!buffer.SequenceEqual(buffer2)) return false;
-                }
+            if (f.Length != newDataStream.Length) return false;
+
+            const int CHUNK_SIZE = 1024;
+            byte[] buffer = new byte[CHUNK_SIZE];
+            byte[] buffer2 = new byte[CHUNK_SIZE];
+            int lastRead1;
+            while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                int lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
+                if (lastRead1 != lastRead2) return false;
+                if (!buffer.SequenceEqual(buffer2)) return false;
             }
 
             return true;
         }
 
+        private static void CopySplitUp(Stream input, Stream output, int start, int leng)
+        {
+            input.Seek(start, SeekOrigin.Begin);
+            output.Seek(0, SeekOrigin.Begin);
+
+            byte[] buffer = new byte[32768];
+            int read;
+            while (leng > 0 && (read = input.Read(buffer, 0, Math.Min(buffer.Length, leng))) > 0)
+            {
+                output.Write(buffer, 0, read);
+                leng -= read;
+            }
+        }
+
         public void Write(string output)
         {
-            byte[] newData;
+            MemoryStream newData;
             if (WillStoreOriginalCopyInMemory)
             {
                 newData = WriteData(new BinaryReader(new MemoryStream(OriginalCopy)));
@@ -254,10 +282,27 @@ namespace UAssetAPI
                 }
             }
 
-            using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
+            if (data.UseSeparateBulkDataFiles && data.categories.Count > 0)
             {
-                f.Write(newData, 0, newData.Length);
+                int breakingOffPoint = data.categories[0].ReferenceData.startV;
+                using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
+                {
+                    CopySplitUp(newData, f, 0, breakingOffPoint);
+                }
+
+                using (FileStream f = File.Open(Path.ChangeExtension(output, "uexp"), FileMode.Create, FileAccess.Write))
+                {
+                    CopySplitUp(newData, f, breakingOffPoint, (int)(newData.Length - breakingOffPoint));
+                }
             }
+            else
+            {
+                using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
+                {
+                    newData.CopyTo(f);
+                }
+            }
+            
         }
 
         // willStoreOriginalCopyInMemory uses double the memory (!) but allows saving even after the original file on disk has been deleted
@@ -266,27 +311,24 @@ namespace UAssetAPI
             this.path = input;
             this.WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
             this.WillWriteSectionSix = willWriteSectionSix;
-            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
-            {
-                var ourReader = new BinaryReader(f);
-                data = new AssetReader(ourReader, manualSkips, forceReads);
 
-                if (WillStoreOriginalCopyInMemory)
-                {
-                    ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
-                    OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
-                }
+            data = new AssetReader();
+            var ourReader = data.PathToReader(path);
+            data.Read(ourReader, manualSkips, forceReads);
+
+            if (WillStoreOriginalCopyInMemory)
+            {
+                ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
             }
         }
 
         public AssetWriter(string input, int[] manualSkips = null, int[] forceReads = null)
         {
             this.path = input;
-            using (FileStream f = File.Open(path, FileMode.Open, FileAccess.Read))
-            {
-                var ourReader = new BinaryReader(f);
-                data = new AssetReader(ourReader, manualSkips, forceReads);
-            }
+            data = new AssetReader();
+            var ourReader = data.PathToReader(path);
+            data.Read(ourReader, manualSkips, forceReads);
         }
     }
 }
