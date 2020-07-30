@@ -8,7 +8,8 @@ namespace UAssetAPI.PropertyTypes
 {
     public class MapPropertyData : PropertyData<OrderedDictionary> // Map
     {
-        OrderedDictionary KeysToRemove = null;
+        public string[] dummyEntry = new string[] { string.Empty, string.Empty };
+        public OrderedDictionary KeysToRemove = null;
 
         public MapPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
         {
@@ -69,6 +70,10 @@ namespace UAssetAPI.PropertyTypes
             if (ForceReadNull) reader.ReadByte();
 
             int numEntries = reader.ReadInt32();
+            if (numEntries == 0)
+            {
+                dummyEntry = new string[] { type1, type2 };
+            }
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
@@ -85,9 +90,17 @@ namespace UAssetAPI.PropertyTypes
 
         public override int Write(BinaryWriter writer)
         {
-            var firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
-            writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Key).Type));
-            writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Value).Type));
+            if (Value.Count > 0)
+            {
+                DictionaryEntry firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
+                writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Key).Type));
+                writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Value).Type));
+            }
+            else
+            {
+                writer.Write((long)Asset.SearchHeaderReference(dummyEntry[0]));
+                writer.Write((long)Asset.SearchHeaderReference(dummyEntry[1]));
+            }
             writer.Write(KeysToRemove != null ? KeysToRemove.Count : 0);
             if (KeysToRemove != null && KeysToRemove.Count > 0)
             {

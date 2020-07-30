@@ -74,16 +74,14 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Asset.AddHeaderReference(d[0]);
-            Asset.AddHeaderReference(d[1]);
-            Value = Asset.SearchHeaderReference(d[0]);
+            Value = Asset.AddHeaderReference(d[0]);
             if (d[0].Equals("None"))
             {
                 if (byte.TryParse(d[1], out byte res)) FullEnum = res;
             }
             else
             {
-                FullEnum = Asset.SearchHeaderReference(d[1]);
+                FullEnum = Asset.AddHeaderReference(d[1]);
             }
         }
     }

@@ -22,11 +22,11 @@ namespace UAssetAPI
         public int sectionFiveOffset;
         public int fileSize;
 
-        public IList<string> headerIndexList;
-        public IList<Link> links; // base, class, link, connection
-        public IList<int[]> categoryIntReference;
-        public IList<string> categoryStringReference;
-        public IList<Category> categories;
+        public List<string> headerIndexList;
+        public List<Link> links; // base, class, link, connection
+        public List<int[]> categoryIntReference;
+        public List<string> categoryStringReference;
+        public List<Category> categories;
 
         /*private int[] understoodSectionSixTypes = new int[]
         {
@@ -164,6 +164,7 @@ namespace UAssetAPI
                         }
                     }
 
+                    //Debug.WriteLine(refData.type + " " + GetHeaderReference(GetLinkReference(refData.connection)));
                     try
                     {
                         switch (GetHeaderReference(GetLinkReference(refData.connection)))
@@ -205,22 +206,12 @@ namespace UAssetAPI
             return headerIndexList[index];
         }
 
-        public bool ExistsInHeaderReference(string search)
-        {
-            for (int i = 0; i < headerIndexList.Count; i++)
-            {
-                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return true;
-            }
-            return false;
-        }
-
+        // TODO: Optimize this more eventually, it will run very slowly on huge files
         public int SearchHeaderReference(string search)
         {
-            for (int i = 0; i < headerIndexList.Count; i++)
-            {
-                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return i;
-            }
-            throw new FormatException("Requested string \"" + search + "\" not found in header list");
+            int location = headerIndexList.BinarySearch(search);
+            if (location < 0) throw new FormatException("Requested string \"" + search + "\" not found in header list");
+            return location;
         }
 
         public int GetLinkReference(int index)
@@ -230,9 +221,15 @@ namespace UAssetAPI
 
         public int AddHeaderReference(string name)
         {
-            if (ExistsInHeaderReference(name)) return SearchHeaderReference(name);
-            headerIndexList.Add(name);
-            return headerIndexList.Count - 1;
+            try
+            {
+                return SearchHeaderReference(name);
+            }
+            catch (FormatException)
+            {
+                headerIndexList.Add(name);
+                return headerIndexList.Count - 1;
+            }
         }
 
         public Link AddLink(string bbase, string bclass, int link, string property)
