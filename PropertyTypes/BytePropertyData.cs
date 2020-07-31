@@ -30,6 +30,11 @@ namespace UAssetAPI.PropertyTypes
             FullEnum = (int)reader.ReadInt64();
         }
 
+        public override void ReadInArray(BinaryReader reader, long leng)
+        {
+            ReadInMap(reader, leng);
+        }
+
         public override void ReadInMap(BinaryReader reader, long leng)
         {
             Value = (int)reader.ReadInt64();
@@ -50,10 +55,16 @@ namespace UAssetAPI.PropertyTypes
             return 8;
         }
 
-        public override void WriteInMap(BinaryWriter writer)
+        public override int WriteInArray(BinaryWriter writer)
+        {
+            return WriteInMap(writer);
+        }
+
+        public override int WriteInMap(BinaryWriter writer)
         {
             writer.Write((long)Value);
             if (ForceReadNull) writer.Write((byte)0);
+            return 0;
         }
 
         public string GetEnumBase()

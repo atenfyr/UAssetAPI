@@ -25,30 +25,27 @@ namespace UAssetAPI
         public int uexpDataOffset;
         public int fileSize;
 
+        public Guid AssetGuid;
         public List<string> headerIndexList;
         public List<Link> links; // base, class, link, connection
         public List<int[]> categoryIntReference;
         public List<string> categoryStringReference;
         public List<Category> categories;
 
-        /*private int[] understoodSectionSixTypes = new int[]
-        {
-            8,
-            11,
-            41,
-            49,
-            57
-        };*/
-
         private void ReadHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
             sectionSixOffset = reader.ReadInt32();
 
+            reader.ReadUString(); // Usually "None"
+            reader.ReadSingle(); // Usually 0
+
             reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
             sectionOneStringCount = reader.ReadInt32();
 
             Debug.Assert(reader.ReadInt32() == 193); // 45
+
+            //reader.ReadUInt64(); // 49, Usually 0
 
             reader.BaseStream.Seek(57, SeekOrigin.Begin); // 57
             dataCategoryCount = reader.ReadInt32();
@@ -59,16 +56,24 @@ namespace UAssetAPI
             sectionFiveStringCount = reader.ReadInt32(); // 77
             sectionFiveOffset = reader.ReadInt32(); // 81
 
-            reader.BaseStream.Seek(113, SeekOrigin.Begin); // 113
-            Debug.Assert(reader.ReadInt32() == dataCategoryCount);
+            reader.ReadUInt64(); // 85, Usually 0
+            AssetGuid = new Guid(reader.ReadBytes(16));
 
+            Debug.Assert(reader.ReadInt32() == 1); // 109
+            Debug.Assert(reader.ReadInt32() == dataCategoryCount); // 113
             Debug.Assert(reader.ReadInt32() == sectionOneStringCount); // 117
+
+            //reader.ReadBytes(36); // 36 zeros
+
+            // 157, weird 4-byte hash
 
             reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
             uexpDataOffset = reader.ReadInt32();
 
             reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
             fileSize = reader.ReadInt32() + 4;
+
+            reader.ReadBytes(12); // 12 zeros
         }
 
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
@@ -200,8 +205,14 @@ namespace UAssetAPI
                         if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
 
                         int extrasLen = nextStarting - (int)reader.BaseStream.Position;
-                        categories[i].Extras = reader.ReadBytes(extrasLen);
-                        if (extrasLen < 0) throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + extrasLen + " bytes");
+                        if (extrasLen < 0)
+                        {
+                            throw new FormatException("Invalid padding at end of category " + (i + 1) + ": " + extrasLen + " bytes");
+                        }
+                        else
+                        {
+                            categories[i].Extras = reader.ReadBytes(extrasLen);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -226,9 +237,11 @@ namespace UAssetAPI
         // TODO: Optimize this more eventually, it will run very slowly on huge files
         public int SearchHeaderReference(string search)
         {
-            int location = headerIndexList.BinarySearch(search);
-            if (location < 0) throw new FormatException("Requested string \"" + search + "\" not found in header list");
-            return location;
+            for (int i = 0; i < headerIndexList.Count; i++)
+            {
+                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return i;
+            }
+            throw new FormatException("Requested string \"" + search + "\" not found in header list");
         }
 
         public int GetLinkReference(int index)

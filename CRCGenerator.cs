@@ -7,7 +7,11 @@ namespace UAssetAPI
     {
         public static uint GenerateHash(string text)
         {
-            byte[] stream = Encoding.UTF8.GetBytes(text);
+            return GenerateHash(Encoding.UTF8.GetBytes(text));
+        }
+
+        public static uint GenerateHash(byte[] stream)
+        {
             byte[] algor1 = BitConverter.GetBytes(Strihash_DEPRECATED(stream));
             byte[] algor2 = BitConverter.GetBytes(StrCrc32(stream));
             return BitConverter.ToUInt32(new byte[] { algor1[0], algor1[1], algor2[0], algor2[1] }, 0);

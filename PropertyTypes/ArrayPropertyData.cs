@@ -68,7 +68,9 @@ namespace UAssetAPI.PropertyTypes
                 var results = new PropertyData[numEntries];
                 for (int i = 0; i < numEntries; i++)
                 {
-                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset, reader, 0, false);
+                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset);
+                    results[i].ForceReadNull = false;
+                    results[i].ReadInArray(reader, 0);
                 }
                 Value = results;
             }
@@ -114,7 +116,7 @@ namespace UAssetAPI.PropertyTypes
                 for (int i = 0; i < Value.Length; i++)
                 {
                     Value[i].ForceReadNull = false;
-                    Value[i].Write(writer);
+                    Value[i].WriteInArray(writer);
                 }
             }
 

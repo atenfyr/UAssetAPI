@@ -41,6 +41,11 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
+        public virtual void ReadInArray(BinaryReader reader, long leng)
+        {
+            Read(reader, leng);
+        }
+
         public virtual void ReadInMap(BinaryReader reader, long leng)
         {
             Read(reader, leng);
@@ -51,9 +56,14 @@ namespace UAssetAPI.PropertyTypes
             return 0;
         }
 
-        public virtual void WriteInMap(BinaryWriter writer)
+        public virtual int WriteInArray(BinaryWriter writer)
         {
-            Write(writer);
+            return Write(writer);
+        }
+
+        public virtual int WriteInMap(BinaryWriter writer)
+        {
+            return Write(writer);
         }
 
         public virtual void FromString(string[] d)

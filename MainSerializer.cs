@@ -127,6 +127,7 @@ namespace UAssetAPI
             string name = asset.GetHeaderReference((int)reader.ReadInt64());
             if (name.Equals("None")) return null;
 
+            //Debug.WriteLine(name);
             int typeNum = (int)reader.ReadInt64();
             string type = name;
             if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
