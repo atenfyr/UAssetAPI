@@ -2,17 +2,13 @@
 
 namespace UAssetAPI.PropertyTypes
 {
-    /*
-        ForceReadNull should pretty much always be set to true for API usage
-    */
-
     public abstract class PropertyData
     {
         public string Name;
+        public int WidgetData;
         public string Type;
         public AssetReader Asset;
         public object RawValue;
-        public bool ForceReadNull = true;
 
         public void SetObject(object value)
         {
@@ -24,11 +20,10 @@ namespace UAssetAPI.PropertyTypes
             return (T)RawValue;
         }
 
-        public PropertyData(string name, AssetReader asset, bool forceReadNull)
+        public PropertyData(string name, AssetReader asset)
         {
             Name = name;
             Asset = asset;
-            ForceReadNull = forceReadNull;
         }
 
         public PropertyData()
@@ -36,35 +31,16 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        public virtual void Read(BinaryReader reader, long leng)
+        public virtual void Read(BinaryReader reader, bool includeHeader, long leng)
         {
 
         }
 
-        public virtual void ReadInArray(BinaryReader reader, long leng)
-        {
-            Read(reader, leng);
-        }
-
-        public virtual void ReadInMap(BinaryReader reader, long leng)
-        {
-            Read(reader, leng);
-        }
-
-        public virtual int Write(BinaryWriter writer)
+        public virtual int Write(BinaryWriter writer, bool includeHeader)
         {
             return 0;
         }
 
-        public virtual int WriteInArray(BinaryWriter writer)
-        {
-            return Write(writer);
-        }
-
-        public virtual int WriteInMap(BinaryWriter writer)
-        {
-            return Write(writer);
-        }
 
         public virtual void FromString(string[] d)
         {
@@ -80,7 +56,7 @@ namespace UAssetAPI.PropertyTypes
             set => SetObject(value);
         }
 
-        public PropertyData(string name, AssetReader asset, bool forceReadNull) : base(name, asset, forceReadNull)
+        public PropertyData(string name, AssetReader asset) : base(name, asset)
         {
 
         }

@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public int LinkValue = 0;
 
-        public ObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public ObjectPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "ObjectProperty";
         }
@@ -18,9 +18,13 @@ namespace UAssetAPI.PropertyTypes
             Type = "ObjectProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             LinkValue = reader.ReadInt32();
             if (LinkValue < 0 && Utils.GetNormalIndex(LinkValue) >= 0)
             {
@@ -32,9 +36,13 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             if (Value != null) LinkValue = Value.Index;
             writer.Write(LinkValue);
             return 4;

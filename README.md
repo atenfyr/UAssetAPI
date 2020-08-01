@@ -17,3 +17,6 @@ for (int i = 0; i < y.data.headerIndexList.Count; i++)
 }
 y.Write(@"NEW.uasset");
 ```
+
+## Disclaimer
+UAssetAPI is still very much in development, so there is no guarantee of backwards compatibility at this time.

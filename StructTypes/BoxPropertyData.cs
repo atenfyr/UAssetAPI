@@ -8,7 +8,7 @@ namespace UAssetAPI.StructTypes
     {
         public bool IsValid;
 
-        public BoxPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        public BoxPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "Box";
         }
@@ -18,26 +18,33 @@ namespace UAssetAPI.StructTypes
             Type = "Box";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
             Value = new VectorPropertyData[2];
             for (int i = 0; i < 2; i++)
             {
-                var next = new VectorPropertyData(Name, Asset, false);
-                next.Read(reader, 0);
+                var next = new VectorPropertyData(Name, Asset);
+                next.Read(reader, false, 0);
                 Value[i] = next;
             }
 
             IsValid = reader.ReadBoolean();
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+            
             for (int i = 0; i < 2; i++)
             {
-               Value[i].Write(writer);
+               Value[i].Write(writer, includeHeader);
             }
             writer.Write(IsValid);
             return 0;

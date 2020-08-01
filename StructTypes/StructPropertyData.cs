@@ -7,20 +7,17 @@ namespace UAssetAPI.StructTypes
 {
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
-        public bool IsForced = false;
         public string StructType = null;
         public Guid StructGUID = Guid.Empty; // usually set to 0
 
-        public StructPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public StructPropertyData(string name, AssetReader asset) : base(name, asset)
         {
-            IsForced = false;
             Type = "StructProperty";
             Value = new List<PropertyData>();
         }
 
-        public StructPropertyData(string name, AssetReader asset, bool forceReadNull, string forcedType) : base(name, asset, forceReadNull)
+        public StructPropertyData(string name, AssetReader asset, string forcedType) : base(name, asset)
         {
-            IsForced = true;
             StructType = forcedType;
             Type = "StructProperty";
             Value = new List<PropertyData>();
@@ -28,37 +25,13 @@ namespace UAssetAPI.StructTypes
 
         public StructPropertyData()
         {
-
-        }
-
-        public string GetStructType()
-        {
-            return StructType;
-        }
-
-        public void SetStructType(string type)
-        {
-            StructType = type;
-        }
-
-        public void SetForced(string type)
-        {
-            if (string.IsNullOrEmpty(type))
-            {
-                IsForced = false;
-                StructType = null;
-            }
-            else
-            {
-                IsForced = true;
-                StructType = type;
-            }
+            Type = "StructProperty";
         }
 
         private void ReadOnce<T>(BinaryReader reader) where T: PropertyData, new()
         {
-            T data = (T)Activator.CreateInstance(typeof(T), Name, Asset, false);
-            data.Read(reader, 0);
+            T data = (T)Activator.CreateInstance(typeof(T), Name, Asset);
+            data.Read(reader, false, 0);
             Value = new List<PropertyData> { data };
         }
 
@@ -66,7 +39,7 @@ namespace UAssetAPI.StructTypes
         {
             IList<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
-            while ((data = MainSerializer.Read(Asset, reader)) != null)
+            while ((data = MainSerializer.Read(Asset, reader, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -74,9 +47,9 @@ namespace UAssetAPI.StructTypes
             Value = resultingList;
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (!IsForced)
+            if (includeHeader) // originally !isForced
             {
                 StructType = Asset.GetHeaderReference((int)reader.ReadInt64());
                 StructGUID = new Guid(reader.ReadBytes(16));
@@ -98,6 +71,9 @@ namespace UAssetAPI.StructTypes
                     break;
                 case "Vector2D": // 2 floats
                     ReadOnce<Vector2DPropertyData>(reader);
+                    break;
+                case "Vector4": // 4 floats
+                    ReadOnce<Vector4PropertyData>(reader);
                     break;
                 case "Box": // 2 Vectors
                     ReadOnce<BoxPropertyData>(reader);
@@ -125,7 +101,7 @@ namespace UAssetAPI.StructTypes
 
         private void WriteOnce(BinaryWriter writer)
         {
-            Value[0].Write(writer);
+            Value[0].Write(writer, false);
         }
 
         private int WriteNormal(BinaryWriter writer)
@@ -135,26 +111,27 @@ namespace UAssetAPI.StructTypes
             {
                 foreach (var t in Value)
                 {
-                    MainSerializer.Write(t, Asset, writer);
+                    MainSerializer.Write(t, Asset, writer, true);
                 }
             }
             writer.Write((long)Asset.SearchHeaderReference("None"));
             return (int)writer.BaseStream.Position - here;
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (!IsForced)
+            if (includeHeader)
             {
                 writer.Write((long)Asset.SearchHeaderReference(StructType));
                 writer.Write(StructGUID.ToByteArray());
-                if (ForceReadNull) writer.Write((byte)0);
+                writer.Write((byte)0);
             }
             switch(StructType)
             {
                 case "Guid":
                 case "LinearColor":
                 case "Quat":
+                case "Vector4":
                     WriteOnce(writer);
                     return 16;
                 case "Vector":

@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class IntPropertyData : PropertyData<int>
     {
-        public IntPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public IntPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "IntProperty";
         }
@@ -15,15 +15,23 @@ namespace UAssetAPI.PropertyTypes
             Type = "IntProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = reader.ReadInt32();
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             writer.Write(Value);
             return sizeof(int);
         }

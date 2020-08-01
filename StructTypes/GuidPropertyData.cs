@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class GuidPropertyData : PropertyData<Guid>
     {
-        public GuidPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        public GuidPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "Guid";
         }
@@ -16,15 +16,23 @@ namespace UAssetAPI.StructTypes
             Type = "Guid";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = new Guid(reader.ReadBytes(16));
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             writer.Write(Value.ToByteArray());
             return 16;
         }

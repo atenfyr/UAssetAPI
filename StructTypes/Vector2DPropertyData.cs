@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class Vector2DPropertyData : PropertyData<float[]> // X, Y
     {
-        public Vector2DPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        public Vector2DPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "Vector2D";
         }
@@ -16,9 +16,13 @@ namespace UAssetAPI.StructTypes
             Type = "Vector2D";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = new float[2];
             for (int i = 0; i < 2; i++)
             {
@@ -26,9 +30,13 @@ namespace UAssetAPI.StructTypes
             }
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             for (int i = 0; i < 2; i++)
             {
                 writer.Write(Value[i]);

@@ -56,7 +56,7 @@ namespace UAssetAPI
         {
             Data = new List<PropertyData>();
             PropertyData bit;
-            while ((bit = MainSerializer.Read(Asset, reader)) != null)
+            while ((bit = MainSerializer.Read(Asset, reader, true)) != null)
             {
                 Data.Add(bit);
             }
@@ -67,7 +67,7 @@ namespace UAssetAPI
             for (int j = 0; j < Data.Count; j++)
             {
                 PropertyData current = Data[j];
-                MainSerializer.Write(current, Asset, writer);
+                MainSerializer.Write(current, Asset, writer, true);
             }
             writer.Write((long)Asset.SearchHeaderReference("None"));
         }

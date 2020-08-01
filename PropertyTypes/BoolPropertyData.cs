@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class BoolPropertyData : PropertyData<bool>
     {
-        public BoolPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public BoolPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "BoolProperty";
         }
@@ -15,12 +15,12 @@ namespace UAssetAPI.PropertyTypes
             Type = "BoolProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
             Value = reader.ReadInt16() > 0;
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
             writer.Write((short)(Value ? 1 : 0));
             return 0;

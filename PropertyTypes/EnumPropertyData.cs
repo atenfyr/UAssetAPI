@@ -4,9 +4,9 @@ namespace UAssetAPI.PropertyTypes
 {
     public class EnumPropertyData : PropertyData<string>
     {
-        public string FullEnum = string.Empty;
+        public string EnumType;
 
-        public EnumPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public EnumPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "EnumProperty";
         }
@@ -16,45 +16,38 @@ namespace UAssetAPI.PropertyTypes
             Type = "EnumProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
+            if (includeHeader)
+            {
+                EnumType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                reader.ReadByte(); // null byte
+            }
             Value = Asset.GetHeaderReference((int)reader.ReadInt64());
-            if (Value.Contains("::") || Value.Equals("None")) return;
-            if (ForceReadNull) reader.ReadByte(); // null byte
-            FullEnum = Asset.GetHeaderReference((int)reader.ReadInt64());
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
+            if (includeHeader)
+            {
+                writer.Write((long)Asset.SearchHeaderReference(EnumType));
+                writer.Write((byte)0);
+            }
             writer.Write((long)Asset.SearchHeaderReference(Value));
-            if (Value.Contains("::") || Value.Equals("None")) return sizeof(long);
-            if (ForceReadNull) writer.Write((byte)0);
-            writer.Write((long)Asset.SearchHeaderReference(FullEnum));
             return sizeof(long);
-        }
-
-        public string GetEnumBase()
-        {
-            return Value;
-        }
-
-        public string GetEnumFull()
-        {
-            return FullEnum;
         }
 
         public override string ToString()
         {
-            if (Value.Contains("::") || Value.Equals("None")) return Value;
-            return FullEnum;
+            return Value;
         }
 
         public override void FromString(string[] d)
         {
             Asset.AddHeaderReference(d[0]);
             Asset.AddHeaderReference(d[1]);
-            Value = d[0];
-            FullEnum = d[1];
+            EnumType = d[0];
+            Value = d[1];
         }
     }
 }

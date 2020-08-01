@@ -8,7 +8,7 @@
         public ulong Property;
         public int Index;
 
-        public Link(string bbase, string bclass, int link, string property, int index, AssetReader asset)
+        public Link(string bbase, string bclass, int link, string property, AssetReader asset, int index = 0)
         {
             Base = (ulong)asset.SearchHeaderReference(bbase);
             Class = (ulong)asset.SearchHeaderReference(bclass);
@@ -17,7 +17,7 @@
             Index = index;
         }
 
-        public Link(ulong bbase, ulong bclass, int link, ulong property, int index)
+        public Link(ulong bbase, ulong bclass, int link, ulong property, int index = 0)
         {
             Base = bbase;
             Class = bclass;

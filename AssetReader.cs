@@ -8,11 +8,104 @@ namespace UAssetAPI
 {
     public class AssetReader
     {
+        /* Public Methods */
         public string path;
         public bool UseSeparateBulkDataFiles = false;
         public List<int> UExpData;
+        public Guid AssetGuid;
 
-        /* These are public for debugging, eventually they will not be */
+        public IReadOnlyList<string> GetHeaderIndexList()
+        {
+            return headerIndexList.AsReadOnly();
+        }
+
+        public void ClearHeaderIndexList()
+        {
+            headerIndexList = new List<string>();
+            headerLookup = new Dictionary<string, int>();
+        }
+
+        public string GetHeaderReference(int index)
+        {
+            if (index < 0) return Convert.ToString(-index);
+            if (index > headerIndexList.Count) return Convert.ToString(index);
+            return headerIndexList[index];
+        }
+
+        public string GetHeaderReferenceWithoutZero(int index)
+        {
+            if (index <= 0) return Convert.ToString(-index);
+            if (index > headerIndexList.Count) return Convert.ToString(index);
+            return headerIndexList[index];
+        }
+
+        public int SearchHeaderReference(string search)
+        {
+            if (headerLookup.ContainsKey(search)) return headerLookup[search];
+            throw new FormatException("Requested string \"" + search + "\" not found in header list");
+        }
+
+        public int AddHeaderReference(string name)
+        {
+            if (headerLookup.ContainsKey(name)) return SearchHeaderReference(name);
+            headerIndexList.Add(name);
+            headerLookup.Add(name, headerIndexList.Count - 1);
+            return headerIndexList.Count - 1;
+        }
+
+        public int GetLinkReference(int index)
+        {
+            return (int)(index < 0 ? (long)links[Utils.GetNormalIndex(index)].Property : -index);
+        }
+
+        public Link AddLink(string bbase, string bclass, int link, string property)
+        {
+            Link nuevo = new Link(bbase, bclass, link, property, this, Utils.GetLinkIndex(links.Count));
+            links.Add(nuevo);
+            return nuevo;
+        }
+
+        public int AddLink(Link li)
+        {
+            li.Index = Utils.GetLinkIndex(links.Count);
+            links.Add(li);
+            return li.Index;
+        }
+
+        public int SearchForLink(ulong bbase, ulong bclass, int link, ulong property)
+        {
+            int currentPos = 0;
+            for (int i = 0; i < links.Count; i++)
+            {
+                currentPos--;
+                if (bbase == links[i].Base
+                    && bclass == links[i].Class
+                    && link == links[i].Linkage
+                    && property == links[i].Property)
+                {
+                    return currentPos;
+                }
+
+            }
+
+            return 0;
+        }
+
+        public int SearchForLink(ulong property)
+        {
+            int currentPos = 0;
+            for (int i = 0; i < links.Count; i++)
+            {
+                currentPos--;
+                if (property == links[i].Property) return currentPos;
+            }
+
+            return 0;
+        }
+
+        /* End Public Methods */
+
+        // These are public for debugging, eventually they will not be
         public int sectionSixOffset;
         public int sectionOneStringCount;
         public int dataCategoryCount;
@@ -25,8 +118,9 @@ namespace UAssetAPI
         public int uexpDataOffset;
         public int fileSize;
 
-        public Guid AssetGuid;
-        public List<string> headerIndexList;
+        // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
+        internal List<string> headerIndexList;
+        private Dictionary<string, int> headerLookup = new Dictionary<string, int>();
         public List<Link> links; // base, class, link, connection
         public List<int[]> categoryIntReference;
         public List<string> categoryStringReference;
@@ -85,11 +179,11 @@ namespace UAssetAPI
             // Section 1
             reader.BaseStream.Position += 8;
 
-            headerIndexList = new List<string>();
+            ClearHeaderIndexList();
             for (int i = 0; i < sectionOneStringCount; i++)
             {
                 var str = reader.ReadUStringWithGUID(out uint guid);
-                headerIndexList.Add(str);
+                AddHeaderReference(str);
             }
 
             // Section 2
@@ -225,55 +319,6 @@ namespace UAssetAPI
                     }
                 }
             }
-        }
-
-        public string GetHeaderReference(int index)
-        {
-            if (index < 0) return Convert.ToString(-index);
-            if (index > headerIndexList.Count) return Convert.ToString(index);
-            return headerIndexList[index];
-        }
-
-        // TODO: Optimize this more eventually, it will run very slowly on huge files
-        public int SearchHeaderReference(string search)
-        {
-            for (int i = 0; i < headerIndexList.Count; i++)
-            {
-                if (headerIndexList[i] != null && headerIndexList[i].Equals(search)) return i;
-            }
-            throw new FormatException("Requested string \"" + search + "\" not found in header list");
-        }
-
-        public int GetLinkReference(int index)
-        {
-            return (int)(index < 0 ? (long)links[Utils.GetNormalIndex(index)].Property : -index);
-        }
-
-        public int AddHeaderReference(string name)
-        {
-            try
-            {
-                return SearchHeaderReference(name);
-            }
-            catch (FormatException)
-            {
-                headerIndexList.Add(name);
-                return headerIndexList.Count - 1;
-            }
-        }
-
-        public Link AddLink(string bbase, string bclass, int link, string property)
-        {
-            Link nuevo = new Link(bbase, bclass, link, property, Utils.GetLinkIndex(links.Count), this);
-            links.Add(nuevo);
-            return nuevo;
-        }
-
-        public int AddLink(Link li)
-        {
-            li.Index = Utils.GetLinkIndex(links.Count - 1);
-            links.Add(li);
-            return li.Index;
         }
 
         public MemoryStream PathToStream(string p)

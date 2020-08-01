@@ -10,7 +10,7 @@ namespace UAssetAPI.PropertyTypes
         public string ArrayType;
         public StructPropertyData DummyStruct;
 
-        public ArrayPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public ArrayPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "ArrayProperty";
             Value = new PropertyData[0];
@@ -22,10 +22,14 @@ namespace UAssetAPI.PropertyTypes
             Value = new PropertyData[0];
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                reader.ReadByte(); // null byte
+            }
+
             int numEntries = reader.ReadInt32();
             if (ArrayType == "StructProperty")
             {
@@ -46,7 +50,7 @@ namespace UAssetAPI.PropertyTypes
 
                 if (numEntries == 0)
                 {
-                    DummyStruct = new StructPropertyData(name, Asset, true, fullType)
+                    DummyStruct = new StructPropertyData(name, Asset, fullType)
                     {
                         StructGUID = structGUID
                     };
@@ -55,8 +59,8 @@ namespace UAssetAPI.PropertyTypes
                 {
                     for (int i = 0; i < numEntries; i++)
                     {
-                        var data = new StructPropertyData(name, Asset, true, fullType);
-                        data.Read(reader, 0);
+                        var data = new StructPropertyData(name, Asset, fullType);
+                        data.Read(reader, false, 0);
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }
@@ -66,29 +70,35 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 var results = new PropertyData[numEntries];
-                for (int i = 0; i < numEntries; i++)
+                if (numEntries > 0)
                 {
-                    results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset);
-                    results[i].ForceReadNull = false;
-                    results[i].ReadInArray(reader, 0);
+                    int averageSize = (int)(leng / numEntries);
+                    for (int i = 0; i < numEntries; i++)
+                    {
+                        results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset);
+                        results[i].Read(reader, false, averageSize);
+                    }
                 }
                 Value = results;
             }
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
             if (Value.Length > 0) ArrayType = Value[0].Type;
 
-            writer.Write((long)Asset.SearchHeaderReference(ArrayType));
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((long)Asset.SearchHeaderReference(ArrayType));
+                writer.Write((byte)0);
+            }
 
             int here = (int)writer.BaseStream.Position;
             writer.Write(Value.Length);
             if (ArrayType == "StructProperty")
             {
                 StructPropertyData firstElem = Value.Length == 0 ? DummyStruct : (StructPropertyData)Value[0];
-                string fullType = firstElem.GetStructType();
+                string fullType = firstElem.StructType;
 
                 writer.Write((long)Asset.SearchHeaderReference(firstElem.Name));
                 writer.Write((long)Asset.SearchHeaderReference("StructProperty"));
@@ -100,23 +110,21 @@ namespace UAssetAPI.PropertyTypes
 
                 for (int i = 0; i < Value.Length; i++)
                 {
-                    Value[i].ForceReadNull = true;
-                    ((StructPropertyData)Value[i]).SetForced(fullType);
-                    Value[i].Write(writer);
+                    ((StructPropertyData)Value[i]).StructType = fullType;
+                    Value[i].Write(writer, false);
                 }
 
                 int fullLen = (int)writer.BaseStream.Position - lengthLoc;
                 int newLoc = (int)writer.BaseStream.Position;
                 writer.Seek(lengthLoc, SeekOrigin.Begin);
-                writer.Write(fullLen - 32 - (ForceReadNull ? 1 : 0));
+                writer.Write(fullLen - 32 - (includeHeader ? 1 : 0));
                 writer.Seek(newLoc, SeekOrigin.Begin);
             }
             else
             {
                 for (int i = 0; i < Value.Length; i++)
                 {
-                    Value[i].ForceReadNull = false;
-                    Value[i].WriteInArray(writer);
+                    Value[i].Write(writer, false);
                 }
             }
 

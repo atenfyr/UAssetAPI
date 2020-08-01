@@ -12,8 +12,13 @@ namespace UAssetAPI
 
     public static class MainSerializer
     {
-        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool forceReadNull = true)
+#if DEBUG
+        private static string lastType;
+#endif
+
+        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool includeHeader = true)
         {
+            //Debug.WriteLine(type);
             PropertyData data;
             switch (type)
             {
@@ -104,6 +109,9 @@ namespace UAssetAPI
                 case "Quat":
                     data = new QuatPropertyData(name, asset);
                     break;
+                case "Vector4":
+                    data = new Vector4PropertyData(name, asset);
+                    break;
                 case "SoftObjectProperty":
                     data = new SoftObjectPropertyData(name, asset);
                     break;
@@ -111,20 +119,26 @@ namespace UAssetAPI
                     data = new MulticastDelegatePropertyData(name, asset);
                     break;
                 default:
+#if DEBUG
+                    Debug.WriteLine("Last type: " + lastType);
+#endif
                     if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
+#if DEBUG
+            lastType = type;
+#endif
             if (reader != null)
             {
-                if (forceReadNull == false) data.ForceReadNull = false;
-                data.Read(reader, leng);
+                data.Read(reader, includeHeader, leng);
             }
             return data;
         }
 
-        public static PropertyData Read(AssetReader asset, BinaryReader reader, bool forceReadNull = true)
+        public static PropertyData Read(AssetReader asset, BinaryReader reader, bool includeHeader)
         {
-            string name = asset.GetHeaderReference((int)reader.ReadInt64());
+            string name = asset.GetHeaderReference((int)reader.ReadInt32());
+            int widgetData = reader.ReadInt32();
             if (name.Equals("None")) return null;
 
             //Debug.WriteLine(name);
@@ -133,16 +147,19 @@ namespace UAssetAPI
             if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
 
             long leng = reader.ReadInt64();
-            return TypeToClass(type, name, asset, reader, leng, forceReadNull);
+            PropertyData result = TypeToClass(type, name, asset, reader, leng, includeHeader);
+            result.WidgetData = widgetData;
+            return result;
         }
 
-        public static int Write(PropertyData property, AssetReader asset, BinaryWriter writer) // Returns location of the length
+        public static int Write(PropertyData property, AssetReader asset, BinaryWriter writer, bool includeHeader) // Returns location of the length
         {
-            writer.Write((long)asset.SearchHeaderReference(property.Name));
+            writer.Write((int)asset.SearchHeaderReference(property.Name));
+            writer.Write(property.WidgetData);
             writer.Write((long)asset.SearchHeaderReference(property.Type));
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((long)0); // initial length
-            int realLength = property.Write(writer);
+            int realLength = property.Write(writer, includeHeader);
             int newLoc = (int)writer.BaseStream.Position;
 
             writer.Seek(oldLoc, SeekOrigin.Begin);

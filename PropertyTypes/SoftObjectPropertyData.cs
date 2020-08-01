@@ -6,7 +6,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public long Value2 = 0;
 
-        public SoftObjectPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public SoftObjectPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "SoftObjectProperty";
         }
@@ -16,16 +16,24 @@ namespace UAssetAPI.PropertyTypes
             Type = "SoftObjectProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = Asset.GetHeaderReference(reader.ReadInt32()); // a header reference that isn't a long!? wow!
             Value2 = reader.ReadInt64();
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             writer.Write(Asset.SearchHeaderReference(Value));
             writer.Write(Value2);
             return sizeof(int) + sizeof(long);

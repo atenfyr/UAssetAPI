@@ -4,7 +4,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class StrPropertyData : PropertyData<string>
     {
-        public StrPropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public StrPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "StrProperty";
         }
@@ -14,15 +14,23 @@ namespace UAssetAPI.PropertyTypes
             Type = "StrProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = reader.ReadUString();
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             int here = (int)writer.BaseStream.Position;
             writer.WriteUString(Value);
             return (int)writer.BaseStream.Position - here;

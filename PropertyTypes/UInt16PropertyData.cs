@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UInt16PropertyData : PropertyData<ushort>
     {
-        public UInt16PropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public UInt16PropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "UInt16Property";
         }
@@ -15,15 +15,23 @@ namespace UAssetAPI.PropertyTypes
             Type = "UInt16Property";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = reader.ReadUInt16();
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             writer.Write(Value);
             return sizeof(ushort);
         }

@@ -12,7 +12,7 @@ namespace UAssetAPI.StructTypes
         private float[] originalData;
         private Color initialColor;
 
-        public LinearColorPropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        public LinearColorPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "LinearColor";
         }
@@ -22,9 +22,13 @@ namespace UAssetAPI.StructTypes
             Type = "LinearColor";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             originalData = new float[4];
             for (int i = 0; i < 4; i++)
             {
@@ -35,9 +39,12 @@ namespace UAssetAPI.StructTypes
             initialColor = Color.FromArgb(Value.ToArgb());
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
 
             if (initialColor.ToArgb() == Value.ToArgb())
             {

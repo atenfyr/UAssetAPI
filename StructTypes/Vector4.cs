@@ -4,16 +4,16 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class VectorPropertyData : PropertyData<float[]> // X, Y, Z
+    public class Vector4PropertyData : PropertyData<float[]>
     {
-        public VectorPropertyData(string name, AssetReader asset) : base(name, asset)
+        public Vector4PropertyData(string name, AssetReader asset) : base(name, asset)
         {
-            Type = "Vector";
+            Type = "Vector4";
         }
 
-        public VectorPropertyData()
+        public Vector4PropertyData()
         {
-            Type = "Vector";
+            Type = "Vector4";
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng)
@@ -23,8 +23,8 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            Value = new float[3];
-            for (int i = 0; i < 3; i++)
+            Value = new float[4];
+            for (int i = 0; i < 4; i++)
             {
                 Value[i] = reader.ReadSingle();
             }
@@ -37,7 +37,7 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
                 writer.Write(Value[i]);
             }
@@ -46,10 +46,11 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d)
         {
-            Value = new float[3];
+            Value = new float[4];
             if (float.TryParse(d[0], out float res1)) Value[0] = res1;
             if (float.TryParse(d[1], out float res2)) Value[1] = res2;
             if (float.TryParse(d[2], out float res3)) Value[2] = res3;
+            if (float.TryParse(d[3], out float res4)) Value[3] = res3;
         }
 
         public override string ToString()

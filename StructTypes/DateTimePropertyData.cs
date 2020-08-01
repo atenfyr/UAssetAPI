@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class DateTimePropertyData : PropertyData<DateTime>
     {
-        public DateTimePropertyData(string name, AssetReader asset, bool forceReadNull = false) : base(name, asset, forceReadNull)
+        public DateTimePropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "DateTime";
         }
@@ -16,15 +16,23 @@ namespace UAssetAPI.StructTypes
             Type = "DateTime";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            if (ForceReadNull) reader.ReadByte(); // null byte
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
+
             Value = new DateTime(reader.ReadInt64()); // number of ticks since January 1, 0001
         }
 
-        public override int Write(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (ForceReadNull) writer.Write((byte)0);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
+
             writer.Write(Value.Ticks);
             return sizeof(long);
         }

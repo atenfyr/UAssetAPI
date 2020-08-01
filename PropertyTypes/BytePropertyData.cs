@@ -4,11 +4,18 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    public enum BytePropertyType
+    {
+        Byte,
+        Long,
+    }
+
     public class BytePropertyData : PropertyData<int>
     {
-        public int FullEnum;
+        public BytePropertyType ByteType;
+        public int EnumType = 0;
 
-        public BytePropertyData(string name, AssetReader asset, bool forceReadNull = true) : base(name, asset, forceReadNull)
+        public BytePropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "ByteProperty";
         }
@@ -18,81 +25,81 @@ namespace UAssetAPI.PropertyTypes
             Type = "ByteProperty";
         }
 
-        public override void Read(BinaryReader reader, long leng)
+        // TODO: Use the leng parameter to determine the type of ByteProperty, we aren't going to get anywhere with anything else
+        public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            Value = (int)reader.ReadInt64();
-            if (ForceReadNull) reader.ReadByte(); // null byte
-            if (Asset.GetHeaderReference(Value) == "None")
+            if (includeHeader)
             {
-                FullEnum = (int)reader.ReadByte();
-                return;
+                EnumType = (int)reader.ReadInt64();
+                reader.ReadByte(); // null byte
             }
-            FullEnum = (int)reader.ReadInt64();
-        }
 
-        public override void ReadInArray(BinaryReader reader, long leng)
-        {
-            ReadInMap(reader, leng);
-        }
-
-        public override void ReadInMap(BinaryReader reader, long leng)
-        {
-            Value = (int)reader.ReadInt64();
-            if (ForceReadNull) reader.ReadByte();
-            FullEnum = 0;
-        }
-
-        public override int Write(BinaryWriter writer)
-        {
-            writer.Write((long)Value);
-            if (ForceReadNull) writer.Write((byte)0);
-            if (Asset.GetHeaderReference(Value) == "None")
+            switch (leng)
             {
-                writer.Write((byte)FullEnum);
-                return 1;
+                case 1:
+                    ByteType = BytePropertyType.Byte;
+                    Value = (int)reader.ReadByte();
+                    break;
+                case 8:
+                    ByteType = BytePropertyType.Long;
+                    Value = (int)reader.ReadInt64();
+                    break;
+                default:
+                    throw new FormatException("Invalid length " + leng + " for ByteProperty");
             }
-            writer.Write((long)FullEnum);
-            return 8;
         }
 
-        public override int WriteInArray(BinaryWriter writer)
+        public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            return WriteInMap(writer);
-        }
+            if (includeHeader)
+            {
+                writer.Write((long)EnumType);
+                writer.Write((byte)0);
+            }
 
-        public override int WriteInMap(BinaryWriter writer)
-        {
-            writer.Write((long)Value);
-            if (ForceReadNull) writer.Write((byte)0);
-            return 0;
+            switch (ByteType)
+            {
+                case BytePropertyType.Byte:
+                    writer.Write((byte)Value);
+                    return 1;
+                case BytePropertyType.Long:
+                    writer.Write((long)Value);
+                    return 8;
+                default:
+                    throw new FormatException("Invalid BytePropertyType " + ByteType);
+            }
         }
 
         public string GetEnumBase()
         {
-            return Asset.GetHeaderReference(Value);
+            if (EnumType <= 0) return "null";
+            return Asset.GetHeaderReference(EnumType);
         }
 
         public string GetEnumFull()
         {
-            return Asset.GetHeaderReference(FullEnum);
+            if (Value <= 0) return "null";
+            return Asset.GetHeaderReference(Value);
         }
 
         public override string ToString()
         {
-            if (GetEnumBase() == "None") return Convert.ToString(FullEnum);
+            if (ByteType == BytePropertyType.Byte) return Convert.ToString(Value);
             return GetEnumFull();
         }
 
         public override void FromString(string[] d)
         {
-            Value = Asset.AddHeaderReference(d[0]);
-            if (d[0].Equals("None"))
+            EnumType = Asset.AddHeaderReference(d[0]);
+            if (byte.TryParse(d[1], out byte res))
             {
-                if (byte.TryParse(d[1], out byte res)) FullEnum = res;
+                ByteType = BytePropertyType.Byte;
+                Value = res;
             }
             else
             {
-                FullEnum = Asset.AddHeaderReference(d[1]);
+                ByteType = BytePropertyType.Long;
+                Value = Asset.AddHeaderReference(d[1]);
             }
         }
     }

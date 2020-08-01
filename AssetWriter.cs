@@ -7,12 +7,38 @@ namespace UAssetAPI
 {
     public class AssetWriter
     {
+        /* Public Methods */
         public bool WillWriteSectionSix = true;
         public bool WillStoreOriginalCopyInMemory = false;
-        private readonly byte[] OriginalCopy;
-
         public string path;
         public AssetReader data;
+
+        public bool VerifyParsing()
+        {
+            MemoryStream f = data.PathToStream(path);
+            f.Seek(0, SeekOrigin.Begin);
+            MemoryStream newDataStream = WriteData(new BinaryReader(f));
+            f.Seek(0, SeekOrigin.Begin);
+
+            if (f.Length != newDataStream.Length) return false;
+
+            const int CHUNK_SIZE = 1024;
+            byte[] buffer = new byte[CHUNK_SIZE];
+            byte[] buffer2 = new byte[CHUNK_SIZE];
+            int lastRead1;
+            while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                int lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
+                if (lastRead1 != lastRead2) return false;
+                if (!buffer.SequenceEqual(buffer2)) return false;
+            }
+
+            return true;
+        }
+
+        /* End Public Methods */
+
+        private readonly byte[] OriginalCopy;
 
         private byte[] MakeHeader(BinaryReader reader)
         {
@@ -49,7 +75,7 @@ namespace UAssetAPI
             return stre.ToArray();
         }
 
-        public MemoryStream WriteData(BinaryReader reader)
+        internal MemoryStream WriteData(BinaryReader reader)
         {
             var stre = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stre);
@@ -72,12 +98,14 @@ namespace UAssetAPI
             {
                 data.sectionTwoOffset = (int)writer.BaseStream.Position;
                 data.sectionTwoLinkCount = data.links.Count;
+                int newIndex = 0;
                 for (int i = 0; i < data.links.Count; i++)
                 {
                     writer.Write(data.links[i].Base);
                     writer.Write(data.links[i].Class);
                     writer.Write(data.links[i].Linkage);
                     writer.Write(data.links[i].Property);
+                    data.links[i].Index = --newIndex;
                 }
             }
             else
@@ -118,6 +146,8 @@ namespace UAssetAPI
                 data.sectionFourOffset = (int)writer.BaseStream.Position;
                 for (int i = 0; i < data.categories.Count; i++)
                 {
+                    if (i >= data.categoryIntReference.Count) data.categoryIntReference.Add(new int[0]);
+
                     int[] currentData = data.categoryIntReference[i];
                     writer.Write(currentData.Length);
                     for (int j = 0; j < currentData.Length; j++)
@@ -227,29 +257,6 @@ namespace UAssetAPI
 
             writer.Seek(0, SeekOrigin.Begin);
             return stre;
-        }
-
-        public bool VerifyParsing()
-        {
-            MemoryStream f = data.PathToStream(path);
-            f.Seek(0, SeekOrigin.Begin);
-            MemoryStream newDataStream = WriteData(new BinaryReader(f));
-            f.Seek(0, SeekOrigin.Begin);
-
-            if (f.Length != newDataStream.Length) return false;
-
-            const int CHUNK_SIZE = 1024;
-            byte[] buffer = new byte[CHUNK_SIZE];
-            byte[] buffer2 = new byte[CHUNK_SIZE];
-            int lastRead1;
-            while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                int lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
-                if (lastRead1 != lastRead2) return false;
-                if (!buffer.SequenceEqual(buffer2)) return false;
-            }
-
-            return true;
         }
 
         private static void CopySplitUp(Stream input, Stream output, int start, int leng)
