@@ -19,6 +19,11 @@ namespace UAssetAPI
             return headerIndexList.AsReadOnly();
         }
 
+        public IReadOnlyDictionary<string, int> GetHeaderLookup()
+        {
+            return headerLookup;
+        }
+
         public void ClearHeaderIndexList()
         {
             headerIndexList = new List<string>();
@@ -39,9 +44,14 @@ namespace UAssetAPI
             return headerIndexList[index];
         }
 
+        public bool HeaderReferenceContains(string search)
+        {
+            return headerLookup.ContainsKey(search);
+        }
+
         public int SearchHeaderReference(string search)
         {
-            if (headerLookup.ContainsKey(search)) return headerLookup[search];
+            if (HeaderReferenceContains(search)) return headerLookup[search];
             throw new FormatException("Requested string \"" + search + "\" not found in header list");
         }
 
@@ -81,6 +91,24 @@ namespace UAssetAPI
                 if (bbase == links[i].Base
                     && bclass == links[i].Class
                     && link == links[i].Linkage
+                    && property == links[i].Property)
+                {
+                    return currentPos;
+                }
+
+            }
+
+            return 0;
+        }
+
+        public int SearchForLink(ulong bbase, ulong bclass, ulong property)
+        {
+            int currentPos = 0;
+            for (int i = 0; i < links.Count; i++)
+            {
+                currentPos--;
+                if (bbase == links[i].Base
+                    && bclass == links[i].Class
                     && property == links[i].Property)
                 {
                     return currentPos;
@@ -285,6 +313,10 @@ namespace UAssetAPI
                     {
                         switch (GetHeaderReference(GetLinkReference(refData.connection)))
                         {
+                            case "BlueprintGeneratedClass":
+                                categories[i] = new BlueprintGeneratedClassCategory(categories[i]);
+                                categories[i].Read(reader);
+                                break;
                             case "StringTable":
                                 categories[i] = new StringTableCategory(categories[i]);
                                 categories[i].Read(reader);
@@ -311,7 +343,7 @@ namespace UAssetAPI
                     catch (Exception ex)
                     {
 #if DEBUG
-                        Console.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
+                        Debug.WriteLine("\nFailed to parse category " + (i + 1) + ": " + ex.ToString());
 #endif
                         reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
                         categories[i] = new RawCategory(categories[i]);
