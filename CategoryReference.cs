@@ -33,6 +33,23 @@
             this.garbage3 = garbage3;
         }
 
+        public CategoryReference(CategoryReference refer)
+        {
+            this.connection = refer.connection;
+            this.connect = refer.connect;
+            this.category = refer.category;
+            this.link = refer.link;
+            this.typeIndex = refer.typeIndex;
+            this.type = refer.type;
+            this.lengthV = refer.lengthV;
+            this.startV = refer.startV;
+
+            this.garbage1 = refer.garbage1;
+            this.garbage2 = refer.garbage2;
+            this.garbageNew = refer.garbageNew;
+            this.garbage3 = refer.garbage3;
+        }
+
         public CategoryReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV)
         {
             this.connection = connection;

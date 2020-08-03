@@ -265,7 +265,13 @@ namespace UAssetAPI
                     k = Asset.GetHeaderReference(firstBit);
                 }
 
-                Data2.Add(new BPPair(k, Asset.GetHeaderReference(secondBit)));
+                string v = Convert.ToString(secondBit);
+                if (secondBit >= 0)
+                {
+                    v = Asset.GetHeaderReference(secondBit);
+                }
+
+                Data2.Add(new BPPair(k, v));
             }
 
             reader.ReadBytes(4);
