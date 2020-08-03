@@ -41,7 +41,7 @@ namespace UAssetAPI.PropertyTypes
                     return;
                 }
 
-                Debug.Assert(Asset.GetHeaderReference((int)reader.ReadInt64()) == ArrayType);
+                if (Asset.GetHeaderReference((int)reader.ReadInt64()) != ArrayType) throw new FormatException("Invalid array type");
                 reader.ReadInt64(); // length value
 
                 string fullType = Asset.GetHeaderReference((int)reader.ReadInt64());
