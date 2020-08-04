@@ -75,7 +75,7 @@ namespace UAssetAPI
             return stre.ToArray();
         }
 
-        internal MemoryStream WriteData(BinaryReader reader)
+        public MemoryStream WriteData(BinaryReader reader)
         {
             var stre = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stre);
