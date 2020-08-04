@@ -10,6 +10,7 @@ namespace UAssetAPI
         /* Public Methods */
         public bool WillWriteSectionSix = true;
         public bool WillStoreOriginalCopyInMemory = false;
+        public readonly byte[] OriginalCopy;
         public string path;
         public AssetReader data;
 
@@ -37,8 +38,6 @@ namespace UAssetAPI
         }
 
         /* End Public Methods */
-
-        private readonly byte[] OriginalCopy;
 
         private byte[] MakeHeader(BinaryReader reader)
         {
