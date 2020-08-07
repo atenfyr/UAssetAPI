@@ -311,24 +311,28 @@ namespace UAssetAPI
                     //Debug.WriteLine(refData.type + " " + GetHeaderReference(GetLinkReference(refData.connection)));
                     try
                     {
+                        int nextStarting = (int)reader.BaseStream.Length - 4;
+                        if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
+
                         switch (GetHeaderReference(GetLinkReference(refData.connection)))
                         {
                             case "BlueprintGeneratedClass":
                                 categories[i] = new BlueprintGeneratedClassCategory(categories[i]);
-                                categories[i].Read(reader);
+                                categories[i].Read(reader, nextStarting);
+                                break;
+                            case "Level":
+                                categories[i] = new LevelCategory(categories[i]);
+                                categories[i].Read(reader, nextStarting);
                                 break;
                             case "StringTable":
                                 categories[i] = new StringTableCategory(categories[i]);
-                                categories[i].Read(reader);
+                                categories[i].Read(reader, nextStarting);
                                 break;
                             default:
                                 categories[i] = new NormalCategory(categories[i]);
-                                categories[i].Read(reader);
+                                categories[i].Read(reader, nextStarting);
                                 break;
                         }
-
-                        int nextStarting = (int)reader.BaseStream.Length - 4;
-                        if ((categories.Count - 1) > i) nextStarting = categories[i + 1].ReferenceData.startV;
 
                         int extrasLen = nextStarting - (int)reader.BaseStream.Position;
                         if (extrasLen < 0)
