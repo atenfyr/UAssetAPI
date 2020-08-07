@@ -6,12 +6,39 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class LinearColorPropertyData : PropertyData<Color> // R, G, B, A
+    public class LinearColor
     {
-        // These fields are used to ensure that identical floats are written if the color is unchanged
-        private float[] originalData;
-        private Color initialColor;
+        public float R;
+        public float G;
+        public float B;
+        public float A;
 
+        public Color GetARGB()
+        {
+            return Color.FromArgb(
+                (int)(Math.Pow(Utils.Clamp(A, 0, 1), 1.0 / 2.2) * 255),
+                (int)(Math.Pow(Utils.Clamp(R, 0, 1), 1.0 / 2.2) * 255),
+                (int)(Math.Pow(Utils.Clamp(G, 0, 1), 1.0 / 2.2) * 255),
+                (int)(Math.Pow(Utils.Clamp(B, 0, 1), 1.0 / 2.2) * 255)
+            );
+        }
+
+        public LinearColor()
+        {
+
+        }
+
+        public LinearColor(float R, float G, float B, float A)
+        {
+            this.R = R;
+            this.G = G;
+            this.B = B;
+            this.A = A;
+        }
+    }
+
+    public class LinearColorPropertyData : PropertyData<LinearColor> // R, G, B, A
+    {
         public LinearColorPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "LinearColor";
@@ -29,14 +56,13 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            originalData = new float[4];
-            for (int i = 0; i < 4; i++)
+            Value = new LinearColor
             {
-                originalData[i] = reader.ReadSingle();
-            }
-
-            Value = Color.FromArgb((int)(Math.Min(originalData[3] * 255, 255)), (int)(Math.Min(originalData[0] * 255, 255)), (int)(Math.Min(originalData[1] * 255, 255)), (int)(Math.Min(originalData[2] * 255, 255)));
-            initialColor = Color.FromArgb(Value.ToArgb());
+                R = reader.ReadSingle(),
+                G = reader.ReadSingle(),
+                B = reader.ReadSingle(),
+                A = reader.ReadSingle()
+            };
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -46,18 +72,11 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            if (initialColor.ToArgb() == Value.ToArgb())
-            {
-                for (int i = 0; i < 4; i++) writer.Write(originalData[i]);
-            }
-            else
-            {
-                writer.Write((float)Value.R / 255);
-                writer.Write((float)Value.G / 255);
-                writer.Write((float)Value.B / 255);
-                writer.Write((float)Value.A / 255);
-            }
-            return 16;
+            writer.Write(Value.R);
+            writer.Write(Value.G);
+            writer.Write(Value.B);
+            writer.Write(Value.A);
+            return sizeof(float) * 4;
         }
 
         public override string ToString()
@@ -67,11 +86,11 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d)
         {
-            if (!int.TryParse(d[0], out int colorR)) return;
-            if (!int.TryParse(d[1], out int colorG)) return;
-            if (!int.TryParse(d[2], out int colorB)) return;
-            if (!int.TryParse(d[3], out int colorA)) return;
-            Value = Color.FromArgb(colorA, colorR, colorG, colorB);
+            if (!float.TryParse(d[0], out float colorR)) return;
+            if (!float.TryParse(d[1], out float colorG)) return;
+            if (!float.TryParse(d[2], out float colorB)) return;
+            if (!float.TryParse(d[3], out float colorA)) return;
+            Value = new LinearColor(colorA, colorR, colorG, colorB);
         }
     }
 }

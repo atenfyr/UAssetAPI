@@ -36,8 +36,10 @@ namespace UAssetAPI.PropertyTypes
                     Value = null;
                     break;
                 case TextHistoryType.Base:
-                    Extras = reader.ReadBytes(4);
-                    Value = new string[] { reader.ReadUString(), reader.ReadUString() };
+                    //Extras = reader.ReadBytes(4);
+                    //Console.WriteLine("EXT: " + BitConverter.ToInt32(Extras, 0));
+                    Extras = new byte[0];
+                    Value = new string[] { reader.ReadUString(), reader.ReadUString(), reader.ReadUString() };
                     break;
                 case TextHistoryType.StringTableEntry:
                     Extras = reader.ReadBytes(8);
@@ -66,7 +68,7 @@ namespace UAssetAPI.PropertyTypes
                     Value = null;
                     break;
                 case TextHistoryType.Base:
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < 3; i++)
                     {
                         writer.WriteUString(Value[i]);
                     }

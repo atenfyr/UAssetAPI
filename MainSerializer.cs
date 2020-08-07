@@ -13,7 +13,7 @@ namespace UAssetAPI
     public static class MainSerializer
     {
 #if DEBUG
-        private static string lastType;
+        private static PropertyData lastType;
 #endif
 
         public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool includeHeader = true)
@@ -120,13 +120,14 @@ namespace UAssetAPI
                     break;
                 default:
 #if DEBUG
-                    Debug.WriteLine("Last type: " + lastType);
+                    Debug.WriteLine("Last type: " + lastType.Type);
+                    if (lastType is StructPropertyData) Debug.WriteLine("Was a " + ((StructPropertyData)lastType).StructType);
 #endif
                     if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
                     throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
             }
 #if DEBUG
-            lastType = type;
+            lastType = data;
 #endif
             if (reader != null)
             {

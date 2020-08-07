@@ -93,6 +93,9 @@ namespace UAssetAPI.StructTypes
                 case "Quat": // 4 floats
                     ReadOnce<QuatPropertyData>(reader);
                     break;
+                case "SoftObjectPath":
+                    ReadOnce<SoftObjectPropertyData>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
@@ -136,6 +139,7 @@ namespace UAssetAPI.StructTypes
                     return 16;
                 case "Vector":
                 case "Rotator":
+                case "SoftObjectPath":
                     WriteOnce(writer);
                     return 12;
                 case "Vector2D":
