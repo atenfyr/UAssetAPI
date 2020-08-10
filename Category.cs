@@ -403,9 +403,9 @@ namespace UAssetAPI
                 writer.Write(IndexData[i]);
             }
 
-            writer.Write(LevelType.Namespace);
+            writer.WriteUString(LevelType.Namespace);
             writer.Write((int)0);
-            writer.Write(LevelType.Value);
+            writer.WriteUString(LevelType.Value);
 
             writer.Write((long)0);
             writer.Write(FlagsProbably);
