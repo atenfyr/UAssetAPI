@@ -297,27 +297,6 @@ namespace UAssetAPI
                 }
                 else if (Data2[i] is BPPair us)
                 {
-                    /*bool succeeded = false;
-                    int part1 = 0;
-                    if (!int.TryParse(us.Key, out part1))
-                    {
-                        for (int c = 0; c < IndexData.Count; c++)
-                        {
-                            if (IndexData[c].Equals(us.Key))
-                            {
-                                part1 = c;
-                                succeeded = true;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        succeeded = true;
-                    }
-
-                    if (!succeeded) return;*/
-
                     int.TryParse(us.Key, out int part1);
                     if (part1 == 0 && Asset.HeaderReferenceContains(us.Key)) part1 = Asset.SearchHeaderReference(us.Key);
                     int.TryParse(us.Value, out int part2);

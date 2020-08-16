@@ -51,6 +51,7 @@
     <Compile Include="PropertyTypes\BoolPropertyData.cs" />
     <Compile Include="PropertyTypes\BytePropertyData.cs" />
     <Compile Include="StructTypes\ColorPropertyData.cs" />
+    <Compile Include="StructTypes\RichCurveKeyProperty.cs" />
     <Compile Include="StructTypes\TimespanPropertyData.cs" />
     <Compile Include="StructTypes\DateTimePropertyData.cs" />
     <Compile Include="PropertyTypes\EnumPropertyData.cs" />

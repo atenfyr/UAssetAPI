@@ -25,7 +25,6 @@ namespace UAssetAPI.PropertyTypes
             Type = "ByteProperty";
         }
 
-        // TODO: Use the leng parameter to determine the type of ByteProperty, we aren't going to get anywhere with anything else
         public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
             if (includeHeader)
@@ -40,6 +39,7 @@ namespace UAssetAPI.PropertyTypes
                     ByteType = BytePropertyType.Byte;
                     Value = (int)reader.ReadByte();
                     break;
+                case 0: // Should be only seen in maps
                 case 8:
                     ByteType = BytePropertyType.Long;
                     Value = (int)reader.ReadInt64();

@@ -96,6 +96,9 @@ namespace UAssetAPI.StructTypes
                 case "SoftObjectPath":
                     ReadOnce<SoftObjectPropertyData>(reader);
                     break;
+                case "RichCurveKey":
+                    ReadOnce<RichCurveKeyProperty>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
@@ -154,6 +157,9 @@ namespace UAssetAPI.StructTypes
                 case "Box":
                     WriteOnce(writer);
                     return 25;
+                case "RichCurveKey":
+                    WriteOnce(writer);
+                    return 27;
                 default:
                     return WriteNormal(writer);
             }
