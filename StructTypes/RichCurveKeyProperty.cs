@@ -14,7 +14,7 @@ namespace UAssetAPI.StructTypes
         Constant,
         Cubic,
         None
-    };
+    }
 
     public enum RichCurveTangentMode
     {
@@ -22,7 +22,7 @@ namespace UAssetAPI.StructTypes
         User,
         Break,
         None
-    };
+    }
 
     public enum RichCurveTangentWeightMode
     {
@@ -30,7 +30,7 @@ namespace UAssetAPI.StructTypes
         WeightedArrive,
         WeightedLeave,
         WeightedBoth
-    };
+    }
 
     public class RichCurveKeyProperty : PropertyData
     {

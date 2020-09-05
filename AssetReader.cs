@@ -6,6 +6,16 @@ using System.Linq;
 
 namespace UAssetAPI
 {
+    public class HeaderOutOfRangeException : FormatException
+    {
+        public string RequiredString;
+
+        public HeaderOutOfRangeException(string requiredString) : base("Requested string \"" + requiredString + "\" not found in header list")
+        {
+            RequiredString = requiredString;
+        }
+    }
+
     public class AssetReader
     {
         /* Public Methods */
@@ -30,6 +40,13 @@ namespace UAssetAPI
             headerLookup = new Dictionary<string, int>();
         }
 
+        public void SetHeaderReference(int index, string value)
+        {
+            headerLookup.Remove(headerIndexList[index]);
+            headerIndexList[index] = value;
+            headerLookup[value] = index;
+        }
+
         public string GetHeaderReference(int index)
         {
             if (index < 0) return Convert.ToString(-index);
@@ -52,7 +69,7 @@ namespace UAssetAPI
         public int SearchHeaderReference(string search)
         {
             if (HeaderReferenceContains(search)) return headerLookup[search];
-            throw new FormatException("Requested string \"" + search + "\" not found in header list");
+            throw new HeaderOutOfRangeException(search);
         }
 
         public int AddHeaderReference(string name)

@@ -7,6 +7,13 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
 {
+    public enum ZeroPaddingMode
+    {
+        Unknown,
+        Yes,
+        No
+    }
+
     public class Category
     {
         public CategoryReference ReferenceData;
@@ -69,9 +76,9 @@ namespace UAssetAPI
             Read2(reader, nextStarting);
         }
 
-        public virtual void Read2(BinaryReader reader, int nextStarting)
+        public virtual ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
-
+            return ZeroPaddingMode.Unknown;
         }
 
         public override void Write(BinaryWriter writer)
@@ -154,7 +161,7 @@ namespace UAssetAPI
             Data2 = data;
         }
 
-        public override void Read2(BinaryReader reader, int nextStarting)
+        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
             reader.ReadInt32();
 
@@ -166,6 +173,7 @@ namespace UAssetAPI
                 UString x = reader.ReadUStringWithEncoding();
                 Data2.Add(x);
             }
+            return ZeroPaddingMode.Unknown;
         }
 
         public override void Write2(BinaryWriter writer)
@@ -234,7 +242,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read2(BinaryReader reader, int nextStarting)
+        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
             reader.ReadInt32();
             BaseClass = reader.ReadInt32();
@@ -276,6 +284,7 @@ namespace UAssetAPI
             }
 
             reader.ReadBytes(4);
+            return ZeroPaddingMode.No;
         }
 
         public override void Write2(BinaryWriter writer)
@@ -345,7 +354,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read2(BinaryReader reader, int nextStarting)
+        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
             reader.ReadInt32();
             int numIndexEntries = reader.ReadInt32();
@@ -371,6 +380,7 @@ namespace UAssetAPI
             }
 
             reader.ReadByte();
+            return ZeroPaddingMode.No;
         }
 
         public override void Write2(BinaryWriter writer)

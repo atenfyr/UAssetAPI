@@ -1,9 +1,12 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace UAssetAPI.PropertyTypes
 {
     public class StrPropertyData : PropertyData<string>
     {
+        public Encoding Encoding = Encoding.UTF8;
+
         public StrPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "StrProperty";
@@ -21,7 +24,9 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = reader.ReadUString();
+            UString ustr = reader.ReadUStringWithEncoding();
+            Encoding = ustr.Encoding;
+            Value = ustr.Value;
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -32,7 +37,7 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int here = (int)writer.BaseStream.Position;
-            writer.WriteUString(Value);
+            writer.WriteUString(new UString(Value, Encoding));
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -44,6 +49,7 @@ namespace UAssetAPI.PropertyTypes
         public override void FromString(string[] d)
         {
             Value = d[0];
+            if (d.Length >= 5) Encoding = (d[5].Equals("utf-16") ? Encoding.Unicode : Encoding.UTF8);
         }
     }
 }

@@ -6,22 +6,29 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    public static class LinearHelpers
+    {
+        public static Color Convert(LinearColor color)
+        {
+            float FloatR = Utils.Clamp(color.R, 0.0f, 1.0f);
+            float FloatG = Utils.Clamp(color.G, 0.0f, 1.0f);
+            float FloatB = Utils.Clamp(color.B, 0.0f, 1.0f);
+            float FloatA = Utils.Clamp(color.A, 0.0f, 1.0f);
+
+		    FloatR = (float)(FloatR <= 0.0031308f ? FloatR * 12.92f : Math.Pow(FloatR, 1.0f / 2.4f) * 1.055f - 0.055f);
+		    FloatG = (float)(FloatG <= 0.0031308f ? FloatG * 12.92f : Math.Pow(FloatG, 1.0f / 2.4f) * 1.055f - 0.055f);
+		    FloatB = (float)(FloatB <= 0.0031308f ? FloatB * 12.92f : Math.Pow(FloatB, 1.0f / 2.4f) * 1.055f - 0.055f);
+
+	        return Color.FromArgb((byte)Math.Floor(FloatA * 255.999f), (byte)Math.Floor(FloatR * 255.999f), (byte)Math.Floor(FloatG * 255.999f), (byte)Math.Floor(FloatB * 255.999f));
+        }
+    }
+
     public class LinearColor
     {
         public float R;
         public float G;
         public float B;
         public float A;
-
-        public Color GetARGB()
-        {
-            return Color.FromArgb(
-                (int)(Math.Pow(Utils.Clamp(A, 0, 1), 1.0 / 2.2) * 255),
-                (int)(Math.Pow(Utils.Clamp(R, 0, 1), 1.0 / 2.2) * 255),
-                (int)(Math.Pow(Utils.Clamp(G, 0, 1), 1.0 / 2.2) * 255),
-                (int)(Math.Pow(Utils.Clamp(B, 0, 1), 1.0 / 2.2) * 255)
-            );
-        }
 
         public LinearColor()
         {
@@ -90,7 +97,7 @@ namespace UAssetAPI.StructTypes
             if (!float.TryParse(d[1], out float colorG)) return;
             if (!float.TryParse(d[2], out float colorB)) return;
             if (!float.TryParse(d[3], out float colorA)) return;
-            Value = new LinearColor(colorA, colorR, colorG, colorB);
+            Value = new LinearColor(colorR, colorG, colorB, colorA);
         }
     }
 }

@@ -28,7 +28,15 @@ namespace UAssetAPI.PropertyTypes
             switch (type)
             {
                 case "StructProperty":
-                    StructPropertyData data = new StructPropertyData(name, asset, "Generic");
+                    string strucType = "Generic";
+                    switch(name)
+                    {
+                        case "ColorDatabase":
+                            strucType = "LinearColor";
+                            break;
+                    }
+
+                    StructPropertyData data = new StructPropertyData(name, asset, strucType);
                     data.Read(reader, false, leng);
                     return data;
                 default:

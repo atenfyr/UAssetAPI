@@ -4,9 +4,9 @@ namespace UAssetAPI.PropertyTypes
 {
     public abstract class PropertyData
     {
-        public string Name;
-        public int WidgetData;
-        public string Type;
+        public string Name = "";
+        public int WidgetData = 0;
+        public string Type = "";
         public AssetReader Asset;
         public object RawValue;
 
