@@ -334,6 +334,7 @@ namespace UAssetAPI
                         switch (GetHeaderReference(GetLinkReference(refData.connection)))
                         {
                             case "BlueprintGeneratedClass":
+                            case "WidgetBlueprintGeneratedClass":
                                 categories[i] = new BlueprintGeneratedClassCategory(categories[i]);
                                 categories[i].Read(reader, nextStarting);
                                 break;

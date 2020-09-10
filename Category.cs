@@ -191,38 +191,22 @@ namespace UAssetAPI
         }
     }
 
-    public class BPPortion
+    public class FunctionDataEntry
     {
+        public string Name;
+        public int Flags;
+        public int Category;
 
-    }
-
-    public class BPSeparator : BPPortion
-    {
-        public BPSeparator()
+        public FunctionDataEntry(string name, int flags, int category)
         {
-
+            Name = name;
+            Flags = flags;
+            Category = category;
         }
 
         public override string ToString()
         {
-            return "()";
-        }
-    }
-
-    public class BPPair : BPPortion
-    {
-        public string Key;
-        public string Value;
-
-        public BPPair(string key, string value)
-        {
-            Key = key;
-            Value = value;
-        }
-
-        public override string ToString()
-        {
-            return "(" + Key + ", " + Value + ")";
+            return "(" + Name + ", " + Category + ")";
         }
     }
 
@@ -230,7 +214,10 @@ namespace UAssetAPI
     {
         public int BaseClass;
         public List<int> IndexData;
-        public List<BPPortion> Data2;
+        public List<FunctionDataEntry> FunctionData;
+        public int FooterSeparator;
+        public int FooterObject;
+        public string FooterEngine;
 
         public BlueprintGeneratedClassCategory(Category super) : base(super)
         {
@@ -254,36 +241,27 @@ namespace UAssetAPI
                 IndexData.Add(reader.ReadInt32());
             }
 
-            Data2 = new List<BPPortion>();
-            int noneRef = Asset.SearchHeaderReference("None");
-            while (true)
+            reader.ReadBytes(8); // 8 zeros
+
+            FunctionData = new List<FunctionDataEntry>();
+            int numFuncIndexEntries = reader.ReadInt32();
+            for (int i = 0; i < numFuncIndexEntries; i++)
             {
-                int firstBit = reader.ReadInt32();
-                if (firstBit == 0)
-                {
-                    Data2.Add(new BPSeparator());
-                    continue;
-                }
-                if (firstBit == noneRef) break;
+                int functionName = reader.ReadInt32();
+                int flags = reader.ReadInt32();
+                int functionCategory = reader.ReadInt32();
 
-                int secondBit = reader.ReadInt32();
-
-                string k = Convert.ToString(firstBit);
-                if (firstBit >= 0)
-                {
-                    k = Asset.GetHeaderReference(firstBit);
-                }
-
-                string v = Convert.ToString(secondBit);
-                if (secondBit >= 0)
-                {
-                    v = Asset.GetHeaderReference(secondBit);
-                }
-
-                Data2.Add(new BPPair(k, v));
+                FunctionData.Add(new FunctionDataEntry(Asset.GetHeaderReference(functionName), flags, functionCategory));
             }
 
-            reader.ReadBytes(4);
+            FooterSeparator = reader.ReadInt32(); // usually 10 00 84 00
+            FooterObject = reader.ReadInt32();
+            FooterEngine = Asset.GetHeaderReference((int)reader.ReadInt32());
+            reader.ReadBytes(16); // zeros
+            reader.ReadInt64(); // None
+
+            // Here are a couple weird ints we're ignoring for now
+
             return ZeroPaddingMode.No;
         }
 
@@ -298,25 +276,23 @@ namespace UAssetAPI
                 writer.Write(IndexData[i]);
             }
 
-            for (int i = 0; i < Data2.Count; i++)
-            {
-                if (Data2[i] is BPSeparator)
-                {
-                    writer.Write((int)0);
-                }
-                else if (Data2[i] is BPPair us)
-                {
-                    int.TryParse(us.Key, out int part1);
-                    if (part1 == 0 && Asset.HeaderReferenceContains(us.Key)) part1 = Asset.SearchHeaderReference(us.Key);
-                    int.TryParse(us.Value, out int part2);
-                    if (part2 == 0 && Asset.HeaderReferenceContains(us.Value)) part2 = Asset.SearchHeaderReference(us.Value);
+            writer.Write((long)0); // 8 zeros
 
-                    writer.Write(part1);
-                    writer.Write(part2);
-                }
+            writer.Write(FunctionData.Count);
+            for (int i = 0; i < FunctionData.Count; i++)
+            {
+                writer.Write((int)Asset.SearchHeaderReference(FunctionData[i].Name));
+                writer.Write((int)FunctionData[i].Flags);
+                writer.Write((int)FunctionData[i].Category);
             }
 
+            writer.Write(FooterSeparator);
+            writer.Write(FooterObject);
+            writer.Write((int)Asset.SearchHeaderReference(FooterEngine));
+            writer.Write((long)0); writer.Write((long)0); // 16 zeros
             writer.Write((long)Asset.SearchHeaderReference("None"));
+
+            // Here are a couple weird ints we're ignoring for now
         }
     }
 

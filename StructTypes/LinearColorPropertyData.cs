@@ -15,11 +15,11 @@ namespace UAssetAPI.StructTypes
             float FloatB = Utils.Clamp(color.B, 0.0f, 1.0f);
             float FloatA = Utils.Clamp(color.A, 0.0f, 1.0f);
 
-		    FloatR = (float)(FloatR <= 0.0031308f ? FloatR * 12.92f : Math.Pow(FloatR, 1.0f / 2.4f) * 1.055f - 0.055f);
-		    FloatG = (float)(FloatG <= 0.0031308f ? FloatG * 12.92f : Math.Pow(FloatG, 1.0f / 2.4f) * 1.055f - 0.055f);
-		    FloatB = (float)(FloatB <= 0.0031308f ? FloatB * 12.92f : Math.Pow(FloatB, 1.0f / 2.4f) * 1.055f - 0.055f);
+            FloatR = (float)(FloatR <= 0.0031308f ? FloatR * 12.92f : Math.Pow(FloatR, 1.0f / 2.4f) * 1.055f - 0.055f);
+            FloatG = (float)(FloatG <= 0.0031308f ? FloatG * 12.92f : Math.Pow(FloatG, 1.0f / 2.4f) * 1.055f - 0.055f);
+            FloatB = (float)(FloatB <= 0.0031308f ? FloatB * 12.92f : Math.Pow(FloatB, 1.0f / 2.4f) * 1.055f - 0.055f);
 
-	        return Color.FromArgb((byte)Math.Floor(FloatA * 255.999f), (byte)Math.Floor(FloatR * 255.999f), (byte)Math.Floor(FloatG * 255.999f), (byte)Math.Floor(FloatB * 255.999f));
+            return Color.FromArgb((byte)Math.Floor(FloatA * 255.999f), (byte)Math.Floor(FloatR * 255.999f), (byte)Math.Floor(FloatG * 255.999f), (byte)Math.Floor(FloatB * 255.999f));
         }
     }
 

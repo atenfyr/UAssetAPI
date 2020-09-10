@@ -25,8 +25,8 @@ namespace UAssetAPI.PropertyTypes
             }
 
             UString ustr = reader.ReadUStringWithEncoding();
-            Encoding = ustr.Encoding;
-            Value = ustr.Value;
+            if (ustr != null) Encoding = ustr.Encoding;
+            Value = ustr != null ? ustr.Value : null;
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
