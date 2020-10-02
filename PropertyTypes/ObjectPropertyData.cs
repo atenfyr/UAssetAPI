@@ -25,7 +25,12 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            LinkValue = reader.ReadInt32();
+            SetLinkValue(reader.ReadInt32());
+        }
+
+        public void SetLinkValue(int newLinkValue)
+        {
+            LinkValue = newLinkValue;
             if (LinkValue < 0 && Utils.GetNormalIndex(LinkValue) >= 0)
             {
                 Value = Asset.links[Utils.GetNormalIndex(LinkValue)]; // link reference

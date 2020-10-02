@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -32,8 +33,13 @@ namespace UAssetAPI.PropertyTypes
             switch(HistoryType)
             {
                 case TextHistoryType.None:
-                    Extras = new byte[0];
-                    Value = null;
+                    Extras = reader.ReadBytes(4);
+                    List<string> ValueList = new List<string>();
+                    for (int i = 0; i < BitConverter.ToInt32(Extras, 0); i++)
+                    {
+                        ValueList.Add(reader.ReadUString());
+                    }
+                    Value = ValueList.ToArray();
                     break;
                 case TextHistoryType.Base:
                     //Extras = reader.ReadBytes(4);
@@ -65,7 +71,12 @@ namespace UAssetAPI.PropertyTypes
             switch(HistoryType)
             {
                 case TextHistoryType.None:
-                    Value = null;
+                    writer.Seek(-4, SeekOrigin.Current);
+                    writer.Write(Value.Length);
+                    foreach (string val in Value)
+                    {
+                        writer.WriteUString(val);
+                    }
                     break;
                 case TextHistoryType.Base:
                     for (int i = 0; i < 3; i++)
@@ -107,7 +118,7 @@ namespace UAssetAPI.PropertyTypes
             if (d[0].Equals("null"))
             {
                 HistoryType = TextHistoryType.None;
-                Value = null;
+                Value = new string[] { };
                 return;
             }
 

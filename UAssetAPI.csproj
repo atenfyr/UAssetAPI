@@ -85,6 +85,7 @@
     <Compile Include="StructTypes\BoxPropertyData.cs" />
     <Compile Include="StructTypes\Vector4PropertyData.cs" />
     <Compile Include="StructTypes\VectorPropertyData.cs" />
+    <Compile Include="StructTypes\ViewTargetBlendParamsPropertyData.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

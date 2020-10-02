@@ -56,9 +56,6 @@ namespace UAssetAPI
                 case null:
                     writer.Write((int)0);
                     break;
-                case "":
-                    writer.Write((int)1);
-                    break;
                 default:
                     int realLen = str.Length + 1;
                     if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;

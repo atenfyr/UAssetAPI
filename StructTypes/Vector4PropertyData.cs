@@ -50,7 +50,7 @@ namespace UAssetAPI.StructTypes
             if (float.TryParse(d[0], out float res1)) Value[0] = res1;
             if (float.TryParse(d[1], out float res2)) Value[1] = res2;
             if (float.TryParse(d[2], out float res3)) Value[2] = res3;
-            if (float.TryParse(d[3], out float res4)) Value[3] = res3;
+            if (float.TryParse(d[3], out float res4)) Value[3] = res4;
         }
 
         public override string ToString()

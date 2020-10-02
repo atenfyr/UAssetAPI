@@ -99,6 +99,9 @@ namespace UAssetAPI.StructTypes
                 case "RichCurveKey":
                     ReadOnce<RichCurveKeyProperty>(reader);
                     break;
+                case "ViewTargetBlendParams":
+                    ReadOnce<ViewTargetBlendParamsPropertyData>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
@@ -160,6 +163,9 @@ namespace UAssetAPI.StructTypes
                 case "RichCurveKey":
                     WriteOnce(writer);
                     return 27;
+                case "ViewTargetBlendParams":
+                    WriteOnce(writer);
+                    return 13;
                 default:
                     return WriteNormal(writer);
             }

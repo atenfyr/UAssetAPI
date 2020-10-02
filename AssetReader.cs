@@ -150,18 +150,18 @@ namespace UAssetAPI
 
         /* End Public Methods */
 
-        // These are public for debugging, eventually they will not be
-        public int sectionSixOffset;
-        public int sectionOneStringCount;
-        public int dataCategoryCount;
-        public int sectionThreeOffset;
-        public int sectionTwoLinkCount;
-        public int sectionTwoOffset;
-        public int sectionFourOffset;
-        public int sectionFiveStringCount;
-        public int sectionFiveOffset;
-        public int uexpDataOffset;
-        public int fileSize;
+        internal int headerSize;
+        internal int sectionSixOffset;
+        internal int sectionOneStringCount;
+        internal int dataCategoryCount;
+        internal int sectionThreeOffset;
+        internal int sectionTwoLinkCount;
+        internal int sectionTwoOffset;
+        internal int sectionFourOffset;
+        internal int sectionFiveStringCount;
+        internal int sectionFiveOffset;
+        internal int uexpDataOffset;
+        internal int fileSize;
 
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
         internal List<string> headerIndexList;
@@ -171,8 +171,12 @@ namespace UAssetAPI
         public List<string> categoryStringReference;
         public List<Category> categories;
 
+        private static uint UASSET_MAGIC = 2653586369;
         private void ReadHeader(BinaryReader reader)
         {
+            reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            Debug.Assert(reader.ReadUInt32() == UASSET_MAGIC);
+
             reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
             sectionSixOffset = reader.ReadInt32();
 
@@ -182,9 +186,10 @@ namespace UAssetAPI
             reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
             sectionOneStringCount = reader.ReadInt32();
 
-            Debug.Assert(reader.ReadInt32() == 193); // 45
+            headerSize = reader.ReadInt32();
+            Debug.Assert(headerSize == 193);
 
-            //reader.ReadUInt64(); // 49, Usually 0
+            reader.ReadInt64(); // uncertain, always 0
 
             reader.BaseStream.Seek(57, SeekOrigin.Begin); // 57
             dataCategoryCount = reader.ReadInt32();
@@ -202,9 +207,9 @@ namespace UAssetAPI
             Debug.Assert(reader.ReadInt32() == dataCategoryCount); // 113
             Debug.Assert(reader.ReadInt32() == sectionOneStringCount); // 117
 
-            //reader.ReadBytes(36); // 36 zeros
+            reader.ReadBytes(36); // 36 zeros
 
-            // 157, weird 4-byte hash
+            // 157, weird 4-byte hash + 4 zeros
 
             reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
             uexpDataOffset = reader.ReadInt32();
@@ -218,8 +223,7 @@ namespace UAssetAPI
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
-            byte[] header = reader.ReadBytes(185);
-            ReadHeader(new BinaryReader(new MemoryStream(header)));
+            ReadHeader(reader);
 
             // Section 1
             reader.BaseStream.Position += 8;
