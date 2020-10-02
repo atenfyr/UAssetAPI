@@ -88,7 +88,7 @@ namespace UAssetAPI.StructTypes
             writer.Write(ArriveTangentWeight);
             writer.Write(LeaveTangent);
             writer.Write(LeaveTangentWeight);
-            return 0;
+            return sizeof(float) * 6 + sizeof(sbyte) * 3;
         }
 
         public override void FromString(string[] d)

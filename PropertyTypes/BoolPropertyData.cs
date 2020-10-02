@@ -17,12 +17,20 @@ namespace UAssetAPI.PropertyTypes
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            Value = reader.ReadInt16() > 0;
+            Value = reader.ReadByte() > 0;
+            if (includeHeader)
+            {
+                reader.ReadByte();
+            }
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            writer.Write((short)(Value ? 1 : 0));
+            writer.Write(Value);
+            if (includeHeader)
+            {
+                writer.Write((byte)0);
+            }
             return 0;
         }
 

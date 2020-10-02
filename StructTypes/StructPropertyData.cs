@@ -102,15 +102,36 @@ namespace UAssetAPI.StructTypes
                 case "ViewTargetBlendParams":
                     ReadOnce<ViewTargetBlendParamsPropertyData>(reader);
                     break;
+                case "ColorMaterialInput":
+                    ReadOnce<ColorMaterialInputPropertyData>(reader);
+                    break;
+                case "ExpressionInput":
+                    ReadOnce<ExpressionInputPropertyData>(reader);
+                    break;
+                case "MaterialAttributesInput":
+                    ReadOnce<MaterialAttributesInputPropertyData>(reader);
+                    break;
+                case "ScalarMaterialInput":
+                    ReadOnce<ScalarMaterialInputPropertyData>(reader);
+                    break;
+                case "ShadingModelMaterialInput":
+                    ReadOnce<ShadingModelMaterialInputPropertyData>(reader);
+                    break;
+                case "VectorMaterialInput":
+                    ReadOnce<VectorMaterialInputPropertyData>(reader);
+                    break;
+                case "Vector2MaterialInput":
+                    ReadOnce<Vector2MaterialInputPropertyData>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
             }
         }
 
-        private void WriteOnce(BinaryWriter writer)
+        private int WriteOnce(BinaryWriter writer)
         {
-            Value[0].Write(writer, false);
+            return Value[0].Write(writer, false);
         }
 
         private int WriteNormal(BinaryWriter writer)
@@ -135,7 +156,7 @@ namespace UAssetAPI.StructTypes
                 writer.Write(StructGUID.ToByteArray());
                 writer.Write((byte)0);
             }
-            switch(StructType)
+            /*switch(StructType)
             {
                 case "Guid":
                 case "LinearColor":
@@ -166,6 +187,34 @@ namespace UAssetAPI.StructTypes
                 case "ViewTargetBlendParams":
                     WriteOnce(writer);
                     return 13;
+                default:
+                    return WriteNormal(writer);
+            }*/
+            switch (StructType)
+            {
+                case "Guid":
+                case "LinearColor":
+                case "Quat":
+                case "Vector4":
+                case "Vector":
+                case "Rotator":
+                case "SoftObjectPath":
+                case "Vector2D":
+                case "IntPoint":
+                case "DateTime":
+                case "Timespan":
+                case "Color":
+                case "Box":
+                case "RichCurveKey":
+                case "ViewTargetBlendParams":
+                case "ExpressionInput":
+                case "MaterialAttributesInput":
+                case "ColorMaterialInput":
+                case "ScalarMaterialInput":
+                case "ShadingModelMaterialInput":
+                case "VectorMaterialInput":
+                case "Vector2MaterialInput":
+                    return WriteOnce(writer);
                 default:
                     return WriteNormal(writer);
             }

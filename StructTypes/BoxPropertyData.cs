@@ -47,7 +47,7 @@ namespace UAssetAPI.StructTypes
                Value[i].Write(writer, includeHeader);
             }
             writer.Write(IsValid);
-            return 0;
+            return 25;
         }
 
         public override void FromString(string[] d)
