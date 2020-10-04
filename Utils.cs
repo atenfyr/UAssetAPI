@@ -80,7 +80,7 @@ namespace UAssetAPI
 
         public static void WriteUString(this BinaryWriter writer, UString str)
         {
-            WriteUString(writer, str.Value, str.Encoding);
+            WriteUString(writer, str?.Value, str?.Encoding);
         }
 
         public static int GetLinkIndex(int index)

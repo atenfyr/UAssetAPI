@@ -1,47 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class BoolPropertyData : PropertyData<bool>
+    public class UnknownPropertyData : PropertyData<byte[]>
     {
-        public BoolPropertyData(string name, AssetReader asset) : base(name, asset)
+        public UnknownPropertyData(string name, AssetReader asset) : base(name, asset)
         {
-            Type = "BoolProperty";
+            Type = "UnknownProperty";
         }
 
-        public BoolPropertyData()
+        public UnknownPropertyData()
         {
-            Type = "BoolProperty";
+            Type = "UnknownProperty";
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng)
         {
-            Value = reader.ReadBoolean();
             if (includeHeader)
             {
                 reader.ReadByte();
             }
+
+            Value = reader.ReadBytes((int)leng);
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            writer.Write(Value);
             if (includeHeader)
             {
                 writer.Write((byte)0);
             }
-            return 0;
+
+            writer.Write(Value);
+            return Value.Length;
         }
 
         public override string ToString()
         {
             return Convert.ToString(Value);
-        }
-
-        public override void FromString(string[] d)
-        {
-            Value = d[0].Equals("1") || d[0].ToLower().Equals("true");
         }
     }
 }

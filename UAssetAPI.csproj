@@ -50,6 +50,7 @@
     <Compile Include="PropertyTypes\ArrayPropertyData.cs" />
     <Compile Include="PropertyTypes\BoolPropertyData.cs" />
     <Compile Include="PropertyTypes\BytePropertyData.cs" />
+    <Compile Include="PropertyTypes\UnknownPropertyData.cs" />
     <Compile Include="StructTypes\ColorPropertyData.cs" />
     <Compile Include="StructTypes\MaterialInputProperties.cs" />
     <Compile Include="StructTypes\RichCurveKeyProperty.cs" />

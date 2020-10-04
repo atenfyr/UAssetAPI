@@ -120,11 +120,23 @@ namespace UAssetAPI
                     break;
                 default:
 #if DEBUG
+                    Debug.WriteLine("Parsing unknown type " + type);
+                    Debug.WriteLine("Length: " + leng);
+                    Debug.WriteLine("Pos: " + reader.BaseStream.Position);
                     Debug.WriteLine("Last type: " + lastType.Type);
-                    if (lastType is StructPropertyData) Debug.WriteLine("Was a " + ((StructPropertyData)lastType).StructType);
+                    if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType);
 #endif
-                    if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
-                    throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
+                    if (leng > 0)
+                    {
+                        data = new UnknownPropertyData(name, asset);
+                        data.Type = type;
+                    }
+                    else
+                    {
+                        if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
+                        throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
+                    }
+                    break;
             }
 #if DEBUG
             lastType = data;
