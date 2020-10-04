@@ -120,11 +120,13 @@ namespace UAssetAPI
                     break;
                 default:
 #if DEBUG
+                    Debug.WriteLine("-----------");
                     Debug.WriteLine("Parsing unknown type " + type);
                     Debug.WriteLine("Length: " + leng);
-                    Debug.WriteLine("Pos: " + reader.BaseStream.Position);
+                    if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
                     Debug.WriteLine("Last type: " + lastType.Type);
                     if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType);
+                    Debug.WriteLine("-----------");
 #endif
                     if (leng > 0)
                     {

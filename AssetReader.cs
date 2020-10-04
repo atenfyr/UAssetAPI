@@ -175,7 +175,7 @@ namespace UAssetAPI
         private void ReadHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            Debug.Assert(reader.ReadUInt32() == UASSET_MAGIC);
+            if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
             reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
             sectionSixOffset = reader.ReadInt32();
