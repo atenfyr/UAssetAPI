@@ -49,7 +49,7 @@ namespace UAssetAPI.PropertyTypes
         public override void FromString(string[] d)
         {
             Value = d[0];
-            if (d.Length >= 5) Encoding = (d[5].Equals("utf-16") ? Encoding.Unicode : Encoding.UTF8);
+            if (d.Length >= 5) Encoding = (d[5].Equals("utf-16") ? Encoding.ASCII : Encoding.UTF8);
         }
     }
 }

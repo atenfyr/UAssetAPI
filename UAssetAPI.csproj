@@ -88,6 +88,7 @@
     <Compile Include="StructTypes\Vector4PropertyData.cs" />
     <Compile Include="StructTypes\VectorPropertyData.cs" />
     <Compile Include="StructTypes\ViewTargetBlendParamsPropertyData.cs" />
+    <Compile Include="UE4Version.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

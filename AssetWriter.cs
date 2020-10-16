@@ -176,9 +176,10 @@ namespace UAssetAPI
             }
 
             // Uexp Data
-            data.uexpDataOffset = (int)stre.Position;
             if (data.UseSeparateBulkDataFiles)
             {
+                writer.Write(new byte[data.gapBeforeUexp]);
+                data.uexpDataOffset = (int)stre.Position;
                 foreach (int part in data.UExpData)
                 {
                     writer.Write(part);
@@ -244,8 +245,23 @@ namespace UAssetAPI
                     writer.Write(us.type);
                     writer.Write(us.garbageNew);
                     writer.Write(us.lengthV); // !!!
-                    writer.Write(us.garbage2);
-                    writer.Write(us.startV); // !!!
+
+                    if (data.GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    {
+                        writer.Write(us.garbage2);
+                        writer.Write(us.startV);
+                    }
+                    else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    {
+                        writer.Write(us.startV);
+                        writer.Write(us.garbage2);
+                    }
+                    else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V1)
+                    {
+                        writer.Write(us.garbage2);
+                        writer.Write(us.startV);
+                    }
+
                     writer.Write(us.garbage3);
                 }
             }

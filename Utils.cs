@@ -23,7 +23,7 @@ namespace UAssetAPI
                     else
                     {
                         byte[] data = reader.ReadBytes(length);
-                        return new UString(Encoding.UTF8.GetString(data, 0, data.Length - 1), Encoding.UTF8);
+                        return new UString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
                     }
             }
         }
@@ -49,7 +49,7 @@ namespace UAssetAPI
 
         public static void WriteUString(this BinaryWriter writer, string str, Encoding encoding = null)
         {
-            if (encoding == null) encoding = Encoding.UTF8;
+            if (encoding == null) encoding = Encoding.ASCII;
 
             switch (str)
             {

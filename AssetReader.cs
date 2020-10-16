@@ -23,6 +23,7 @@ namespace UAssetAPI
         public bool UseSeparateBulkDataFiles = false;
         public List<int> UExpData;
         public Guid AssetGuid;
+        public UE4Version GuessedVersion;
 
         public IReadOnlyList<string> GetHeaderIndexList()
         {
@@ -82,7 +83,12 @@ namespace UAssetAPI
 
         public int GetLinkReference(int index)
         {
-            return (int)(index < 0 ? (long)links[Utils.GetNormalIndex(index)].Property : -index);
+            return (int)(index < 0 ? (long)GetLinkAt(index).Property : -index);
+        }
+
+        public Link GetLinkAt(int index)
+        {
+            return links[Utils.GetNormalIndex(index)];
         }
 
         public Link AddLink(string bbase, string bclass, int link, string property)
@@ -150,18 +156,19 @@ namespace UAssetAPI
 
         /* End Public Methods */
 
-        internal int headerSize;
-        internal int sectionSixOffset;
-        internal int sectionOneStringCount;
-        internal int dataCategoryCount;
-        internal int sectionThreeOffset;
-        internal int sectionTwoLinkCount;
-        internal int sectionTwoOffset;
-        internal int sectionFourOffset;
-        internal int sectionFiveStringCount;
-        internal int sectionFiveOffset;
-        internal int uexpDataOffset;
-        internal int fileSize;
+        public int headerSize;
+        public int sectionSixOffset;
+        public int sectionOneStringCount;
+        public int dataCategoryCount;
+        public int sectionThreeOffset;
+        public int sectionTwoLinkCount;
+        public int sectionTwoOffset;
+        public int sectionFourOffset;
+        public int sectionFiveStringCount;
+        public int sectionFiveOffset;
+        public int uexpDataOffset;
+        public int gapBeforeUexp;
+        public int fileSize;
 
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
         internal List<string> headerIndexList;
@@ -187,7 +194,6 @@ namespace UAssetAPI
             sectionOneStringCount = reader.ReadInt32();
 
             headerSize = reader.ReadInt32();
-            Debug.Assert(headerSize == 193);
 
             reader.ReadInt64(); // uncertain, always 0
 
@@ -199,6 +205,26 @@ namespace UAssetAPI
             sectionFourOffset = reader.ReadInt32(); // 73
             sectionFiveStringCount = reader.ReadInt32(); // 77
             sectionFiveOffset = reader.ReadInt32(); // 81
+
+            switch (headerSize)
+            {
+                case 185:
+                    GuessedVersion = UE4Version.VER_GUESSED_V1;
+                    break;
+                case 193:
+                    if (sectionFourOffset == 0)
+                    {
+                        GuessedVersion = UE4Version.VER_GUESSED_V3;
+                    }
+                    else
+                    {
+                        GuessedVersion = UE4Version.VER_GUESSED_V2;
+                    }
+                    break;
+                case 197:
+                    GuessedVersion = UE4Version.VER_GUESSED_V2;
+                    break;
+            }
 
             reader.ReadUInt64(); // 85, Usually 0
             AssetGuid = new Guid(reader.ReadBytes(16));
@@ -250,6 +276,8 @@ namespace UAssetAPI
                 }
             }
 
+            int gapStart = 0;
+
             // Section 3
             categories = new List<Category>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
             if (sectionThreeOffset > 0)
@@ -257,21 +285,45 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < dataCategoryCount; i++)
                 {
-                    int connection = reader.ReadInt32();
-                    int connect = reader.ReadInt32();
-                    int category = reader.ReadInt32();
-                    int link = reader.ReadInt32();
-                    int typeIndex = reader.ReadInt32();
-                    int garbage1 = reader.ReadInt32();
-                    ushort type = reader.ReadUInt16();
-                    ushort garbageNew = reader.ReadUInt16();
-                    int lengthV = reader.ReadInt32(); // !!!
-                    int garbage2 = reader.ReadInt32();
-                    int startV = reader.ReadInt32(); // !!!
+                    int connection = 0, connect = 0, category = 0, link = 0, typeIndex = 0, garbage1 = 0, lengthV = 0, garbage2 = 0, startV = 0;
+                    ushort type = 0, garbageNew = 0;
 
-                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(104 - (10 * 4))), this, new byte[0]));
+                    connection = reader.ReadInt32();
+                    connect = reader.ReadInt32();
+                    category = reader.ReadInt32();
+                    link = reader.ReadInt32();
+                    typeIndex = reader.ReadInt32();
+                    garbage1 = reader.ReadInt32();
+                    type = reader.ReadUInt16();
+                    garbageNew = reader.ReadUInt16();
+                    lengthV = reader.ReadInt32(); // !!!
+
+                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    {
+                        garbage2 = reader.ReadInt32();
+                        startV = reader.ReadInt32(); // !!!
+                    }
+                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    {
+                        startV = reader.ReadInt32(); // !!!
+                        garbage2 = reader.ReadInt32();
+                    }
+                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V1)
+                    {
+                        garbage2 = reader.ReadInt32();
+                        startV = reader.ReadInt32(); // !!!
+                    }
+
+                    int totalByteCount = 104;
+                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2) totalByteCount = 104;
+                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3) totalByteCount = 96;
+                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V1) totalByteCount = 72;
+
+                    categories.Add(new Category(new CategoryReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(totalByteCount - (10 * 4))), this, new byte[0]));
                 }
+                gapStart = (int)reader.BaseStream.Position;
             }
+
 
             // Section 4
             categoryIntReference = new List<int[]>();
@@ -288,6 +340,7 @@ namespace UAssetAPI
                     }
                     categoryIntReference.Add(data);
                 }
+                gapStart = (int)reader.BaseStream.Position;
             }
 
             // Section 5
@@ -299,6 +352,7 @@ namespace UAssetAPI
                 {
                     categoryStringReference.Add(reader.ReadUString());
                 }
+                gapStart = (int)reader.BaseStream.Position;
             }
 
             // Section 6
@@ -306,6 +360,7 @@ namespace UAssetAPI
             {
                 if (UseSeparateBulkDataFiles)
                 {
+                    gapBeforeUexp = uexpDataOffset - gapStart;
                     reader.BaseStream.Seek(uexpDataOffset, SeekOrigin.Begin);
                     UExpData = new List<int>();
                     int firstStart = categories[0].ReferenceData.startV;
@@ -348,6 +403,10 @@ namespace UAssetAPI
                                 break;
                             case "StringTable":
                                 categories[i] = new StringTableCategory(categories[i]);
+                                categories[i].Read(reader, nextStarting);
+                                break;
+                            case "DataTable":
+                                categories[i] = new DataTableCategory(categories[i]);
                                 categories[i].Read(reader, nextStarting);
                                 break;
                             default:
