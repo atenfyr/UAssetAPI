@@ -45,13 +45,15 @@ namespace UAssetAPI
             var stre = new MemoryStream(reader.ReadBytes(193));
             BinaryWriter writer = new BinaryWriter(stre);
 
-            writer.Seek(24, SeekOrigin.Begin); // 24
+            writer.Write(AssetReader.UASSET_MAGIC);
+
+            writer.Seek(24 + data.extraGameJump, SeekOrigin.Current); // 24
             writer.Write(data.sectionSixOffset);
 
-            writer.Seek(41, SeekOrigin.Begin); // 41
+            writer.Seek(13, SeekOrigin.Current); // 41
             writer.Write(data.sectionOneStringCount);
 
-            writer.Seek(57, SeekOrigin.Begin); // 57
+            writer.Seek(12, SeekOrigin.Current); // 57
             writer.Write(data.dataCategoryCount);
             writer.Write(data.sectionThreeOffset); // 61
             writer.Write(data.sectionTwoLinkCount); // 65
@@ -60,15 +62,29 @@ namespace UAssetAPI
             writer.Write(data.sectionFiveStringCount); // 77
             writer.Write(data.sectionFiveOffset); // 81
 
-            writer.Seek(113, SeekOrigin.Begin); // 113
-            writer.Write(data.dataCategoryCount);
+            // 8 or 4 bytes 0
+            // 16-byte GUID
+            // 4 bytes for the 1
 
+            if (data.GuessedVersion >= UE4Version.VER_GUESSED_V2) writer.Seek(8, SeekOrigin.Current);
+            else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V3) writer.Seek(8, SeekOrigin.Current);
+            else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V1) writer.Seek(4, SeekOrigin.Current);
+
+            writer.Seek(16, SeekOrigin.Current);
+
+            writer.Write((int)1);
+            writer.Write(data.dataCategoryCount);
             writer.Write(data.headerIndexList.Count); // 117
 
-            writer.Seek(165, SeekOrigin.Begin); // 165
+            // 36 zeros
+            // weird 4 byte hash + 4 zeros
+            writer.Seek(36, SeekOrigin.Current);
+            writer.Seek(8, SeekOrigin.Current);
+
             writer.Write(data.uexpDataOffset);
 
-            writer.Seek(169, SeekOrigin.Begin); // 169
+            if (data.GuessedVersion >= UE4Version.VER_GUESSED_V1 && data.GuessedVersion < UE4Version.VER_GUESSED_V3) writer.Write(data.sectionSixOffset - 4);
+
             writer.Write(data.fileSize - 4);
 
             return stre.ToArray();
@@ -84,7 +100,7 @@ namespace UAssetAPI
             writer.Write(MakeHeader(reader));
 
             // Section 1
-            writer.Seek(193, SeekOrigin.Begin);
+            writer.Seek(data.headerSize, SeekOrigin.Begin);
             data.sectionOneStringCount = data.headerIndexList.Count;
             for (int i = 0; i < data.headerIndexList.Count; i++)
             {
@@ -140,7 +156,7 @@ namespace UAssetAPI
             }
 
             // Section 4
-            if (data.categoryIntReference.Count > 0)
+            if (data.doWeHaveSectionFour)
             {
                 data.sectionFourOffset = (int)writer.BaseStream.Position;
                 for (int i = 0; i < data.categories.Count; i++)
@@ -161,7 +177,7 @@ namespace UAssetAPI
             }
 
             // Section 5
-            if (data.categoryStringReference.Count > 0)
+            if (data.doWeHaveSectionFive)
             {
                 data.sectionFiveOffset = (int)writer.BaseStream.Position;
                 data.sectionFiveStringCount = data.categoryStringReference.Count;
@@ -241,7 +257,16 @@ namespace UAssetAPI
                     writer.Write(us.category);
                     writer.Write(us.link);
                     writer.Write(us.typeIndex);
-                    writer.Write(us.garbage1);
+
+                    if (data.GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    {
+                        writer.Write(us.garbage1);
+                    }
+                    else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    {
+                        writer.Write(us.garbage1);
+                    }
+
                     writer.Write(us.type);
                     writer.Write(us.garbageNew);
                     writer.Write(us.lengthV); // !!!
@@ -258,8 +283,8 @@ namespace UAssetAPI
                     }
                     else if (data.GuessedVersion >= UE4Version.VER_GUESSED_V1)
                     {
-                        writer.Write(us.garbage2);
                         writer.Write(us.startV);
+                        writer.Write(us.garbage2);
                     }
 
                     writer.Write(us.garbage3);

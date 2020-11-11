@@ -169,6 +169,11 @@ namespace UAssetAPI
         public int uexpDataOffset;
         public int gapBeforeUexp;
         public int fileSize;
+        public bool doWeHaveSectionFour = true;
+        public bool doWeHaveSectionFive = true;
+
+        public uint extraGameIdentifier;
+        public int extraGameJump = 0;
 
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
         internal List<string> headerIndexList;
@@ -178,26 +183,34 @@ namespace UAssetAPI
         public List<string> categoryStringReference;
         public List<Category> categories;
 
-        private static uint UASSET_MAGIC = 2653586369;
+        public static uint UASSET_MAGIC = 2653586369;
         private void ReadHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
-            reader.BaseStream.Seek(24, SeekOrigin.Begin); // 24
+            reader.BaseStream.Seek(8, SeekOrigin.Begin); // 8
+            extraGameIdentifier = reader.ReadUInt32();
+            if (extraGameIdentifier != 0)
+            {
+                reader.BaseStream.Seek(20, SeekOrigin.Begin); // 20
+                extraGameJump = reader.ReadByte() * 20; // probably not the actual format, but it works for now
+            }
+
+            reader.BaseStream.Seek(24 + extraGameJump, SeekOrigin.Begin); // 24
             sectionSixOffset = reader.ReadInt32();
 
             reader.ReadUString(); // Usually "None"
             reader.ReadSingle(); // Usually 0
 
-            reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
+            //reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
             sectionOneStringCount = reader.ReadInt32();
 
             headerSize = reader.ReadInt32();
 
             reader.ReadInt64(); // uncertain, always 0
 
-            reader.BaseStream.Seek(57, SeekOrigin.Begin); // 57
+            //reader.BaseStream.Seek(57, SeekOrigin.Begin); // 57
             dataCategoryCount = reader.ReadInt32();
             sectionThreeOffset = reader.ReadInt32(); // 61
             sectionTwoLinkCount = reader.ReadInt32(); // 65
@@ -206,7 +219,7 @@ namespace UAssetAPI
             sectionFiveStringCount = reader.ReadInt32(); // 77
             sectionFiveOffset = reader.ReadInt32(); // 81
 
-            switch (headerSize)
+            switch (headerSize - extraGameJump)
             {
                 case 185:
                     GuessedVersion = UE4Version.VER_GUESSED_V1;
@@ -226,7 +239,11 @@ namespace UAssetAPI
                     break;
             }
 
-            reader.ReadUInt64(); // 85, Usually 0
+            // 85, Usually 0
+            if (GuessedVersion >= UE4Version.VER_GUESSED_V2) reader.ReadUInt64();
+            else if (GuessedVersion >= UE4Version.VER_GUESSED_V3) reader.ReadUInt64();
+            else if (GuessedVersion >= UE4Version.VER_GUESSED_V1) reader.ReadUInt32();
+
             AssetGuid = new Guid(reader.ReadBytes(16));
 
             Debug.Assert(reader.ReadInt32() == 1); // 109
@@ -235,12 +252,14 @@ namespace UAssetAPI
 
             reader.ReadBytes(36); // 36 zeros
 
-            // 157, weird 4-byte hash + 4 zeros
+            reader.ReadInt64(); // 157, weird 4-byte hash + 4 zeros
 
-            reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
+            //reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
             uexpDataOffset = reader.ReadInt32();
 
-            reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
+            if (GuessedVersion >= UE4Version.VER_GUESSED_V1 && GuessedVersion < UE4Version.VER_GUESSED_V3) Debug.Assert(reader.ReadInt32() == (sectionSixOffset - 4));
+
+            //reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
             fileSize = reader.ReadInt32() + 4;
 
             reader.ReadBytes(12); // 12 zeros
@@ -252,7 +271,7 @@ namespace UAssetAPI
             ReadHeader(reader);
 
             // Section 1
-            reader.BaseStream.Position += 8;
+            reader.BaseStream.Seek(headerSize, SeekOrigin.Begin);
 
             ClearHeaderIndexList();
             for (int i = 0; i < sectionOneStringCount; i++)
@@ -293,7 +312,20 @@ namespace UAssetAPI
                     category = reader.ReadInt32();
                     link = reader.ReadInt32();
                     typeIndex = reader.ReadInt32();
-                    garbage1 = reader.ReadInt32();
+
+                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    {
+                        garbage1 = reader.ReadInt32();
+                    }
+                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    {
+                        garbage1 = reader.ReadInt32();
+                    }
+                    else
+                    {
+                        garbage1 = 0;
+                    }
+
                     type = reader.ReadUInt16();
                     garbageNew = reader.ReadUInt16();
                     lengthV = reader.ReadInt32(); // !!!
@@ -310,8 +342,8 @@ namespace UAssetAPI
                     }
                     else if (GuessedVersion >= UE4Version.VER_GUESSED_V1)
                     {
-                        garbage2 = reader.ReadInt32();
                         startV = reader.ReadInt32(); // !!!
+                        garbage2 = reader.ReadInt32();
                     }
 
                     int totalByteCount = 104;
@@ -323,7 +355,6 @@ namespace UAssetAPI
                 }
                 gapStart = (int)reader.BaseStream.Position;
             }
-
 
             // Section 4
             categoryIntReference = new List<int[]>();
@@ -342,6 +373,10 @@ namespace UAssetAPI
                 }
                 gapStart = (int)reader.BaseStream.Position;
             }
+            else
+            {
+                doWeHaveSectionFour = false;
+            }
 
             // Section 5
             categoryStringReference = new List<string>();
@@ -353,6 +388,10 @@ namespace UAssetAPI
                     categoryStringReference.Add(reader.ReadUString());
                 }
                 gapStart = (int)reader.BaseStream.Position;
+            }
+            else
+            {
+                doWeHaveSectionFive = false;
             }
 
             // Section 6
