@@ -47,7 +47,7 @@ namespace UAssetAPI
 
             writer.Write(AssetReader.UASSET_MAGIC);
 
-            writer.Seek(24 + data.extraGameJump, SeekOrigin.Current); // 24
+            writer.Seek(24 + data.extraGameJump, SeekOrigin.Begin); // 24
             writer.Write(data.sectionSixOffset);
 
             writer.Seek(13, SeekOrigin.Current); // 41
