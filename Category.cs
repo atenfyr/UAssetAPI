@@ -270,7 +270,15 @@ namespace UAssetAPI
 
             FooterSeparator = reader.ReadInt32(); // usually 10 00 84 00
             FooterObject = reader.ReadInt32();
-            FooterEngine = Asset.GetHeaderReference((int)reader.ReadInt32());
+            int footerEngineRaw = (int)reader.ReadInt32();
+            if (footerEngineRaw < 0 || footerEngineRaw > Asset.GetHeaderIndexList().Count)
+            {
+                FooterEngine = footerEngineRaw.ToString();
+            }
+            else
+            {
+                FooterEngine = Asset.GetHeaderReference(footerEngineRaw);
+            }
             reader.ReadBytes(16); // zeros
             reader.ReadInt64(); // None
 
@@ -302,7 +310,14 @@ namespace UAssetAPI
 
             writer.Write(FooterSeparator);
             writer.Write(FooterObject);
-            writer.Write((int)Asset.SearchHeaderReference(FooterEngine));
+            if (Asset.HeaderReferenceContains(FooterEngine))
+            {
+                writer.Write((int)Asset.SearchHeaderReference(FooterEngine));
+            }
+            else
+            {
+                writer.Write(int.Parse(FooterEngine));
+            }
             writer.Write((long)0); writer.Write((long)0); // 16 zeros
             writer.Write((long)Asset.SearchHeaderReference("None"));
 

@@ -96,6 +96,12 @@ namespace UAssetAPI.StructTypes
                 case "SoftObjectPath":
                     ReadOnce<SoftObjectPropertyData>(reader);
                     break;
+                case "SoftAssetPath":
+                    ReadOnce<SoftAssetPathPropertyData>(reader);
+                    break;
+                case "SoftClassPath":
+                    ReadOnce<SoftClassPathPropertyData>(reader);
+                    break;
                 case "RichCurveKey":
                     ReadOnce<RichCurveKeyProperty>(reader);
                     break;
@@ -199,6 +205,8 @@ namespace UAssetAPI.StructTypes
                 case "Vector":
                 case "Rotator":
                 case "SoftObjectPath":
+                case "SoftAssetPath":
+                case "SoftClassPath":
                 case "Vector2D":
                 case "IntPoint":
                 case "DateTime":
