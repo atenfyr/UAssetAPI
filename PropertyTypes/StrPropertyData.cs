@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class StrPropertyData : PropertyData<string>
     {
-        public Encoding Encoding = Encoding.UTF8;
+        public Encoding Encoding = Encoding.ASCII;
 
         public StrPropertyData(string name, AssetReader asset) : base(name, asset)
         {

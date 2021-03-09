@@ -88,7 +88,9 @@ namespace UAssetAPI
 
         public Link GetLinkAt(int index)
         {
-            return links[Utils.GetNormalIndex(index)];
+            int normalIndex = Utils.GetNormalIndex(index);
+            if (normalIndex < 0 || normalIndex >= links.Count) return null;
+            return links[normalIndex];
         }
 
         public Link AddLink(string bbase, string bclass, int link, string property)
@@ -103,6 +105,39 @@ namespace UAssetAPI
             li.Index = Utils.GetLinkIndex(links.Count);
             links.Add(li);
             return li.Index;
+        }
+
+        public BlueprintGeneratedClassCategory GetBGCCategory()
+        {
+            foreach (Category cat in categories)
+            {
+                if (cat is BlueprintGeneratedClassCategory bgcCat) return bgcCat;
+            }
+            return null;
+        }
+        
+        public string GetBGCName()
+        {
+            var bgcCat = GetBGCCategory();
+            if (bgcCat == null || bgcCat.ReferenceData == null) return null;
+
+            return GetHeaderReference(bgcCat.ReferenceData.typeIndex);
+        }
+
+        public void GetParentClass(out string parentClassPath, out string parentBGCName)
+        {
+            parentClassPath = null;
+            parentBGCName = null;
+
+            var bgcCat = GetBGCCategory();
+            if (bgcCat == null) return;
+
+            Link parentClassLink = GetLinkAt(bgcCat.BaseClass);
+            if (parentClassLink == null) return;
+            if (parentClassLink.Linkage >= 0) return;
+
+            parentBGCName = GetHeaderReference((int)parentClassLink.Property);
+            parentClassPath = GetHeaderReference((int)GetLinkAt((int)parentClassLink.Linkage).Property);
         }
 
         public int SearchForLink(ulong bbase, ulong bclass, int link, ulong property)
@@ -483,19 +518,22 @@ namespace UAssetAPI
             {
                 MemoryStream completeStream = new MemoryStream();
                 origStream.CopyTo(completeStream);
+
+                UseSeparateBulkDataFiles = false;
                 try
                 {
-                    using (FileStream newStream = File.Open(Path.ChangeExtension(p, "uexp"), FileMode.Open))
+                    var targetFile = Path.ChangeExtension(p, "uexp");
+                    if (File.Exists(targetFile))
                     {
-                        completeStream.Seek(0, SeekOrigin.End);
-                        newStream.CopyTo(completeStream);
-                        UseSeparateBulkDataFiles = true;
+                        using (FileStream newStream = File.Open(targetFile, FileMode.Open))
+                        {
+                            completeStream.Seek(0, SeekOrigin.End);
+                            newStream.CopyTo(completeStream);
+                            UseSeparateBulkDataFiles = true;
+                        }
                     }
                 }
-                catch (FileNotFoundException)
-                {
-                    UseSeparateBulkDataFiles = false;
-                }
+                catch (FileNotFoundException) { }
 
                 completeStream.Seek(0, SeekOrigin.Begin);
                 return completeStream;
