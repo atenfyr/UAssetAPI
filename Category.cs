@@ -228,10 +228,12 @@ namespace UAssetAPI
     {
         public int BaseClass;
         public List<int> IndexData;
+        public byte[] DummyInbetweenData; // Usually zeros, sometimes not
         public List<FunctionDataEntry> FunctionData;
         public int FooterSeparator;
         public int FooterObject;
         public string FooterEngine;
+        public byte[] DummyInbetweenData2; // Usually zeros, sometimes not
 
         public BlueprintGeneratedClassCategory(Category super) : base(super)
         {
@@ -255,7 +257,7 @@ namespace UAssetAPI
                 IndexData.Add(reader.ReadInt32());
             }
 
-            reader.ReadBytes(8); // 8 zeros
+            DummyInbetweenData = reader.ReadBytes(8);
 
             FunctionData = new List<FunctionDataEntry>();
             int numFuncIndexEntries = reader.ReadInt32();
@@ -279,8 +281,9 @@ namespace UAssetAPI
             {
                 FooterEngine = Asset.GetHeaderReference(footerEngineRaw);
             }
-            reader.ReadBytes(16); // zeros
-            reader.ReadInt64(); // None
+            DummyInbetweenData2 = reader.ReadBytes(16); // zeros
+
+            //reader.ReadInt64(); // None
 
             // Here are a couple weird ints we're ignoring for now
 
@@ -298,7 +301,7 @@ namespace UAssetAPI
                 writer.Write(IndexData[i]);
             }
 
-            writer.Write((long)0); // 8 zeros
+            writer.Write(DummyInbetweenData);
 
             writer.Write(FunctionData.Count);
             for (int i = 0; i < FunctionData.Count; i++)
@@ -318,8 +321,10 @@ namespace UAssetAPI
             {
                 writer.Write(int.Parse(FooterEngine));
             }
-            writer.Write((long)0); writer.Write((long)0); // 16 zeros
-            writer.Write((long)Asset.SearchHeaderReference("None"));
+            writer.Write(DummyInbetweenData2);
+
+            // There is a "None" here, but to allow for writing for different engine versions we leave it as part of the extra data section
+            //writer.Write((long)Asset.SearchHeaderReference("None"));
 
             // Here are a couple weird ints we're ignoring for now
         }
