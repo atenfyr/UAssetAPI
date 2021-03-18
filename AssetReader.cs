@@ -191,23 +191,23 @@ namespace UAssetAPI
 
         /* End Public Methods */
 
-        public int headerSize;
-        public int sectionSixOffset;
-        public int sectionOneStringCount;
-        public int dataCategoryCount;
-        public int sectionThreeOffset;
-        public int sectionTwoLinkCount;
-        public int sectionTwoOffset;
-        public int sectionFourOffset;
-        public int sectionFiveStringCount;
-        public int sectionFiveOffset;
-        public int uexpDataOffset;
-        public int gapBeforeUexp;
-        public int fileSize;
+        public int headerSize = 0;
+        public int sectionSixOffset = 0;
+        public int sectionOneStringCount = 0;
+        public int dataCategoryCount = 0;
+        public int sectionThreeOffset = 0;
+        public int sectionTwoLinkCount = 0;
+        public int sectionTwoOffset = 0;
+        public int sectionFourOffset = 0;
+        public int sectionFiveStringCount = 0;
+        public int sectionFiveOffset = 0;
+        public int uexpDataOffset = 0;
+        public int gapBeforeUexp = 0;
+        public int fileSize = 0;
         public bool doWeHaveSectionFour = true;
         public bool doWeHaveSectionFive = true;
 
-        public uint extraGameIdentifier;
+        public uint extraGameIdentifier = 0;
         public int extraGameJump = 0;
 
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
@@ -217,6 +217,11 @@ namespace UAssetAPI
         public List<int[]> categoryIntReference;
         public List<string> categoryStringReference;
         public List<Category> categories;
+
+        private void Assert(bool v)
+        {
+            if (!v) throw new FormatException("Failed assertion while reading asset header");
+        }
 
         public static uint UASSET_MAGIC = 2653586369;
         private void ReadHeader(BinaryReader reader)
@@ -281,9 +286,9 @@ namespace UAssetAPI
 
             AssetGuid = new Guid(reader.ReadBytes(16));
 
-            Debug.Assert(reader.ReadInt32() == 1); // 109
-            Debug.Assert(reader.ReadInt32() == dataCategoryCount); // 113
-            Debug.Assert(reader.ReadInt32() == sectionOneStringCount); // 117
+            Assert(reader.ReadInt32() == 1); // 109
+            Assert(reader.ReadInt32() == dataCategoryCount); // 113
+            Assert(reader.ReadInt32() == sectionOneStringCount); // 117
 
             reader.ReadBytes(36); // 36 zeros
 
@@ -292,7 +297,7 @@ namespace UAssetAPI
             //reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
             uexpDataOffset = reader.ReadInt32();
 
-            if (GuessedVersion >= UE4Version.VER_GUESSED_V1 && GuessedVersion < UE4Version.VER_GUESSED_V3) Debug.Assert(reader.ReadInt32() == (sectionSixOffset - 4));
+            if (GuessedVersion >= UE4Version.VER_GUESSED_V1 && GuessedVersion < UE4Version.VER_GUESSED_V3) Assert(reader.ReadInt32() == (sectionSixOffset - 4));
 
             //reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
             fileSize = reader.ReadInt32() + 4;
