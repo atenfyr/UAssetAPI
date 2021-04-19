@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -104,8 +103,9 @@ namespace UAssetAPI
             data.sectionOneStringCount = data.headerIndexList.Count;
             for (int i = 0; i < data.headerIndexList.Count; i++)
             {
-                writer.WriteUString(data.headerIndexList[i]);
-                writer.Write(CRCGenerator.GenerateHash(data.headerIndexList[i]));
+                UString ourUString = new UString(data.headerIndexList[i], data.headerEncodingLookup[data.headerIndexList[i]]);
+                writer.WriteUString(ourUString);
+                writer.Write(CRCGenerator.GenerateHash(ourUString));
             }
 
             // Section 2

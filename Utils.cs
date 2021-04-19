@@ -47,6 +47,20 @@ namespace UAssetAPI
             return str;
         }
 
+        public static UString ReadUStringWithGUIDAndEncoding(this BinaryReader reader, out uint guid)
+        {
+            UString str = reader.ReadUStringWithEncoding();
+            if (!string.IsNullOrEmpty(str.Value))
+            {
+                guid = reader.ReadUInt32();
+            }
+            else
+            {
+                guid = 0;
+            }
+            return str;
+        }
+
         public static void WriteUString(this BinaryWriter writer, string str, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.ASCII;
@@ -60,15 +74,25 @@ namespace UAssetAPI
                     int realLen = str.Length + 1;
                     if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;
 
+                    byte[] orig = encoding.GetBytes(str);
+                    byte[] finalResult = new byte[orig.Length + encoding.GetStandardEncodingByteSize()];
+                    Buffer.BlockCopy(orig, 0, finalResult, 0, orig.Length);
+
                     writer.Write(realLen);
-                    writer.Write(encoding.GetBytes(str));
-                    for (int k = 0; k < encoding.GetByteCount(new char[] { 'a' }); k++)
-                    {
-                        writer.Write((byte)0);
-                    }
+                    writer.Write(finalResult);
 
                     break;
             }
+        }
+
+        public static void WriteUString(this BinaryWriter writer, UString str)
+        {
+            WriteUString(writer, str?.Value, str?.Encoding);
+        }
+
+        public static int GetStandardEncodingByteSize(this Encoding encoding)
+        {
+            return encoding.GetByteCount(new char[] { 'a' });
         }
 
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
@@ -76,11 +100,6 @@ namespace UAssetAPI
             if (val.CompareTo(min) < 0) return min;
             else if (val.CompareTo(max) > 0) return max;
             else return val;
-        }
-
-        public static void WriteUString(this BinaryWriter writer, UString str)
-        {
-            WriteUString(writer, str?.Value, str?.Encoding);
         }
 
         public static int GetLinkIndex(int index)

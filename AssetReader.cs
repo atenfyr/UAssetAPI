@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace UAssetAPI
 {
@@ -39,13 +40,20 @@ namespace UAssetAPI
         {
             headerIndexList = new List<string>();
             headerLookup = new Dictionary<string, int>();
+            headerEncodingLookup = new Dictionary<string, Encoding>();
         }
 
         public void SetHeaderReference(int index, string value)
         {
+            SetHeaderReference(index, new UString(value, Encoding.ASCII));
+        }
+
+        public void SetHeaderReference(int index, UString value)
+        {
             headerLookup.Remove(headerIndexList[index]);
-            headerIndexList[index] = value;
-            headerLookup[value] = index;
+            headerIndexList[index] = value.Value;
+            headerLookup[value.Value] = index;
+            headerEncodingLookup[value.Value] = value.Encoding;
         }
 
         public string GetHeaderReference(int index)
@@ -62,6 +70,20 @@ namespace UAssetAPI
             return headerIndexList[index];
         }
 
+        public UString GetHeaderReferenceWithEncoding(int index)
+        {
+            string realStr = GetHeaderReference(index);
+            if (headerEncodingLookup.ContainsKey(realStr)) return new UString(realStr, headerEncodingLookup[realStr]);
+            return new UString(realStr, Encoding.ASCII);
+        }
+
+        public UString GetHeaderReferenceWithEncodingWithoutZero(int index)
+        {
+            string realStr = GetHeaderReferenceWithoutZero(index);
+            if (headerEncodingLookup.ContainsKey(realStr)) return new UString(realStr, headerEncodingLookup[realStr]);
+            return new UString(realStr, Encoding.ASCII);
+        }
+
         public bool HeaderReferenceContains(string search)
         {
             return headerLookup.ContainsKey(search);
@@ -75,9 +97,15 @@ namespace UAssetAPI
 
         public int AddHeaderReference(string name)
         {
-            if (headerLookup.ContainsKey(name)) return SearchHeaderReference(name);
-            headerIndexList.Add(name);
-            headerLookup.Add(name, headerIndexList.Count - 1);
+            return AddHeaderReference(new UString(name, Encoding.ASCII));
+        }
+
+        public int AddHeaderReference(UString name)
+        {
+            if (headerLookup.ContainsKey(name.Value)) return SearchHeaderReference(name.Value);
+            headerIndexList.Add(name.Value);
+            headerLookup.Add(name.Value, headerIndexList.Count - 1);
+            headerEncodingLookup[name.Value] = name.Encoding;
             return headerIndexList.Count - 1;
         }
 
@@ -213,6 +241,8 @@ namespace UAssetAPI
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
         internal List<string> headerIndexList;
         private Dictionary<string, int> headerLookup = new Dictionary<string, int>();
+        internal Dictionary<string, Encoding> headerEncodingLookup = new Dictionary<string, Encoding>();
+
         public List<Link> links; // base, class, link, connection
         public List<int[]> categoryIntReference;
         public List<string> categoryStringReference;
@@ -316,7 +346,7 @@ namespace UAssetAPI
             ClearHeaderIndexList();
             for (int i = 0; i < sectionOneStringCount; i++)
             {
-                var str = reader.ReadUStringWithGUID(out uint guid);
+                var str = reader.ReadUStringWithGUIDAndEncoding(out uint guid);
                 AddHeaderReference(str);
             }
 
