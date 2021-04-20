@@ -7,7 +7,7 @@ namespace UAssetAPI
     {
         public static uint GenerateHash(UString text)
         {
-            return GenerateHash(text.Value, text.Encoding);
+            return GenerateHash(text?.Value, text?.Encoding);
         }
 
         public static uint GenerateHash(string text)
@@ -17,13 +17,8 @@ namespace UAssetAPI
 
         public static uint GenerateHash(string text, Encoding encoding)
         {
-            return GenerateHash(encoding.GetBytes(text), encoding.GetStandardEncodingByteSize());
-        }
-
-        public static uint GenerateHash(byte[] stream, int encodingSize = 1)
-        {
-            byte[] algor1 = BitConverter.GetBytes(Strihash_DEPRECATED(stream));
-            byte[] algor2 = BitConverter.GetBytes(encodingSize == 1 ? StrCrc32_ANSI(stream) : StrCrc32_WIDE(stream, encodingSize));
+            byte[] algor1 = BitConverter.GetBytes(Strihash_DEPRECATED(encoding.GetBytes(text)));
+            byte[] algor2 = BitConverter.GetBytes(StrCrc32(text));
             return BitConverter.ToUInt32(new byte[] { algor1[0], algor1[1], algor2[0], algor2[1] }, 0);
         }
 
@@ -38,31 +33,13 @@ namespace UAssetAPI
             return hash;
         }
 
-        private static uint StrCrc32_ANSI(byte[] stream, uint CRC = 0)
+        // Accurate for both WIDECHAR and ANSICHAR
+        private static uint StrCrc32(string text, uint CRC = 0)
         {
             CRC = ~CRC;
-            for (int i = 0; i < stream.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
-                byte Ch = stream[i];
-                CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC ^ Ch) & 0xFF];
-                CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC) & 0xFF];
-                CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC) & 0xFF];
-                CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC) & 0xFF];
-            }
-            return ~CRC;
-        }
-
-        private static uint StrCrc32_WIDE(byte[] stream, int encodingSize, uint CRC = 0)
-        {
-            if (encodingSize > 4) throw new ArgumentException("StrCrc32 only works with CharType up to 32 bits.");
-
-            CRC = ~CRC;
-            for (int i = 0; i < stream.Length; i += encodingSize)
-            {
-                byte[] ourBytes = new byte[4];
-                Buffer.BlockCopy(stream, i, ourBytes, 0, encodingSize);
-
-                uint Ch = BitConverter.ToUInt32(ourBytes, 0);
+                char Ch = text[i];
                 CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC ^ Ch) & 0xFF];
                 Ch >>= 8;
                 CRC = (CRC >> 8) ^ CRCTablesSB8[0, (CRC ^ Ch) & 0xFF];

@@ -75,7 +75,7 @@ namespace UAssetAPI
                     if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;
 
                     byte[] orig = encoding.GetBytes(str);
-                    byte[] finalResult = new byte[orig.Length + encoding.GetStandardEncodingByteSize()];
+                    byte[] finalResult = new byte[orig.Length + 1 + (realLen >= 0 ? 0 : 1)];
                     Buffer.BlockCopy(orig, 0, finalResult, 0, orig.Length);
 
                     writer.Write(realLen);
@@ -88,11 +88,6 @@ namespace UAssetAPI
         public static void WriteUString(this BinaryWriter writer, UString str)
         {
             WriteUString(writer, str?.Value, str?.Encoding);
-        }
-
-        public static int GetStandardEncodingByteSize(this Encoding encoding)
-        {
-            return encoding.GetByteCount(new char[] { 'a' });
         }
 
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
