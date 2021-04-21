@@ -71,16 +71,9 @@ namespace UAssetAPI
                     writer.Write((int)0);
                     break;
                 default:
-                    int realLen = str.Length + 1;
-                    if (encoding.Equals(Encoding.Unicode)) realLen = -realLen;
-
-                    byte[] orig = encoding.GetBytes(str);
-                    byte[] finalResult = new byte[orig.Length + 1 + (realLen >= 0 ? 0 : 1)];
-                    Buffer.BlockCopy(orig, 0, finalResult, 0, orig.Length);
-
-                    writer.Write(realLen);
-                    writer.Write(finalResult);
-
+                    string nullTerminatedStr = str + "\0";
+                    writer.Write(encoding is UnicodeEncoding ? -nullTerminatedStr.Length : nullTerminatedStr.Length);
+                    writer.Write(encoding.GetBytes(nullTerminatedStr));
                     break;
             }
         }
