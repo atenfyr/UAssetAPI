@@ -16,9 +16,8 @@ namespace UAssetAPI
         private static PropertyData lastType;
 #endif
 
-        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, long leng = 0, bool includeHeader = true)
+        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
-            //Debug.WriteLine(type);
             PropertyData data;
             switch (type)
             {
@@ -143,6 +142,8 @@ namespace UAssetAPI
 #if DEBUG
             lastType = data;
 #endif
+
+            data.DuplicationIndex = duplicationIndex;
             if (reader != null)
             {
                 data.Read(reader, includeHeader, leng);
@@ -161,8 +162,9 @@ namespace UAssetAPI
             string type = name;
             if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
 
-            long leng = reader.ReadInt64();
-            PropertyData result = TypeToClass(type, name, asset, reader, leng, includeHeader);
+            int leng = reader.ReadInt32();
+            int duplicationIndex = reader.ReadInt32();
+            PropertyData result = TypeToClass(type, name, asset, reader, leng, duplicationIndex, includeHeader);
             result.WidgetData = widgetData;
             return result;
         }
@@ -173,12 +175,13 @@ namespace UAssetAPI
             writer.Write(property.WidgetData);
             writer.Write((long)asset.SearchHeaderReference(property.Type));
             int oldLoc = (int)writer.BaseStream.Position;
-            writer.Write((long)0); // initial length
+            writer.Write((int)0); // initial length
+            writer.Write(property.DuplicationIndex);
             int realLength = property.Write(writer, includeHeader);
             int newLoc = (int)writer.BaseStream.Position;
 
             writer.Seek(oldLoc, SeekOrigin.Begin);
-            writer.Write((long)realLength);
+            writer.Write(realLength);
             writer.Seek(newLoc, SeekOrigin.Begin);
             return oldLoc;
         }

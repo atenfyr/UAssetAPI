@@ -7,6 +7,7 @@ namespace UAssetAPI.PropertyTypes
         public string Name = "";
         public int WidgetData = 0;
         public string Type = "";
+        public int DuplicationIndex = 0;
         public AssetReader Asset;
         public object RawValue;
 

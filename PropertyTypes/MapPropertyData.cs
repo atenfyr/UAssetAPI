@@ -23,7 +23,7 @@ namespace UAssetAPI.PropertyTypes
             Value = new OrderedDictionary();
         }
 
-        private PropertyData MapTypeToClass(string type, string name, AssetReader asset, BinaryReader reader, long leng, bool includeHeader)
+        private PropertyData MapTypeToClass(string type, string name, AssetReader asset, BinaryReader reader, int leng, bool includeHeader)
         {
             switch (type)
             {
