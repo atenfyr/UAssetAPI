@@ -64,6 +64,7 @@ namespace UAssetAPI.PropertyTypes
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }
+                    DummyStruct = (StructPropertyData)results[0];
                 }
                 Value = results;
             }
@@ -97,15 +98,17 @@ namespace UAssetAPI.PropertyTypes
             writer.Write(Value.Length);
             if (ArrayType == "StructProperty")
             {
-                StructPropertyData firstElem = Value.Length == 0 ? DummyStruct : (StructPropertyData)Value[0];
-                string fullType = firstElem.StructType;
+                if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
+                if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
 
-                writer.Write((long)Asset.SearchHeaderReference(firstElem.Name));
+                string fullType = DummyStruct.StructType;
+
+                writer.Write((long)Asset.SearchHeaderReference(DummyStruct.Name));
                 writer.Write((long)Asset.SearchHeaderReference("StructProperty"));
                 int lengthLoc = (int)writer.BaseStream.Position;
                 writer.Write((long)0);
                 writer.Write((long)Asset.SearchHeaderReference(fullType));
-                writer.Write(firstElem.StructGUID.ToByteArray());
+                writer.Write(DummyStruct.StructGUID.ToByteArray());
                 writer.Write((byte)0);
 
                 for (int i = 0; i < Value.Length; i++)
