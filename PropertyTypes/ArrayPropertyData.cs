@@ -22,7 +22,7 @@ namespace UAssetAPI.PropertyTypes
             Value = new PropertyData[0];
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -73,11 +73,12 @@ namespace UAssetAPI.PropertyTypes
                 var results = new PropertyData[numEntries];
                 if (numEntries > 0)
                 {
-                    int averageSize = (int)(leng / numEntries);
+                    int averageSizeEstimate1 = (int)(leng1 / numEntries);
+                    int averageSizeEstimate2 = (int)((leng1 - 4) / numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
                         results[i] = MainSerializer.TypeToClass(ArrayType, Name, Asset);
-                        results[i].Read(reader, false, averageSize);
+                        results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
                 }
                 Value = results;

@@ -15,7 +15,7 @@ namespace UAssetAPI.PropertyTypes
             Type = "BoolProperty";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             Value = reader.ReadBoolean();
             if (includeHeader)

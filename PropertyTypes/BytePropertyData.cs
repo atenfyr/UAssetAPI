@@ -25,7 +25,12 @@ namespace UAssetAPI.PropertyTypes
             Type = "ByteProperty";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        {
+            ReadCustom(reader, includeHeader, leng1, leng2, true);
+        }
+
+        private void ReadCustom(BinaryReader reader, bool includeHeader, long leng1, long leng2, bool canRepeat)
         {
             if (includeHeader)
             {
@@ -33,7 +38,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte(); // null byte
             }
 
-            switch (leng)
+            switch (leng1)
             {
                 case 1:
                     ByteType = BytePropertyType.Byte;
@@ -45,7 +50,12 @@ namespace UAssetAPI.PropertyTypes
                     Value = (int)reader.ReadInt64();
                     break;
                 default:
-                    throw new FormatException("Invalid length " + leng + " for ByteProperty");
+                    if (canRepeat)
+                    {
+                        ReadCustom(reader, false, leng2, 0, false);
+                        return;
+                    }
+                    throw new FormatException("Invalid length " + leng1 + " for ByteProperty");
             }
         }
 

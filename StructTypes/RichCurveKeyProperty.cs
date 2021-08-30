@@ -54,7 +54,7 @@ namespace UAssetAPI.StructTypes
             Type = "RichCurveKey";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {

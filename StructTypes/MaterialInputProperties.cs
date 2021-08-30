@@ -58,7 +58,7 @@ namespace UAssetAPI.StructTypes
             Type = "ExpressionInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -91,7 +91,7 @@ namespace UAssetAPI.StructTypes
             Type = "MaterialAttributesInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -124,7 +124,7 @@ namespace UAssetAPI.StructTypes
             Type = "ColorMaterialInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -162,7 +162,7 @@ namespace UAssetAPI.StructTypes
             Type = "ScalarMaterialInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -200,7 +200,7 @@ namespace UAssetAPI.StructTypes
             Type = "ShadingModelMaterialInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -238,7 +238,7 @@ namespace UAssetAPI.StructTypes
             Type = "VectorMaterialInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -276,7 +276,7 @@ namespace UAssetAPI.StructTypes
             Type = "Vector2MaterialInput";
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng)
+        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
