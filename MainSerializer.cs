@@ -171,6 +171,8 @@ namespace UAssetAPI
 
         public static int Write(PropertyData property, AssetReader asset, BinaryWriter writer, bool includeHeader) // Returns location of the length
         {
+            if (property == null) return 0;
+
             writer.Write((int)asset.SearchHeaderReference(property.Name));
             writer.Write(property.WidgetData);
             writer.Write((long)asset.SearchHeaderReference(property.Type));
