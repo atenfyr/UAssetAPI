@@ -41,7 +41,7 @@ namespace UAssetAPI
         private byte[] MakeHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            var stre = new MemoryStream(reader.ReadBytes(193 + data.extraGameJump));
+            var stre = new MemoryStream(reader.ReadBytes(data.headerSize));
             BinaryWriter writer = new BinaryWriter(stre);
 
             writer.Write(AssetReader.UASSET_MAGIC);
