@@ -132,6 +132,15 @@ namespace UAssetAPI.StructTypes
                 case "GameplayTagContainer":
                     ReadOnce<GameplayTagContainerPropertyData>(reader);
                     break;
+                case "PerPlatformInt":
+                    ReadOnce<PerPlatformIntPropertyData>(reader);
+                    break;
+                case "PerPlatformFloat":
+                    ReadOnce<PerPlatformFloatPropertyData>(reader);
+                    break;
+                case "PerPlatformBool":
+                    ReadOnce<PerPlatformBoolPropertyData>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
@@ -226,6 +235,9 @@ namespace UAssetAPI.StructTypes
                 case "VectorMaterialInput":
                 case "Vector2MaterialInput":
                 case "GameplayTagContainer":
+                case "PerPlatformInt":
+                case "PerPlatformFloat":
+                case "PerPlatformBool":
                     return WriteOnce(writer);
                 default:
                     return WriteNormal(writer);

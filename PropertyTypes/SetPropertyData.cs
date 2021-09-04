@@ -12,11 +12,15 @@ namespace UAssetAPI.PropertyTypes
         public SetPropertyData(string name, AssetReader asset) : base(name, asset)
         {
             Type = "SetProperty";
+            Value = new PropertyData[0];
+            RemovedItems = new PropertyData[0];
         }
 
         public SetPropertyData()
         {
             Type = "SetProperty";
+            Value = new PropertyData[0];
+            RemovedItems = new PropertyData[0];
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -18,6 +18,11 @@ namespace UAssetAPI
 
         public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
+            /*
+                TODO:
+                    * MovieSceneFrameRange, MovieSceneFloatChannel, & co.
+            */
+
             PropertyData data;
             switch (type)
             {
@@ -116,6 +121,15 @@ namespace UAssetAPI
                     break;
                 case "GameplayTagContainer":
                     data = new GameplayTagContainerPropertyData(name, asset);
+                    break;
+                case "PerPlatformInt":
+                    data = new PerPlatformIntPropertyData(name, asset);
+                    break;
+                case "PerPlatformFloat":
+                    data = new PerPlatformFloatPropertyData(name, asset);
+                    break;
+                case "PerPlatformBool":
+                    data = new PerPlatformBoolPropertyData(name, asset);
                     break;
                 case "SoftObjectProperty":
                     data = new SoftObjectPropertyData(name, asset);

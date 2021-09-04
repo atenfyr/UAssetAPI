@@ -56,6 +56,8 @@
     <Compile Include="StructTypes\ColorPropertyData.cs" />
     <Compile Include="StructTypes\MaterialInputProperties.cs" />
     <Compile Include="StructTypes\GameplayTagContainerPropertyData.cs" />
+    <Compile Include="StructTypes\PerPlatformBoolPropertyData.cs" />
+    <Compile Include="StructTypes\PerPlatformIntPropertyData.cs" />
     <Compile Include="StructTypes\RichCurveKeyProperty.cs" />
     <Compile Include="PropertyTypes\SoftAssetPathPropertyData.cs" />
     <Compile Include="StructTypes\TimespanPropertyData.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="PropertyTypes\UInt64PropertyData.cs" />
     <Compile Include="StructTypes\Vector2DPropertyData.cs" />
     <Compile Include="StructTypes\BoxPropertyData.cs" />
+    <Compile Include="StructTypes\PerPlatformFloatPropertyData.cs" />
     <Compile Include="StructTypes\Vector4PropertyData.cs" />
     <Compile Include="StructTypes\VectorPropertyData.cs" />
     <Compile Include="StructTypes\ViewTargetBlendParamsPropertyData.cs" />
