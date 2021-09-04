@@ -27,7 +27,7 @@ namespace UAssetAPI.StructTypes
             Value = new NamePropertyData[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                Value[i] = new NamePropertyData(Name, Asset);
+                Value[i] = new NamePropertyData("TagName", Asset);
                 Value[i].Read(reader, false, sizeof(int) * 2);
             }
         }
