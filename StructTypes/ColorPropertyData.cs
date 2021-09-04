@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
-        public ColorPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ColorPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Color";
         }

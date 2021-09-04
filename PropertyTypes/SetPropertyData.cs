@@ -9,7 +9,7 @@ namespace UAssetAPI.PropertyTypes
         public PropertyData[] RemovedItems;
         public StructPropertyData RemovedItemsDummyStruct;
 
-        public SetPropertyData(string name, AssetReader asset) : base(name, asset)
+        public SetPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "SetProperty";
             Value = new PropertyData[0];
@@ -27,7 +27,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                ArrayType = Asset.GetNameReference((int)reader.ReadInt64());
                 reader.ReadByte(); // null byte
             }
 
@@ -45,7 +45,7 @@ namespace UAssetAPI.PropertyTypes
 
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchHeaderReference(ArrayType));
+                writer.Write((long)Asset.SearchNameReference(ArrayType));
                 writer.Write((byte)0);
             }
 

@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class Vector2DPropertyData : PropertyData<float[]> // X, Y
     {
-        public Vector2DPropertyData(string name, AssetReader asset) : base(name, asset)
+        public Vector2DPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Vector2D";
         }

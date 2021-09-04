@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class BoolPropertyData : PropertyData<bool>
     {
-        public BoolPropertyData(string name, AssetReader asset) : base(name, asset)
+        public BoolPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "BoolProperty";
         }

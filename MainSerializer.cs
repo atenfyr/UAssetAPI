@@ -16,7 +16,7 @@ namespace UAssetAPI
         private static PropertyData lastType;
 #endif
 
-        public static PropertyData TypeToClass(string type, string name, AssetReader asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
+        public static PropertyData TypeToClass(string type, string name, UAsset asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
             /*
                 TODO:
@@ -171,16 +171,16 @@ namespace UAssetAPI
             return data;
         }
 
-        public static PropertyData Read(AssetReader asset, BinaryReader reader, bool includeHeader)
+        public static PropertyData Read(UAsset asset, BinaryReader reader, bool includeHeader)
         {
-            string name = asset.GetHeaderReference((int)reader.ReadInt32());
+            string name = asset.GetNameReference((int)reader.ReadInt32());
             int widgetData = reader.ReadInt32();
             if (name.Equals("None")) return null;
 
             //Debug.WriteLine(name);
             int typeNum = (int)reader.ReadInt64();
             string type = name;
-            if (typeNum > 0) type = asset.GetHeaderReference(typeNum);
+            if (typeNum > 0) type = asset.GetNameReference(typeNum);
 
             int leng = reader.ReadInt32();
             int duplicationIndex = reader.ReadInt32();
@@ -189,13 +189,13 @@ namespace UAssetAPI
             return result;
         }
 
-        public static int Write(PropertyData property, AssetReader asset, BinaryWriter writer, bool includeHeader) // Returns location of the length
+        public static int Write(PropertyData property, UAsset asset, BinaryWriter writer, bool includeHeader) // Returns location of the length
         {
             if (property == null) return 0;
 
-            writer.Write((int)asset.SearchHeaderReference(property.Name));
+            writer.Write((int)asset.SearchNameReference(property.Name));
             writer.Write(property.WidgetData);
-            writer.Write((long)asset.SearchHeaderReference(property.Type));
+            writer.Write((long)asset.SearchNameReference(property.Type));
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((int)0); // initial length
             writer.Write(property.DuplicationIndex);

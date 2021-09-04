@@ -7,7 +7,7 @@ namespace UAssetAPI.StructTypes
 {
     public class PerPlatformIntPropertyData : PropertyData<int[]>
     {
-        public PerPlatformIntPropertyData(string name, AssetReader asset) : base(name, asset)
+        public PerPlatformIntPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "PerPlatformInt";
         }

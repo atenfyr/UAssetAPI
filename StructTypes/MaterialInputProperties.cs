@@ -20,7 +20,7 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        public MaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public MaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
 
         }
@@ -48,7 +48,7 @@ namespace UAssetAPI.StructTypes
 
     public class ExpressionInputPropertyData : MaterialInputPropertyData<int>
     {
-        public ExpressionInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ExpressionInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ExpressionInput";
         }
@@ -81,7 +81,7 @@ namespace UAssetAPI.StructTypes
 
     public class MaterialAttributesInputPropertyData : MaterialInputPropertyData<int>
     {
-        public MaterialAttributesInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public MaterialAttributesInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "MaterialAttributesInput";
         }
@@ -114,7 +114,7 @@ namespace UAssetAPI.StructTypes
 
     public class ColorMaterialInputPropertyData : MaterialInputPropertyData<ColorPropertyData>
     {
-        public ColorMaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ColorMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ColorMaterialInput";
         }
@@ -152,7 +152,7 @@ namespace UAssetAPI.StructTypes
 
     public class ScalarMaterialInputPropertyData : MaterialInputPropertyData<float>
     {
-        public ScalarMaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ScalarMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ScalarMaterialInput";
         }
@@ -190,7 +190,7 @@ namespace UAssetAPI.StructTypes
 
     public class ShadingModelMaterialInputPropertyData : MaterialInputPropertyData<uint>
     {
-        public ShadingModelMaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ShadingModelMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ShadingModelMaterialInput";
         }
@@ -228,7 +228,7 @@ namespace UAssetAPI.StructTypes
 
     public class VectorMaterialInputPropertyData : MaterialInputPropertyData<VectorPropertyData>
     {
-        public VectorMaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public VectorMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "VectorMaterialInput";
         }
@@ -266,7 +266,7 @@ namespace UAssetAPI.StructTypes
 
     public class Vector2MaterialInputPropertyData : MaterialInputPropertyData<Vector2DPropertyData>
     {
-        public Vector2MaterialInputPropertyData(string name, AssetReader asset) : base(name, asset)
+        public Vector2MaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Vector2MaterialInput";
         }

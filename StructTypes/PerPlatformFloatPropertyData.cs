@@ -7,7 +7,7 @@ namespace UAssetAPI.StructTypes
 {
     public class PerPlatformFloatPropertyData : PropertyData<float[]>
     {
-        public PerPlatformFloatPropertyData(string name, AssetReader asset) : base(name, asset)
+        public PerPlatformFloatPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "PerPlatformFloat";
         }

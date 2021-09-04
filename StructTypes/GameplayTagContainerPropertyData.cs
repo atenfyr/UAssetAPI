@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class GameplayTagContainerPropertyData : PropertyData<NamePropertyData[]>
     {
-        public GameplayTagContainerPropertyData(string name, AssetReader asset) : base(name, asset)
+        public GameplayTagContainerPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "GameplayTagContainer";
         }

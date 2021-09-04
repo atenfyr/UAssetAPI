@@ -31,7 +31,7 @@ namespace UAssetAPI.StructTypes
         public float BlendExp;
         public bool bLockOutgoing;
 
-        public ViewTargetBlendParamsPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ViewTargetBlendParamsPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ViewTargetBlendParams";
         }

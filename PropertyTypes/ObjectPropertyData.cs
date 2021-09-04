@@ -4,11 +4,11 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class ObjectPropertyData : PropertyData<Link>
+    public class ObjectPropertyData : PropertyData<Import>
     {
         public int LinkValue = 0;
 
-        public ObjectPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ObjectPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ObjectProperty";
         }
@@ -31,9 +31,9 @@ namespace UAssetAPI.PropertyTypes
         public void SetLinkValue(int newLinkValue)
         {
             LinkValue = newLinkValue;
-            if (LinkValue < 0 && Utils.GetNormalIndex(LinkValue) >= 0)
+            if (LinkValue < 0 && UAPUtils.GetNormalIndex(LinkValue) >= 0)
             {
-                Value = Asset.links[Utils.GetNormalIndex(LinkValue)]; // link reference
+                Value = Asset.Imports[UAPUtils.GetNormalIndex(LinkValue)]; // link reference
             }
             else
             {
@@ -57,7 +57,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (LinkValue > 0) return Convert.ToString(LinkValue);
             if (Value == null) return "null";
-            return Asset.GetHeaderReference((int)Value.Property);
+            return Value.Property;
         }
 
         public override void FromString(string[] d)
@@ -68,11 +68,11 @@ namespace UAssetAPI.PropertyTypes
                 return;
             }
 
-            for (int i = 0; i < Asset.links.Count; i++)
+            for (int i = 0; i < Asset.Imports.Count; i++)
             {
-                if (Asset.GetHeaderReference((int)Asset.links[i].Property).Equals(d[0]))
+                if (Asset.Imports[i].Property.Equals(d[0]))
                 {
-                    Value = Asset.links[i];
+                    Value = Asset.Imports[i];
                     return;
                 }
             }

@@ -7,7 +7,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public int Value2 = 0;
 
-        public NamePropertyData(string name, AssetReader asset) : base(name, asset)
+        public NamePropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "NameProperty";
         }
@@ -24,7 +24,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = Asset.GetHeaderReference(reader.ReadInt32());
+            Value = Asset.GetNameReference(reader.ReadInt32());
             Value2 = reader.ReadInt32();
         }
 
@@ -35,7 +35,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write((int)Asset.SearchHeaderReference(Value));
+            writer.Write((int)Asset.SearchNameReference(Value));
             writer.Write(Value2);
             return sizeof(int) * 2;
         }

@@ -42,10 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetReader.cs" />
-    <Compile Include="AssetWriter.cs" />
-    <Compile Include="Category.cs" />
-    <Compile Include="CategoryReference.cs" />
+    <Compile Include="UAsset.cs" />
+    <Compile Include="Export.cs" />
+    <Compile Include="ExportReference.cs" />
     <Compile Include="CRCGenerator.cs" />
     <Compile Include="PropertyTypes\ArrayPropertyData.cs" />
     <Compile Include="PropertyTypes\SetPropertyData.cs" />
@@ -72,7 +71,7 @@
     <Compile Include="PropertyTypes\IntPropertyData.cs" />
     <Compile Include="StructTypes\LinearColorPropertyData.cs" />
     <Compile Include="MainSerializer.cs" />
-    <Compile Include="Link.cs" />
+    <Compile Include="Import.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyTypes\MapPropertyData.cs" />
     <Compile Include="PropertyTypes\MulticastDelegatePropertyData.cs" />
@@ -96,7 +95,7 @@
     <Compile Include="StructTypes\VectorPropertyData.cs" />
     <Compile Include="StructTypes\ViewTargetBlendParamsPropertyData.cs" />
     <Compile Include="UE4Version.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="UAPUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

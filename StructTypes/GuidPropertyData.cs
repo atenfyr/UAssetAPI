@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class GuidPropertyData : PropertyData<Guid>
     {
-        public GuidPropertyData(string name, AssetReader asset) : base(name, asset)
+        public GuidPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Guid";
         }

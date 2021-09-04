@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class DateTimePropertyData : PropertyData<DateTime>
     {
-        public DateTimePropertyData(string name, AssetReader asset) : base(name, asset)
+        public DateTimePropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "DateTime";
         }

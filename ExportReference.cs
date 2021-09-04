@@ -1,6 +1,6 @@
 ﻿namespace UAssetAPI
 {
-    public class CategoryReference
+    public class ExportReference
     {
         public int connection;
         public int connect;
@@ -16,7 +16,7 @@
         public ushort garbageNew;
         public byte[] garbage3;
 
-        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV, int garbage1, int garbage2, ushort garbageNew, byte[] garbage3)
+        public ExportReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV, int garbage1, int garbage2, ushort garbageNew, byte[] garbage3)
         {
             this.connection = connection;
             this.connect = connect;
@@ -33,7 +33,7 @@
             this.garbage3 = garbage3;
         }
 
-        public CategoryReference(CategoryReference refer)
+        public ExportReference(ExportReference refer)
         {
             this.connection = refer.connection;
             this.connect = refer.connect;
@@ -50,7 +50,7 @@
             this.garbage3 = refer.garbage3;
         }
 
-        public CategoryReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV)
+        public ExportReference(int connection, int connect, int category, int link, int typeIndex, ushort type, int lengthV, int startV)
         {
             this.connection = connection;
             this.connect = connect;
@@ -62,7 +62,7 @@
             this.startV = startV;
         }
 
-        public CategoryReference()
+        public ExportReference()
         {
 
         }

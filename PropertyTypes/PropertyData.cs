@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
         public int WidgetData = 0;
         public string Type = "";
         public int DuplicationIndex = 0;
-        public AssetReader Asset;
+        public UAsset Asset;
         public object RawValue;
 
         public void SetObject(object value)
@@ -21,7 +21,7 @@ namespace UAssetAPI.PropertyTypes
             return (T)RawValue;
         }
 
-        public PropertyData(string name, AssetReader asset)
+        public PropertyData(string name, UAsset asset)
         {
             Name = name;
             Asset = asset;
@@ -57,7 +57,7 @@ namespace UAssetAPI.PropertyTypes
             set => SetObject(value);
         }
 
-        public PropertyData(string name, AssetReader asset) : base(name, asset)
+        public PropertyData(string name, UAsset asset) : base(name, asset)
         {
 
         }

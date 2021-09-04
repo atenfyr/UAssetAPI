@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class TimespanPropertyData : PropertyData<TimeSpan>
     {
-        public TimespanPropertyData(string name, AssetReader asset) : base(name, asset)
+        public TimespanPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Timespan";
         }

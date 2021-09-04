@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UInt64PropertyData : PropertyData<ulong>
     {
-        public UInt64PropertyData(string name, AssetReader asset) : base(name, asset)
+        public UInt64PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "UInt64Property";
         }

@@ -6,7 +6,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public string EnumType;
 
-        public EnumPropertyData(string name, AssetReader asset) : base(name, asset)
+        public EnumPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "EnumProperty";
         }
@@ -20,20 +20,20 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                EnumType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                EnumType = Asset.GetNameReference((int)reader.ReadInt64());
                 reader.ReadByte(); // null byte
             }
-            Value = Asset.GetHeaderReference((int)reader.ReadInt64());
+            Value = Asset.GetNameReference((int)reader.ReadInt64());
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchHeaderReference(EnumType));
+                writer.Write((long)Asset.SearchNameReference(EnumType));
                 writer.Write((byte)0);
             }
-            writer.Write((long)Asset.SearchHeaderReference(Value));
+            writer.Write((long)Asset.SearchNameReference(Value));
             return sizeof(long);
         }
 
@@ -44,8 +44,8 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Asset.AddHeaderReference(d[0]);
-            Asset.AddHeaderReference(d[1]);
+            Asset.AddNameReference(d[0]);
+            Asset.AddNameReference(d[1]);
             EnumType = d[0];
             Value = d[1];
         }

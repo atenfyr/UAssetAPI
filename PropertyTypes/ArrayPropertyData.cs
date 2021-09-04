@@ -9,7 +9,7 @@ namespace UAssetAPI.PropertyTypes
         public string ArrayType;
         public StructPropertyData DummyStruct;
 
-        public ArrayPropertyData(string name, AssetReader asset) : base(name, asset)
+        public ArrayPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ArrayProperty";
             Value = new PropertyData[0];
@@ -25,7 +25,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                ArrayType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                ArrayType = Asset.GetNameReference((int)reader.ReadInt64());
                 reader.ReadByte(); // null byte
             }
 
@@ -33,17 +33,17 @@ namespace UAssetAPI.PropertyTypes
             if (ArrayType == "StructProperty")
             {
                 var results = new PropertyData[numEntries];
-                string name = Asset.GetHeaderReference((int)reader.ReadInt64());
+                string name = Asset.GetNameReference((int)reader.ReadInt64());
                 if (name.Equals("None"))
                 {
                     Value = results;
                     return;
                 }
 
-                if (Asset.GetHeaderReference((int)reader.ReadInt64()) != ArrayType) throw new FormatException("Invalid array type");
+                if (Asset.GetNameReference((int)reader.ReadInt64()) != ArrayType) throw new FormatException("Invalid array type");
                 reader.ReadInt64(); // length value
 
-                string fullType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                string fullType = Asset.GetNameReference((int)reader.ReadInt64());
                 Guid structGUID = new Guid(reader.ReadBytes(16));
                 reader.ReadByte();
 
@@ -90,7 +90,7 @@ namespace UAssetAPI.PropertyTypes
 
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchHeaderReference(ArrayType));
+                writer.Write((long)Asset.SearchNameReference(ArrayType));
                 writer.Write((byte)0);
             }
 
@@ -103,11 +103,11 @@ namespace UAssetAPI.PropertyTypes
 
                 string fullType = DummyStruct.StructType;
 
-                writer.Write((long)Asset.SearchHeaderReference(DummyStruct.Name));
-                writer.Write((long)Asset.SearchHeaderReference("StructProperty"));
+                writer.Write((long)Asset.SearchNameReference(DummyStruct.Name));
+                writer.Write((long)Asset.SearchNameReference("StructProperty"));
                 int lengthLoc = (int)writer.BaseStream.Position;
                 writer.Write((long)0);
-                writer.Write((long)Asset.SearchHeaderReference(fullType));
+                writer.Write((long)Asset.SearchNameReference(fullType));
                 writer.Write(DummyStruct.StructGUID.ToByteArray());
                 writer.Write((byte)0);
 

@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class RotatorPropertyData : PropertyData<float[]> // Pitch, Yaw, Roll
     {
-        public RotatorPropertyData(string name, AssetReader asset) : base(name, asset)
+        public RotatorPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Rotator";
         }

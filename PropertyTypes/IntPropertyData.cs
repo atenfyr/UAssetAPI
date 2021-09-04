@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class IntPropertyData : PropertyData<int>
     {
-        public IntPropertyData(string name, AssetReader asset) : base(name, asset)
+        public IntPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "IntProperty";
         }

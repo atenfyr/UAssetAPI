@@ -7,7 +7,7 @@ namespace UAssetAPI.StructTypes
 {
     public class PerPlatformBoolPropertyData : PropertyData<bool[]>
     {
-        public PerPlatformBoolPropertyData(string name, AssetReader asset) : base(name, asset)
+        public PerPlatformBoolPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "PerPlatformBool";
         }

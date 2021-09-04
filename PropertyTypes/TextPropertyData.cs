@@ -11,7 +11,7 @@ namespace UAssetAPI.PropertyTypes
         public byte[] Extras;
         public UString BaseBlankString;
 
-        public TextPropertyData(string name, AssetReader asset) : base(name, asset)
+        public TextPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "TextProperty";
         }

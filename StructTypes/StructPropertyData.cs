@@ -10,13 +10,13 @@ namespace UAssetAPI.StructTypes
         public string StructType = null;
         public Guid StructGUID = Guid.Empty; // usually set to 0
 
-        public StructPropertyData(string name, AssetReader asset) : base(name, asset)
+        public StructPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "StructProperty";
             Value = new List<PropertyData>();
         }
 
-        public StructPropertyData(string name, AssetReader asset, string forcedType) : base(name, asset)
+        public StructPropertyData(string name, UAsset asset, string forcedType) : base(name, asset)
         {
             StructType = forcedType;
             Type = "StructProperty";
@@ -51,7 +51,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader) // originally !isForced
             {
-                StructType = Asset.GetHeaderReference((int)reader.ReadInt64());
+                StructType = Asset.GetNameReference((int)reader.ReadInt64());
                 StructGUID = new Guid(reader.ReadBytes(16));
                 reader.ReadByte();
             }
@@ -162,7 +162,7 @@ namespace UAssetAPI.StructTypes
                     MainSerializer.Write(t, Asset, writer, true);
                 }
             }
-            writer.Write((long)Asset.SearchHeaderReference("None"));
+            writer.Write((long)Asset.SearchNameReference("None"));
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -170,7 +170,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchHeaderReference(StructType));
+                writer.Write((long)Asset.SearchNameReference(StructType));
                 writer.Write(StructGUID.ToByteArray());
                 writer.Write((byte)0);
             }

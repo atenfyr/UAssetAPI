@@ -11,7 +11,7 @@ namespace UAssetAPI.PropertyTypes
         public string[] dummyEntry = new string[] { string.Empty, string.Empty };
         public OrderedDictionary KeysToRemove = null;
 
-        public MapPropertyData(string name, AssetReader asset) : base(name, asset)
+        public MapPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "MapProperty";
             Value = new OrderedDictionary();
@@ -23,7 +23,7 @@ namespace UAssetAPI.PropertyTypes
             Value = new OrderedDictionary();
         }
 
-        private PropertyData MapTypeToClass(string type, string name, AssetReader asset, BinaryReader reader, int leng, bool includeHeader)
+        private PropertyData MapTypeToClass(string type, string name, UAsset asset, BinaryReader reader, int leng, bool includeHeader)
         {
             switch (type)
             {
@@ -71,8 +71,8 @@ namespace UAssetAPI.PropertyTypes
             string type1 = null, type2 = null;
             if (includeHeader)
             {
-                type1 = Asset.GetHeaderReference((int)reader.ReadInt64());
-                type2 = Asset.GetHeaderReference((int)reader.ReadInt64());
+                type1 = Asset.GetNameReference((int)reader.ReadInt64());
+                type2 = Asset.GetNameReference((int)reader.ReadInt64());
                 reader.ReadByte();
             }
 
@@ -108,13 +108,13 @@ namespace UAssetAPI.PropertyTypes
                 if (Value.Count > 0)
                 {
                     DictionaryEntry firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
-                    writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Key).Type));
-                    writer.Write((long)Asset.SearchHeaderReference(((PropertyData)firstEntry.Value).Type));
+                    writer.Write((long)Asset.SearchNameReference(((PropertyData)firstEntry.Key).Type));
+                    writer.Write((long)Asset.SearchNameReference(((PropertyData)firstEntry.Value).Type));
                 }
                 else
                 {
-                    writer.Write((long)Asset.SearchHeaderReference(dummyEntry[0]));
-                    writer.Write((long)Asset.SearchHeaderReference(dummyEntry[1]));
+                    writer.Write((long)Asset.SearchNameReference(dummyEntry[0]));
+                    writer.Write((long)Asset.SearchNameReference(dummyEntry[1]));
                 }
                 writer.Write((byte)0);
             }

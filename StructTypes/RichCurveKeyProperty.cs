@@ -44,7 +44,7 @@ namespace UAssetAPI.StructTypes
         public float LeaveTangent;
         public float LeaveTangentWeight;
 
-        public RichCurveKeyProperty(string name, AssetReader asset) : base(name, asset)
+        public RichCurveKeyProperty(string name, UAsset asset) : base(name, asset)
         {
             Type = "RichCurveKey";
         }

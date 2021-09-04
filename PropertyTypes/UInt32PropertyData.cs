@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UInt32PropertyData : PropertyData<uint>
     {
-        public UInt32PropertyData(string name, AssetReader asset) : base(name, asset)
+        public UInt32PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "UInt32Property";
         }

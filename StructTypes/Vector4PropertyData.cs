@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class Vector4PropertyData : PropertyData<float[]>
     {
-        public Vector4PropertyData(string name, AssetReader asset) : base(name, asset)
+        public Vector4PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Vector4";
         }

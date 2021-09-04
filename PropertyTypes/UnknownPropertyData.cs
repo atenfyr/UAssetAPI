@@ -9,7 +9,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UnknownPropertyData : PropertyData<byte[]>
     {
-        public UnknownPropertyData(string name, AssetReader asset) : base(name, asset)
+        public UnknownPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "UnknownProperty";
         }

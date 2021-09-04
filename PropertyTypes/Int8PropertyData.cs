@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class Int8PropertyData : PropertyData<sbyte>
     {
-        public Int8PropertyData(string name, AssetReader asset) : base(name, asset)
+        public Int8PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Int8Property";
         }

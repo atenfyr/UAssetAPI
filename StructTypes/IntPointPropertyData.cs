@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class IntPointPropertyData : PropertyData<int[]> // X, Y
     {
-        public IntPointPropertyData(string name, AssetReader asset) : base(name, asset)
+        public IntPointPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "IntPoint";
         }

@@ -7,7 +7,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public string Value2;
 
-        public MulticastDelegatePropertyData(string name, AssetReader asset) : base(name, asset)
+        public MulticastDelegatePropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "MulticastDelegateProperty";
         }
@@ -29,7 +29,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 Value[i] = reader.ReadInt32();
             }
-            Value2 = Asset.GetHeaderReference((int)reader.ReadUInt64());
+            Value2 = Asset.GetNameReference((int)reader.ReadUInt64());
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -43,7 +43,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 writer.Write(Value[i]);
             }
-            writer.Write((long)Asset.SearchHeaderReference(Value2));
+            writer.Write((long)Asset.SearchNameReference(Value2));
             return (sizeof(int) * 2) + sizeof(long);
         }
 
@@ -64,7 +64,7 @@ namespace UAssetAPI.PropertyTypes
             if (int.TryParse(d[0], out int res)) Value[0] = res;
             if (int.TryParse(d[1], out int res2)) Value[1] = res2;
 
-            Asset.AddHeaderReference(d[2]);
+            Asset.AddNameReference(d[2]);
             Value2 = d[2];
         }
     }

@@ -8,7 +8,7 @@ namespace UAssetAPI.StructTypes
     {
         public bool IsValid;
 
-        public BoxPropertyData(string name, AssetReader asset) : base(name, asset)
+        public BoxPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Box";
         }

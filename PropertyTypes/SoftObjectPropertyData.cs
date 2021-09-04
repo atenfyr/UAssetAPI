@@ -6,7 +6,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public long Value2 = 0;
 
-        public SoftObjectPropertyData(string name, AssetReader asset) : base(name, asset)
+        public SoftObjectPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "SoftObjectProperty";
         }
@@ -23,7 +23,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = Asset.GetHeaderReference(reader.ReadInt32()); // a header reference that isn't a long!? wow!
+            Value = Asset.GetNameReference(reader.ReadInt32()); // a header reference that isn't a long!? wow!
             Value2 = reader.ReadInt64();
         }
 
@@ -34,7 +34,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(Asset.SearchHeaderReference(Value));
+            writer.Write(Asset.SearchNameReference(Value));
             writer.Write(Value2);
             return sizeof(int) + sizeof(long);
         }
@@ -46,7 +46,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Asset.AddHeaderReference(d[0]);
+            Asset.AddNameReference(d[0]);
             Value = d[0];
 
             if (int.TryParse(d[1], out int res2))

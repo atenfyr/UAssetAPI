@@ -10,10 +10,10 @@ namespace UAssetAPI.StructTypes
     {
         public static Color Convert(LinearColor color)
         {
-            float FloatR = Utils.Clamp(color.R, 0.0f, 1.0f);
-            float FloatG = Utils.Clamp(color.G, 0.0f, 1.0f);
-            float FloatB = Utils.Clamp(color.B, 0.0f, 1.0f);
-            float FloatA = Utils.Clamp(color.A, 0.0f, 1.0f);
+            float FloatR = UAPUtils.Clamp(color.R, 0.0f, 1.0f);
+            float FloatG = UAPUtils.Clamp(color.G, 0.0f, 1.0f);
+            float FloatB = UAPUtils.Clamp(color.B, 0.0f, 1.0f);
+            float FloatA = UAPUtils.Clamp(color.A, 0.0f, 1.0f);
 
             FloatR = (float)(FloatR <= 0.0031308f ? FloatR * 12.92f : Math.Pow(FloatR, 1.0f / 2.4f) * 1.055f - 0.055f);
             FloatG = (float)(FloatG <= 0.0031308f ? FloatG * 12.92f : Math.Pow(FloatG, 1.0f / 2.4f) * 1.055f - 0.055f);
@@ -46,7 +46,7 @@ namespace UAssetAPI.StructTypes
 
     public class LinearColorPropertyData : PropertyData<LinearColor> // R, G, B, A
     {
-        public LinearColorPropertyData(string name, AssetReader asset) : base(name, asset)
+        public LinearColorPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "LinearColor";
         }

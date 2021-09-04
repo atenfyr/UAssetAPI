@@ -7,7 +7,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public Encoding Encoding = Encoding.ASCII;
 
-        public StrPropertyData(string name, AssetReader asset) : base(name, asset)
+        public StrPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "StrProperty";
         }

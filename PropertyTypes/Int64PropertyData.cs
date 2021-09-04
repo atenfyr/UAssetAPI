@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class Int64PropertyData : PropertyData<long>
     {
-        public Int64PropertyData(string name, AssetReader asset) : base(name, asset)
+        public Int64PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Int64Property";
         }

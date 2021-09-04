@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UAssetAPI
 {
-    public static class Utils
+    public static class UAPUtils
     {
         public static UString ReadUStringWithEncoding(this BinaryReader reader)
         {
@@ -90,7 +90,7 @@ namespace UAssetAPI
             else return val;
         }
 
-        public static int GetLinkIndex(int index)
+        public static int GetImportIndex(int index)
         {
             return -(index + 1);
         }
@@ -98,6 +98,13 @@ namespace UAssetAPI
         public static int GetNormalIndex(int index)
         {
             return -(index + 1);
+        }
+
+        public static string GetImportNameReferenceWithoutZero(int j, UAsset asset)
+        {
+            string refer = asset.GetImportReference(j);
+            if (!asset.NameReferenceContains(refer)) return refer;
+            return asset.GetNameReferenceWithoutZero(asset.SearchNameReference(refer));
         }
     }
 }

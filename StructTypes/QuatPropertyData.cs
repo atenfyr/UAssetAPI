@@ -6,7 +6,7 @@ namespace UAssetAPI.StructTypes
 {
     public class QuatPropertyData : PropertyData<float[]>
     {
-        public QuatPropertyData(string name, AssetReader asset) : base(name, asset)
+        public QuatPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "Quat";
         }

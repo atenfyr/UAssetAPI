@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UInt16PropertyData : PropertyData<ushort>
     {
-        public UInt16PropertyData(string name, AssetReader asset) : base(name, asset)
+        public UInt16PropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "UInt16Property";
         }

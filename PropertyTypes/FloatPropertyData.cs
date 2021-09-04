@@ -5,7 +5,7 @@ namespace UAssetAPI.PropertyTypes
 {
     public class FloatPropertyData : PropertyData<float>
     {
-        public FloatPropertyData(string name, AssetReader asset) : base(name, asset)
+        public FloatPropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "FloatProperty";
         }

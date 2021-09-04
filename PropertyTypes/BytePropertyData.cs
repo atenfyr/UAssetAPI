@@ -15,7 +15,7 @@ namespace UAssetAPI.PropertyTypes
         public BytePropertyType ByteType;
         public int EnumType = 0;
 
-        public BytePropertyData(string name, AssetReader asset) : base(name, asset)
+        public BytePropertyData(string name, UAsset asset) : base(name, asset)
         {
             Type = "ByteProperty";
         }
@@ -83,13 +83,13 @@ namespace UAssetAPI.PropertyTypes
         public string GetEnumBase()
         {
             if (EnumType <= 0) return "null";
-            return Asset.GetHeaderReference(EnumType);
+            return Asset.GetNameReference(EnumType);
         }
 
         public string GetEnumFull()
         {
             if (Value <= 0) return "null";
-            return Asset.GetHeaderReference(Value);
+            return Asset.GetNameReference(Value);
         }
 
         public override string ToString()
@@ -100,7 +100,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            EnumType = Asset.AddHeaderReference(d[0]);
+            EnumType = Asset.AddNameReference(d[0]);
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -109,7 +109,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.Long;
-                Value = Asset.AddHeaderReference(d[1]);
+                Value = Asset.AddNameReference(d[1]);
             }
         }
     }

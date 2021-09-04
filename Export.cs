@@ -15,22 +15,22 @@ namespace UAssetAPI
         No
     }
 
-    public class Category
+    public class Export
     {
-        public CategoryReference ReferenceData;
+        public ExportReference ReferenceData;
         public byte[] Extras;
-        public AssetReader Asset;
+        public UAsset Asset;
 
-        public Category(CategoryReference reference, AssetReader asset, byte[] extras)
+        public Export(ExportReference reference, UAsset asset, byte[] extras)
         {
             ReferenceData = reference;
             Asset = asset;
             Extras = extras;
         }
 
-        public Category()
+        public Export()
         {
-            ReferenceData = new CategoryReference();
+            ReferenceData = new ExportReference();
         }
 
         public virtual void Read(BinaryReader reader, int nextStarting = 0)
@@ -44,23 +44,23 @@ namespace UAssetAPI
         }
     }
 
-    public class NormalCategory : Category
+    public class NormalExport : Export
     {
         public IList<PropertyData> Data;
 
-        public NormalCategory(Category super)
+        public NormalExport(Export super)
         {
             ReferenceData = super.ReferenceData;
             Asset = super.Asset;
             Extras = super.Extras;
         }
 
-        public NormalCategory(CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
 
-        public NormalCategory(IList<PropertyData> data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(IList<PropertyData> data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -89,7 +89,7 @@ namespace UAssetAPI
                 PropertyData current = Data[j];
                 MainSerializer.Write(current, Asset, writer, true);
             }
-            writer.Write((long)Asset.SearchHeaderReference("None"));
+            writer.Write((long)Asset.SearchNameReference("None"));
             Write2(writer);
         }
 
@@ -99,18 +99,18 @@ namespace UAssetAPI
         }
     }
 
-    public class RawCategory : Category
+    public class RawExport : Export
     {
         public byte[] Data;
 
-        public RawCategory(Category super)
+        public RawExport(Export super)
         {
             ReferenceData = super.ReferenceData;
             Asset = super.Asset;
             Extras = super.Extras;
         }
 
-        public RawCategory(byte[] data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public RawExport(byte[] data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -148,16 +148,16 @@ namespace UAssetAPI
         }
     }
 
-    public class StringTableCategory : NormalCategory
+    public class StringTableExport : NormalExport
     {
         public StringTable Data2;
 
-        public StringTableCategory(Category super) : base(super)
+        public StringTableExport(Export super) : base(super)
         {
 
         }
 
-        public StringTableCategory(StringTable data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public StringTableExport(StringTable data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data2 = data;
         }
@@ -198,13 +198,13 @@ namespace UAssetAPI
     }
 
 
-    public class FunctionCategory : Category
+    public class FunctionCategory : Export
     {
 
     }
 
 
-    // Used in BlueprintGeneratedClassCategory
+    // Used in BlueprintGeneratedClassExport
     public class FunctionDataEntry
     {
         public string Name;
@@ -224,7 +224,7 @@ namespace UAssetAPI
         }
     }
 
-    public class BlueprintGeneratedClassCategory : NormalCategory
+    public class BlueprintGeneratedClassExport : NormalExport
     {
         public int BaseClass;
         public List<int> IndexData;
@@ -235,12 +235,12 @@ namespace UAssetAPI
         public string FooterEngine;
         public byte[] DummyInbetweenData2; // Usually zeros, sometimes not
 
-        public BlueprintGeneratedClassCategory(Category super) : base(super)
+        public BlueprintGeneratedClassExport(Export super) : base(super)
         {
 
         }
 
-        public BlueprintGeneratedClassCategory(CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public BlueprintGeneratedClassExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
@@ -267,19 +267,19 @@ namespace UAssetAPI
                 int flags = reader.ReadInt32();
                 int functionCategory = reader.ReadInt32();
 
-                FunctionData.Add(new FunctionDataEntry(Asset.GetHeaderReference(functionName), flags, functionCategory));
+                FunctionData.Add(new FunctionDataEntry(Asset.GetNameReference(functionName), flags, functionCategory));
             }
 
             FooterSeparator = reader.ReadInt32(); // usually 10 00 84 00
             FooterObject = reader.ReadInt32();
             int footerEngineRaw = (int)reader.ReadInt32();
-            if (footerEngineRaw < 0 || footerEngineRaw > Asset.GetHeaderIndexList().Count)
+            if (footerEngineRaw < 0 || footerEngineRaw > Asset.GetNameMapIndexList().Count)
             {
                 FooterEngine = footerEngineRaw.ToString();
             }
             else
             {
-                FooterEngine = Asset.GetHeaderReference(footerEngineRaw);
+                FooterEngine = Asset.GetNameReference(footerEngineRaw);
             }
             DummyInbetweenData2 = reader.ReadBytes(16); // zeros
 
@@ -306,16 +306,16 @@ namespace UAssetAPI
             writer.Write(FunctionData.Count);
             for (int i = 0; i < FunctionData.Count; i++)
             {
-                writer.Write((int)Asset.SearchHeaderReference(FunctionData[i].Name));
+                writer.Write((int)Asset.SearchNameReference(FunctionData[i].Name));
                 writer.Write((int)FunctionData[i].Flags);
                 writer.Write((int)FunctionData[i].Category);
             }
 
             writer.Write(FooterSeparator);
             writer.Write(FooterObject);
-            if (Asset.HeaderReferenceContains(FooterEngine))
+            if (Asset.NameReferenceContains(FooterEngine))
             {
-                writer.Write((int)Asset.SearchHeaderReference(FooterEngine));
+                writer.Write((int)Asset.SearchNameReference(FooterEngine));
             }
             else
             {
@@ -324,7 +324,7 @@ namespace UAssetAPI
             writer.Write(DummyInbetweenData2);
 
             // There is a "None" here, but to allow for writing for different engine versions we leave it as part of the extra data section
-            //writer.Write((long)Asset.SearchHeaderReference("None"));
+            //writer.Write((long)Asset.SearchNameReference("None"));
 
             // Here are a couple weird ints we're ignoring for now
         }
@@ -358,16 +358,16 @@ namespace UAssetAPI
         }
     }
 
-    public class DataTableCategory : NormalCategory
+    public class DataTableExport : NormalExport
     {
         public DataTable Data2;
 
-        public DataTableCategory(Category super) : base(super)
+        public DataTableExport(Export super) : base(super)
         {
 
         }
 
-        public DataTableCategory(DataTable data, CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public DataTableExport(DataTable data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data2 = data;
         }
@@ -380,7 +380,7 @@ namespace UAssetAPI
             {
                 if (thisData.Name == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = Asset.GetHeaderReference((int)thisObjData.Value.Property);
+                    decidedStructType = thisObjData.Value.Property;
                     break;
                 }
             }
@@ -393,7 +393,7 @@ namespace UAssetAPI
             int numEntries = reader.ReadInt32();
             for (int i = 0; i < numEntries; i++)
             {
-                string rowName = Asset.GetHeaderReference(reader.ReadInt32());
+                string rowName = Asset.GetNameReference(reader.ReadInt32());
                 int duplicateIndex = reader.ReadInt32();
                 var nextStruct = new StructPropertyData(rowName, Asset)
                 {
@@ -413,7 +413,7 @@ namespace UAssetAPI
             {
                 if (thisData.Name == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = Asset.GetHeaderReference((int)thisObjData.Value.Property);
+                    decidedStructType = thisObjData.Value.Property;
                     break;
                 }
             }
@@ -425,7 +425,7 @@ namespace UAssetAPI
             {
                 var thisDataTableEntry = Data2.Table[i];
                 thisDataTableEntry.Data.StructType = decidedStructType;
-                writer.Write((int)Asset.SearchHeaderReference(thisDataTableEntry.Data.Name));
+                writer.Write((int)Asset.SearchNameReference(thisDataTableEntry.Data.Name));
                 writer.Write(thisDataTableEntry.DuplicateIndex);
                 thisDataTableEntry.Data.Write(writer, false);
             }
@@ -449,19 +449,19 @@ namespace UAssetAPI
         }
     }
 
-    public class LevelCategory : NormalCategory
+    public class LevelExport : NormalExport
     {
         public List<int> IndexData;
         public NamespacedString LevelType;
         public ulong FlagsProbably;
         public List<int> MiscCategoryData;
 
-        public LevelCategory(Category super) : base(super)
+        public LevelExport(Export super) : base(super)
         {
 
         }
 
-        public LevelCategory(CategoryReference reference, AssetReader asset, byte[] extras) : base(reference, asset, extras)
+        public LevelExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
