@@ -69,6 +69,9 @@ namespace UAssetAPI
                 case "ArrayProperty":
                     data = new ArrayPropertyData(name, asset);
                     break;
+                case "SetProperty":
+                    data = new SetPropertyData(name, asset);
+                    break;
                 case "MapProperty":
                     data = new MapPropertyData(name, asset);
                     break;
@@ -110,6 +113,9 @@ namespace UAssetAPI
                     break;
                 case "Vector4":
                     data = new Vector4PropertyData(name, asset);
+                    break;
+                case "GameplayTagContainer":
+                    data = new GameplayTagContainerPropertyData(name, asset);
                     break;
                 case "SoftObjectProperty":
                     data = new SoftObjectPropertyData(name, asset);

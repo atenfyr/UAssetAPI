@@ -34,6 +34,9 @@ namespace UAssetAPI.PropertyTypes
                         case "ColorDatabase":
                             strucType = "LinearColor";
                             break;
+                        case "PlayerCharacterIDs":
+                            strucType = "Guid";
+                            break;
                     }
 
                     StructPropertyData data = new StructPropertyData(name, asset, strucType);

@@ -129,6 +129,9 @@ namespace UAssetAPI.StructTypes
                 case "Vector2MaterialInput":
                     ReadOnce<Vector2MaterialInputPropertyData>(reader);
                     break;
+                case "GameplayTagContainer":
+                    ReadOnce<GameplayTagContainerPropertyData>(reader);
+                    break;
                 default:
                     ReadNormal(reader);
                     break;
@@ -222,6 +225,7 @@ namespace UAssetAPI.StructTypes
                 case "ShadingModelMaterialInput":
                 case "VectorMaterialInput":
                 case "Vector2MaterialInput":
+                case "GameplayTagContainer":
                     return WriteOnce(writer);
                 default:
                     return WriteNormal(writer);
