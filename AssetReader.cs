@@ -235,7 +235,6 @@ namespace UAssetAPI
         public bool doWeHaveSectionFour = true;
         public bool doWeHaveSectionFive = true;
 
-        public uint extraGameIdentifier = 0;
         public int extraGameJump = 0;
 
         // Do not directly add values to headerIndexList under any circumstances; use AddHeaderReference instead
@@ -259,13 +258,8 @@ namespace UAssetAPI
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
-            reader.BaseStream.Seek(8, SeekOrigin.Begin); // 8
-            extraGameIdentifier = reader.ReadUInt32();
-            if (extraGameIdentifier != 0)
-            {
-                reader.BaseStream.Seek(20, SeekOrigin.Begin); // 20
-                extraGameJump = reader.ReadByte() * 20; // probably not the actual format, but it works for now
-            }
+            reader.BaseStream.Seek(20, SeekOrigin.Begin);
+            extraGameJump = reader.ReadInt32() * 20;
 
             reader.BaseStream.Seek(24 + extraGameJump, SeekOrigin.Begin); // 24
             sectionSixOffset = reader.ReadInt32();
