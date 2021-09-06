@@ -230,6 +230,19 @@ namespace UAssetAPI
 
         public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
+            // This serialization is not yet fully complete, so if this asset is too old just forget about it
+            if (Asset.EngineVersion < UE4Version.VER_UE4_22)
+            {
+                BaseClass = 0;
+                IndexData = new List<int>();
+                DummyInbetweenData = new byte[8];
+                FunctionData = new List<FunctionDataEntry>();
+                FooterSeparator = 0;
+                FooterObject = 0;
+                DummyInbetweenData2 = new byte[16];
+                return ZeroPaddingMode.No;
+            }
+
             reader.ReadInt32();
             BaseClass = reader.ReadInt32();
 
@@ -275,6 +288,12 @@ namespace UAssetAPI
 
         public override void Write2(BinaryWriter writer)
         {
+            // This serialization is not yet fully complete, so if this asset is too old just forget about it
+            if (Asset.EngineVersion < UE4Version.VER_UE4_22)
+            {
+                return;
+            }
+
             writer.Write((int)0);
             writer.Write(BaseClass);
 

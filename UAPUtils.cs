@@ -74,7 +74,7 @@ namespace UAssetAPI
             return str;
         }
 
-        public static void WriteFString(this BinaryWriter writer, string str, Encoding encoding = null)
+        public static int WriteFString(this BinaryWriter writer, string str, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.ASCII;
 
@@ -82,18 +82,19 @@ namespace UAssetAPI
             {
                 case null:
                     writer.Write((int)0);
-                    break;
+                    return 4;
                 default:
                     string nullTerminatedStr = str + "\0";
                     writer.Write(encoding is UnicodeEncoding ? -nullTerminatedStr.Length : nullTerminatedStr.Length);
-                    writer.Write(encoding.GetBytes(nullTerminatedStr));
-                    break;
+                    byte[] actualStrData = encoding.GetBytes(nullTerminatedStr);
+                    writer.Write(actualStrData);
+                    return actualStrData.Length + 4;
             }
         }
 
-        public static void WriteFString(this BinaryWriter writer, FString str)
+        public static int WriteFString(this BinaryWriter writer, FString str)
         {
-            WriteFString(writer, str?.Value, str?.Encoding);
+            return WriteFString(writer, str?.Value, str?.Encoding);
         }
 
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>

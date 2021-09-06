@@ -540,8 +540,6 @@ namespace UAssetAPI
                 }
             }
 
-            int gapStart = 0;
-
             // Export details
             Exports = new List<Export>();
             if (ExportOffset > 0)
@@ -593,7 +591,6 @@ namespace UAssetAPI
 
                     Exports.Add(new Export(newRef, this, new byte[0]));
                 }
-                gapStart = (int)reader.BaseStream.Position;
             }
 
             // DependsMap
@@ -611,7 +608,6 @@ namespace UAssetAPI
                     }
                     DependsMap.Add(data);
                 }
-                gapStart = (int)reader.BaseStream.Position;
             }
             else
             {
@@ -627,7 +623,6 @@ namespace UAssetAPI
                 {
                     SoftPackageReferencesMap.Add(reader.ReadFString());
                 }
-                gapStart = (int)reader.BaseStream.Position;
             }
             else
             {

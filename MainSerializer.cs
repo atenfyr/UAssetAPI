@@ -170,6 +170,9 @@ namespace UAssetAPI
                 case "SoftObjectProperty":
                     data = new SoftObjectPropertyData(name, asset);
                     break;
+                case "AssetObjectProperty":
+                    data = new AssetObjectPropertyData(name, asset);
+                    break;
                 case "MulticastDelegateProperty":
                     data = new MulticastDelegatePropertyData(name, asset);
                     break;
