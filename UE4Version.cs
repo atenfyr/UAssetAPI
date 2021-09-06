@@ -2,6 +2,7 @@
 {
     public enum UE4Version
     {
+        UNKNOWN = -1,
         VER_UE4_OLDEST_LOADABLE_PACKAGE = 214,
         VER_UE4_BLUEPRINT_VARS_NOT_READ_ONLY,
         VER_UE4_STATIC_MESH_STORE_NAV_COLLISION,
@@ -342,8 +343,5 @@
         VER_UE4_24 = 518,
         VER_UE4_25 = 518,
         VER_UE4_26 = 519,
-        VER_GUESSED_V1 = VER_UE4_13,
-        VER_GUESSED_V2 = VER_UE4_18,
-        VER_GUESSED_V3 = VER_UE4_15,
     };
 }

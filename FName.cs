@@ -32,11 +32,6 @@ namespace UAssetAPI
             return Value.GetHashCode();
         }
 
-        /*public static implicit operator string(FString input)
-        {
-            return input.ToString();
-        }*/
-
         public FString(string value, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.ASCII;
@@ -75,11 +70,6 @@ namespace UAssetAPI
         {
             return Value.GetHashCode() ^ Number.GetHashCode();
         }
-
-        /*public static implicit operator string(FName input)
-        {
-            return input.ToString();
-        }*/
 
         public FName(string value, int number = 0)
         {
