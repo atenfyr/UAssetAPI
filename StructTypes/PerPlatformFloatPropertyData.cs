@@ -7,14 +7,14 @@ namespace UAssetAPI.StructTypes
 {
     public class PerPlatformFloatPropertyData : PropertyData<float[]>
     {
-        public PerPlatformFloatPropertyData(string name, UAsset asset) : base(name, asset)
+        public PerPlatformFloatPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "PerPlatformFloat";
+            Type = new FName("PerPlatformFloat");
         }
 
         public PerPlatformFloatPropertyData()
         {
-            Type = "PerPlatformFloat";
+            Type = new FName("PerPlatformFloat");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

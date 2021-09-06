@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class TimespanPropertyData : PropertyData<TimeSpan>
     {
-        public TimespanPropertyData(string name, UAsset asset) : base(name, asset)
+        public TimespanPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Timespan";
+            Type = new FName("Timespan");
         }
 
         public TimespanPropertyData()
         {
-            Type = "Timespan";
+            Type = new FName("Timespan");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
@@ -44,14 +40,14 @@ namespace UAssetAPI.StructTypes
         public float LeaveTangent;
         public float LeaveTangentWeight;
 
-        public RichCurveKeyProperty(string name, UAsset asset) : base(name, asset)
+        public RichCurveKeyProperty(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "RichCurveKey";
+            Type = new FName("RichCurveKey");
         }
 
         public RichCurveKeyProperty()
         {
-            Type = "RichCurveKey";
+            Type = new FName("RichCurveKey");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

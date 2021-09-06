@@ -8,34 +8,34 @@ namespace UAssetAPI.PropertyTypes
 {
     public class MapPropertyData : PropertyData<OrderedDictionary> // Map
     {
-        public string[] dummyEntry = new string[] { string.Empty, string.Empty };
+        public FName[] dummyEntry = new FName[] { new FName(string.Empty), new FName(string.Empty) };
         public OrderedDictionary KeysToRemove = null;
 
-        public MapPropertyData(string name, UAsset asset) : base(name, asset)
+        public MapPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "MapProperty";
+            Type = new FName("MapProperty");
             Value = new OrderedDictionary();
         }
 
         public MapPropertyData()
         {
-            Type = "MapProperty";
+            Type = new FName("MapProperty");
             Value = new OrderedDictionary();
         }
 
-        private PropertyData MapTypeToClass(string type, string name, UAsset asset, BinaryReader reader, int leng, bool includeHeader)
+        private PropertyData MapTypeToClass(FName type, FName name, UAsset asset, BinaryReader reader, int leng, bool includeHeader)
         {
-            switch (type)
+            switch (type.Value.Value)
             {
                 case "StructProperty":
-                    string strucType = "Generic";
-                    switch(name)
+                    FName strucType = new FName("Generic");
+                    switch(name.Value.Value)
                     {
                         case "ColorDatabase":
-                            strucType = "LinearColor";
+                            strucType = new FName("LinearColor");
                             break;
                         case "PlayerCharacterIDs":
-                            strucType = "Guid";
+                            strucType = new FName("Guid");
                             break;
                     }
 
@@ -49,7 +49,7 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        private OrderedDictionary ReadRawMap(BinaryReader reader, string type1, string type2, int numEntries)
+        private OrderedDictionary ReadRawMap(BinaryReader reader, FName type1, FName type2, int numEntries)
         {
             var resultingDict = new OrderedDictionary();
 
@@ -68,11 +68,11 @@ namespace UAssetAPI.PropertyTypes
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
-            string type1 = null, type2 = null;
+            FName type1 = null, type2 = null;
             if (includeHeader)
             {
-                type1 = Asset.GetNameReference((int)reader.ReadInt64());
-                type2 = Asset.GetNameReference((int)reader.ReadInt64());
+                type1 = reader.ReadFName(Asset);
+                type2 = reader.ReadFName(Asset);
                 reader.ReadByte();
             }
 
@@ -85,7 +85,7 @@ namespace UAssetAPI.PropertyTypes
             int numEntries = reader.ReadInt32();
             if (numEntries == 0)
             {
-                dummyEntry = new string[] { type1, type2 };
+                dummyEntry = new FName[] { type1, type2 };
             }
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
@@ -108,13 +108,13 @@ namespace UAssetAPI.PropertyTypes
                 if (Value.Count > 0)
                 {
                     DictionaryEntry firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
-                    writer.Write((long)Asset.SearchNameReference(((PropertyData)firstEntry.Key).Type));
-                    writer.Write((long)Asset.SearchNameReference(((PropertyData)firstEntry.Value).Type));
+                    writer.WriteFName(((PropertyData)firstEntry.Key).Type, Asset);
+                    writer.WriteFName(((PropertyData)firstEntry.Value).Type, Asset);
                 }
                 else
                 {
-                    writer.Write((long)Asset.SearchNameReference(dummyEntry[0]));
-                    writer.Write((long)Asset.SearchNameReference(dummyEntry[1]));
+                    writer.WriteFName(dummyEntry[0], Asset);
+                    writer.WriteFName(dummyEntry[1], Asset);
                 }
                 writer.Write((byte)0);
             }

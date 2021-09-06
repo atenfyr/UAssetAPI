@@ -9,16 +9,16 @@ namespace UAssetAPI.PropertyTypes
         public int Flag;
         public TextHistoryType HistoryType = TextHistoryType.Base;
         public byte[] Extras;
-        public UString BaseBlankString;
+        public FString BaseBlankString;
 
-        public TextPropertyData(string name, UAsset asset) : base(name, asset)
+        public TextPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "TextProperty";
+            Type = new FName("TextProperty");
         }
 
         public TextPropertyData()
         {
-            Type = "TextProperty";
+            Type = new FName("TextProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -38,7 +38,7 @@ namespace UAssetAPI.PropertyTypes
                     List<string> ValueList = new List<string>();
                     for (int i = 0; i < BitConverter.ToInt32(Extras, 0); i++)
                     {
-                        ValueList.Add(reader.ReadUString());
+                        ValueList.Add(reader.ReadFString());
                     }
                     Value = ValueList.ToArray();
                     break;
@@ -46,12 +46,12 @@ namespace UAssetAPI.PropertyTypes
                     //Extras = reader.ReadBytes(4);
                     //Console.WriteLine("EXT: " + BitConverter.ToInt32(Extras, 0));
                     Extras = new byte[0];
-                    BaseBlankString = reader.ReadUStringWithEncoding();
-                    Value = new string[] { reader.ReadUString(), reader.ReadUString() };
+                    BaseBlankString = reader.ReadFStringWithEncoding();
+                    Value = new string[] { reader.ReadFString(), reader.ReadFString() };
                     break;
                 case TextHistoryType.StringTableEntry:
                     Extras = reader.ReadBytes(8);
-                    Value = new string[] { reader.ReadUString() };
+                    Value = new string[] { reader.ReadFString() };
                     break;
                 default:
                     throw new FormatException("Unimplemented reader for " + HistoryType.ToString());
@@ -77,18 +77,18 @@ namespace UAssetAPI.PropertyTypes
                     writer.Write(Value.Length);
                     foreach (string val in Value)
                     {
-                        writer.WriteUString(val);
+                        writer.WriteFString(val);
                     }
                     break;
                 case TextHistoryType.Base:
-                    writer.WriteUString(BaseBlankString);
+                    writer.WriteFString(BaseBlankString);
                     for (int i = 0; i < 2; i++)
                     {
-                        writer.WriteUString(Value[i]);
+                        writer.WriteFString(Value[i]);
                     }
                     break;
                 case TextHistoryType.StringTableEntry:
-                    writer.WriteUString(Value[0]);
+                    writer.WriteFString(Value[0]);
                     break;
                 default:
                     throw new FormatException("Unimplemented writer for " + HistoryType.ToString());

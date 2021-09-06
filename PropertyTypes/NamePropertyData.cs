@@ -1,20 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class NamePropertyData : PropertyData<string>
+    public class NamePropertyData : PropertyData<FName>
     {
-        public int Value2 = 0;
-
-        public NamePropertyData(string name, UAsset asset) : base(name, asset)
+        public NamePropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "NameProperty";
+            Type = new FName("NameProperty");
         }
 
         public NamePropertyData()
         {
-            Type = "NameProperty";
+            Type = new FName("NameProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -24,8 +23,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = Asset.GetNameReference(reader.ReadInt32());
-            Value2 = reader.ReadInt32();
+            Value = reader.ReadFName(Asset);
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -35,8 +33,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write((int)Asset.SearchNameReference(Value));
-            writer.Write(Value2);
+            writer.WriteFName(Value, Asset);
             return sizeof(int) * 2;
         }
 
@@ -47,9 +44,8 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Value = d[0];
-            Value2 = 0;
-            if (d[1] != null && int.TryParse(d[1], out int res)) Value2 = res;
+            int.TryParse(d[1], out int number);
+            Value = new FName(d[0], number);
         }
     }
 }

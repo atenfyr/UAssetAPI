@@ -9,16 +9,16 @@ namespace UAssetAPI.PropertyTypes
         public PropertyData[] RemovedItems;
         public StructPropertyData RemovedItemsDummyStruct;
 
-        public SetPropertyData(string name, UAsset asset) : base(name, asset)
+        public SetPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "SetProperty";
+            Type = new FName("SetProperty");
             Value = new PropertyData[0];
             RemovedItems = new PropertyData[0];
         }
 
         public SetPropertyData()
         {
-            Type = "SetProperty";
+            Type = new FName("SetProperty");
             Value = new PropertyData[0];
             RemovedItems = new PropertyData[0];
         }
@@ -27,11 +27,11 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                ArrayType = Asset.GetNameReference((int)reader.ReadInt64());
+                ArrayType = reader.ReadFName(Asset);
                 reader.ReadByte(); // null byte
             }
 
-            var removedItemsDummy = new ArrayPropertyData("RemovedItems", Asset);
+            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"), Asset);
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
             RemovedItems = removedItemsDummy.Value;
@@ -45,11 +45,11 @@ namespace UAssetAPI.PropertyTypes
 
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchNameReference(ArrayType));
+                writer.WriteFName(ArrayType, Asset);
                 writer.Write((byte)0);
             }
 
-            var removedItemsDummy = new ArrayPropertyData("RemovedItems", Asset);
+            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"), Asset);
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.DummyStruct = RemovedItemsDummyStruct;
             removedItemsDummy.Value = RemovedItems;

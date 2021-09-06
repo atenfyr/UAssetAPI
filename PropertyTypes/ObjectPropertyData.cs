@@ -6,16 +6,16 @@ namespace UAssetAPI.PropertyTypes
 {
     public class ObjectPropertyData : PropertyData<Import>
     {
-        public int LinkValue = 0;
+        public int CurrentIndex = 0;
 
-        public ObjectPropertyData(string name, UAsset asset) : base(name, asset)
+        public ObjectPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ObjectProperty";
+            Type = new FName("ObjectProperty");
         }
 
         public ObjectPropertyData()
         {
-            Type = "ObjectProperty";
+            Type = new FName("ObjectProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -25,15 +25,15 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            SetLinkValue(reader.ReadInt32());
+            SetCurrentIndex(reader.ReadInt32());
         }
 
-        public void SetLinkValue(int newLinkValue)
+        public void SetCurrentIndex(int newIndex)
         {
-            LinkValue = newLinkValue;
-            if (LinkValue < 0 && UAPUtils.GetNormalIndex(LinkValue) >= 0)
+            CurrentIndex = newIndex;
+            if (CurrentIndex < 0 && UAPUtils.GetNormalIndex(CurrentIndex) >= 0)
             {
-                Value = Asset.Imports[UAPUtils.GetNormalIndex(LinkValue)]; // link reference
+                Value = Asset.Imports[UAPUtils.GetNormalIndex(CurrentIndex)]; // link reference
             }
             else
             {
@@ -48,29 +48,29 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            if (Value != null) LinkValue = Value.Index;
-            writer.Write(LinkValue);
+            if (Value != null) CurrentIndex = Value.Index;
+            writer.Write(CurrentIndex);
             return 4;
         }
 
         public override string ToString()
         {
-            if (LinkValue > 0) return Convert.ToString(LinkValue);
+            if (CurrentIndex > 0) return Convert.ToString(CurrentIndex);
             if (Value == null) return "null";
-            return Value.Property;
+            return Value.ObjectName.Value.Value;
         }
 
         public override void FromString(string[] d)
         {
             if (int.TryParse(d[0], out int res))
             {
-                LinkValue = res;
+                CurrentIndex = res;
                 return;
             }
 
             for (int i = 0; i < Asset.Imports.Count; i++)
             {
-                if (Asset.Imports[i].Property.Equals(d[0]))
+                if (Asset.Imports[i].ObjectName.Equals(d[0]))
                 {
                     Value = Asset.Imports[i];
                     return;

@@ -2,18 +2,27 @@
 {
     public class Import
     {
-        public string Base;
-        public string Class;
-        public int Linkage;
-        public string Property;
+        public FName ClassPackage;
+        public FName ClassName;
+        public int OuterIndex;
+        public FName ObjectName;
         public int Index;
 
-        public Import(string bbase, string bclass, int link, string property, int index = 0)
+        public Import(string classPackage, string className, int outerIndex, string objectName, int index = 0)
         {
-            Base = bbase;
-            Class = bclass;
-            Linkage = link;
-            Property = property;
+            ClassPackage = new FName(classPackage);
+            ClassName = new FName(className);
+            OuterIndex = outerIndex;
+            ObjectName = new FName(objectName);
+            Index = index;
+        }
+
+        public Import(FName classPackage, FName className, int outerIndex, FName objectName, int index = 0)
+        {
+            ClassPackage = classPackage;
+            ClassName = className;
+            OuterIndex = outerIndex;
+            ObjectName = objectName;
             Index = index;
         }
 

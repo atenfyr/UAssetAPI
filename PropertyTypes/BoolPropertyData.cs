@@ -5,14 +5,14 @@ namespace UAssetAPI.PropertyTypes
 {
     public class BoolPropertyData : PropertyData<bool>
     {
-        public BoolPropertyData(string name, UAsset asset) : base(name, asset)
+        public BoolPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "BoolProperty";
+            Type = new FName("BoolProperty");
         }
 
         public BoolPropertyData()
         {
-            Type = "BoolProperty";
+            Type = new FName("BoolProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

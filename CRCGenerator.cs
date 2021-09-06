@@ -5,7 +5,7 @@ namespace UAssetAPI
 {
     public static class CRCGenerator
     {
-        public static uint GenerateHash(UString text)
+        public static uint GenerateHash(FString text)
         {
             return GenerateHash(text?.Value, text?.Encoding);
         }

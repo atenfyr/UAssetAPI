@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class GuidPropertyData : PropertyData<Guid>
     {
-        public GuidPropertyData(string name, UAsset asset) : base(name, asset)
+        public GuidPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Guid";
+            Type = new FName("Guid");
         }
 
         public GuidPropertyData()
         {
-            Type = "Guid";
+            Type = new FName("Guid");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -17,11 +17,11 @@ namespace UAssetAPI
 
     public class Export
     {
-        public ExportReference ReferenceData;
+        public ExportDetails ReferenceData;
         public byte[] Extras;
         public UAsset Asset;
 
-        public Export(ExportReference reference, UAsset asset, byte[] extras)
+        public Export(ExportDetails reference, UAsset asset, byte[] extras)
         {
             ReferenceData = reference;
             Asset = asset;
@@ -30,7 +30,7 @@ namespace UAssetAPI
 
         public Export()
         {
-            ReferenceData = new ExportReference();
+            ReferenceData = new ExportDetails();
         }
 
         public virtual void Read(BinaryReader reader, int nextStarting = 0)
@@ -55,12 +55,12 @@ namespace UAssetAPI
             Extras = super.Extras;
         }
 
-        public NormalExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
 
-        public NormalExport(IList<PropertyData> data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(IList<PropertyData> data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -89,7 +89,7 @@ namespace UAssetAPI
                 PropertyData current = Data[j];
                 MainSerializer.Write(current, Asset, writer, true);
             }
-            writer.Write((long)Asset.SearchNameReference("None"));
+            writer.WriteFName(new FName("None"), Asset);
             Write2(writer);
         }
 
@@ -110,7 +110,7 @@ namespace UAssetAPI
             Extras = super.Extras;
         }
 
-        public RawExport(byte[] data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public RawExport(byte[] data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data = data;
         }
@@ -121,24 +121,7 @@ namespace UAssetAPI
         }
     }
 
-    public class UString
-    {
-        public string Value;
-        public Encoding Encoding;
-
-        public UString(string value, Encoding encoding)
-        {
-            Value = value;
-            Encoding = encoding;
-        }
-
-        public UString()
-        {
-
-        }
-    }
-
-    public class StringTable : List<UString>
+    public class StringTable : List<FString>
     {
         public string Name;
 
@@ -157,7 +140,7 @@ namespace UAssetAPI
 
         }
 
-        public StringTableExport(StringTable data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public StringTableExport(StringTable data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data2 = data;
         }
@@ -166,12 +149,12 @@ namespace UAssetAPI
         {
             reader.ReadInt32();
 
-            Data2 = new StringTable(reader.ReadUString());
+            Data2 = new StringTable(reader.ReadFString());
 
             int numEntries = reader.ReadInt32() * 2;
             for (int i = 0; i < numEntries; i++)
             {
-                UString x = reader.ReadUStringWithEncoding();
+                FString x = reader.ReadFStringWithEncoding();
                 Data2.Add(x);
             }
             return ZeroPaddingMode.Unknown;
@@ -181,13 +164,13 @@ namespace UAssetAPI
         {
             writer.Write((int)0);
 
-            writer.WriteUString(Data2.Name);
+            writer.WriteFString(Data2.Name);
 
             writer.Write(Data2.Count / 2);
             int lenData = (Data2.Count / 2) * 2;
             for (int i = 0; i < lenData; i++)
             {
-                writer.WriteUString(Data2[i]);
+                writer.WriteFString(Data2[i]);
             }
         }
     }
@@ -207,11 +190,11 @@ namespace UAssetAPI
     // Used in BlueprintGeneratedClassExport
     public class FunctionDataEntry
     {
-        public string Name;
+        public FString Name;
         public int Flags;
         public int Category;
 
-        public FunctionDataEntry(string name, int flags, int category)
+        public FunctionDataEntry(FString name, int flags, int category)
         {
             Name = name;
             Flags = flags;
@@ -232,7 +215,7 @@ namespace UAssetAPI
         public List<FunctionDataEntry> FunctionData;
         public int FooterSeparator;
         public int FooterObject;
-        public string FooterEngine;
+        public FString FooterEngine;
         public byte[] DummyInbetweenData2; // Usually zeros, sometimes not
 
         public BlueprintGeneratedClassExport(Export super) : base(super)
@@ -240,7 +223,7 @@ namespace UAssetAPI
 
         }
 
-        public BlueprintGeneratedClassExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public BlueprintGeneratedClassExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
@@ -275,7 +258,7 @@ namespace UAssetAPI
             int footerEngineRaw = (int)reader.ReadInt32();
             if (footerEngineRaw < 0 || footerEngineRaw > Asset.GetNameMapIndexList().Count)
             {
-                FooterEngine = footerEngineRaw.ToString();
+                FooterEngine = new FString(footerEngineRaw.ToString());
             }
             else
             {
@@ -319,7 +302,7 @@ namespace UAssetAPI
             }
             else
             {
-                writer.Write(int.Parse(FooterEngine));
+                writer.Write(int.Parse(FooterEngine.Value));
             }
             writer.Write(DummyInbetweenData2);
 
@@ -367,7 +350,7 @@ namespace UAssetAPI
 
         }
 
-        public DataTableExport(DataTable data, ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public DataTableExport(DataTable data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
             Data2 = data;
         }
@@ -375,16 +358,15 @@ namespace UAssetAPI
         public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
         {
             // Find an ObjectProperty named RowStruct
-            string decidedStructType = "Generic";
+            FName decidedStructType = new FName("Generic");
             foreach (PropertyData thisData in Data)
             {
-                if (thisData.Name == "RowStruct" && thisData is ObjectPropertyData thisObjData)
+                if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = thisObjData.Value.Property;
+                    decidedStructType = thisObjData.Value.ObjectName;
                     break;
                 }
             }
-            Debug.WriteLine(decidedStructType);
 
             reader.ReadInt32();
 
@@ -393,9 +375,9 @@ namespace UAssetAPI
             int numEntries = reader.ReadInt32();
             for (int i = 0; i < numEntries; i++)
             {
-                string rowName = Asset.GetNameReference(reader.ReadInt32());
+                FString rowName = Asset.GetNameReference(reader.ReadInt32());
                 int duplicateIndex = reader.ReadInt32();
-                var nextStruct = new StructPropertyData(rowName, Asset)
+                var nextStruct = new StructPropertyData(new FName(rowName), Asset)
                 {
                     StructType = decidedStructType
                 };
@@ -408,12 +390,12 @@ namespace UAssetAPI
         public override void Write2(BinaryWriter writer)
         {
             // Find an ObjectProperty named RowStruct
-            string decidedStructType = "Generic";
+            FName decidedStructType = new FName("Generic");
             foreach (PropertyData thisData in Data)
             {
-                if (thisData.Name == "RowStruct" && thisData is ObjectPropertyData thisObjData)
+                if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = thisObjData.Value.Property;
+                    decidedStructType = thisObjData.Value.ObjectName;
                     break;
                 }
             }
@@ -425,7 +407,7 @@ namespace UAssetAPI
             {
                 var thisDataTableEntry = Data2.Table[i];
                 thisDataTableEntry.Data.StructType = decidedStructType;
-                writer.Write((int)Asset.SearchNameReference(thisDataTableEntry.Data.Name));
+                writer.Write((int)Asset.SearchNameReference(thisDataTableEntry.Data.Name.Value));
                 writer.Write(thisDataTableEntry.DuplicateIndex);
                 thisDataTableEntry.Data.Write(writer, false);
             }
@@ -461,7 +443,7 @@ namespace UAssetAPI
 
         }
 
-        public LevelExport(ExportReference reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public LevelExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
@@ -477,9 +459,9 @@ namespace UAssetAPI
                 IndexData.Add(reader.ReadInt32());
             }
 
-            var nms = reader.ReadUString();
+            var nms = reader.ReadFString();
             reader.ReadInt32(); // null
-            var val = reader.ReadUString();
+            var val = reader.ReadFString();
             LevelType = new NamespacedString(nms, val);
 
             reader.ReadInt64(); // null
@@ -504,9 +486,9 @@ namespace UAssetAPI
                 writer.Write(IndexData[i]);
             }
 
-            writer.WriteUString(LevelType.Namespace);
+            writer.WriteFString(LevelType.Namespace);
             writer.Write((int)0);
-            writer.WriteUString(LevelType.Value);
+            writer.WriteFString(LevelType.Value);
 
             writer.Write((long)0);
             writer.Write(FlagsProbably);

@@ -7,14 +7,14 @@ namespace UAssetAPI.PropertyTypes
     {
         public Encoding Encoding = Encoding.ASCII;
 
-        public StrPropertyData(string name, UAsset asset) : base(name, asset)
+        public StrPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "StrProperty";
+            Type = new FName("StrProperty");
         }
 
         public StrPropertyData()
         {
-            Type = "StrProperty";
+            Type = new FName("StrProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -24,7 +24,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            UString ustr = reader.ReadUStringWithEncoding();
+            FString ustr = reader.ReadFStringWithEncoding();
             if (ustr != null) Encoding = ustr.Encoding;
             Value = ustr != null ? ustr.Value : null;
         }
@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int here = (int)writer.BaseStream.Position;
-            writer.WriteUString(new UString(Value, Encoding));
+            writer.WriteFString(new FString(Value, Encoding));
             return (int)writer.BaseStream.Position - here;
         }
 

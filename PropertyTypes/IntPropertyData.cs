@@ -5,14 +5,14 @@ namespace UAssetAPI.PropertyTypes
 {
     public class IntPropertyData : PropertyData<int>
     {
-        public IntPropertyData(string name, UAsset asset) : base(name, asset)
+        public IntPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "IntProperty";
+            Type = new FName("IntProperty");
         }
 
         public IntPropertyData()
         {
-            Type = "IntProperty";
+            Type = new FName("IntProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
-        public ColorPropertyData(string name, UAsset asset) : base(name, asset)
+        public ColorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Color";
+            Type = new FName("Color");
         }
 
         public ColorPropertyData()
         {
-            Type = "Color";
+            Type = new FName("Color");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

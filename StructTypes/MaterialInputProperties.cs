@@ -20,7 +20,7 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        public MaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public MaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
         }
@@ -48,14 +48,14 @@ namespace UAssetAPI.StructTypes
 
     public class ExpressionInputPropertyData : MaterialInputPropertyData<int>
     {
-        public ExpressionInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public ExpressionInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ExpressionInput";
+            Type = new FName("ExpressionInput");
         }
 
         public ExpressionInputPropertyData()
         {
-            Type = "ExpressionInput";
+            Type = new FName("ExpressionInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -81,14 +81,14 @@ namespace UAssetAPI.StructTypes
 
     public class MaterialAttributesInputPropertyData : MaterialInputPropertyData<int>
     {
-        public MaterialAttributesInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public MaterialAttributesInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "MaterialAttributesInput";
+            Type = new FName("MaterialAttributesInput");
         }
 
         public MaterialAttributesInputPropertyData()
         {
-            Type = "MaterialAttributesInput";
+            Type = new FName("MaterialAttributesInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -114,14 +114,14 @@ namespace UAssetAPI.StructTypes
 
     public class ColorMaterialInputPropertyData : MaterialInputPropertyData<ColorPropertyData>
     {
-        public ColorMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public ColorMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ColorMaterialInput";
+            Type = new FName("ColorMaterialInput");
         }
 
         public ColorMaterialInputPropertyData()
         {
-            Type = "ColorMaterialInput";
+            Type = new FName("ColorMaterialInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -152,14 +152,14 @@ namespace UAssetAPI.StructTypes
 
     public class ScalarMaterialInputPropertyData : MaterialInputPropertyData<float>
     {
-        public ScalarMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public ScalarMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ScalarMaterialInput";
+            Type = new FName("ScalarMaterialInput");
         }
 
         public ScalarMaterialInputPropertyData()
         {
-            Type = "ScalarMaterialInput";
+            Type = new FName("ScalarMaterialInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -190,14 +190,14 @@ namespace UAssetAPI.StructTypes
 
     public class ShadingModelMaterialInputPropertyData : MaterialInputPropertyData<uint>
     {
-        public ShadingModelMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public ShadingModelMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ShadingModelMaterialInput";
+            Type = new FName("ShadingModelMaterialInput");
         }
 
         public ShadingModelMaterialInputPropertyData()
         {
-            Type = "ShadingModelMaterialInput";
+            Type = new FName("ShadingModelMaterialInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -228,14 +228,14 @@ namespace UAssetAPI.StructTypes
 
     public class VectorMaterialInputPropertyData : MaterialInputPropertyData<VectorPropertyData>
     {
-        public VectorMaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public VectorMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "VectorMaterialInput";
+            Type = new FName("VectorMaterialInput");
         }
 
         public VectorMaterialInputPropertyData()
         {
-            Type = "VectorMaterialInput";
+            Type = new FName("VectorMaterialInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -266,14 +266,14 @@ namespace UAssetAPI.StructTypes
 
     public class Vector2MaterialInputPropertyData : MaterialInputPropertyData<Vector2DPropertyData>
     {
-        public Vector2MaterialInputPropertyData(string name, UAsset asset) : base(name, asset)
+        public Vector2MaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Vector2MaterialInput";
+            Type = new FName("Vector2MaterialInput");
         }
 
         public Vector2MaterialInputPropertyData()
         {
-            Type = "Vector2MaterialInput";
+            Type = new FName("Vector2MaterialInput");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

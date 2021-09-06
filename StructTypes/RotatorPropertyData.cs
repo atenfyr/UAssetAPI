@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class RotatorPropertyData : PropertyData<float[]> // Pitch, Yaw, Roll
     {
-        public RotatorPropertyData(string name, UAsset asset) : base(name, asset)
+        public RotatorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Rotator";
+            Type = new FName("Rotator");
         }
 
         public RotatorPropertyData()
         {
-            Type = "Rotator";
+            Type = new FName("Rotator");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

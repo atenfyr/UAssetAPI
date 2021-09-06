@@ -8,14 +8,14 @@ namespace UAssetAPI.StructTypes
     {
         public bool IsValid;
 
-        public BoxPropertyData(string name, UAsset asset) : base(name, asset)
+        public BoxPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Box";
+            Type = new FName("Box");
         }
 
         public BoxPropertyData()
         {
-            Type = "Box";
+            Type = new FName("Box");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

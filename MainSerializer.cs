@@ -16,7 +16,7 @@ namespace UAssetAPI
         private static PropertyData lastType;
 #endif
 
-        public static PropertyData TypeToClass(string type, string name, UAsset asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
+        public static PropertyData TypeToClass(FName type, FName name, UAsset asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
             /*
                 TODO:
@@ -24,7 +24,7 @@ namespace UAssetAPI
             */
 
             PropertyData data;
-            switch (type)
+            switch (type.Value.Value)
             {
                 case "BoolProperty":
                     data = new BoolPropertyData(name, asset);
@@ -131,6 +131,42 @@ namespace UAssetAPI
                 case "PerPlatformBool":
                     data = new PerPlatformBoolPropertyData(name, asset);
                     break;
+                case "SoftObjectPath":
+                    data = new SoftObjectPathPropertyData(name, asset);
+                    break;
+                case "SoftAssetPath":
+                    data = new SoftAssetPathPropertyData(name, asset);
+                    break;
+                case "SoftClassPath":
+                    data = new SoftClassPathPropertyData(name, asset);
+                    break;
+                case "RichCurveKey":
+                    data = new RichCurveKeyProperty(name, asset);
+                    break;
+                case "ViewTargetBlendParams":
+                    data = new ViewTargetBlendParamsPropertyData(name, asset);
+                    break;
+                case "ExpressionInput":
+                    data = new ExpressionInputPropertyData(name, asset);
+                    break;
+                case "MaterialAttributesInput":
+                    data = new MaterialAttributesInputPropertyData(name, asset);
+                    break;
+                case "ColorMaterialInput":
+                    data = new ColorMaterialInputPropertyData(name, asset);
+                    break;
+                case "ScalarMaterialInput":
+                    data = new ScalarMaterialInputPropertyData(name, asset);
+                    break;
+                case "ShadingModelMaterialInput":
+                    data = new ShadingModelMaterialInputPropertyData(name, asset);
+                    break;
+                case "VectorMaterialInput":
+                    data = new VectorMaterialInputPropertyData(name, asset);
+                    break;
+                case "Vector2MaterialInput":
+                    data = new Vector2MaterialInputPropertyData(name, asset);
+                    break;
                 case "SoftObjectProperty":
                     data = new SoftObjectPropertyData(name, asset);
                     break;
@@ -173,19 +209,14 @@ namespace UAssetAPI
 
         public static PropertyData Read(UAsset asset, BinaryReader reader, bool includeHeader)
         {
-            string name = asset.GetNameReference((int)reader.ReadInt32());
-            int widgetData = reader.ReadInt32();
-            if (name.Equals("None")) return null;
+            FName name = reader.ReadFName(asset);
+            if (name.Value.Value == "None") return null;
 
-            //Debug.WriteLine(name);
-            int typeNum = (int)reader.ReadInt64();
-            string type = name;
-            if (typeNum > 0) type = asset.GetNameReference(typeNum);
+            FName type = reader.ReadFName(asset);
 
             int leng = reader.ReadInt32();
             int duplicationIndex = reader.ReadInt32();
             PropertyData result = TypeToClass(type, name, asset, reader, leng, duplicationIndex, includeHeader);
-            result.WidgetData = widgetData;
             return result;
         }
 
@@ -193,9 +224,8 @@ namespace UAssetAPI
         {
             if (property == null) return 0;
 
-            writer.Write((int)asset.SearchNameReference(property.Name));
-            writer.Write(property.WidgetData);
-            writer.Write((long)asset.SearchNameReference(property.Type));
+            writer.WriteFName(property.Name, asset);
+            writer.WriteFName(property.Type, asset);
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((int)0); // initial length
             writer.Write(property.DuplicationIndex);

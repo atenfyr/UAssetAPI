@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class Vector4PropertyData : PropertyData<float[]>
     {
-        public Vector4PropertyData(string name, UAsset asset) : base(name, asset)
+        public Vector4PropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Vector4";
+            Type = new FName("Vector4");
         }
 
         public Vector4PropertyData()
         {
-            Type = "Vector4";
+            Type = new FName("Vector4");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

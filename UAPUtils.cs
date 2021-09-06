@@ -7,7 +7,20 @@ namespace UAssetAPI
 {
     public static class UAPUtils
     {
-        public static UString ReadUStringWithEncoding(this BinaryReader reader)
+        public static FName ReadFName(this BinaryReader reader, UAsset asset)
+        {
+            int nameMapPointer = reader.ReadInt32();
+            int number = reader.ReadInt32();
+            return new FName(asset.GetNameReference(nameMapPointer), number);
+        }
+
+        public static void WriteFName(this BinaryWriter writer, FName name, UAsset asset)
+        {
+            writer.Write(asset.SearchNameReference(name.Value));
+            writer.Write(name.Number);
+        }
+
+        public static FString ReadFStringWithEncoding(this BinaryReader reader)
         {
             int length = reader.ReadInt32();
             switch (length)
@@ -18,24 +31,24 @@ namespace UAssetAPI
                     if (length < 0)
                     {
                         byte[] data = reader.ReadBytes(-length * 2);
-                        return new UString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
+                        return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
                     }
                     else
                     {
                         byte[] data = reader.ReadBytes(length);
-                        return new UString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
+                        return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
                     }
             }
         }
 
-        public static string ReadUString(this BinaryReader reader)
+        public static string ReadFString(this BinaryReader reader)
         {
-            return ReadUStringWithEncoding(reader)?.Value;
+            return ReadFStringWithEncoding(reader)?.Value;
         }
 
-        public static string ReadUStringWithGUID(this BinaryReader reader, out uint guid)
+        public static string ReadFStringWithGUID(this BinaryReader reader, out uint guid)
         {
-            string str = reader.ReadUString();
+            string str = reader.ReadFString();
             if (!string.IsNullOrEmpty(str))
             {
                 guid = reader.ReadUInt32();
@@ -47,9 +60,9 @@ namespace UAssetAPI
             return str;
         }
 
-        public static UString ReadUStringWithGUIDAndEncoding(this BinaryReader reader, out uint guid)
+        public static FString ReadFStringWithGUIDAndEncoding(this BinaryReader reader, out uint guid)
         {
-            UString str = reader.ReadUStringWithEncoding();
+            FString str = reader.ReadFStringWithEncoding();
             if (!string.IsNullOrEmpty(str.Value))
             {
                 guid = reader.ReadUInt32();
@@ -61,7 +74,7 @@ namespace UAssetAPI
             return str;
         }
 
-        public static void WriteUString(this BinaryWriter writer, string str, Encoding encoding = null)
+        public static void WriteFString(this BinaryWriter writer, string str, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.ASCII;
 
@@ -78,9 +91,9 @@ namespace UAssetAPI
             }
         }
 
-        public static void WriteUString(this BinaryWriter writer, UString str)
+        public static void WriteFString(this BinaryWriter writer, FString str)
         {
-            WriteUString(writer, str?.Value, str?.Encoding);
+            WriteFString(writer, str?.Value, str?.Encoding);
         }
 
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
@@ -100,9 +113,9 @@ namespace UAssetAPI
             return -(index + 1);
         }
 
-        public static string GetImportNameReferenceWithoutZero(int j, UAsset asset)
+        public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)
         {
-            string refer = asset.GetImportReference(j);
+            FString refer = asset.GetImportObjectName(j).Value;
             if (!asset.NameReferenceContains(refer)) return refer;
             return asset.GetNameReferenceWithoutZero(asset.SearchNameReference(refer));
         }

@@ -15,14 +15,14 @@ namespace UAssetAPI.PropertyTypes
         public BytePropertyType ByteType;
         public int EnumType = 0;
 
-        public BytePropertyData(string name, UAsset asset) : base(name, asset)
+        public BytePropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ByteProperty";
+            Type = new FName("ByteProperty");
         }
 
         public BytePropertyData()
         {
-            Type = "ByteProperty";
+            Type = new FName("ByteProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -80,27 +80,27 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public string GetEnumBase()
+        public FString GetEnumBase()
         {
-            if (EnumType <= 0) return "null";
+            if (EnumType <= 0) return new FString("null");
             return Asset.GetNameReference(EnumType);
         }
 
-        public string GetEnumFull()
+        public FString GetEnumFull()
         {
-            if (Value <= 0) return "null";
+            if (Value <= 0) return new FString("null");
             return Asset.GetNameReference(Value);
         }
 
         public override string ToString()
         {
             if (ByteType == BytePropertyType.Byte) return Convert.ToString(Value);
-            return GetEnumFull();
+            return GetEnumFull().Value;
         }
 
         public override void FromString(string[] d)
         {
-            EnumType = Asset.AddNameReference(d[0]);
+            EnumType = Asset.AddNameReference(new FString(d[0]));
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -109,7 +109,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.Long;
-                Value = Asset.AddNameReference(d[1]);
+                Value = Asset.AddNameReference(new FString(d[1]));
             }
         }
     }

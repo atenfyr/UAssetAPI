@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class SoftAssetPathPropertyData : PropertyData<string>
+    public class SoftAssetPathPropertyData : PropertyData<FName>
     {
-        public long Value2 = 0;
+        public uint ID = 0;
 
-        public SoftAssetPathPropertyData(string name, UAsset asset) : base(name, asset)
+        public SoftAssetPathPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "SoftAssetPath";
+            Type = new FName("SoftAssetPath");
         }
 
         public SoftAssetPathPropertyData()
         {
-            Type = "SoftAssetPath";
+            Type = new FName("SoftAssetPath");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -28,8 +28,8 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = Asset.GetNameReference(reader.ReadInt32()); // a header reference that isn't a long!? wow!
-            Value2 = reader.ReadInt64();
+            Value = reader.ReadFName(Asset);
+            ID = reader.ReadUInt32();
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -39,28 +39,28 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(Asset.SearchNameReference(Value));
-            writer.Write(Value2);
-            return sizeof(int) + sizeof(long);
+            writer.WriteFName(Value, Asset);
+            writer.Write(ID);
+            return sizeof(int) * 3;
         }
 
         public override string ToString()
         {
-            return "(" + Value + ", " + Value2 + ")";
+            return "(" + Value + ", " + ID + ")";
         }
 
         public override void FromString(string[] d)
         {
-            Asset.AddNameReference(d[0]);
-            Value = d[0];
+            Asset.AddNameReference(new FString(d[0]));
+            Value = new FName(d[0]);
 
-            if (int.TryParse(d[1], out int res2))
+            if (uint.TryParse(d[1], out uint res2))
             {
-                Value2 = res2;
+                ID = res2;
             }
             else
             {
-                Value2 = 0;
+                ID = 0;
             }
         }
     }

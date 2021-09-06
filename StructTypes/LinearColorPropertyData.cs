@@ -46,14 +46,14 @@ namespace UAssetAPI.StructTypes
 
     public class LinearColorPropertyData : PropertyData<LinearColor> // R, G, B, A
     {
-        public LinearColorPropertyData(string name, UAsset asset) : base(name, asset)
+        public LinearColorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "LinearColor";
+            Type = new FName("LinearColor");
         }
 
         public LinearColorPropertyData()
         {
-            Type = "LinearColor";
+            Type = new FName("LinearColor");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -2,52 +2,52 @@
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class EnumPropertyData : PropertyData<string>
+    public class EnumPropertyData : PropertyData<FName>
     {
-        public string EnumType;
+        public FName EnumType;
 
-        public EnumPropertyData(string name, UAsset asset) : base(name, asset)
+        public EnumPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "EnumProperty";
+            Type = new FName("EnumProperty");
         }
 
         public EnumPropertyData()
         {
-            Type = "EnumProperty";
+            Type = new FName("EnumProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
-                EnumType = Asset.GetNameReference((int)reader.ReadInt64());
+                EnumType = reader.ReadFName(Asset);
                 reader.ReadByte(); // null byte
             }
-            Value = Asset.GetNameReference((int)reader.ReadInt64());
+            Value = reader.ReadFName(Asset);
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchNameReference(EnumType));
+                writer.WriteFName(EnumType, Asset);
                 writer.Write((byte)0);
             }
-            writer.Write((long)Asset.SearchNameReference(Value));
-            return sizeof(long);
+            writer.WriteFName(Value, Asset);
+            return sizeof(int) * 2;
         }
 
         public override string ToString()
         {
-            return Value;
+            return Value.ToString();
         }
 
         public override void FromString(string[] d)
         {
-            Asset.AddNameReference(d[0]);
-            Asset.AddNameReference(d[1]);
-            EnumType = d[0];
-            Value = d[1];
+            Asset.AddNameReference(new FString(d[0]));
+            Asset.AddNameReference(new FString(d[1]));
+            EnumType = new FName(d[0]);
+            Value = new FName(d[1]);
         }
     }
 }

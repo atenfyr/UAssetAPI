@@ -5,14 +5,14 @@ namespace UAssetAPI.PropertyTypes
 {
     public class FloatPropertyData : PropertyData<float>
     {
-        public FloatPropertyData(string name, UAsset asset) : base(name, asset)
+        public FloatPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "FloatProperty";
+            Type = new FName("FloatProperty");
         }
 
         public FloatPropertyData()
         {
-            Type = "FloatProperty";
+            Type = new FName("FloatProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

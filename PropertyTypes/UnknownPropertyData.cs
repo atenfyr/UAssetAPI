@@ -9,14 +9,14 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UnknownPropertyData : PropertyData<byte[]>
     {
-        public UnknownPropertyData(string name, UAsset asset) : base(name, asset)
+        public UnknownPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "UnknownProperty";
+            Type = new FName("UnknownProperty");
         }
 
         public UnknownPropertyData()
         {
-            Type = "UnknownProperty";
+            Type = new FName("UnknownProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

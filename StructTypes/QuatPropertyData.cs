@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class QuatPropertyData : PropertyData<float[]>
     {
-        public QuatPropertyData(string name, UAsset asset) : base(name, asset)
+        public QuatPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "Quat";
+            Type = new FName("Quat");
         }
 
         public QuatPropertyData()
         {
-            Type = "Quat";
+            Type = new FName("Quat");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

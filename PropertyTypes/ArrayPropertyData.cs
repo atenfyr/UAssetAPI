@@ -6,18 +6,18 @@ namespace UAssetAPI.PropertyTypes
 {
     public class ArrayPropertyData : PropertyData<PropertyData[]> // Array
     {
-        public string ArrayType;
+        public FName ArrayType;
         public StructPropertyData DummyStruct;
 
-        public ArrayPropertyData(string name, UAsset asset) : base(name, asset)
+        public ArrayPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ArrayProperty";
+            Type = new FName("ArrayProperty");
             Value = new PropertyData[0];
         }
 
         public ArrayPropertyData()
         {
-            Type = "ArrayProperty";
+            Type = new FName("ArrayProperty");
             Value = new PropertyData[0];
         }
 
@@ -25,25 +25,25 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                ArrayType = Asset.GetNameReference((int)reader.ReadInt64());
+                ArrayType = reader.ReadFName(Asset);
                 reader.ReadByte(); // null byte
             }
 
             int numEntries = reader.ReadInt32();
-            if (ArrayType == "StructProperty")
+            if (ArrayType.Value.Value == "StructProperty")
             {
                 var results = new PropertyData[numEntries];
-                string name = Asset.GetNameReference((int)reader.ReadInt64());
-                if (name.Equals("None"))
+                FName name = reader.ReadFName(Asset);
+                if (name.Value.Value.Equals("None"))
                 {
                     Value = results;
                     return;
                 }
 
-                if (Asset.GetNameReference((int)reader.ReadInt64()) != ArrayType) throw new FormatException("Invalid array type");
+                if (reader.ReadFName(Asset).Value.Value != ArrayType.Value.Value) throw new FormatException("Invalid array type");
                 reader.ReadInt64(); // length value
 
-                string fullType = Asset.GetNameReference((int)reader.ReadInt64());
+                FName fullType = reader.ReadFName(Asset);
                 Guid structGUID = new Guid(reader.ReadBytes(16));
                 reader.ReadByte();
 
@@ -90,24 +90,24 @@ namespace UAssetAPI.PropertyTypes
 
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchNameReference(ArrayType));
+                writer.WriteFName(ArrayType, Asset);
                 writer.Write((byte)0);
             }
 
             int here = (int)writer.BaseStream.Position;
             writer.Write(Value.Length);
-            if (ArrayType == "StructProperty")
+            if (ArrayType.Value.Value == "StructProperty")
             {
                 if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
                 if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
 
-                string fullType = DummyStruct.StructType;
+                FName fullType = DummyStruct.StructType;
 
-                writer.Write((long)Asset.SearchNameReference(DummyStruct.Name));
-                writer.Write((long)Asset.SearchNameReference("StructProperty"));
+                writer.WriteFName(DummyStruct.Name, Asset);
+                writer.WriteFName(new FName("StructProperty"), Asset);
                 int lengthLoc = (int)writer.BaseStream.Position;
                 writer.Write((long)0);
-                writer.Write((long)Asset.SearchNameReference(fullType));
+                writer.WriteFName(fullType, Asset);
                 writer.Write(DummyStruct.StructGUID.ToByteArray());
                 writer.Write((byte)0);
 
@@ -136,7 +136,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            if (d[4] != null) ArrayType = d[4];
+            if (d[4] != null) ArrayType = new FName(d[4]);
         }
     }
 }

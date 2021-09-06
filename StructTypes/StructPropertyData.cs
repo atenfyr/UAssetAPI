@@ -7,25 +7,25 @@ namespace UAssetAPI.StructTypes
 {
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
-        public string StructType = null;
+        public FName StructType = null;
         public Guid StructGUID = Guid.Empty; // usually set to 0
 
-        public StructPropertyData(string name, UAsset asset) : base(name, asset)
+        public StructPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "StructProperty";
+            Type = new FName("StructProperty");
             Value = new List<PropertyData>();
         }
 
-        public StructPropertyData(string name, UAsset asset, string forcedType) : base(name, asset)
+        public StructPropertyData(FName name, UAsset asset, FName forcedType) : base(name, asset)
         {
             StructType = forcedType;
-            Type = "StructProperty";
+            Type = new FName("StructProperty");
             Value = new List<PropertyData>();
         }
 
         public StructPropertyData()
         {
-            Type = "StructProperty";
+            Type = new FName("StructProperty");
         }
 
         private void ReadOnce<T>(BinaryReader reader) where T: PropertyData, new()
@@ -51,11 +51,11 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader) // originally !isForced
             {
-                StructType = Asset.GetNameReference((int)reader.ReadInt64());
+                StructType = reader.ReadFName(Asset);
                 StructGUID = new Guid(reader.ReadBytes(16));
                 reader.ReadByte();
             }
-            switch (StructType)
+            switch (StructType.Value.Value)
             {
                 case "Guid": // 16 byte GUID
                     ReadOnce<GuidPropertyData>(reader);
@@ -94,7 +94,7 @@ namespace UAssetAPI.StructTypes
                     ReadOnce<QuatPropertyData>(reader);
                     break;
                 case "SoftObjectPath":
-                    ReadOnce<SoftObjectPropertyData>(reader);
+                    ReadOnce<SoftObjectPathPropertyData>(reader);
                     break;
                 case "SoftAssetPath":
                     ReadOnce<SoftAssetPathPropertyData>(reader);
@@ -162,7 +162,7 @@ namespace UAssetAPI.StructTypes
                     MainSerializer.Write(t, Asset, writer, true);
                 }
             }
-            writer.Write((long)Asset.SearchNameReference("None"));
+            writer.WriteFName(new FName("None"), Asset);
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -170,7 +170,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((long)Asset.SearchNameReference(StructType));
+                writer.WriteFName(StructType, Asset);
                 writer.Write(StructGUID.ToByteArray());
                 writer.Write((byte)0);
             }
@@ -208,7 +208,7 @@ namespace UAssetAPI.StructTypes
                 default:
                     return WriteNormal(writer);
             }*/
-            switch (StructType)
+            switch (StructType.Value.Value)
             {
                 case "Guid":
                 case "LinearColor":
@@ -246,7 +246,7 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d)
         {
-            if (d[4] != null) StructType = d[4];
+            if (d[4] != null) StructType = new FName(d[4]);
         }
     }
 }

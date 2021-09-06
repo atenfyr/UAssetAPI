@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class GameplayTagContainerPropertyData : PropertyData<NamePropertyData[]>
     {
-        public GameplayTagContainerPropertyData(string name, UAsset asset) : base(name, asset)
+        public GameplayTagContainerPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "GameplayTagContainer";
+            Type = new FName("GameplayTagContainer");
         }
 
         public GameplayTagContainerPropertyData()
         {
-            Type = "GameplayTagContainer";
+            Type = new FName("GameplayTagContainer");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -27,7 +27,7 @@ namespace UAssetAPI.StructTypes
             Value = new NamePropertyData[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                Value[i] = new NamePropertyData("TagName", Asset);
+                Value[i] = new NamePropertyData(new FName("TagName"), Asset);
                 Value[i].Read(reader, false, sizeof(int) * 2);
             }
         }

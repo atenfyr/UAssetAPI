@@ -9,11 +9,11 @@ namespace UAssetAPI
 {
     public class NameMapOutOfRangeException : FormatException
     {
-        public string RequiredString;
+        public FString RequiredName;
 
-        public NameMapOutOfRangeException(string requiredString) : base("Requested string \"" + requiredString + "\" not found in name map")
+        public NameMapOutOfRangeException(FString requiredName) : base("Requested name \"" + requiredName + "\" not found in name map")
         {
-            RequiredString = requiredString;
+            RequiredName = requiredName;
         }
     }
 
@@ -27,7 +27,7 @@ namespace UAssetAPI
         public byte[] OriginalCopy;
         public List<int> UExpData;
         public Guid AssetGuid;
-        public UE4Version GuessedVersion;
+        public UE4Version EngineVersion;
 
         public bool VerifyParsing()
         {
@@ -52,97 +52,59 @@ namespace UAssetAPI
             return true;
         }
 
-        public IReadOnlyList<string> GetNameMapIndexList()
+        public IReadOnlyList<FString> GetNameMapIndexList()
         {
             return nameMapIndexList.AsReadOnly();
         }
 
-        public IReadOnlyDictionary<string, int> GetNameMapLookup()
-        {
-            return nameMapLookup;
-        }
-
-        public IReadOnlyDictionary<string, Encoding> GetNameMapEncodingLookup()
-        {
-            return nameMapEncodingLookup;
-        }
-
         public void ClearNameIndexList()
         {
-            nameMapIndexList = new List<string>();
-            nameMapLookup = new Dictionary<string, int>();
-            nameMapEncodingLookup = new Dictionary<string, Encoding>();
+            nameMapIndexList = new List<FString>();
+            nameMapLookup = new Dictionary<int, int>();
         }
 
-        public void SetNameReference(int index, string value)
+        public void SetNameReference(int index, FString value)
         {
-            SetNameReference(index, new UString(value, Encoding.ASCII));
+            nameMapIndexList[index] = value;
+            nameMapLookup[value.GetHashCode()] = index;
         }
 
-        public void SetNameReference(int index, UString value)
+        public FString GetNameReference(int index)
         {
-            nameMapLookup.Remove(nameMapIndexList[index]);
-            nameMapIndexList[index] = value.Value;
-            nameMapLookup[value.Value] = index;
-            nameMapEncodingLookup[value.Value] = value.Encoding;
-        }
-
-        public string GetNameReference(int index)
-        {
-            if (index < 0) return Convert.ToString(-index);
-            if (index > nameMapIndexList.Count) return Convert.ToString(index);
+            if (index < 0) return new FString(Convert.ToString(-index));
+            if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
         }
 
-        public string GetNameReferenceWithoutZero(int index)
+        public FString GetNameReferenceWithoutZero(int index)
         {
-            if (index <= 0) return Convert.ToString(-index);
-            if (index > nameMapIndexList.Count) return Convert.ToString(index);
+            if (index <= 0) return new FString(Convert.ToString(-index));
+            if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
         }
 
-        public UString GetNameReferenceWithEncoding(int index)
+        public bool NameReferenceContains(FString search)
         {
-            string realStr = GetNameReference(index);
-            if (nameMapEncodingLookup.ContainsKey(realStr)) return new UString(realStr, nameMapEncodingLookup[realStr]);
-            return new UString(realStr, Encoding.ASCII);
+            return nameMapLookup.ContainsKey(search.GetHashCode());
         }
 
-        public UString GetNameReferenceWithEncodingWithoutZero(int index)
+        public int SearchNameReference(FString search)
         {
-            string realStr = GetNameReferenceWithoutZero(index);
-            if (nameMapEncodingLookup.ContainsKey(realStr)) return new UString(realStr, nameMapEncodingLookup[realStr]);
-            return new UString(realStr, Encoding.ASCII);
-        }
-
-        public bool NameReferenceContains(string search)
-        {
-            return nameMapLookup.ContainsKey(search);
-        }
-
-        public int SearchNameReference(string search)
-        {
-            if (NameReferenceContains(search)) return nameMapLookup[search];
+            if (NameReferenceContains(search)) return nameMapLookup[search.GetHashCode()];
             throw new NameMapOutOfRangeException(search);
         }
 
-        public int AddNameReference(string name)
+        public int AddNameReference(FString name)
         {
-            return AddNameReference(new UString(name, Encoding.ASCII));
-        }
-
-        public int AddNameReference(UString name)
-        {
-            if (nameMapLookup.ContainsKey(name.Value)) return SearchNameReference(name.Value);
-            nameMapIndexList.Add(name.Value);
-            nameMapLookup.Add(name.Value, nameMapIndexList.Count - 1);
-            nameMapEncodingLookup[name.Value] = name.Encoding;
+            if (nameMapLookup.ContainsKey(name.GetHashCode())) return SearchNameReference(name);
+            nameMapIndexList.Add(name);
+            nameMapLookup.Add(name.GetHashCode(), nameMapIndexList.Count - 1);
             return nameMapIndexList.Count - 1;
         }
 
-        public string GetImportReference(int index)
+        public FName GetImportObjectName(int index)
         {
-            return index < 0 ? GetImportAt(index).Property : Convert.ToString(index);
+            return index < 0 ? GetImportAt(index).ObjectName : new FName(Convert.ToString(index));
         }
 
         public Import GetImportAt(int index)
@@ -175,15 +137,15 @@ namespace UAssetAPI
             return null;
         }
         
-        public string GetBGCName()
+        public FName GetBGCName()
         {
             var bgcCat = GetBlueprintGeneratedClassExport();
             if (bgcCat == null || bgcCat.ReferenceData == null) return null;
 
-            return GetNameReference(bgcCat.ReferenceData.typeIndex);
+            return bgcCat.ReferenceData.ObjectName;
         }
 
-        public void GetParentClass(out string parentClassPath, out string parentBGCName)
+        public void GetParentClass(out FName parentClassPath, out FName parentBGCName)
         {
             parentClassPath = null;
             parentBGCName = null;
@@ -193,22 +155,22 @@ namespace UAssetAPI
 
             Import parentClassLink = GetImportAt(bgcCat.BaseClass);
             if (parentClassLink == null) return;
-            if (parentClassLink.Linkage >= 0) return;
+            if (parentClassLink.OuterIndex >= 0) return;
 
-            parentBGCName = parentClassLink.Property;
-            parentClassPath = GetImportAt((int)parentClassLink.Linkage).Property;
+            parentBGCName = parentClassLink.ObjectName;
+            parentClassPath = GetImportAt((int)parentClassLink.OuterIndex).ObjectName;
         }
 
-        public int SearchForLink(string bbase, string bclass, int link, string property)
+        public int SearchForLink(FName classPackage, FName className, int outerIndex, FName objectName)
         {
             int currentPos = 0;
             for (int i = 0; i < Imports.Count; i++)
             {
                 currentPos--;
-                if (bbase == Imports[i].Base
-                    && bclass == Imports[i].Class
-                    && link == Imports[i].Linkage
-                    && property == Imports[i].Property)
+                if (classPackage == Imports[i].ClassPackage
+                    && className == Imports[i].ClassName
+                    && outerIndex == Imports[i].OuterIndex
+                    && objectName == Imports[i].ObjectName)
                 {
                     return currentPos;
                 }
@@ -218,15 +180,15 @@ namespace UAssetAPI
             return 0;
         }
 
-        public int SearchForLink(string bbase, string bclass, string property)
+        public int SearchForLink(FName classPackage, FName className, FName objectName)
         {
             int currentPos = 0;
             for (int i = 0; i < Imports.Count; i++)
             {
                 currentPos--;
-                if (bbase == Imports[i].Base
-                    && bclass == Imports[i].Class
-                    && property == Imports[i].Property)
+                if (classPackage == Imports[i].ClassPackage
+                    && className == Imports[i].ClassName
+                    && objectName == Imports[i].ObjectName)
                 {
                     return currentPos;
                 }
@@ -236,13 +198,13 @@ namespace UAssetAPI
             return 0;
         }
 
-        public int SearchForLink(string property)
+        public int SearchForLink(FName objectName)
         {
             int currentPos = 0;
             for (int i = 0; i < Imports.Count; i++)
             {
                 currentPos--;
-                if (property == Imports[i].Property) return currentPos;
+                if (objectName == Imports[i].ObjectName) return currentPos;
             }
 
             return 0;
@@ -265,13 +227,12 @@ namespace UAssetAPI
         internal int fileSize = 0;
         internal bool doWeHaveSectionFour = true;
         internal bool doWeHaveSectionFive = true;
-        internal int extraGameJump = 0;
 
-        // Do not directly add values to here under any circumstances; use AddStringReference instead
-        internal List<string> nameMapIndexList;
-        private Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
-        internal Dictionary<string, Encoding> nameMapEncodingLookup = new Dictionary<string, Encoding>();
+        // Do not directly add values to here under any circumstances; use AddNameReference instead
+        internal List<FString> nameMapIndexList;
+        private Dictionary<int, int> nameMapLookup = new Dictionary<int, int>();
 
+        public List<CustomVersion> CustomVersionContainer;
         public List<Import> Imports; // base, class, link, connection
         public List<int[]> ExportIntReference;
         public List<string> ExportStringReference;
@@ -288,13 +249,21 @@ namespace UAssetAPI
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
+            // Custom versions container
             reader.BaseStream.Seek(20, SeekOrigin.Begin);
-            extraGameJump = reader.ReadInt32() * 20;
+            CustomVersionContainer = new List<CustomVersion>();
 
-            reader.BaseStream.Seek(24 + extraGameJump, SeekOrigin.Begin); // 24
-            sectionSixOffset = reader.ReadInt32();
+            int numCustomVersions = reader.ReadInt32();
+            for (int i = 0; i < numCustomVersions; i++)
+            {
+                var customVersionID = new Guid(reader.ReadBytes(16));
+                var customVersionNumber = reader.ReadInt32();
+                CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+            }
 
-            reader.ReadUString(); // Usually "None"
+            sectionSixOffset = reader.ReadInt32(); // 24
+
+            reader.ReadFString(); // Usually "None"
             reader.ReadSingle(); // Usually 0
 
             //reader.BaseStream.Seek(41, SeekOrigin.Begin); // 41
@@ -313,30 +282,30 @@ namespace UAssetAPI
             sectionFiveStringCount = reader.ReadInt32(); // 77
             sectionFiveOffset = reader.ReadInt32(); // 81
 
-            switch (headerSize - extraGameJump)
+            switch (headerSize - (numCustomVersions * (16 + sizeof(int))))
             {
                 case 185:
-                    GuessedVersion = UE4Version.VER_GUESSED_V1;
+                    EngineVersion = UE4Version.VER_GUESSED_V1;
                     break;
                 case 193:
                     if (sectionFourOffset == 0)
                     {
-                        GuessedVersion = UE4Version.VER_GUESSED_V3;
+                        EngineVersion = UE4Version.VER_GUESSED_V3;
                     }
                     else
                     {
-                        GuessedVersion = UE4Version.VER_GUESSED_V2;
+                        EngineVersion = UE4Version.VER_GUESSED_V2;
                     }
                     break;
                 case 197:
-                    GuessedVersion = UE4Version.VER_GUESSED_V2;
+                    EngineVersion = UE4Version.VER_GUESSED_V2;
                     break;
             }
 
             // 85, Usually 0
-            if (GuessedVersion >= UE4Version.VER_GUESSED_V2) reader.ReadUInt64();
-            else if (GuessedVersion >= UE4Version.VER_GUESSED_V3) reader.ReadUInt64();
-            else if (GuessedVersion >= UE4Version.VER_GUESSED_V1) reader.ReadUInt32();
+            if (EngineVersion >= UE4Version.VER_GUESSED_V2) reader.ReadUInt64();
+            else if (EngineVersion >= UE4Version.VER_GUESSED_V3) reader.ReadUInt64();
+            else if (EngineVersion >= UE4Version.VER_GUESSED_V1) reader.ReadUInt32();
 
             AssetGuid = new Guid(reader.ReadBytes(16));
 
@@ -351,7 +320,7 @@ namespace UAssetAPI
             //reader.BaseStream.Seek(165, SeekOrigin.Begin); // 165
             uexpDataOffset = reader.ReadInt32();
 
-            if (GuessedVersion >= UE4Version.VER_GUESSED_V1 && GuessedVersion < UE4Version.VER_GUESSED_V3) Assert(reader.ReadInt32() == (sectionSixOffset - 4));
+            if (EngineVersion >= UE4Version.VER_GUESSED_V1 && EngineVersion < UE4Version.VER_GUESSED_V3) Assert(reader.ReadInt32() == (sectionSixOffset - 4));
 
             //reader.BaseStream.Seek(169, SeekOrigin.Begin); // 169
             fileSize = reader.ReadInt32() + 4;
@@ -370,7 +339,7 @@ namespace UAssetAPI
             ClearNameIndexList();
             for (int i = 0; i < sectionOneStringCount; i++)
             {
-                var str = reader.ReadUStringWithGUIDAndEncoding(out uint guid);
+                var str = reader.ReadFStringWithGUIDAndEncoding(out uint guid);
                 AddNameReference(str);
             }
 
@@ -381,71 +350,62 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(sectionTwoOffset, SeekOrigin.Begin);
                 for (int i = 0; i < sectionTwoLinkCount; i++)
                 {
-                    ulong bbase = reader.ReadUInt64();
-                    ulong bclass = reader.ReadUInt64();
-                    int link = reader.ReadInt32();
-                    ulong property = reader.ReadUInt64();
-                    Imports.Add(new Import(this.GetNameReference((int)bbase), this.GetNameReference((int)bclass), link, this.GetNameReference((int)property), UAPUtils.GetImportIndex(i)));
+                    Imports.Add(new Import(reader.ReadFName(this), reader.ReadFName(this), reader.ReadInt32(), reader.ReadFName(this), UAPUtils.GetImportIndex(i)));
                 }
             }
 
             int gapStart = 0;
 
             // Section 3
-            Exports = new List<Export>(); // connection, connect, category, link, typeIndex, type, length, start, garbage1, garbage2, garbage3
+            Exports = new List<Export>();
             if (sectionThreeOffset > 0)
             {
                 reader.BaseStream.Seek(sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < dataCategoryCount; i++)
                 {
-                    int connection = 0, connect = 0, category = 0, link = 0, typeIndex = 0, garbage1 = 0, lengthV = 0, garbage2 = 0, startV = 0;
-                    ushort type = 0, garbageNew = 0;
-
-                    connection = reader.ReadInt32();
-                    connect = reader.ReadInt32();
-                    category = reader.ReadInt32();
-                    link = reader.ReadInt32();
-                    typeIndex = reader.ReadInt32();
-
-                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    var newRef = new ExportDetails();
+                    newRef.ClassIndex = reader.ReadInt32();
+                    newRef.SuperIndex = reader.ReadInt32();
+                    if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
                     {
-                        garbage1 = reader.ReadInt32();
+                        newRef.TemplateIndex = reader.ReadInt32();
                     }
-                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    newRef.OuterIndex = reader.ReadInt32();
+                    newRef.ObjectName = reader.ReadFName(this);
+                    newRef.ObjectFlags = (EObjectFlags)reader.ReadUInt32();
+                    if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
-                        garbage1 = reader.ReadInt32();
+                        newRef.SerialSize = reader.ReadInt32();
+                        newRef.SerialOffset = reader.ReadInt32();
                     }
                     else
                     {
-                        garbage1 = 0;
+                        newRef.SerialSize = reader.ReadInt64();
+                        newRef.SerialOffset = reader.ReadInt64();
                     }
-
-                    type = reader.ReadUInt16();
-                    garbageNew = reader.ReadUInt16();
-                    lengthV = reader.ReadInt32(); // !!!
-
-                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    newRef.bForcedExport = reader.ReadInt32() == 1;
+                    newRef.bNotForClient = reader.ReadInt32() == 1;
+                    newRef.bNotForServer = reader.ReadInt32() == 1;
+                    newRef.PackageGuid = new Guid(reader.ReadBytes(16));
+                    newRef.PackageFlags = reader.ReadUInt32();
+                    if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
-                        garbage2 = reader.ReadInt32();
-                        startV = reader.ReadInt32(); // !!!
+                        newRef.bNotAlwaysLoadedForEditorGame = reader.ReadInt32() == 1;
                     }
-                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                     {
-                        startV = reader.ReadInt32(); // !!!
-                        garbage2 = reader.ReadInt32();
+                        newRef.bIsAsset = reader.ReadInt32() == 1;
                     }
-                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V1)
+                    if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
-                        startV = reader.ReadInt32(); // !!!
-                        garbage2 = reader.ReadInt32();
+                        newRef.FirstExportDependency = reader.ReadInt32();
+                        newRef.SerializationBeforeSerializationDependencies = reader.ReadInt32();
+                        newRef.CreateBeforeSerializationDependencies = reader.ReadInt32();
+                        newRef.SerializationBeforeCreateDependencies = reader.ReadInt32();
+                        newRef.CreateBeforeCreateDependencies = reader.ReadInt32();
                     }
 
-                    int totalByteCount = 104;
-                    if (GuessedVersion >= UE4Version.VER_GUESSED_V2) totalByteCount = 104;
-                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V3) totalByteCount = 96;
-                    else if (GuessedVersion >= UE4Version.VER_GUESSED_V1) totalByteCount = 72;
-
-                    Exports.Add(new Export(new ExportReference(connection, connect, category, link, typeIndex, type, lengthV, startV, garbage1, garbage2, garbageNew, reader.ReadBytes(totalByteCount - (10 * 4))), this, new byte[0]));
+                    Exports.Add(new Export(newRef, this, new byte[0]));
                 }
                 gapStart = (int)reader.BaseStream.Position;
             }
@@ -479,7 +439,7 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(sectionFiveOffset, SeekOrigin.Begin);
                 for (int i = 0; i < sectionFiveStringCount; i++)
                 {
-                    ExportStringReference.Add(reader.ReadUString());
+                    ExportStringReference.Add(reader.ReadFString());
                 }
                 gapStart = (int)reader.BaseStream.Position;
             }
@@ -496,7 +456,7 @@ namespace UAssetAPI
                     gapBeforeUexp = uexpDataOffset - gapStart;
                     reader.BaseStream.Seek(uexpDataOffset, SeekOrigin.Begin);
                     UExpData = new List<int>();
-                    int firstStart = Exports[0].ReferenceData.startV;
+                    long firstStart = Exports[0].ReferenceData.SerialOffset;
                     while (reader.BaseStream.Position < firstStart)
                     {
                         UExpData.Add(reader.ReadInt32());
@@ -505,57 +465,57 @@ namespace UAssetAPI
 
                 for (int i = 0; i < Exports.Count; i++)
                 {
-                    ExportReference refData = Exports[i].ReferenceData;
-                    reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
+                    ExportDetails refData = Exports[i].ReferenceData;
+                    reader.BaseStream.Seek(refData.SerialOffset, SeekOrigin.Begin);
                     if (manualSkips != null && manualSkips.Contains(i))
                     {
                         if (forceReads == null || !forceReads.Contains(i))
                         {
                             Exports[i] = new RawExport(Exports[i]);
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes(refData.lengthV);
+                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)refData.SerialSize);
                             continue;
                         }
                     }
 
-                    //Debug.WriteLine(refData.type + " " + GetNameReference(GetImportReference(refData.connection)));
+                    //Debug.WriteLine(refData.type + " " + GetNameReference(GetImportObjectName(refData.connection)));
                     try
                     {
-                        int nextStarting = (int)reader.BaseStream.Length - 4;
-                        if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].ReferenceData.startV;
+                        long nextStarting = reader.BaseStream.Length - 4;
+                        if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].ReferenceData.SerialOffset;
 
-                        switch (GetImportReference(refData.connection))
+                        switch (GetImportObjectName(refData.ClassIndex).Value.Value)
                         {
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
                                 Exports[i] = new BlueprintGeneratedClassExport(Exports[i]);
-                                Exports[i].Read(reader, nextStarting);
+                                Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             case "Level":
                                 Exports[i] = new LevelExport(Exports[i]);
-                                Exports[i].Read(reader, nextStarting);
+                                Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             case "StringTable":
                                 Exports[i] = new StringTableExport(Exports[i]);
-                                Exports[i].Read(reader, nextStarting);
+                                Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             case "DataTable":
                                 Exports[i] = new DataTableExport(Exports[i]);
-                                Exports[i].Read(reader, nextStarting);
+                                Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             default:
                                 Exports[i] = new NormalExport(Exports[i]);
-                                Exports[i].Read(reader, nextStarting);
+                                Exports[i].Read(reader, (int)nextStarting);
                                 break;
                         }
 
-                        int extrasLen = nextStarting - (int)reader.BaseStream.Position;
+                        long extrasLen = nextStarting - reader.BaseStream.Position;
                         if (extrasLen < 0)
                         {
                             throw new FormatException("Invalid padding at end of export " + (i + 1) + ": " + extrasLen + " bytes");
                         }
                         else
                         {
-                            Exports[i].Extras = reader.ReadBytes(extrasLen);
+                            Exports[i].Extras = reader.ReadBytes((int)extrasLen);
                         }
                     }
                     catch (Exception ex)
@@ -563,9 +523,9 @@ namespace UAssetAPI
 #if DEBUG
                         Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
-                        reader.BaseStream.Seek(refData.startV, SeekOrigin.Begin);
+                        reader.BaseStream.Seek(refData.SerialOffset, SeekOrigin.Begin);
                         Exports[i] = new RawExport(Exports[i]);
-                        ((RawExport)Exports[i]).Data = reader.ReadBytes(refData.lengthV);
+                        ((RawExport)Exports[i]).Data = reader.ReadBytes((int)refData.SerialSize);
                     }
                 }
             }
@@ -579,7 +539,12 @@ namespace UAssetAPI
 
             writer.Write(UAsset.UASSET_MAGIC);
 
-            writer.Seek(24 + this.extraGameJump, SeekOrigin.Begin); // 24
+            writer.Seek(24, SeekOrigin.Begin); // 24
+            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            {
+                writer.Write(CustomVersionContainer[i].Key.ToByteArray());
+                writer.Write(CustomVersionContainer[i].Version);
+            }
             writer.Write(this.sectionSixOffset);
 
             writer.Seek(13, SeekOrigin.Current); // 41
@@ -598,9 +563,9 @@ namespace UAssetAPI
             // 16-byte GUID
             // 4 bytes for the 1
 
-            if (this.GuessedVersion >= UE4Version.VER_GUESSED_V2) writer.Seek(8, SeekOrigin.Current);
-            else if (this.GuessedVersion >= UE4Version.VER_GUESSED_V3) writer.Seek(8, SeekOrigin.Current);
-            else if (this.GuessedVersion >= UE4Version.VER_GUESSED_V1) writer.Seek(4, SeekOrigin.Current);
+            if (this.EngineVersion >= UE4Version.VER_GUESSED_V2) writer.Seek(8, SeekOrigin.Current);
+            else if (this.EngineVersion >= UE4Version.VER_GUESSED_V3) writer.Seek(8, SeekOrigin.Current);
+            else if (this.EngineVersion >= UE4Version.VER_GUESSED_V1) writer.Seek(4, SeekOrigin.Current);
 
             writer.Seek(16, SeekOrigin.Current);
 
@@ -615,7 +580,7 @@ namespace UAssetAPI
 
             writer.Write(this.uexpDataOffset);
 
-            if (this.GuessedVersion >= UE4Version.VER_GUESSED_V1 && this.GuessedVersion < UE4Version.VER_GUESSED_V3) writer.Write(this.sectionSixOffset - 4);
+            if (this.EngineVersion >= UE4Version.VER_GUESSED_V1 && this.EngineVersion < UE4Version.VER_GUESSED_V3) writer.Write(this.sectionSixOffset - 4);
 
             writer.Write(this.fileSize - 4);
 
@@ -636,9 +601,8 @@ namespace UAssetAPI
             this.sectionOneStringCount = this.nameMapIndexList.Count;
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
-                UString ourUString = new UString(this.nameMapIndexList[i], this.nameMapEncodingLookup[this.nameMapIndexList[i]]);
-                writer.WriteUString(ourUString);
-                writer.Write(CRCGenerator.GenerateHash(ourUString));
+                writer.WriteFString(nameMapIndexList[i].Value);
+                writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i].Value));
             }
 
             // Section 2
@@ -649,10 +613,11 @@ namespace UAssetAPI
                 int newIndex = 0;
                 for (int i = 0; i < this.Imports.Count; i++)
                 {
-                    writer.Write((ulong)this.SearchNameReference(this.Imports[i].Base));
-                    writer.Write((ulong)this.SearchNameReference(this.Imports[i].Class));
-                    writer.Write(this.Imports[i].Linkage);
-                    writer.Write((ulong)this.SearchNameReference(this.Imports[i].Property));
+                    //Debug.WriteLine("l " + writer.BaseStream.Position);
+                    writer.WriteFName(this.Imports[i].ClassPackage, this);
+                    writer.WriteFName(this.Imports[i].ClassName, this);
+                    writer.Write(this.Imports[i].OuterIndex);
+                    writer.WriteFName(this.Imports[i].ObjectName, this);
                     this.Imports[i].Index = --newIndex;
                 }
             }
@@ -668,19 +633,48 @@ namespace UAssetAPI
                 this.dataCategoryCount = this.Exports.Count;
                 for (int i = 0; i < this.Exports.Count; i++)
                 {
-                    ExportReference us = this.Exports[i].ReferenceData;
-                    writer.Write(us.connection);
-                    writer.Write(us.connect);
-                    writer.Write(us.category);
-                    writer.Write(us.link);
-                    writer.Write(us.typeIndex);
-                    writer.Write(us.garbage1);
-                    writer.Write(us.type);
-                    writer.Write(us.garbageNew);
-                    writer.Write(us.lengthV);
-                    writer.Write(us.garbage2);
-                    writer.Write(us.startV);
-                    writer.Write(us.garbage3);
+                    ExportDetails us = this.Exports[i].ReferenceData;
+                    //Debug.WriteLine("d " + writer.BaseStream.Position);
+                    writer.Write(us.ClassIndex);
+                    writer.Write(us.SuperIndex);
+                    if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
+                    {
+                        writer.Write(us.TemplateIndex);
+                    }
+                    writer.Write(us.OuterIndex);
+                    writer.WriteFName(us.ObjectName, this);
+                    writer.Write((uint)us.ObjectFlags);
+                    if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
+                    {
+                        writer.Write((int)us.SerialSize);
+                        writer.Write((int)us.SerialOffset);
+                    }
+                    else
+                    {
+                        writer.Write(us.SerialSize);
+                        writer.Write(us.SerialOffset);
+                    }
+                    writer.Write(us.bForcedExport ? 1 : 0);
+                    writer.Write(us.bNotForClient ? 1 : 0);
+                    writer.Write(us.bNotForServer ? 1 : 0);
+                    writer.Write(us.PackageGuid.ToByteArray());
+                    writer.Write(us.PackageFlags);
+                    if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
+                    {
+                        writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
+                    }
+                    if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+                    {
+                        writer.Write(us.bIsAsset ? 1 : 0);
+                    }
+                    if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+                    {
+                        writer.Write(us.FirstExportDependency);
+                        writer.Write(us.SerializationBeforeSerializationDependencies);
+                        writer.Write(us.CreateBeforeSerializationDependencies);
+                        writer.Write(us.SerializationBeforeCreateDependencies);
+                        writer.Write(us.CreateBeforeCreateDependencies);
+                    }
                 }
             }
             else
@@ -716,7 +710,7 @@ namespace UAssetAPI
                 this.sectionFiveStringCount = this.ExportStringReference.Count;
                 for (int i = 0; i < this.ExportStringReference.Count; i++)
                 {
-                    writer.WriteUString(this.ExportStringReference[i]);
+                    writer.WriteFString(this.ExportStringReference[i]);
                 }
             }
             else
@@ -742,14 +736,14 @@ namespace UAssetAPI
             // Section 6
             int oldOffset = this.sectionSixOffset;
             this.sectionSixOffset = (int)writer.BaseStream.Position;
-            int[] categoryStarts = new int[this.Exports.Count];
+            long[] categoryStarts = new long[this.Exports.Count];
             if (WillWriteExportData)
             {
                 if (this.Exports.Count > 0)
                 {
                     for (int i = 0; i < this.Exports.Count; i++)
                     {
-                        categoryStarts[i] = (int)writer.BaseStream.Position;
+                        categoryStarts[i] = writer.BaseStream.Position;
                         Export us = this.Exports[i];
                         us.Write(writer);
                         writer.Write(us.Extras);
@@ -765,8 +759,8 @@ namespace UAssetAPI
                 int additionalOffset = this.sectionSixOffset - oldOffset;
                 for (int i = 0; i < this.Exports.Count; i++)
                 {
-                    ExportReference us = this.Exports[i].ReferenceData;
-                    categoryStarts[i] = us.startV + additionalOffset;
+                    ExportDetails us = this.Exports[i].ReferenceData;
+                    categoryStarts[i] = us.SerialOffset + additionalOffset;
                 }
             }
 
@@ -778,49 +772,53 @@ namespace UAssetAPI
                 writer.Seek(this.sectionThreeOffset, SeekOrigin.Begin);
                 for (int i = 0; i < this.Exports.Count; i++)
                 {
-                    ExportReference us = this.Exports[i].ReferenceData;
-                    int nextLoc = this.fileSize - 4;
+                    ExportDetails us = this.Exports[i].ReferenceData;
+                    long nextLoc = this.fileSize - 4;
                     if ((this.Exports.Count - 1) > i) nextLoc = categoryStarts[i + 1];
 
-                    us.startV = categoryStarts[i];
-                    us.lengthV = nextLoc - categoryStarts[i];
+                    us.SerialOffset = categoryStarts[i];
+                    us.SerialSize = nextLoc - categoryStarts[i];
 
-                    writer.Write(us.connection);
-                    writer.Write(us.connect);
-                    writer.Write(us.category);
-                    writer.Write(us.link);
-                    writer.Write(us.typeIndex);
-
-                    if (this.GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    writer.Write(us.ClassIndex);
+                    writer.Write(us.SuperIndex);
+                    if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
                     {
-                        writer.Write(us.garbage1);
+                        writer.Write(us.TemplateIndex);
                     }
-                    else if (this.GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    writer.Write(us.OuterIndex);
+                    writer.WriteFName(us.ObjectName, this);
+                    writer.Write((uint)us.ObjectFlags);
+                    if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
-                        writer.Write(us.garbage1);
+                        writer.Write((int)us.SerialSize);
+                        writer.Write((int)us.SerialOffset);
                     }
-
-                    writer.Write(us.type);
-                    writer.Write(us.garbageNew);
-                    writer.Write(us.lengthV); // !!!
-
-                    if (this.GuessedVersion >= UE4Version.VER_GUESSED_V2)
+                    else
                     {
-                        writer.Write(us.garbage2);
-                        writer.Write(us.startV);
+                        writer.Write(us.SerialSize);
+                        writer.Write(us.SerialOffset);
                     }
-                    else if (this.GuessedVersion >= UE4Version.VER_GUESSED_V3)
+                    writer.Write(us.bForcedExport ? 1 : 0);
+                    writer.Write(us.bNotForClient ? 1 : 0);
+                    writer.Write(us.bNotForServer ? 1 : 0);
+                    writer.Write(us.PackageGuid.ToByteArray());
+                    writer.Write(us.PackageFlags);
+                    if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
-                        writer.Write(us.startV);
-                        writer.Write(us.garbage2);
+                        writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
                     }
-                    else if (this.GuessedVersion >= UE4Version.VER_GUESSED_V1)
+                    if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                     {
-                        writer.Write(us.startV);
-                        writer.Write(us.garbage2);
+                        writer.Write(us.bIsAsset ? 1 : 0);
                     }
-
-                    writer.Write(us.garbage3);
+                    if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+                    {
+                        writer.Write(us.FirstExportDependency);
+                        writer.Write(us.SerializationBeforeSerializationDependencies);
+                        writer.Write(us.CreateBeforeSerializationDependencies);
+                        writer.Write(us.SerializationBeforeCreateDependencies);
+                        writer.Write(us.CreateBeforeCreateDependencies);
+                    }
                 }
             }
 
@@ -864,15 +862,15 @@ namespace UAssetAPI
 
             if (this.UseSeparateBulkDataFiles && this.Exports.Count > 0)
             {
-                int breakingOffPoint = this.Exports[0].ReferenceData.startV;
+                long breakingOffPoint = this.Exports[0].ReferenceData.SerialOffset;
                 using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
                 {
-                    CopySplitUp(newData, f, 0, breakingOffPoint);
+                    CopySplitUp(newData, f, 0, (int)breakingOffPoint);
                 }
 
                 using (FileStream f = File.Open(Path.ChangeExtension(output, "uexp"), FileMode.Create, FileAccess.Write))
                 {
-                    CopySplitUp(newData, f, breakingOffPoint, (int)(newData.Length - breakingOffPoint));
+                    CopySplitUp(newData, f, (int)breakingOffPoint, (int)(newData.Length - breakingOffPoint));
                 }
             }
             else
@@ -918,7 +916,7 @@ namespace UAssetAPI
             return new BinaryReader(PathToStream(p));
         }
 
-        // manualSkips is an array of category indexes (starting from 1) to skip
+        // If willStoreOriginalCopyInMemory is true when calling this constructor then you must set OriginalCopy yourself
         public UAsset(BinaryReader reader, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
         {
             WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
@@ -931,7 +929,15 @@ namespace UAssetAPI
             this.FilePath = path;
             WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
             WillWriteExportData = willWriteExportData;
-            Read(PathToReader(this.FilePath), manualSkips, forceReads);
+
+            var ourReader = PathToReader(path);
+            Read(ourReader, manualSkips, forceReads);
+
+            if (WillStoreOriginalCopyInMemory)
+            {
+                ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
+            }
         }
 
         public UAsset()

@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class IntPointPropertyData : PropertyData<int[]> // X, Y
     {
-        public IntPointPropertyData(string name, UAsset asset) : base(name, asset)
+        public IntPointPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "IntPoint";
+            Type = new FName("IntPoint");
         }
 
         public IntPointPropertyData()
         {
-            Type = "IntPoint";
+            Type = new FName("IntPoint");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

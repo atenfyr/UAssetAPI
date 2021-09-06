@@ -4,9 +4,8 @@ namespace UAssetAPI.PropertyTypes
 {
     public abstract class PropertyData
     {
-        public string Name = "";
-        public int WidgetData = 0;
-        public string Type = "";
+        public FName Name = new FName("");
+        public FName Type = new FName("");
         public int DuplicationIndex = 0;
         public UAsset Asset;
         public object RawValue;
@@ -21,7 +20,7 @@ namespace UAssetAPI.PropertyTypes
             return (T)RawValue;
         }
 
-        public PropertyData(string name, UAsset asset)
+        public PropertyData(FName name, UAsset asset)
         {
             Name = name;
             Asset = asset;
@@ -57,7 +56,7 @@ namespace UAssetAPI.PropertyTypes
             set => SetObject(value);
         }
 
-        public PropertyData(string name, UAsset asset) : base(name, asset)
+        public PropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
         }

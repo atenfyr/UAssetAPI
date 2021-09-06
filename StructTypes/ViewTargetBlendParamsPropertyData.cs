@@ -31,14 +31,14 @@ namespace UAssetAPI.StructTypes
         public float BlendExp;
         public bool bLockOutgoing;
 
-        public ViewTargetBlendParamsPropertyData(string name, UAsset asset) : base(name, asset)
+        public ViewTargetBlendParamsPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "ViewTargetBlendParams";
+            Type = new FName("ViewTargetBlendParams");
         }
 
         public ViewTargetBlendParamsPropertyData()
         {
-            Type = "ViewTargetBlendParams";
+            Type = new FName("ViewTargetBlendParams");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

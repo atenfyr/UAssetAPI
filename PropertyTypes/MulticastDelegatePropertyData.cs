@@ -5,16 +5,16 @@ namespace UAssetAPI.PropertyTypes
 {
     public class MulticastDelegatePropertyData : PropertyData<int[]>
     {
-        public string Value2;
+        public FName Value2;
 
-        public MulticastDelegatePropertyData(string name, UAsset asset) : base(name, asset)
+        public MulticastDelegatePropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "MulticastDelegateProperty";
+            Type = new FName("MulticastDelegateProperty");
         }
 
         public MulticastDelegatePropertyData()
         {
-            Type = "MulticastDelegateProperty";
+            Type = new FName("MulticastDelegateProperty");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -29,7 +29,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 Value[i] = reader.ReadInt32();
             }
-            Value2 = Asset.GetNameReference((int)reader.ReadUInt64());
+            Value2 = reader.ReadFName(Asset);
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -43,8 +43,8 @@ namespace UAssetAPI.PropertyTypes
             {
                 writer.Write(Value[i]);
             }
-            writer.Write((long)Asset.SearchNameReference(Value2));
-            return (sizeof(int) * 2) + sizeof(long);
+            writer.WriteFName(Value2, Asset);
+            return sizeof(int) * 4;
         }
 
         public override string ToString()
@@ -64,8 +64,8 @@ namespace UAssetAPI.PropertyTypes
             if (int.TryParse(d[0], out int res)) Value[0] = res;
             if (int.TryParse(d[1], out int res2)) Value[1] = res2;
 
-            Asset.AddNameReference(d[2]);
-            Value2 = d[2];
+            Asset.AddNameReference(new FString(d[2]));
+            Value2 = new FName(d[2]);
         }
     }
 }

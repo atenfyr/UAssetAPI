@@ -42,9 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomVersion.cs" />
+    <Compile Include="FName.cs" />
     <Compile Include="UAsset.cs" />
     <Compile Include="Export.cs" />
-    <Compile Include="ExportReference.cs" />
+    <Compile Include="ExportDetails.cs" />
     <Compile Include="CRCGenerator.cs" />
     <Compile Include="PropertyTypes\ArrayPropertyData.cs" />
     <Compile Include="PropertyTypes\SetPropertyData.cs" />

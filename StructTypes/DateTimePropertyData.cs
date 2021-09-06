@@ -6,14 +6,14 @@ namespace UAssetAPI.StructTypes
 {
     public class DateTimePropertyData : PropertyData<DateTime>
     {
-        public DateTimePropertyData(string name, UAsset asset) : base(name, asset)
+        public DateTimePropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "DateTime";
+            Type = new FName("DateTime");
         }
 
         public DateTimePropertyData()
         {
-            Type = "DateTime";
+            Type = new FName("DateTime");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

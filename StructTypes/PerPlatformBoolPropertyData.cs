@@ -7,14 +7,14 @@ namespace UAssetAPI.StructTypes
 {
     public class PerPlatformBoolPropertyData : PropertyData<bool[]>
     {
-        public PerPlatformBoolPropertyData(string name, UAsset asset) : base(name, asset)
+        public PerPlatformBoolPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "PerPlatformBool";
+            Type = new FName("PerPlatformBool");
         }
 
         public PerPlatformBoolPropertyData()
         {
-            Type = "PerPlatformBool";
+            Type = new FName("PerPlatformBool");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

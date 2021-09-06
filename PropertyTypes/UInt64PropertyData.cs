@@ -5,14 +5,14 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UInt64PropertyData : PropertyData<ulong>
     {
-        public UInt64PropertyData(string name, UAsset asset) : base(name, asset)
+        public UInt64PropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = "UInt64Property";
+            Type = new FName("UInt64Property");
         }
 
         public UInt64PropertyData()
         {
-            Type = "UInt64Property";
+            Type = new FName("UInt64Property");
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
