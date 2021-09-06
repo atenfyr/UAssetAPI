@@ -17,6 +17,14 @@ namespace UAssetAPI
         }
     }
 
+    public class UnknownEngineVersionException : InvalidOperationException
+    {
+        public UnknownEngineVersionException(string message) : base(message)
+        {
+
+        }
+    }
+
     public struct FEngineVersion
     {
         public ushort Major;
@@ -270,6 +278,7 @@ namespace UAssetAPI
         public Guid PackageGuid;
         public FEngineVersion RecordedEngineVersion;
         public FEngineVersion RecordedCompatibleWithEngineVersion;
+        public Dictionary<FString, uint> OverrideGuids; // External programs often leave name map hashes blank, so we preserve those changes to avoid confusion
         /* End Public Fields */
 
         /**
@@ -365,7 +374,6 @@ namespace UAssetAPI
         /* Location into the file on disk for the preload dependency data */
         internal int PreloadDependencyOffset;
 
-        internal Dictionary<FString, bool> nullGuids; // External programs often leave name map hashes blank, so we preserve those changes to avoid confusion
         internal bool doWeHaveDependsMap = true;
         internal bool doWeHaveSoftPackageReferences = true;
         internal bool doWeHaveAssetRegistryData = true;
@@ -376,7 +384,7 @@ namespace UAssetAPI
 
         private void Assert(bool v)
         {
-            if (!v) throw new FormatException("Failed assertion while reading asset header");
+            if (!v) throw new FormatException("Failed assertion while reading asset summary");
         }
 
         public static uint UASSET_MAGIC = 2653586369;
@@ -390,7 +398,17 @@ namespace UAssetAPI
             {
                 LegacyUE3Version = reader.ReadInt32(); // 864 in versioned assets, 0 in unversioned assets
             }
+
             FileVersionUE4 = reader.ReadInt32();
+            if (FileVersionUE4 != 0)
+            {
+                EngineVersion = (UE4Version)FileVersionUE4;
+            }
+            else
+            {
+                if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an engine version is specified");
+            }
+
             FileVersionLicenseeUE4 = reader.ReadInt32();
 
             // Custom versions container
@@ -467,17 +485,17 @@ namespace UAssetAPI
 
             CompressionFlags = reader.ReadUInt32();
             int numCompressedChunks = reader.ReadInt32();
-            if (numCompressedChunks > 0) throw new FormatException("Asset has package-level compression and is too old to be parsed");
+            if (numCompressedChunks > 0) throw new FormatException("Asset has package-level compression and is likely too old to be parsed");
 
             PackageSource = reader.ReadUInt32();
 
             int numAdditionalPackagesToCook = reader.ReadInt32(); // unused
-            if (numAdditionalPackagesToCook > 0) throw new FormatException("Asset has AdditionalPackagesToCook and is too old to be parsed");
+            if (numAdditionalPackagesToCook > 0) throw new FormatException("Asset has AdditionalPackagesToCook and is likely too old to be parsed");
 
             if (LegacyFileVersion > -7)
             {
                 int numTextureAllocations = reader.ReadInt32(); // unused
-                if (numTextureAllocations > 0) throw new FormatException("Asset has texture allocation info and is too old to be parsed");
+                if (numTextureAllocations > 0) throw new FormatException("Asset has texture allocation info and is likely too old to be parsed");
             }
 
             AssetRegistryDataOffset = reader.ReadInt32();
@@ -512,20 +530,18 @@ namespace UAssetAPI
 
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new InvalidOperationException("Cannot begin serialization before an engine version is specified");
-
             // Header
             ReadHeader(reader);
 
             // Name map
             reader.BaseStream.Seek(NameOffset, SeekOrigin.Begin);
 
-            nullGuids = new Dictionary<FString, bool>();
+            OverrideGuids = new Dictionary<FString, uint>();
             ClearNameIndexList();
             for (int i = 0; i < NameCount; i++)
             {
                 var str = reader.ReadFStringWithGUIDAndEncoding(out uint guid);
-                if (guid == 0) nullGuids.Add(str, true);
+                if (guid == 0) OverrideGuids.Add(str, 0);
                 AddNameReference(str);
             }
 
@@ -635,10 +651,12 @@ namespace UAssetAPI
             {
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
                 int numAssets = reader.ReadInt32();
+#pragma warning disable CS0162 // Unreachable code detected
                 for (int i = 0; i < numAssets; i++)
                 {
                     throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
                 }
+#pragma warning restore CS0162 // Unreachable code detected
             }
             else
             {
@@ -730,7 +748,7 @@ namespace UAssetAPI
         private byte[] MakeHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            var stre = new MemoryStream(reader.ReadBytes(this.NameOffset));
+            var stre = new MemoryStream(this.NameOffset);
             BinaryWriter writer = new BinaryWriter(stre);
 
             writer.Write(UAsset.UASSET_MAGIC);
@@ -844,8 +862,6 @@ namespace UAssetAPI
 
         public MemoryStream WriteData(BinaryReader reader)
         {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new InvalidOperationException("Cannot begin serialization before an engine version is specified");
-
             var stre = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stre);
 
@@ -854,14 +870,14 @@ namespace UAssetAPI
             writer.Write(MakeHeader(reader));
 
             // Name map
-            writer.Seek(this.NameOffset, SeekOrigin.Begin);
+            this.NameOffset = (int)writer.BaseStream.Position;
             this.NameCount = this.nameMapIndexList.Count;
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
                 writer.WriteFString(nameMapIndexList[i]);
-                if (nullGuids.ContainsKey(nameMapIndexList[i]) && nullGuids[nameMapIndexList[i]])
+                if (OverrideGuids.ContainsKey(nameMapIndexList[i]))
                 {
-                    writer.Write((uint)0);
+                    writer.Write(OverrideGuids[nameMapIndexList[i]]);
                 }
                 else
                 {
@@ -986,10 +1002,12 @@ namespace UAssetAPI
             {
                 this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
                 writer.Write(this.AssetRegistryData.Count);
+#pragma warning disable CS0162 // Unreachable code detected
                 for (int i = 0; i < this.AssetRegistryData.Count; i++)
                 {
                     throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
                 }
+#pragma warning restore CS0162 // Unreachable code detected
             }
             else
             {
@@ -1118,9 +1136,9 @@ namespace UAssetAPI
             }
         }
 
-        public void Write(string output)
+        public void Write(string outputPath)
         {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new InvalidOperationException("Cannot begin serialization before an engine version is specified");
+            if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
 
             MemoryStream newData;
             if (WillStoreOriginalCopyInMemory)
@@ -1139,19 +1157,19 @@ namespace UAssetAPI
             if (this.UseSeparateBulkDataFiles && this.Exports.Count > 0)
             {
                 long breakingOffPoint = this.Exports[0].ReferenceData.SerialOffset;
-                using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
+                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
                 {
                     CopySplitUp(newData, f, 0, (int)breakingOffPoint);
                 }
 
-                using (FileStream f = File.Open(Path.ChangeExtension(output, "uexp"), FileMode.Create, FileAccess.Write))
+                using (FileStream f = File.Open(Path.ChangeExtension(outputPath, "uexp"), FileMode.Create, FileAccess.Write))
                 {
                     CopySplitUp(newData, f, (int)breakingOffPoint, (int)(newData.Length - breakingOffPoint));
                 }
             }
             else
             {
-                using (FileStream f = File.Open(output, FileMode.Create, FileAccess.Write))
+                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
                 {
                     newData.CopyTo(f);
                 }
@@ -1193,7 +1211,7 @@ namespace UAssetAPI
         }
 
         // If willStoreOriginalCopyInMemory is true when calling this constructor then you must set OriginalCopy yourself
-        public UAsset(BinaryReader reader, UE4Version engineVersion, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
+        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
         {
             EngineVersion = engineVersion;
             WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
@@ -1201,7 +1219,7 @@ namespace UAssetAPI
             Read(reader, manualSkips, forceReads);
         }
 
-        public UAsset(string path, UE4Version engineVersion, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
+        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
         {
             this.FilePath = path;
             EngineVersion = engineVersion;
