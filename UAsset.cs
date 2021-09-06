@@ -601,8 +601,8 @@ namespace UAssetAPI
             this.sectionOneStringCount = this.nameMapIndexList.Count;
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
-                writer.WriteFString(nameMapIndexList[i].Value);
-                writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i].Value));
+                writer.WriteFString(nameMapIndexList[i]);
+                writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i]));
             }
 
             // Section 2

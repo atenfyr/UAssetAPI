@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace UAssetAPI
 {
@@ -17,9 +16,9 @@ namespace UAssetAPI
 
         public static uint GenerateHash(string text, Encoding encoding)
         {
-            byte[] algor1 = BitConverter.GetBytes(Strihash_DEPRECATED(encoding.GetBytes(text)));
-            byte[] algor2 = BitConverter.GetBytes(StrCrc32(text));
-            return BitConverter.ToUInt32(new byte[] { algor1[0], algor1[1], algor2[0], algor2[1] }, 0);
+            uint algor1 = Strihash_DEPRECATED(encoding.GetBytes(text));
+            uint algor2 = StrCrc32(text);
+            return (algor1 & 0xFFFF) | ((algor2 & 0xFFFF) << 16);
         }
 
         private static uint Strihash_DEPRECATED(byte[] stream)
