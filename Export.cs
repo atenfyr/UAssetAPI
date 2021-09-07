@@ -15,6 +15,10 @@ namespace UAssetAPI
         No
     }
 
+    /**
+     * UObject resource type for objects that are contained within this package and can
+     * be referenced by other packages.
+     */
     public class Export
     {
         public ExportDetails ReferenceData;

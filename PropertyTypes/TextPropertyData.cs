@@ -8,6 +8,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public int Flag;
         public TextHistoryType HistoryType = TextHistoryType.Base;
+        public FName StringTable = null;
         public byte[] Extras;
         public FString BaseBlankString;
 
@@ -43,14 +44,13 @@ namespace UAssetAPI.PropertyTypes
                     Value = ValueList.ToArray();
                     break;
                 case TextHistoryType.Base:
-                    //Extras = reader.ReadBytes(4);
-                    //Console.WriteLine("EXT: " + BitConverter.ToInt32(Extras, 0));
                     Extras = new byte[0];
                     BaseBlankString = reader.ReadFStringWithEncoding();
                     Value = new string[] { reader.ReadFString(), reader.ReadFString() };
                     break;
                 case TextHistoryType.StringTableEntry:
-                    Extras = reader.ReadBytes(8);
+                    Extras = new byte[0];
+                    StringTable = reader.ReadFName(Asset);
                     Value = new string[] { reader.ReadFString() };
                     break;
                 default:
@@ -88,6 +88,7 @@ namespace UAssetAPI.PropertyTypes
                     }
                     break;
                 case TextHistoryType.StringTableEntry:
+                    writer.WriteFName(StringTable, Asset);
                     writer.WriteFString(Value[0]);
                     break;
                 default:

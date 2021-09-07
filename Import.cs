@@ -1,5 +1,9 @@
 ﻿namespace UAssetAPI
 {
+    /**
+     * UObject resource type for objects that are referenced by this package, but contained
+     * within another package.
+     */
     public class Import
     {
         public FName ClassPackage;

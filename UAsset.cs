@@ -75,7 +75,6 @@ namespace UAssetAPI
 
     public class UAsset
     {
-        /* Utility Methods */
         public string FilePath;
         public bool WillWriteExportData = true;
         public bool WillStoreOriginalCopyInMemory = false;
@@ -264,36 +263,80 @@ namespace UAssetAPI
             return 0;
         }
 
-        /* End Utility Methods */
-
-        /* Public Fields */
+        /**
+         * All the custom versions stored in the archive.
+         */
         public List<CustomVersion> CustomVersionContainer;
-        public List<Import> Imports;
-        public List<Export> Exports;
-        public List<int[]> DependsMap;
-        public List<string> SoftPackageReferencesMap;
-        public List<int> AssetRegistryData;
-        public List<int> PreloadDependencyMap;
-        public List<FGenerationInfo> Generations;
-        public Guid PackageGuid;
-        public FEngineVersion RecordedEngineVersion;
-        public FEngineVersion RecordedCompatibleWithEngineVersion;
-        public Dictionary<FString, uint> OverrideGuids; // External programs often leave name map hashes blank, so we preserve those changes to avoid confusion
-        /* End Public Fields */
 
         /**
-        * The package file version number when this package was saved.
-        *
-        * Lower 16 bits stores the UE3 engine version
-        * Upper 16 bits stores the UE4/licensee version
-        * For newer packages this is -7
-        *		-2 indicates presence of enum-based custom versions
-        *		-3 indicates guid-based custom versions
-        *		-4 indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
-        *		-5 indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
-        *		-6 indicates optimizations to how custom versions are being serialized
-        *		-7 indicates the texture allocation info has been removed from the summary
-        */
+         * List of object imports. UAssetAPI used to call these "links."
+         */
+        public List<Import> Imports;
+
+        /**
+         * List of object exports. UAssetAPI used to call these "categories."
+         */
+        public List<Export> Exports;
+
+        /**
+         * List of dependency lists for each export.
+         */
+        public List<int[]> DependsMap;
+
+        /**
+         * List of packages that are soft referenced by this package.
+         */
+        public List<string> SoftPackageReferenceList;
+
+        /**
+         * Uncertain
+         */
+        public List<int> AssetRegistryData;
+
+        /**
+	     * List of imports and exports that must be serialized before other exports...all packed together, see FirstExportDependency.
+	     */
+        public List<int> PreloadDependencies;
+
+        /**
+	     * Data about previous versions of this package.
+	     */
+        public List<FGenerationInfo> Generations;
+
+        /**
+	     * Current id for this package; effectively unused.
+	     */
+        public Guid PackageGuid;
+
+        /**
+	     * Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
+	     */
+        public FEngineVersion RecordedEngineVersion;
+
+        /**
+	     * Engine version this package is compatible with. Assets saved by Hotfix releases and engine versions that maintain binary compatibility will have
+	     * a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
+	     */
+        public FEngineVersion RecordedCompatibleWithEngineVersion;
+
+        /**
+         * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.
+         */
+        public Dictionary<FString, uint> OverrideGuids;
+
+        /**
+         * The package file version number when this package was saved.
+         *
+         * Lower 16 bits stores the UE3 engine version
+         * Upper 16 bits stores the UE4/licensee version
+         * For newer packages this is -7
+         *		-2 indicates presence of enum-based custom versions
+         *		-3 indicates guid-based custom versions
+         *		-4 indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
+         *		-5 indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
+         *		-6 indicates optimizations to how custom versions are being serialized
+         *		-7 indicates the texture allocation info has been removed from the summary
+         */
         internal int LegacyFileVersion;
         internal int LegacyUE3Version;
 
@@ -302,7 +345,7 @@ namespace UAssetAPI
         /* Licensee file version */
         internal int FileVersionLicenseeUE4;
 
-        /* This is called "TotalHeaderSize" in UE4; in UAssetAPI the "header" refers to the data before the start of the name map */
+        /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
         internal int SectionSixOffset = 0;
 
         /* The Generic Browser folder name that this package lives in. Usually "None" in cooked assets */
@@ -394,7 +437,7 @@ namespace UAssetAPI
             if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
             LegacyFileVersion = reader.ReadInt32();
-            if (LegacyFileVersion != 4)
+            if (LegacyFileVersion != -4)
             {
                 LegacyUE3Version = reader.ReadInt32(); // 864 in versioned assets, 0 in unversioned assets
             }
@@ -630,14 +673,14 @@ namespace UAssetAPI
                 doWeHaveDependsMap = false;
             }
 
-            // SoftPackageReferencesMap
-            SoftPackageReferencesMap = new List<string>();
+            // SoftPackageReferenceList
+            SoftPackageReferenceList = new List<string>();
             if (SoftPackageReferencesOffset > 0)
             {
                 reader.BaseStream.Seek(SoftPackageReferencesOffset, SeekOrigin.Begin);
                 for (int i = 0; i < SoftPackageReferencesCount; i++)
                 {
-                    SoftPackageReferencesMap.Add(reader.ReadFString());
+                    SoftPackageReferenceList.Add(reader.ReadFString());
                 }
             }
             else
@@ -663,14 +706,14 @@ namespace UAssetAPI
                 doWeHaveAssetRegistryData = false;
             }
 
-            // PreloadDependencyMap
+            // PreloadDependencies
             if (this.UseSeparateBulkDataFiles)
             {
                 reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
-                PreloadDependencyMap = new List<int>();
+                PreloadDependencies = new List<int>();
                 for (int i = 0; i < PreloadDependencyCount; i++)
                 {
-                    PreloadDependencyMap.Add(reader.ReadInt32());
+                    PreloadDependencies.Add(reader.ReadInt32());
                 }
             }
 
@@ -983,14 +1026,14 @@ namespace UAssetAPI
                 this.DependsOffset = 0;
             }
 
-            // SoftPackageReferencesMap
+            // SoftPackageReferenceList
             if (this.doWeHaveSoftPackageReferences)
             {
                 this.SoftPackageReferencesOffset = (int)writer.BaseStream.Position;
-                this.SoftPackageReferencesCount = this.SoftPackageReferencesMap.Count;
-                for (int i = 0; i < this.SoftPackageReferencesMap.Count; i++)
+                this.SoftPackageReferencesCount = this.SoftPackageReferenceList.Count;
+                for (int i = 0; i < this.SoftPackageReferenceList.Count; i++)
                 {
-                    writer.WriteFString(this.SoftPackageReferencesMap[i]);
+                    writer.WriteFString(this.SoftPackageReferenceList[i]);
                 }
             }
             else
@@ -1014,14 +1057,14 @@ namespace UAssetAPI
                 this.AssetRegistryDataOffset = 0;
             }
 
-            // PreloadDependencyMap
+            // PreloadDependencies
             this.PreloadDependencyOffset = (int)writer.BaseStream.Position;
             if (this.UseSeparateBulkDataFiles)
             {
-                this.PreloadDependencyCount = this.PreloadDependencyMap.Count;
-                for (int i = 0; i < this.PreloadDependencyMap.Count; i++)
+                this.PreloadDependencyCount = this.PreloadDependencies.Count;
+                for (int i = 0; i < this.PreloadDependencies.Count; i++)
                 {
-                    writer.Write(this.PreloadDependencyMap[i]);
+                    writer.Write(this.PreloadDependencies[i]);
                 }
             }
 
@@ -1113,6 +1156,14 @@ namespace UAssetAPI
                     }
                 }
             }
+
+            /*Debug.WriteLine(this.NameOffset);
+            Debug.WriteLine(this.ImportOffset);
+            Debug.WriteLine(this.ExportOffset);
+            Debug.WriteLine(this.DependsOffset);
+            Debug.WriteLine(this.SoftPackageReferencesOffset);
+            Debug.WriteLine(this.AssetRegistryDataOffset);
+            Debug.WriteLine(this.PreloadDependencyOffset);*/
 
             // Rewrite Header
             writer.Seek(0, SeekOrigin.Begin);
