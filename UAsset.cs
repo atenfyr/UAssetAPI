@@ -318,11 +318,32 @@ namespace UAssetAPI
 	     * a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
 	     */
         public FEngineVersion RecordedCompatibleWithEngineVersion;
+        /**
+         * Streaming install ChunkIDs
+         */
+        public int[] ChunkIDs;
+
+        /**
+         * The flags for the package
+         */
+        public EPackageFlags PackageFlags;
+
+        /**
+         * Value that is used to determine if the package was saved by Epic(or licensee) or by a modder, etc
+         */
+        public uint PackageSource;
+
+        /**
+         * The Generic Browser folder name that this package lives in. Usually "None" in cooked assets
+         */
+        public FString FolderName;
 
         /**
          * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.
          */
         public Dictionary<FString, uint> OverrideGuids;
+
+
 
         /**
          * The package file version number when this package was saved.
@@ -347,12 +368,6 @@ namespace UAssetAPI
 
         /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
         internal int SectionSixOffset = 0;
-
-        /* The Generic Browser folder name that this package lives in. Usually "None" in cooked assets */
-        internal FString FolderName;
-
-        /* The flags for the package */
-        internal uint PackageFlags;
 
         /* Number of names used in this package */
         internal int NameCount = 0;
@@ -396,9 +411,6 @@ namespace UAssetAPI
         /* Should be zero */
         internal uint CompressionFlags;
 
-        /* Value that is used to determine if the package was saved by Epic(or licensee) or by a modder, etc */
-        internal uint PackageSource;
-
         /* Location into the file on disk for the asset registry tag data */
         internal int AssetRegistryDataOffset;
 
@@ -407,9 +419,6 @@ namespace UAssetAPI
 
         /* Offset to the location in the file where the FWorldTileInfo data start */
         internal int WorldTileInfoDataOffset;
-
-        /* Streaming install ChunkIDs */
-        internal int[] ChunkIDs;
 
         /* Number of preload dependencies contained in this package */
         internal int PreloadDependencyCount;
@@ -472,7 +481,7 @@ namespace UAssetAPI
 
             SectionSixOffset = reader.ReadInt32(); // 24
             FolderName = reader.ReadFStringWithEncoding();
-            PackageFlags = reader.ReadUInt32();
+            PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
             if (EngineVersion >= UE4Version.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
@@ -630,7 +639,7 @@ namespace UAssetAPI
                     newRef.bNotForClient = reader.ReadInt32() == 1;
                     newRef.bNotForServer = reader.ReadInt32() == 1;
                     newRef.PackageGuid = new Guid(reader.ReadBytes(16));
-                    newRef.PackageFlags = reader.ReadUInt32();
+                    newRef.PackageFlags = (EPackageFlags)reader.ReadUInt32();
                     if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
                         newRef.bNotAlwaysLoadedForEditorGame = reader.ReadInt32() == 1;
@@ -815,7 +824,7 @@ namespace UAssetAPI
 
             writer.Write(SectionSixOffset);
             writer.WriteFString(FolderName);
-            writer.Write(PackageFlags);
+            writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
             if (EngineVersion >= UE4Version.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
@@ -981,7 +990,7 @@ namespace UAssetAPI
                     writer.Write(us.bNotForClient ? 1 : 0);
                     writer.Write(us.bNotForServer ? 1 : 0);
                     writer.Write(us.PackageGuid.ToByteArray());
-                    writer.Write(us.PackageFlags);
+                    writer.Write((uint)us.PackageFlags);
                     if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
                         writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
@@ -1137,7 +1146,7 @@ namespace UAssetAPI
                     writer.Write(us.bNotForClient ? 1 : 0);
                     writer.Write(us.bNotForServer ? 1 : 0);
                     writer.Write(us.PackageGuid.ToByteArray());
-                    writer.Write(us.PackageFlags);
+                    writer.Write((uint)us.PackageFlags);
                     if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
                         writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);

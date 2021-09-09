@@ -149,6 +149,7 @@ namespace UAssetAPI.StructTypes
 
         private int WriteOnce(BinaryWriter writer)
         {
+            if (Value.Count != 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " must have exactly one entry");
             return Value[0].Write(writer, false);
         }
 
