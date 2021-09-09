@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace UAssetAPI
 {
@@ -337,6 +336,15 @@ namespace UAssetAPI
          * The Generic Browser folder name that this package lives in. Usually "None" in cooked assets
          */
         public FString FolderName;
+
+        /**
+         * In MapProperties that have StructProperties as their keys or values, there is no deterministic, universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists
+         */
+        public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
+        {
+            { "ColorDatabase", new Tuple<FName, FName>(null, new FName("LinearColor")) },
+            { "PlayerCharacterIDs", new Tuple<FName, FName>(null, new FName("Guid")) }
+        };
 
         /**
          * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.

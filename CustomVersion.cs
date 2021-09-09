@@ -56,7 +56,7 @@ namespace UAssetAPI
         };
 
         public Guid Key;
-        public string FriendlyName;
+        public string FriendlyName = null;
         public int Version;
 
         public CustomVersion(Guid key, int version)

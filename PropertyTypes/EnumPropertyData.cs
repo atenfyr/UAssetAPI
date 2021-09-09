@@ -44,10 +44,25 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Asset.AddNameReference(new FString(d[0]));
-            Asset.AddNameReference(new FString(d[1]));
-            EnumType = new FName(d[0]);
-            Value = new FName(d[1]);
+            if (d[0] != "null" && d[0] != null)
+            {
+                Asset.AddNameReference(new FString(d[0]));
+                EnumType = new FName(d[0]);
+            }
+            else
+            {
+                EnumType = null;
+            }
+
+            if (d[1] != "null" && d[1] != null)
+            {
+                Asset.AddNameReference(new FString(d[1]));
+                Value = new FName(d[1]);
+            }
+            else
+            {
+                Value = null;
+            }
         }
     }
 }

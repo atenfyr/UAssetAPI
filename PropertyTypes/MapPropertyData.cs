@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UAssetAPI.StructTypes;
@@ -23,20 +24,23 @@ namespace UAssetAPI.PropertyTypes
             Value = new OrderedDictionary();
         }
 
-        private PropertyData MapTypeToClass(FName type, FName name, UAsset asset, BinaryReader reader, int leng, bool includeHeader)
+        private PropertyData MapTypeToClass(FName type, FName name, UAsset asset, BinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
             switch (type.Value.Value)
             {
                 case "StructProperty":
                     FName strucType = new FName("Generic");
-                    switch(name.Value.Value)
+
+                    if (asset.MapStructTypeOverride.ContainsKey(name.Value.Value))
                     {
-                        case "ColorDatabase":
-                            strucType = new FName("LinearColor");
-                            break;
-                        case "PlayerCharacterIDs":
-                            strucType = new FName("Guid");
-                            break;
+                        if (isKey)
+                        {
+                            strucType = asset.MapStructTypeOverride[name.Value.Value].Item1;
+                        }
+                        else
+                        {
+                            strucType = asset.MapStructTypeOverride[name.Value.Value].Item2;
+                        }
                     }
 
                     StructPropertyData data = new StructPropertyData(name, asset, strucType);
@@ -57,8 +61,8 @@ namespace UAssetAPI.PropertyTypes
             PropertyData data2 = null;
             for (int i = 0; i < numEntries; i++)
             {
-                data1 = MapTypeToClass(type1, Name, Asset, reader, 0, false);
-                data2 = MapTypeToClass(type2, Name, Asset, reader, 0, false);
+                data1 = MapTypeToClass(type1, Name, Asset, reader, 0, false, true);
+                data2 = MapTypeToClass(type2, Name, Asset, reader, 0, false, false);
 
                 resultingDict.Add(data1, data2);
             }
