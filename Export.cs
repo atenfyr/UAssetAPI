@@ -8,13 +8,6 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI
 {
-    public enum ZeroPaddingMode
-    {
-        Unknown,
-        Yes,
-        No
-    }
-
     /**
      * UObject resource type for objects that are contained within this package and can
      * be referenced by other packages.
@@ -77,13 +70,6 @@ namespace UAssetAPI
             {
                 Data.Add(bit);
             }
-
-            Read2(reader, nextStarting);
-        }
-
-        public virtual ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
-        {
-            return ZeroPaddingMode.Unknown;
         }
 
         public override void Write(BinaryWriter writer)
@@ -94,12 +80,6 @@ namespace UAssetAPI
                 MainSerializer.Write(current, Asset, writer, true);
             }
             writer.WriteFName(new FName("None"), Asset);
-            Write2(writer);
-        }
-
-        public virtual void Write2(BinaryWriter writer)
-        {
-
         }
     }
 
@@ -149,8 +129,10 @@ namespace UAssetAPI
             Data2 = data;
         }
 
-        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
+        public override void Read(BinaryReader reader, int nextStarting)
         {
+            base.Read(reader, nextStarting);
+
             reader.ReadInt32();
 
             Data2 = new StringTable(reader.ReadFString());
@@ -161,11 +143,12 @@ namespace UAssetAPI
                 FString x = reader.ReadFStringWithEncoding();
                 Data2.Add(x);
             }
-            return ZeroPaddingMode.Unknown;
         }
 
-        public override void Write2(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
+            base.Write(writer);
+
             writer.Write((int)0);
 
             writer.WriteFString(Data2.Name);
@@ -184,24 +167,20 @@ namespace UAssetAPI
 
     }
 
-
     public class FunctionCategory : Export
     {
 
     }
 
-
-    // Used in BlueprintGeneratedClassExport
-    public class FunctionDataEntry
+    // Used in ClassExport
+    public struct FunctionDataEntry
     {
-        public FString Name;
-        public int Flags;
+        public FName Name;
         public int Category;
 
-        public FunctionDataEntry(FString name, int flags, int category)
+        public FunctionDataEntry(FName name, int category)
         {
             Name = name;
-            Flags = flags;
             Category = category;
         }
 
@@ -211,128 +190,333 @@ namespace UAssetAPI
         }
     }
 
-    public class BlueprintGeneratedClassExport : NormalExport
+    public struct SerializedInterfaceReference
     {
-        public int BaseClass;
-        public List<int> IndexData;
-        public byte[] DummyInbetweenData; // Usually zeros, sometimes not
-        public List<FunctionDataEntry> FunctionData;
-        public int FooterSeparator;
-        public int FooterObject;
-        public FString FooterEngine;
-        public byte[] DummyInbetweenData2; // Usually zeros, sometimes not
+        public int Class;
+        public int PointerOffset;
+        public bool bImplementedByK2;
 
-        public BlueprintGeneratedClassExport(Export super) : base(super)
+        public SerializedInterfaceReference(int @class, int pointerOffset, bool bImplementedByK2)
+        {
+            Class = @class;
+            PointerOffset = pointerOffset;
+            this.bImplementedByK2 = bImplementedByK2;
+        }
+    }
+
+    public struct FField
+    {
+        public FName Name;
+        public FName Type;
+        public EObjectFlags Flags;
+
+        public FField(FName name, FName type, EObjectFlags flags)
+        {
+            Name = name;
+            Type = type;
+            Flags = flags;
+        }
+    }
+
+
+    public class StructExport : NormalExport
+    {
+        /**
+         * Struct this inherits from, may be null
+         */
+        public int SuperStruct;
+
+        /**
+         * List of child fields
+         */
+        public int[] Children;
+
+        /**
+         * Properties serialized with this struct definition
+         */
+        public FField[] LoadedProperties;
+
+        /**
+         * # of bytecode instructions
+         */
+        public int ScriptBytecodeSize;
+
+        /**
+         * Raw bytecode instructions
+         */
+        public byte[] ScriptBytecode;
+
+        public StructExport(Export super) : base(super)
         {
 
         }
 
-        public BlueprintGeneratedClassExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public StructExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
         {
 
         }
 
-        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
+        public override void Read(BinaryReader reader, int nextStarting)
         {
-            // This serialization is not yet fully complete, so if this asset is too old just forget about it
-            if (Asset.EngineVersion < UE4Version.VER_UE4_22)
-            {
-                BaseClass = 0;
-                IndexData = new List<int>();
-                DummyInbetweenData = new byte[8];
-                FunctionData = new List<FunctionDataEntry>();
-                FooterSeparator = 0;
-                FooterObject = 0;
-                DummyInbetweenData2 = new byte[16];
-                return ZeroPaddingMode.No;
-            }
-
+            base.Read(reader, nextStarting);
             reader.ReadInt32();
-            BaseClass = reader.ReadInt32();
 
-            int numIndexEntries = reader.ReadInt32();
-            IndexData = new List<int>();
-            for (int i = 0; i < numIndexEntries; i++)
+            SuperStruct = reader.ReadInt32();
+
+            if (true || Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
             {
-                IndexData.Add(reader.ReadInt32());
+                int numIndexEntries = reader.ReadInt32();
+                Children = new int[numIndexEntries];
+                for (int i = 0; i < numIndexEntries; i++)
+                {
+                    Children[i] = reader.ReadInt32();
+                }
+            }
+            else
+            {
+                // https://github.com/EpicGames/UnrealEngine/blob/master/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp#L1832
+                Debug.WriteLine(reader.BaseStream.Position);
+                throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
             }
 
-            DummyInbetweenData = reader.ReadBytes(8);
+            if (Asset.GetCustomVersion("FCoreObjectVersion") >= (int)FCoreObjectVersion.FProperties)
+            {
+                int numProps = reader.ReadInt32();
+                LoadedProperties = new FField[numProps];
+                for (int i = 0; i < numProps; i++)
+                {
+                    FName fieldType = reader.ReadFName(Asset);
+                    FName fieldName = reader.ReadFName(Asset);
+                    EObjectFlags flags = (EObjectFlags)reader.ReadUInt32();
+                    LoadedProperties[i] = new FField(fieldName, fieldType, flags);
+                }
+            }
 
-            FunctionData = new List<FunctionDataEntry>();
+            ScriptBytecodeSize = reader.ReadInt32(); // # of bytecode instructions
+            int ScriptStorageSize = reader.ReadInt32(); // # of bytes in total
+            ScriptBytecode = reader.ReadBytes(ScriptStorageSize);
+        }
+
+        public override void Write(BinaryWriter writer)
+        {
+            base.Write(writer);
+            writer.Write((int)0);
+
+            writer.Write(SuperStruct);
+
+            if (Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
+            {
+                writer.Write(Children.Length);
+                for (int i = 0; i < Children.Length; i++)
+                {
+                    writer.Write(Children[i]);
+                }
+            }
+            else
+            {
+                // https://github.com/EpicGames/UnrealEngine/blob/master/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp#L1832
+                throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
+            }
+
+            if (Asset.GetCustomVersion("FCoreObjectVersion") >= (int)FCoreObjectVersion.FProperties)
+            {
+                writer.Write(LoadedProperties.Length);
+                for (int i = 0; i < LoadedProperties.Length; i++)
+                {
+                    writer.WriteFName(LoadedProperties[i].Type, Asset);
+                    writer.WriteFName(LoadedProperties[i].Name, Asset);
+                    writer.Write((uint)LoadedProperties[i].Flags);
+                }
+            }
+
+            writer.Write(ScriptBytecodeSize);
+            writer.Write(ScriptBytecode.Length);
+            writer.Write(ScriptBytecode);
+        }
+    }
+
+    public class ClassExport : StructExport
+    {
+        /**
+         * Map of all functions by name contained in this class
+         */
+        public FunctionDataEntry[] FuncMap; // TMap<FName, UFunction*>
+
+        /**
+         * Class flags; See EClassFlags for more information
+         */
+        public EClassFlags ClassFlags;
+
+        /**
+         * The required type for the outer of instances of this class
+         */
+        public int ClassWithin;
+
+        /**
+         * Which Name.ini file to load Config variables out of
+         */
+        public FName ClassConfigName;
+
+        /**
+	     * The list of interfaces which this class implements, along with the pointer property that is located at the offset of the interface's vtable.
+	     * If the interface class isn't native, the property will be null.
+	     */
+        public SerializedInterfaceReference[] Interfaces;
+
+        /**
+         * This is the blueprint that caused the generation of this class, or null if it is a native compiled-in class
+         */
+        public int ClassGeneratedBy;
+
+        /**
+         * Does this class use deprecated script order?
+         */
+        public bool bDeprecatedForceScriptOrder;
+
+        /**
+         * Used to check if the class was cooked or not
+         */
+        public bool bCooked;
+
+        /**
+         * The class default object; used for delta serialization and object initialization
+         */
+        public int ClassDefaultObject;
+
+        public ClassExport(Export super) : base(super)
+        {
+
+        }
+
+        public ClassExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        {
+
+        }
+
+        public override void Read(BinaryReader reader, int nextStarting)
+        {
+            base.Read(reader, nextStarting);
+
             int numFuncIndexEntries = reader.ReadInt32();
+            FuncMap = new FunctionDataEntry[numFuncIndexEntries];
             for (int i = 0; i < numFuncIndexEntries; i++)
             {
-                int functionName = reader.ReadInt32();
-                int flags = reader.ReadInt32();
+                FName functionName = reader.ReadFName(Asset);
                 int functionCategory = reader.ReadInt32();
 
-                FunctionData.Add(new FunctionDataEntry(Asset.GetNameReference(functionName), flags, functionCategory));
+                FuncMap[i] = new FunctionDataEntry(functionName, functionCategory);
             }
+            //if (numFuncIndexEntries == 0) reader.ReadInt32(); // temporary fix
 
-            FooterSeparator = reader.ReadInt32(); // usually 10 00 84 00
-            FooterObject = reader.ReadInt32();
-            int footerEngineRaw = (int)reader.ReadInt32();
-            if (footerEngineRaw < 0 || footerEngineRaw > Asset.GetNameMapIndexList().Count)
+            ClassFlags = (EClassFlags)reader.ReadUInt32();
+
+            if (Asset.EngineVersion < UE4Version.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
             {
-                FooterEngine = new FString(footerEngineRaw.ToString());
+                ClassFlags ^= EClassFlags.CLASS_NotPlaceable;
             }
-            else
+
+            ClassWithin = reader.ReadInt32();
+            ClassConfigName = reader.ReadFName(Asset);
+            Asset.AddNameReference(ClassConfigName.Value);
+
+            int numInterfaces = 0;
+            long interfacesStart = 0;
+            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
-                FooterEngine = Asset.GetNameReference(footerEngineRaw);
+                interfacesStart = reader.BaseStream.Position;
+                numInterfaces = reader.ReadInt32();
+                reader.BaseStream.Seek(interfacesStart + sizeof(int) + numInterfaces * (sizeof(int) * 3), SeekOrigin.Begin);
             }
-            DummyInbetweenData2 = reader.ReadBytes(16); // zeros
 
-            //reader.ReadInt64(); // None
+            // Linking procedure here; I don't think anything is really serialized during this
+            ClassGeneratedBy = reader.ReadInt32();
 
-            // Here are a couple weird ints we're ignoring for now
+            long currentOffset = reader.BaseStream.Position;
+            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            {
+                reader.BaseStream.Seek(interfacesStart, SeekOrigin.Begin);
+            }
+            numInterfaces = reader.ReadInt32();
+            Interfaces = new SerializedInterfaceReference[numInterfaces];
+            for (int i = 0; i < numInterfaces; i++)
+            {
+                Interfaces[i] = new SerializedInterfaceReference(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32() == 1);
+            }
+            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            {
+                reader.BaseStream.Seek(currentOffset, SeekOrigin.Begin);
+            }
 
-            return ZeroPaddingMode.No;
+            bDeprecatedForceScriptOrder = reader.ReadInt32() == 1;
+
+            reader.ReadInt64(); // None
+
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
+            {
+                bCooked = reader.ReadInt32() == 1;
+            }
+
+            ClassDefaultObject = reader.ReadInt32();
+
+            // CDO serialization usually comes after this export has finished serializing
         }
 
-        public override void Write2(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
-            // This serialization is not yet fully complete, so if this asset is too old just forget about it
-            if (Asset.EngineVersion < UE4Version.VER_UE4_22)
+            base.Write(writer);
+
+            writer.Write(FuncMap.Length);
+            for (int i = 0; i < FuncMap.Length; i++)
             {
-                return;
+                writer.WriteFName(FuncMap[i].Name, Asset);
+                writer.Write((int)FuncMap[i].Category);
+            }
+            //if (FuncMap.Length == 0) writer.Write((int)0); // temporary fix
+
+            EClassFlags serializingClassFlags = ClassFlags;
+            if (Asset.EngineVersion < UE4Version.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
+            {
+                serializingClassFlags ^= EClassFlags.CLASS_NotPlaceable;
+            }
+            writer.Write((uint)serializingClassFlags);
+
+            writer.Write(ClassWithin);
+            writer.WriteFName(ClassConfigName, Asset);
+
+            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            {
+                SerializeInterfaces(writer);
             }
 
-            writer.Write((int)0);
-            writer.Write(BaseClass);
+            // Linking procedure here; I don't think anything is really serialized during this
+            writer.Write(ClassGeneratedBy);
 
-            writer.Write(IndexData.Count);
-            for (int i = 0; i < IndexData.Count; i++)
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
-                writer.Write(IndexData[i]);
+                SerializeInterfaces(writer);
             }
 
-            writer.Write(DummyInbetweenData);
+            writer.Write(bDeprecatedForceScriptOrder ? 1 : 0);
 
-            writer.Write(FunctionData.Count);
-            for (int i = 0; i < FunctionData.Count; i++)
+            writer.WriteFName(new FName("None"), Asset);
+
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
             {
-                writer.Write((int)Asset.SearchNameReference(FunctionData[i].Name));
-                writer.Write((int)FunctionData[i].Flags);
-                writer.Write((int)FunctionData[i].Category);
+                writer.Write(bCooked ? 1 : 0);
             }
 
-            writer.Write(FooterSeparator);
-            writer.Write(FooterObject);
-            if (Asset.NameReferenceContains(FooterEngine))
-            {
-                writer.Write((int)Asset.SearchNameReference(FooterEngine));
-            }
-            else
-            {
-                writer.Write(int.Parse(FooterEngine.Value));
-            }
-            writer.Write(DummyInbetweenData2);
+            writer.Write(ClassDefaultObject);
+        }
 
-            // There is a "None" here, but to allow for writing for different engine versions we leave it as part of the extra data section
-            //writer.Write((long)Asset.SearchNameReference("None"));
-
-            // Here are a couple weird ints we're ignoring for now
+        private void SerializeInterfaces(BinaryWriter writer)
+        {
+            writer.Write(Interfaces.Length);
+            for (int i = 0; i < Interfaces.Length; i++)
+            {
+                writer.Write(Interfaces[i].Class);
+                writer.Write(Interfaces[i].PointerOffset);
+                writer.Write(Interfaces[i].bImplementedByK2 ? 1 : 0);
+            }
         }
     }
 
@@ -378,8 +562,10 @@ namespace UAssetAPI
             Data2 = data;
         }
 
-        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
+        public override void Read(BinaryReader reader, int nextStarting)
         {
+            base.Read(reader, nextStarting);
+
             // Find an ObjectProperty named RowStruct
             FName decidedStructType = new FName("Generic");
             foreach (PropertyData thisData in Data)
@@ -407,11 +593,12 @@ namespace UAssetAPI
                 nextStruct.Read(reader, false, 0);
                 Data2.Table.Add(new DataTableEntry(nextStruct, duplicateIndex));
             }
-            return ZeroPaddingMode.Unknown;
         }
 
-        public override void Write2(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
+            base.Write(writer);
+
             // Find an ObjectProperty named RowStruct
             FName decidedStructType = new FName("Generic");
             foreach (PropertyData thisData in Data)
@@ -471,8 +658,10 @@ namespace UAssetAPI
 
         }
 
-        public override ZeroPaddingMode Read2(BinaryReader reader, int nextStarting)
+        public override void Read(BinaryReader reader, int nextStarting)
         {
+            base.Read(reader, nextStarting);
+
             reader.ReadInt32();
             int numIndexEntries = reader.ReadInt32();
 
@@ -497,11 +686,12 @@ namespace UAssetAPI
             }
 
             reader.ReadByte();
-            return ZeroPaddingMode.No;
         }
 
-        public override void Write2(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
+            base.Write(writer);
+
             writer.Write((int)0);
             writer.Write(IndexData.Count);
             for (int i = 0; i < IndexData.Count; i++)

@@ -43,9 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomVersion.cs" />
-    <Compile Include="EObjectFlags.cs" />
     <Compile Include="FName.cs" />
-    <Compile Include="EPackageFlags.cs" />
+    <Compile Include="Flags.cs" />
+    <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="UAsset.cs" />
     <Compile Include="Export.cs" />
     <Compile Include="ExportDetails.cs" />

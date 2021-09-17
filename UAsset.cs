@@ -180,18 +180,18 @@ namespace UAssetAPI
             return li.Index;
         }
 
-        public BlueprintGeneratedClassExport GetBlueprintGeneratedClassExport()
+        public ClassExport GetClassExport()
         {
             foreach (Export cat in Exports)
             {
-                if (cat is BlueprintGeneratedClassExport bgcCat) return bgcCat;
+                if (cat is ClassExport bgcCat) return bgcCat;
             }
             return null;
         }
         
         public FName GetBGCName()
         {
-            var bgcCat = GetBlueprintGeneratedClassExport();
+            var bgcCat = GetClassExport();
             if (bgcCat == null || bgcCat.ReferenceData == null) return null;
 
             return bgcCat.ReferenceData.ObjectName;
@@ -202,15 +202,43 @@ namespace UAssetAPI
             parentClassPath = null;
             parentBGCName = null;
 
-            var bgcCat = GetBlueprintGeneratedClassExport();
+            var bgcCat = GetClassExport();
             if (bgcCat == null) return;
 
-            Import parentClassLink = GetImportAt(bgcCat.BaseClass);
+            Import parentClassLink = GetImportAt(bgcCat.SuperStruct);
             if (parentClassLink == null) return;
             if (parentClassLink.OuterIndex >= 0) return;
 
             parentBGCName = parentClassLink.ObjectName;
             parentClassPath = GetImportAt((int)parentClassLink.OuterIndex).ObjectName;
+        }
+
+        public int GetCustomVersion(Guid key)
+        {
+            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            {
+                CustomVersion custVer = CustomVersionContainer[i];
+                if (custVer.Key == key)
+                {
+                    return custVer.Version;
+                }
+            }
+
+            return -1; // https://github.com/EpicGames/UnrealEngine/blob/99b6e203a15d04fc7bbbf554c421a985c1ccb8f1/Engine/Source/Runtime/Core/Private/Serialization/Archive.cpp#L578
+        }
+
+        public int GetCustomVersion(string friendlyName)
+        {
+            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            {
+                CustomVersion custVer = CustomVersionContainer[i];
+                if (custVer.FriendlyName == friendlyName)
+                {
+                    return custVer.Version;
+                }
+            }
+
+            return -1; // https://github.com/EpicGames/UnrealEngine/blob/99b6e203a15d04fc7bbbf554c421a985c1ccb8f1/Engine/Source/Runtime/Core/Private/Serialization/Archive.cpp#L578
         }
 
         public int SearchForLink(FName classPackage, FName className, int outerIndex, FName objectName)
@@ -293,6 +321,12 @@ namespace UAssetAPI
         public List<int> AssetRegistryData;
 
         /**
+         * Tile information used by WorldComposition.
+         * Defines properties necessary for tile positioning in the world.
+         */
+        public FWorldTileInfo WorldTileInfo;
+
+        /**
 	     * List of imports and exports that must be serialized before other exports...all packed together, see FirstExportDependency.
 	     */
         public List<int> PreloadDependencies;
@@ -343,7 +377,7 @@ namespace UAssetAPI
         public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
         {
             { "ColorDatabase", new Tuple<FName, FName>(null, new FName("LinearColor")) },
-            { "PlayerCharacterIDs", new Tuple<FName, FName>(null, new FName("Guid")) }
+            { "PlayerCharacterIDs", new Tuple<FName, FName>(new FName("Guid"), null) }
         };
 
         /**
@@ -437,6 +471,7 @@ namespace UAssetAPI
         internal bool doWeHaveDependsMap = true;
         internal bool doWeHaveSoftPackageReferences = true;
         internal bool doWeHaveAssetRegistryData = true;
+        internal bool doWeHaveWorldTileInfo = true;
 
         // Do not directly add values to here under any circumstances; use AddNameReference instead
         private List<FString> nameMapIndexList;
@@ -723,6 +758,18 @@ namespace UAssetAPI
                 doWeHaveAssetRegistryData = false;
             }
 
+            // WorldTileInfoDataOffset
+            WorldTileInfo = null;
+            if (WorldTileInfoDataOffset > 0)
+            {
+                WorldTileInfo = new FWorldTileInfo();
+                WorldTileInfo.Read(reader, this);
+            }
+            else
+            {
+                doWeHaveWorldTileInfo = false;
+            }
+
             // PreloadDependencies
             if (this.UseSeparateBulkDataFiles)
             {
@@ -761,7 +808,8 @@ namespace UAssetAPI
                         {
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
-                                Exports[i] = new BlueprintGeneratedClassExport(Exports[i]);
+                            case "AnimBlueprintGeneratedClass":
+                                Exports[i] = new ClassExport(Exports[i]);
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             case "Level":
@@ -1058,6 +1106,7 @@ namespace UAssetAPI
                 this.SoftPackageReferencesOffset = 0;
             }
 
+            // AssetRegistryData
             if (this.doWeHaveAssetRegistryData)
             {
                 this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
@@ -1072,6 +1121,16 @@ namespace UAssetAPI
             else
             {
                 this.AssetRegistryDataOffset = 0;
+            }
+
+            // WorldTileInfo
+            if (this.doWeHaveWorldTileInfo)
+            {
+                WorldTileInfo.Write(writer, this);
+            }
+            else
+            {
+                this.WorldTileInfoDataOffset = 0;
             }
 
             // PreloadDependencies

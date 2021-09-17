@@ -29,7 +29,7 @@ namespace UAssetAPI.PropertyTypes
             switch (type.Value.Value)
             {
                 case "StructProperty":
-                    FName strucType = new FName("Generic");
+                    FName strucType = null;
 
                     if (asset.MapStructTypeOverride.ContainsKey(name.Value.Value))
                     {
@@ -42,6 +42,8 @@ namespace UAssetAPI.PropertyTypes
                             strucType = asset.MapStructTypeOverride[name.Value.Value].Item2;
                         }
                     }
+
+                    if (strucType == null) strucType = new FName("Generic");
 
                     StructPropertyData data = new StructPropertyData(name, asset, strucType);
                     data.Read(reader, false, leng);
