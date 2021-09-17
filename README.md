@@ -9,19 +9,19 @@ If you find an Unreal Engine 4 .uasset that has its `VerifyParsing()` method ret
 ## A quick example
 ```cs
 // The goal is to modify a ChildSlotComponent in the Seat3_Large asset in order to rotate and translate the slots so that the seat faces forward
-UAsset y = new UAsset(@"C:\Users\Alexandros\Desktop\astroneer_tinkering\pak\Astro\Content\Components_Large\Seat3_Large.uasset");
+AssetWriter y = new AssetWriter(@"C:\Users\Alexandros\Desktop\astroneer_tinkering\pak\Astro\Content\Components_Large\Seat3_Large.uasset", null, null); // no skips, no force reads
 Console.WriteLine("Data preserved: " + (y.VerifyParsing() ? "YES" : "NO"));
 {
-    Export baseUs = y.Exports[17]; // Export 18 is the ChildSlotComponent we want to modify
-    if (baseUs is NormalExport us)
+    Category baseUs = y.data.categories[17]; // Category 18 is the ChildSlotComponent we want to modify
+    if (baseUs is NormalCategory us)
     {
         // Here we make a new StructProperty that we'll insert in the ChildSlotComponent category to translate it
-        var newStruc = new StructPropertyData("RelativeLocation", y)
+        var newStruc = new StructPropertyData("RelativeLocation", y.data)
         {
             StructType = "Vector",
             Value = new List<PropertyData>
             {
-                new VectorPropertyData("Vector", y)
+                new VectorPropertyData("Vector", y.data)
                 {
                     Value = new float[] { 0, 175, 100 } // Translation in unreal units (X, Y, Z)
                 }
@@ -53,7 +53,7 @@ Console.WriteLine("Data preserved: " + (y.VerifyParsing() ? "YES" : "NO"));
     }
 
     // Save to a separate directory for packing
-    Directory.CreateDirectory(Path.GetDirectoryName(y.FilePath.Replace("pak", "mod")));
-    y.Write(y.FilePath.Replace("pak", "mod"));
+    Directory.CreateDirectory(Path.GetDirectoryName(y.path.Replace("pak", "mod")));
+    y.Write(y.path.Replace("pak", "mod"));
 }
 ```
