@@ -4,24 +4,24 @@ This is a simple, work-in-progress .NET API to facilitate reading and modifying 
 ## Contributing
 Contributions are always welcome to this repository, and they're what make the open source community so great. Any contributions, whether through pull requests or issues, that you make are greatly appreciated.
 
-If you find an Unreal Engine 4 .uasset that has its `VerifyParsing()` method return false (or display "failed to verify parsing" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)), feel free to submit an issue here and I will try to push a commit to make it verify parsing.
+If you find an Unreal Engine 4 .uasset that has its `VerifyParsing()` method return false (or display "failed to verify parsing" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)), feel free to submit an issue here with a copy of the asset in question along with the game and Unreal version that it was cooked with and I will try to push a commit to make it verify parsing.
 
 ## A quick example
 ```cs
 // The goal is to modify a ChildSlotComponent in the Seat3_Large asset in order to rotate and translate the slots so that the seat faces forward
-AssetWriter y = new AssetWriter(@"C:\Users\Alexandros\Desktop\astroneer_tinkering\pak\Astro\Content\Components_Large\Seat3_Large.uasset", null, null); // no skips, no force reads
+UAsset y = new UAsset(@"C:\Users\Alexandros\Desktop\astroneer_tinkering\pak\Astro\Content\Components_Large\Seat3_Large.uasset");
 Console.WriteLine("Data preserved: " + (y.VerifyParsing() ? "YES" : "NO"));
 {
-    Category baseUs = y.data.categories[17]; // Category 18 is the ChildSlotComponent we want to modify
-    if (baseUs is NormalCategory us)
+    Export baseUs = y.Exports[17]; // Export 18 is the ChildSlotComponent we want to modify
+    if (baseUs is NormalExport us)
     {
         // Here we make a new StructProperty that we'll insert in the ChildSlotComponent category to translate it
-        var newStruc = new StructPropertyData("RelativeLocation", y.data)
+        var newStruc = new StructPropertyData("RelativeLocation", y)
         {
             StructType = "Vector",
             Value = new List<PropertyData>
             {
-                new VectorPropertyData("Vector", y.data)
+                new VectorPropertyData("Vector", y)
                 {
                     Value = new float[] { 0, 175, 100 } // Translation in unreal units (X, Y, Z)
                 }
@@ -53,7 +53,7 @@ Console.WriteLine("Data preserved: " + (y.VerifyParsing() ? "YES" : "NO"));
     }
 
     // Save to a separate directory for packing
-    Directory.CreateDirectory(Path.GetDirectoryName(y.path.Replace("pak", "mod")));
-    y.Write(y.path.Replace("pak", "mod"));
+    Directory.CreateDirectory(Path.GetDirectoryName(y.FilePath.Replace("pak", "mod")));
+    y.Write(y.FilePath.Replace("pak", "mod"));
 }
 ```
