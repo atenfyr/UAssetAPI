@@ -3,10 +3,28 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class MulticastDelegatePropertyData : PropertyData<int[]>
+    public class FMulticastDelegate
     {
-        public FName Value2;
+        /** Uncertain what this is for; if you find out, please let me know */
+        public int Number;
+        /** Uncertain what this is for; if you find out, please let me know */
+        public FName Delegate;
 
+        public FMulticastDelegate(int number, FName @delegate)
+        {
+            Number = number;
+            Delegate = @delegate;
+        }
+
+        public FMulticastDelegate()
+        {
+
+        }
+    }
+
+
+    public class MulticastDelegatePropertyData : PropertyData<FMulticastDelegate[]>
+    {
         public MulticastDelegatePropertyData(FName name, UAsset asset) : base(name, asset)
         {
             Type = new FName("MulticastDelegateProperty");
@@ -24,12 +42,12 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Value = new int[2];
-            for (int i = 0; i < 2; i++)
+            int numVals = reader.ReadInt32();
+            Value = new FMulticastDelegate[numVals];
+            for (int i = 0; i < numVals; i++)
             {
-                Value[i] = reader.ReadInt32();
+                Value[i] = new FMulticastDelegate(reader.ReadInt32(), reader.ReadFName(Asset));
             }
-            Value2 = reader.ReadFName(Asset);
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -39,12 +57,13 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            for (int i = 0; i < 2; i++)
+            writer.Write(Value.Length);
+            for (int i = 0; i < Value.Length; i++)
             {
-                writer.Write(Value[i]);
+                writer.Write(Value[i].Number);
+                writer.WriteFName(Value[i].Delegate, Asset);
             }
-            writer.WriteFName(Value2, Asset);
-            return sizeof(int) * 4;
+            return sizeof(int) + sizeof(int) * 3 * Value.Length;
         }
 
         public override string ToString()
@@ -52,20 +71,14 @@ namespace UAssetAPI.PropertyTypes
             string oup = "(";
             for (int i = 0; i < Value.Length; i++)
             {
-                oup += Convert.ToString(Value[i]) + ", ";
+                oup += "(" + Convert.ToString(Value[i].Number) + ", " + Value[i].Delegate.Value.Value + "), ";
             }
-            oup += Value2;
-            return oup + ")";
+            return oup.Substring(0, oup.Length - 2) + ")";
         }
 
         public override void FromString(string[] d)
         {
-            Value = new int[] { 0, 0 };
-            if (int.TryParse(d[0], out int res)) Value[0] = res;
-            if (int.TryParse(d[1], out int res2)) Value[1] = res2;
-
-            Asset.AddNameReference(new FString(d[2]));
-            Value2 = new FName(d[2]);
+            
         }
     }
 }

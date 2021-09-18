@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace UAssetAPI
 {
@@ -16,23 +18,27 @@ namespace UAssetAPI
 
         public static uint GenerateHash(string text, Encoding encoding)
         {
-            uint algor1 = Strihash_DEPRECATED(encoding.GetBytes(text));
+            uint algor1 = Strihash_DEPRECATED(text, encoding);
             uint algor2 = StrCrc32(text);
             return (algor1 & 0xFFFF) | ((algor2 & 0xFFFF) << 16);
         }
 
-        private static uint Strihash_DEPRECATED(byte[] stream)
+        private static uint Strihash_DEPRECATED(string text, Encoding encoding)
         {
             uint hash = 0;
-            for (int i = 0; i < stream.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
-                char B = char.ToUpper((char)stream[i]);
-                hash = ((hash >> 8) & 0x00FFFFFF) ^ CRCTable_DEPRECATED[(hash ^ B) & 0x000000FF];
+                char B = char.ToUpper(text[i]);
+                byte[] rawDataForCharacter = encoding.GetBytes(new char[1] { B });
+                foreach (byte rawByte in rawDataForCharacter)
+                {
+                    hash = ((hash >> 8) & 0x00FFFFFF) ^ CRCTable_DEPRECATED[(hash ^ rawByte) & 0x000000FF];
+                }
             }
             return hash;
         }
 
-        // Accurate for both WIDECHAR and ANSICHAR
+        // Accurate as-is for both WIDECHAR and ANSICHAR
         private static uint StrCrc32(string text, uint CRC = 0)
         {
             CRC = ~CRC;

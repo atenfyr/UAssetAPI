@@ -56,7 +56,23 @@ namespace UAssetAPI
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString() + "(" + Number + ")";
+        }
+
+        /** Inverse of FName.ToString() */
+        public static FName FromString(string val)
+        {
+            if (val == "null") return null;
+            if (val[val.Length - 1] != ')') return new FName(val);
+
+            int locLastLeftBracket = val.LastIndexOf('(');
+            if (locLastLeftBracket < 0) return new FName(val);
+
+            string discriminatorRaw = val.Substring(locLastLeftBracket + 1, val.Length - locLastLeftBracket - 2);
+            if (!int.TryParse(discriminatorRaw, out int discriminator)) return new FName(val);
+
+            string realStr = val.Substring(0, locLastLeftBracket);
+            return new FName(realStr, discriminator);
         }
 
         public override bool Equals(object obj)

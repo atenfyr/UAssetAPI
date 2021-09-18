@@ -41,7 +41,7 @@ namespace UAssetAPI.StructTypes
             writer.Write(Value.G);
             writer.Write(Value.B);
             writer.Write(Value.A);
-            return 4;
+            return sizeof(byte) * 4;
         }
 
         public override string ToString()

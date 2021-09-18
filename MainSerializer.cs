@@ -179,11 +179,11 @@ namespace UAssetAPI
                 default:
 #if DEBUG
                     Debug.WriteLine("-----------");
-                    Debug.WriteLine("Parsing unknown type " + type);
+                    Debug.WriteLine("Parsing unknown type " + type.ToString());
                     Debug.WriteLine("Length: " + leng);
                     if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
-                    Debug.WriteLine("Last type: " + lastType.Type);
-                    if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType);
+                    Debug.WriteLine("Last type: " + lastType.Type.ToString());
+                    if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType.ToString());
                     Debug.WriteLine("-----------");
 #endif
                     if (leng > 0)
@@ -193,8 +193,8 @@ namespace UAssetAPI
                     }
                     else
                     {
-                        if (reader == null) throw new FormatException("Unknown property type: " + type + " (on " + name + ")");
-                        throw new FormatException("Unknown property type: " + type + " (on " + name + " at " + reader.BaseStream.Position + ")");
+                        if (reader == null) throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + ")");
+                        throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + " at " + reader.BaseStream.Position + ")");
                     }
                     break;
             }

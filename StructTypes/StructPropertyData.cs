@@ -247,7 +247,7 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d)
         {
-            if (d[4] != null) StructType = new FName(d[4]);
+            if (d[4] != null) StructType = FName.FromString(d[4]);
         }
     }
 }

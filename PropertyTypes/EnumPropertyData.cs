@@ -46,8 +46,9 @@ namespace UAssetAPI.PropertyTypes
         {
             if (d[0] != "null" && d[0] != null)
             {
-                Asset.AddNameReference(new FString(d[0]));
-                EnumType = new FName(d[0]);
+                FName output = FName.FromString(d[0]);
+                Asset.AddNameReference(output.Value);
+                EnumType = output;
             }
             else
             {
@@ -56,8 +57,9 @@ namespace UAssetAPI.PropertyTypes
 
             if (d[1] != "null" && d[1] != null)
             {
-                Asset.AddNameReference(new FString(d[1]));
-                Value = new FName(d[1]);
+                FName output = FName.FromString(d[1]);
+                Asset.AddNameReference(output.Value);
+                Value = output;
             }
             else
             {

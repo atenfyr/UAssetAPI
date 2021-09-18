@@ -2,7 +2,7 @@
 {
     public enum UE4Version
     {
-        UNKNOWN = -1,
+        UNKNOWN = 0,
         VER_UE4_OLDEST_LOADABLE_PACKAGE = 214,
         VER_UE4_BLUEPRINT_VARS_NOT_READ_ONLY,
         VER_UE4_STATIC_MESH_STORE_NAV_COLLISION,

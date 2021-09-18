@@ -136,7 +136,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            if (d[4] != null) ArrayType = new FName(d[4]);
+            if (d[4] != null) ArrayType = FName.FromString(d[4]);
         }
     }
 }

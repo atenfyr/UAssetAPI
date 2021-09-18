@@ -186,7 +186,7 @@ namespace UAssetAPI
 
         public override string ToString()
         {
-            return "(" + Name + ", " + Category + ")";
+            return "(" + Name.ToString() + ", " + Category + ")";
         }
     }
 

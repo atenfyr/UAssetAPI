@@ -39,13 +39,12 @@ namespace UAssetAPI.PropertyTypes
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            return Value.ToString();
         }
 
         public override void FromString(string[] d)
         {
-            int.TryParse(d[1], out int number);
-            Value = new FName(d[0], number);
+            Value = FName.FromString(d[0]);
         }
     }
 }

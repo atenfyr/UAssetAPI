@@ -41,13 +41,14 @@ namespace UAssetAPI.PropertyTypes
 
         public override string ToString()
         {
-            return "(" + Value + ", " + ID + ")";
+            return "(" + Value.ToString() + ", " + ID + ")";
         }
 
         public override void FromString(string[] d)
         {
-            Asset.AddNameReference(new FString(d[0]));
-            Value = new FName(d[0]);
+            FName output = FName.FromString(d[0]);
+            Asset.AddNameReference(output.Value);
+            Value = output;
 
             if (uint.TryParse(d[1], out uint res2))
             {
