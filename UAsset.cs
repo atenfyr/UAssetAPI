@@ -148,7 +148,7 @@ namespace UAssetAPI
 
         public int AddNameReference(FString name, bool forceAddDuplicates = false)
         {
-            if (!forceAddDuplicates && nameMapLookup.ContainsKey(name.GetHashCode())) return SearchNameReference(name);
+            if (!forceAddDuplicates && NameReferenceContains(name)) return SearchNameReference(name);
             nameMapIndexList.Add(name);
             nameMapLookup[name.GetHashCode()] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
