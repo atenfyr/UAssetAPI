@@ -146,11 +146,11 @@ namespace UAssetAPI
             throw new NameMapOutOfRangeException(search);
         }
 
-        public int AddNameReference(FString name)
+        public int AddNameReference(FString name, bool forceAddDuplicates = false)
         {
-            if (nameMapLookup.ContainsKey(name.GetHashCode())) return SearchNameReference(name);
+            if (!forceAddDuplicates && nameMapLookup.ContainsKey(name.GetHashCode())) return SearchNameReference(name);
             nameMapIndexList.Add(name);
-            nameMapLookup.Add(name.GetHashCode(), nameMapIndexList.Count - 1);
+            nameMapLookup[name.GetHashCode()] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
         }
 
@@ -637,7 +637,7 @@ namespace UAssetAPI
             {
                 var str = reader.ReadFStringWithGUIDAndEncoding(out uint guid);
                 if (guid == 0) OverrideGuids.Add(str, 0);
-                AddNameReference(str);
+                AddNameReference(str, true);
             }
 
             // Imports
