@@ -74,12 +74,13 @@ namespace UAssetAPI
 
     /* Below are some enums of custom versions we need for serialization */
 
+    /* This attribute represents the engine version at the time that the custom version was implemented */
     [AttributeUsage(AttributeTargets.Field)]
-    public class Introduced : Attribute
+    public class IntroducedAttribute : Attribute
     {
         public UE4Version IntroducedVersion;
 
-        public Introduced(UE4Version introducedVersion)
+        public IntroducedAttribute(UE4Version introducedVersion)
         {
             IntroducedVersion = introducedVersion;
         }
@@ -288,7 +289,7 @@ namespace UAssetAPI
     public enum FFrameworkObjectVersion
     {
         // Before any version changes were made
-        [Introduced(UE4Version.VER_UE4_STREAMABLE_TEXTURE_MIN_MAX_DISTANCE)]
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         BeforeCustomVersionWasAdded = 0,
 
         // BodySetup's default instance collision profile is used by default when creating a new instance.
@@ -454,7 +455,7 @@ namespace UAssetAPI
     public enum FCoreObjectVersion
     {
         // Before any version changes were made
-        [Introduced(UE4Version.VER_UE4_STREAMABLE_TEXTURE_MIN_MAX_DISTANCE)]
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         BeforeCustomVersionWasAdded = 0,
         [Introduced(UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)]
         MaterialInputNativeSerialize,

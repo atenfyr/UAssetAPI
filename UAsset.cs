@@ -241,20 +241,31 @@ namespace UAssetAPI
             return -1;
         }
 
-        public int GetCustomVersion<T>()
+        public T GetCustomVersion<T>()
         {
-            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
+            Type customVersionEnumType = typeof(T);
+            if (!customVersionEnumType.IsEnum) throw new ArgumentException("T must be an enumerated type");
 
             for (int i = 0; i < CustomVersionContainer.Count; i++)
             {
                 CustomVersion custVer = CustomVersionContainer[i];
-                if (custVer.FriendlyName == typeof(T).Name)
+                if (custVer.FriendlyName == customVersionEnumType.Name)
                 {
-                    return custVer.Version;
+                    return (T)(object)custVer.Version;
                 }
             }
 
-            return -1;
+            // Try and guess the custom version based off the engine version
+            T[] allVals = (T[])Enum.GetValues(customVersionEnumType);
+            for (int i = allVals.Length - 1; i >= 0; i--)
+            {
+                T val = allVals[i];
+                var attributes = customVersionEnumType.GetMember(val.ToString())[0].GetCustomAttributes(typeof(IntroducedAttribute), false);
+                if (attributes.Length < 0) continue;
+                if (EngineVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return val;
+            }
+
+            return (T)(object)-1;
         }
 
         public int SearchForLink(FName classPackage, FName className, int outerIndex, FName objectName)

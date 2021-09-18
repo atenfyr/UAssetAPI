@@ -263,7 +263,7 @@ namespace UAssetAPI
 
             SuperStruct = reader.ReadInt32();
 
-            if (true || Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
+            if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
                 int numIndexEntries = reader.ReadInt32();
                 Children = new int[numIndexEntries];
@@ -279,7 +279,7 @@ namespace UAssetAPI
                 throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
             }
 
-            if (Asset.GetCustomVersion("FCoreObjectVersion") >= (int)FCoreObjectVersion.FProperties)
+            if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
             {
                 int numProps = reader.ReadInt32();
                 LoadedProperties = new FField[numProps];
@@ -304,7 +304,7 @@ namespace UAssetAPI
 
             writer.Write(SuperStruct);
 
-            if (true || Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
+            if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
                 writer.Write(Children.Length);
                 for (int i = 0; i < Children.Length; i++)
@@ -318,7 +318,7 @@ namespace UAssetAPI
                 throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
             }
 
-            if (Asset.GetCustomVersion("FCoreObjectVersion") >= (int)FCoreObjectVersion.FProperties)
+            if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
             {
                 writer.Write(LoadedProperties.Length);
                 for (int i = 0; i < LoadedProperties.Length; i++)
