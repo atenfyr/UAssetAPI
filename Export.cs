@@ -293,6 +293,10 @@ namespace UAssetAPI
                     LoadedProperties[i] = new FField(fieldName, fieldType, flags, strangeExtras);
                 }
             }
+            else
+            {
+                LoadedProperties = new FField[0];
+            }
 
             ScriptBytecodeSize = reader.ReadInt32(); // # of bytecode instructions
             int ScriptStorageSize = reader.ReadInt32(); // # of bytes in total
@@ -419,7 +423,6 @@ namespace UAssetAPI
 
             ClassWithin = reader.ReadInt32();
             ClassConfigName = reader.ReadFName(Asset);
-            Asset.AddNameReference(ClassConfigName.Value);
 
             int numInterfaces = 0;
             long interfacesStart = 0;

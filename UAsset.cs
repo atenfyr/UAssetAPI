@@ -318,6 +318,16 @@ namespace UAssetAPI
         }
 
         /**
+         * Should this asset not serialize its engine and custom versions?
+         */
+        public bool IsUnversioned;
+
+        /**
+         * The licensee file version.
+         */
+        public int FileVersionLicenseeUE4;
+
+        /**
          * All the custom versions stored in the archive.
          */
         public List<CustomVersion> CustomVersionContainer;
@@ -428,12 +438,6 @@ namespace UAssetAPI
          *		-7 indicates the texture allocation info has been removed from the summary
          */
         internal int LegacyFileVersion;
-        internal int LegacyUE3Version;
-
-        /* Serialized UE4 file version */
-        internal UE4Version FileVersionUE4;
-        /* Licensee file version */
-        internal int FileVersionLicenseeUE4;
 
         /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
         internal int SectionSixOffset = 0;
@@ -518,16 +522,18 @@ namespace UAssetAPI
             LegacyFileVersion = reader.ReadInt32();
             if (LegacyFileVersion != -4)
             {
-                LegacyUE3Version = reader.ReadInt32(); // 864 in versioned assets, 0 in unversioned assets
+                reader.ReadInt32(); // LegacyUE3Version for backwards-compatibility with UE3 games: always 864 in versioned assets, always 0 in unversioned assets
             }
 
-            FileVersionUE4 = (UE4Version)reader.ReadInt32();
-            if (FileVersionUE4 > UE4Version.UNKNOWN)
+            UE4Version fileVersionUE4 = (UE4Version)reader.ReadInt32();
+            if (fileVersionUE4 > UE4Version.UNKNOWN)
             {
-                EngineVersion = FileVersionUE4;
+                IsUnversioned = false;
+                EngineVersion = fileVersionUE4;
             }
             else
             {
+                IsUnversioned = true;
                 if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an engine version is manually specified");
             }
 
@@ -789,6 +795,8 @@ namespace UAssetAPI
             WorldTileInfo = null;
             if (WorldTileInfoDataOffset > 0)
             {
+                //Debug.WriteLine(WorldTileInfoDataOffset);
+                reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
                 WorldTileInfo = new FWorldTileInfo();
                 WorldTileInfo.Read(reader, this);
             }
@@ -890,14 +898,27 @@ namespace UAssetAPI
             writer.Write(LegacyFileVersion);
             if (LegacyFileVersion != 4)
             {
-                writer.Write(LegacyUE3Version);
+                writer.Write(IsUnversioned ? 0 : 864);
             }
-            writer.Write((int)FileVersionUE4);
+
+            if (IsUnversioned)
+            {
+                writer.Write(0);
+            }
+            else
+            {
+                writer.Write((int)EngineVersion);
+            }
+
             writer.Write(FileVersionLicenseeUE4);
             if (LegacyFileVersion <= -2)
             {
-                if (FileVersionUE4 > UE4Version.UNKNOWN)
+                if (IsUnversioned)
                 {
+                    writer.Write(0);
+                }
+                else
+                { 
                     // TODO: support for enum-based custom versions
                     writer.Write(CustomVersionContainer.Count);
                     for (int i = 0; i < CustomVersionContainer.Count; i++)
@@ -905,10 +926,6 @@ namespace UAssetAPI
                         writer.Write(CustomVersionContainer[i].Key.ToByteArray());
                         writer.Write(CustomVersionContainer[i].Version);
                     }
-                }
-                else
-                {
-                    writer.Write(0);
                 }
             }
 
