@@ -238,7 +238,23 @@ namespace UAssetAPI
                 }
             }
 
-            return -1; // https://github.com/EpicGames/UnrealEngine/blob/99b6e203a15d04fc7bbbf554c421a985c1ccb8f1/Engine/Source/Runtime/Core/Private/Serialization/Archive.cpp#L578
+            return -1;
+        }
+
+        public int GetCustomVersion<T>()
+        {
+            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
+
+            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            {
+                CustomVersion custVer = CustomVersionContainer[i];
+                if (custVer.FriendlyName == typeof(T).Name)
+                {
+                    return custVer.Version;
+                }
+            }
+
+            return -1;
         }
 
         public int SearchForLink(FName classPackage, FName className, int outerIndex, FName objectName)
@@ -403,8 +419,8 @@ namespace UAssetAPI
         internal int LegacyFileVersion;
         internal int LegacyUE3Version;
 
-        /* UE4 file version */
-        internal int FileVersionUE4;
+        /* Serialized UE4 file version */
+        internal UE4Version FileVersionUE4;
         /* Licensee file version */
         internal int FileVersionLicenseeUE4;
 
@@ -494,14 +510,14 @@ namespace UAssetAPI
                 LegacyUE3Version = reader.ReadInt32(); // 864 in versioned assets, 0 in unversioned assets
             }
 
-            FileVersionUE4 = reader.ReadInt32();
-            if (FileVersionUE4 != 0)
+            FileVersionUE4 = (UE4Version)reader.ReadInt32();
+            if (FileVersionUE4 > UE4Version.UNKNOWN)
             {
-                EngineVersion = (UE4Version)FileVersionUE4;
+                EngineVersion = FileVersionUE4;
             }
             else
             {
-                if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an engine version is specified");
+                if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an engine version is manually specified");
             }
 
             FileVersionLicenseeUE4 = reader.ReadInt32();
@@ -865,16 +881,23 @@ namespace UAssetAPI
             {
                 writer.Write(LegacyUE3Version);
             }
-            writer.Write(FileVersionUE4);
+            writer.Write((int)FileVersionUE4);
             writer.Write(FileVersionLicenseeUE4);
             if (LegacyFileVersion <= -2)
             {
-                // TODO: support for enum-based custom versions
-                writer.Write(CustomVersionContainer.Count);
-                for (int i = 0; i < CustomVersionContainer.Count; i++)
+                if (FileVersionUE4 > UE4Version.UNKNOWN)
                 {
-                    writer.Write(CustomVersionContainer[i].Key.ToByteArray());
-                    writer.Write(CustomVersionContainer[i].Version);
+                    // TODO: support for enum-based custom versions
+                    writer.Write(CustomVersionContainer.Count);
+                    for (int i = 0; i < CustomVersionContainer.Count; i++)
+                    {
+                        writer.Write(CustomVersionContainer[i].Key.ToByteArray());
+                        writer.Write(CustomVersionContainer[i].Version);
+                    }
+                }
+                else
+                {
+                    writer.Write(0);
                 }
             }
 

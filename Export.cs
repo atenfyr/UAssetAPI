@@ -304,7 +304,7 @@ namespace UAssetAPI
 
             writer.Write(SuperStruct);
 
-            if (Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
+            if (true || Asset.GetCustomVersion("FFrameworkObjectVersion") < (int)FFrameworkObjectVersion.RemoveUField_Next)
             {
                 writer.Write(Children.Length);
                 for (int i = 0; i < Children.Length; i++)
@@ -406,7 +406,6 @@ namespace UAssetAPI
 
                 FuncMap[i] = new FunctionDataEntry(functionName, functionCategory);
             }
-            //if (numFuncIndexEntries == 0) reader.ReadInt32(); // temporary fix
 
             ClassFlags = (EClassFlags)reader.ReadUInt32();
 
