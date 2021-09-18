@@ -209,12 +209,14 @@ namespace UAssetAPI
         public FName Name;
         public FName Type;
         public EObjectFlags Flags;
+        public byte[] Extras; // Uncertain meaning; please let me know if you have information about the rest of FField's serialization
 
-        public FField(FName name, FName type, EObjectFlags flags)
+        public FField(FName name, FName type, EObjectFlags flags, byte[] extras)
         {
             Name = name;
             Type = type;
             Flags = flags;
+            Extras = extras;
         }
     }
 
@@ -275,7 +277,6 @@ namespace UAssetAPI
             else
             {
                 // https://github.com/EpicGames/UnrealEngine/blob/master/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp#L1832
-                Debug.WriteLine(reader.BaseStream.Position);
                 throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
             }
 
@@ -288,7 +289,8 @@ namespace UAssetAPI
                     FName fieldType = reader.ReadFName(Asset);
                     FName fieldName = reader.ReadFName(Asset);
                     EObjectFlags flags = (EObjectFlags)reader.ReadUInt32();
-                    LoadedProperties[i] = new FField(fieldName, fieldType, flags);
+                    byte[] strangeExtras = reader.ReadBytes(31);
+                    LoadedProperties[i] = new FField(fieldName, fieldType, flags, strangeExtras);
                 }
             }
 
@@ -326,6 +328,7 @@ namespace UAssetAPI
                     writer.WriteFName(LoadedProperties[i].Type, Asset);
                     writer.WriteFName(LoadedProperties[i].Name, Asset);
                     writer.Write((uint)LoadedProperties[i].Flags);
+                    writer.Write(LoadedProperties[i].Extras);
                 }
             }
 

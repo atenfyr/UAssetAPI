@@ -261,7 +261,7 @@ namespace UAssetAPI
             {
                 T val = allVals[i];
                 var attributes = customVersionEnumType.GetMember(val.ToString())[0].GetCustomAttributes(typeof(IntroducedAttribute), false);
-                if (attributes.Length < 0) continue;
+                if (attributes.Length <= 0) continue;
                 if (EngineVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return val;
             }
 
