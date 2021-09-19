@@ -28,7 +28,7 @@ namespace UAssetAPI
             uint hash = 0;
             for (int i = 0; i < text.Length; i++)
             {
-                char B = char.ToUpper(text[i]);
+                char B = char.ToUpperInvariant(text[i]);
                 byte[] rawDataForCharacter = encoding.GetBytes(new char[1] { B });
                 foreach (byte rawByte in rawDataForCharacter)
                 {

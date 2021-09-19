@@ -8,9 +8,9 @@ namespace UAssetAPI
         /**
          * Static map of custom version GUIDs to the class or object that they represent in the Unreal Engine. This list is not necessarily exhaustive, so feel free to add to it if need be
          */
-        private static readonly Dictionary<Guid, string> GuidToCustomVersionStringMap = new Dictionary<Guid, string>()
+        public static readonly Dictionary<Guid, string> GuidToCustomVersionStringMap = new Dictionary<Guid, string>()
         {
-            { UAPUtils.GUID(0, 0, 0, 0xF99D40C1), "UnusedCustomVersionKey" },
+            { UnusedCustomVersionKey, "UnusedCustomVersionKey" },
             { UAPUtils.GUID(0xB0D832E4, 0x1F894F0D, 0xACCF7EB7, 0x36FD4AA2), "FBlueprintsObjectVersion" },
             { UAPUtils.GUID(0xE1C64328, 0xA22C4D53, 0xA36C8E86, 0x6417BD8C), "FBuildObjectVersion" },
             { UAPUtils.GUID(0x375EC13C, 0x06E448FB, 0xB50084F0, 0x262A717E), "FCoreObjectVersion" },
@@ -54,6 +54,22 @@ namespace UAssetAPI
             { UAPUtils.GUID(0xab965196, 0x45d808fc, 0xb7d7228d, 0x78ad569e), "FLiveLinkCustomVersion" },
             // etc.
         };
+
+        public static readonly Guid UnusedCustomVersionKey = UAPUtils.GUID(0, 0, 0, 0xF99D40C1);
+
+        public static string GetCustomVersionFriendlyNameFromGuid(Guid guid)
+        {
+            return GuidToCustomVersionStringMap.ContainsKey(guid) ? GuidToCustomVersionStringMap[guid] : null;
+        }
+
+        public static Guid GetCustomVersionGuidFromFriendlyName(string friendlyName)
+        {
+            foreach (KeyValuePair<Guid, string> entry in GuidToCustomVersionStringMap)
+            {
+                if (entry.Value == friendlyName) return entry.Key;
+            }
+            return UnusedCustomVersionKey;
+        }
 
         public Guid Key;
         public string FriendlyName = null;
@@ -463,7 +479,7 @@ namespace UAssetAPI
         EnumProperties,
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         SkeletalMaterialEditorDataStripping,
-        [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         FProperties,
 
         // -----<new versions can be added above this line>-------------------------------------------------

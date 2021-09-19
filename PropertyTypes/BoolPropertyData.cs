@@ -41,7 +41,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d)
         {
-            Value = d[0].Equals("1") || d[0].ToLower().Equals("true");
+            Value = d[0].Equals("1") || d[0].ToLowerInvariant().Equals("true");
         }
     }
 }

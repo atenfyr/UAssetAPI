@@ -202,6 +202,7 @@ namespace UAssetAPI
 
         public void Write(BinaryWriter writer, UAsset asset)
         {
+            // Needs further testing
             if (true || asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
             {
                 writer.Write(Position[0]);

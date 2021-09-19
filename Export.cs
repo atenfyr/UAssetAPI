@@ -423,6 +423,7 @@ namespace UAssetAPI
 
             ClassWithin = reader.ReadInt32();
             ClassConfigName = reader.ReadFName(Asset);
+            Asset.AddNameReference(ClassConfigName.Value);
 
             int numInterfaces = 0;
             long interfacesStart = 0;
@@ -476,7 +477,6 @@ namespace UAssetAPI
                 writer.WriteFName(FuncMap[i].Name, Asset);
                 writer.Write((int)FuncMap[i].Category);
             }
-            //if (FuncMap.Length == 0) writer.Write((int)0); // temporary fix
 
             EClassFlags serializingClassFlags = ClassFlags;
             if (Asset.EngineVersion < UE4Version.VER_UE4_CLASS_NOTPLACEABLE_ADDED)

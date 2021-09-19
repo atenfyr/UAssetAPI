@@ -318,12 +318,27 @@ namespace UAssetAPI
         }
 
         /**
+         * The package file version number when this package was saved.
+         *
+         * Lower 16 bits stores the UE3 engine version
+         * Upper 16 bits stores the UE4/licensee version
+         * For newer packages this is -7
+         *		-2 indicates presence of enum-based custom versions
+         *		-3 indicates guid-based custom versions
+         *		-4 indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
+         *		-5 indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
+         *		-6 indicates optimizations to how custom versions are being serialized
+         *		-7 indicates the texture allocation info has been removed from the summary
+         */
+        public int LegacyFileVersion;
+
+        /**
          * Should this asset not serialize its engine and custom versions?
          */
         public bool IsUnversioned;
 
         /**
-         * The licensee file version.
+         * The licensee file version. Used by some games to add their own Engine-level versioning.
          */
         public int FileVersionLicenseeUE4;
 
@@ -374,7 +389,7 @@ namespace UAssetAPI
         public List<FGenerationInfo> Generations;
 
         /**
-	     * Current id for this package; effectively unused.
+	     * Current ID for this package. Effectively unused.
 	     */
         public Guid PackageGuid;
 
@@ -388,23 +403,24 @@ namespace UAssetAPI
 	     * a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
 	     */
         public FEngineVersion RecordedCompatibleWithEngineVersion;
+
         /**
          * Streaming install ChunkIDs
          */
         public int[] ChunkIDs;
 
         /**
-         * The flags for the package
+         * The flags for this package.
          */
         public EPackageFlags PackageFlags;
 
         /**
-         * Value that is used to determine if the package was saved by Epic(or licensee) or by a modder, etc
+         * Value that is used to determine if the package was saved by Epic, a licensee, modder, etc.
          */
         public uint PackageSource;
 
         /**
-         * The Generic Browser folder name that this package lives in. Usually "None" in cooked assets
+         * The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
          */
         public FString FolderName;
 
@@ -421,23 +437,6 @@ namespace UAssetAPI
          * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.
          */
         public Dictionary<FString, uint> OverrideGuids;
-
-
-
-        /**
-         * The package file version number when this package was saved.
-         *
-         * Lower 16 bits stores the UE3 engine version
-         * Upper 16 bits stores the UE4/licensee version
-         * For newer packages this is -7
-         *		-2 indicates presence of enum-based custom versions
-         *		-3 indicates guid-based custom versions
-         *		-4 indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
-         *		-5 indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
-         *		-6 indicates optimizations to how custom versions are being serialized
-         *		-7 indicates the texture allocation info has been removed from the summary
-         */
-        internal int LegacyFileVersion;
 
         /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
         internal int SectionSixOffset = 0;
