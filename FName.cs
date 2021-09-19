@@ -108,7 +108,8 @@ namespace UAssetAPI
 
         public FName()
         {
-
+            Value = new FString("");
+            Number = 0;
         }
     }
 }

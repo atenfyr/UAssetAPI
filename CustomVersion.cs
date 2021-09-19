@@ -463,7 +463,7 @@ namespace UAssetAPI
         EnumProperties,
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         SkeletalMaterialEditorDataStripping,
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         FProperties,
 
         // -----<new versions can be added above this line>-------------------------------------------------

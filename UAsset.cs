@@ -795,7 +795,6 @@ namespace UAssetAPI
             WorldTileInfo = null;
             if (WorldTileInfoDataOffset > 0)
             {
-                //Debug.WriteLine(WorldTileInfoDataOffset);
                 reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
                 WorldTileInfo = new FWorldTileInfo();
                 WorldTileInfo.Read(reader, this);
@@ -1177,6 +1176,7 @@ namespace UAssetAPI
             // WorldTileInfo
             if (this.doWeHaveWorldTileInfo)
             {
+                this.WorldTileInfoDataOffset = (int)writer.BaseStream.Position;
                 WorldTileInfo.Write(writer, this);
             }
             else

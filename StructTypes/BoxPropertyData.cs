@@ -24,6 +24,7 @@ namespace UAssetAPI.StructTypes
             {
                 reader.ReadByte();
             }
+
             Value = new VectorPropertyData[2];
             for (int i = 0; i < 2; i++)
             {
@@ -41,13 +42,14 @@ namespace UAssetAPI.StructTypes
             {
                 writer.Write((byte)0);
             }
-            
+
+            int totalSize = 0;
             for (int i = 0; i < 2; i++)
             {
-               Value[i].Write(writer, includeHeader);
+                totalSize += Value[i].Write(writer, includeHeader);
             }
             writer.Write(IsValid);
-            return 25;
+            return totalSize + sizeof(bool);
         }
 
         public override void FromString(string[] d)

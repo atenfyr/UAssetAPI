@@ -150,7 +150,8 @@ namespace UAssetAPI
             Position = new int[3];
             AbsolutePosition = new int[3];
 
-            if (asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
+            // Needs further testing
+            if (true || asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
             {
                 Position[0] = reader.ReadInt32();
                 Position[1] = reader.ReadInt32();
@@ -162,7 +163,7 @@ namespace UAssetAPI
                 Position[1] = reader.ReadInt32();
                 Position[2] = reader.ReadInt32();
             }
-            Bounds = new BoxPropertyData(new FName(""), asset);
+            Bounds = new BoxPropertyData(new FName(), asset);
             Bounds.Read(reader, false, 0, 0);
             Layer = new FWorldTileLayer();
             Layer.Read(reader, asset);
@@ -201,7 +202,7 @@ namespace UAssetAPI
 
         public void Write(BinaryWriter writer, UAsset asset)
         {
-            if (asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
+            if (true || asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
             {
                 writer.Write(Position[0]);
                 writer.Write(Position[1]);
