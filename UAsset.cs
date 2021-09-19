@@ -74,11 +74,34 @@ namespace UAssetAPI
 
     public class UAsset
     {
+        /**
+         * The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
+         */
         public string FilePath;
+
+        /**
+         * Will export data be serialized?
+         */
         public bool WillWriteExportData = true;
+
+        /**
+         * Should the original copy of this asset be stored in memory as a byte array for reference when serializing, as opposed to accessing the file from disk?
+         */
         public bool WillStoreOriginalCopyInMemory = false;
+
+        /**
+         * Should the asset be separated into .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
+         */
         public bool UseSeparateBulkDataFiles = false;
+
+        /**
+         * The original copy in memory to use as reference if WillStoreOriginalCopyInMemory is set to true.
+         */
         public byte[] OriginalCopy;
+
+        /**
+         * The version of the Unreal Engine that will be used to parse this asset if it is unversioned.
+         */
         public UE4Version EngineVersion = UE4Version.UNKNOWN;
 
         public bool VerifyParsing()
@@ -189,7 +212,7 @@ namespace UAssetAPI
             return null;
         }
         
-        public FName GetBGCName()
+        public FName GetClassExportName()
         {
             var bgcCat = GetClassExport();
             if (bgcCat == null || bgcCat.ReferenceData == null) return null;
@@ -345,7 +368,7 @@ namespace UAssetAPI
         /**
          * All the custom versions stored in the archive.
          */
-        public List<CustomVersion> CustomVersionContainer;
+        public List<CustomVersion> CustomVersionContainer = null;
 
         /**
          * List of object imports. UAssetAPI used to call these "links."
@@ -543,7 +566,7 @@ namespace UAssetAPI
             if (LegacyFileVersion <= -2)
             {
                 // TODO: support for enum-based custom versions
-                CustomVersionContainer = new List<CustomVersion>();
+                if (CustomVersionContainer == null) CustomVersionContainer = new List<CustomVersion>();
 
                 numCustomVersions = reader.ReadInt32();
                 for (int i = 0; i < numCustomVersions; i++)
@@ -1387,16 +1410,7 @@ namespace UAssetAPI
             return new BinaryReader(PathToStream(p));
         }
 
-        // If willStoreOriginalCopyInMemory is true when calling this constructor then you must set OriginalCopy yourself
-        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
-        {
-            EngineVersion = engineVersion;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
-            Read(reader, manualSkips, forceReads);
-        }
-
-        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true, int[] manualSkips = null, int[] forceReads = null)
+        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
         {
             this.FilePath = path;
             EngineVersion = engineVersion;
@@ -1404,7 +1418,25 @@ namespace UAssetAPI
             WillWriteExportData = willWriteExportData;
 
             var ourReader = PathToReader(path);
-            Read(ourReader, manualSkips, forceReads);
+            Read(ourReader);
+
+            if (WillStoreOriginalCopyInMemory)
+            {
+                ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
+            }
+        }
+
+        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        {
+            this.FilePath = path;
+            EngineVersion = engineVersion;
+            CustomVersionContainer = defaultCustomVersionContainer;
+            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            WillWriteExportData = willWriteExportData;
+
+            var ourReader = PathToReader(path);
+            Read(ourReader);
 
             if (WillStoreOriginalCopyInMemory)
             {
@@ -1416,6 +1448,39 @@ namespace UAssetAPI
         public UAsset()
         {
 
+        }
+
+        // If willStoreOriginalCopyInMemory is true when calling the following constructors, then you must set OriginalCopy yourself
+        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        {
+            EngineVersion = engineVersion;
+            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            WillWriteExportData = willWriteExportData;
+        }
+
+        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        {
+            EngineVersion = engineVersion;
+            CustomVersionContainer = defaultCustomVersionContainer;
+            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            WillWriteExportData = willWriteExportData;
+        }
+
+        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        {
+            EngineVersion = engineVersion;
+            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            WillWriteExportData = willWriteExportData;
+            Read(reader);
+        }
+
+        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        {
+            EngineVersion = engineVersion;
+            CustomVersionContainer = defaultCustomVersionContainer;
+            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
+            WillWriteExportData = willWriteExportData;
+            Read(reader);
         }
     }
 }

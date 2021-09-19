@@ -75,6 +75,13 @@ namespace UAssetAPI
         public string FriendlyName = null;
         public int Version;
 
+        public CustomVersion(string friendlyName, int version)
+        {
+            Key = GetCustomVersionGuidFromFriendlyName(friendlyName);
+            FriendlyName = friendlyName;
+            Version = version;
+        }
+
         public CustomVersion(Guid key, int version)
         {
             Key = key;
