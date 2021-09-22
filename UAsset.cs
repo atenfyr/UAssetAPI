@@ -214,16 +214,16 @@ namespace UAssetAPI
         
         public FName GetClassExportName()
         {
-            var bgcCat = GetClassExport();
-            if (bgcCat == null || bgcCat.ReferenceData == null) return null;
+            var classExport = GetClassExport();
+            if (classExport == null || classExport.ReferenceData == null) return null;
 
-            return bgcCat.ReferenceData.ObjectName;
+            return classExport.ReferenceData.ObjectName;
         }
 
-        public void GetParentClass(out FName parentClassPath, out FName parentBGCName)
+        public void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
         {
             parentClassPath = null;
-            parentBGCName = null;
+            parentClassExportName = null;
 
             var bgcCat = GetClassExport();
             if (bgcCat == null) return;
@@ -232,7 +232,7 @@ namespace UAssetAPI
             if (parentClassLink == null) return;
             if (parentClassLink.OuterIndex >= 0) return;
 
-            parentBGCName = parentClassLink.ObjectName;
+            parentClassExportName = parentClassLink.ObjectName;
             parentClassPath = GetImportAt((int)parentClassLink.OuterIndex).ObjectName;
         }
 
