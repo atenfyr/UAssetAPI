@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
+using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
 
@@ -221,6 +223,24 @@ namespace UAssetAPI
             int duplicationIndex = reader.ReadInt32();
             PropertyData result = TypeToClass(type, name, asset, reader, leng, duplicationIndex, includeHeader);
             return result;
+        }
+
+        private static readonly Regex allNonLetters = new Regex("[^a-zA-Z]", RegexOptions.Compiled);
+        public static FProperty ReadFProperty(UAsset asset, BinaryReader reader)
+        {
+            FName serializedType = reader.ReadFName(asset);
+            Type requestedType = Type.GetType("UAssetAPI.FieldTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
+            if (requestedType == null) requestedType = typeof(FGenericProperty);
+            var res = (FProperty)Activator.CreateInstance(requestedType);
+            res.SerializedType = serializedType;
+            res.Read(reader, asset);
+            return res;
+        }
+
+        public static void WriteFProperty(FProperty prop, UAsset asset, BinaryWriter writer)
+        {
+            writer.WriteFName(prop.SerializedType, asset);
+            prop.Write(writer, asset);
         }
 
         public static int Write(PropertyData property, UAsset asset, BinaryWriter writer, bool includeHeader) // Returns location of the length

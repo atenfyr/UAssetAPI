@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using UAssetAPI.FieldTypes;
 
 namespace UAssetAPI
 {
@@ -865,8 +866,26 @@ namespace UAssetAPI
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
                             case "AnimBlueprintGeneratedClass":
-                                Exports[i] = new ClassExport(Exports[i]);
+                                var bgc = new ClassExport(Exports[i]);
+                                Exports[i] = bgc;
                                 Exports[i].Read(reader, (int)nextStarting);
+
+                                // Check to see if we can add some new map type overrides
+                                if (bgc.LoadedProperties != null)
+                                {
+                                    foreach (FProperty entry in bgc.LoadedProperties)
+                                    {
+                                        if (entry is FMapProperty fMapEntry)
+                                        {
+                                            FName keyOverride = null;
+                                            FName valueOverride = null;
+                                            if (fMapEntry.KeyProp is FStructProperty keyPropStruc) keyOverride = GetImportObjectName(keyPropStruc.Struct);
+                                            if (fMapEntry.ValueProp is FStructProperty valuePropStruc) valueOverride = GetImportObjectName(valuePropStruc.Struct);
+
+                                            this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
+                                        }
+                                    }
+                                }
                                 break;
                             case "Level":
                                 Exports[i] = new LevelExport(Exports[i]);

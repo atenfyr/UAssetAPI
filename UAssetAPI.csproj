@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomVersion.cs" />
+    <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="FWorldTileInfo.cs" />

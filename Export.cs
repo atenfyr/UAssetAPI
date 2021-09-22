@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
+using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
 
@@ -204,23 +203,6 @@ namespace UAssetAPI
         }
     }
 
-    public struct FField
-    {
-        public FName Name;
-        public FName Type;
-        public EObjectFlags Flags;
-        public byte[] Extras; // Uncertain meaning; please let me know if you have information about the rest of FField's serialization
-
-        public FField(FName name, FName type, EObjectFlags flags, byte[] extras)
-        {
-            Name = name;
-            Type = type;
-            Flags = flags;
-            Extras = extras;
-        }
-    }
-
-
     public class StructExport : NormalExport
     {
         /**
@@ -236,7 +218,7 @@ namespace UAssetAPI
         /**
          * Properties serialized with this struct definition
          */
-        public FField[] LoadedProperties;
+        public FProperty[] LoadedProperties;
 
         /**
          * # of bytecode instructions
@@ -283,19 +265,15 @@ namespace UAssetAPI
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
             {
                 int numProps = reader.ReadInt32();
-                LoadedProperties = new FField[numProps];
+                LoadedProperties = new FProperty[numProps];
                 for (int i = 0; i < numProps; i++)
                 {
-                    FName fieldType = reader.ReadFName(Asset);
-                    FName fieldName = reader.ReadFName(Asset);
-                    EObjectFlags flags = (EObjectFlags)reader.ReadUInt32();
-                    byte[] strangeExtras = reader.ReadBytes(31);
-                    LoadedProperties[i] = new FField(fieldName, fieldType, flags, strangeExtras);
+                    LoadedProperties[i] = MainSerializer.ReadFProperty(Asset, reader);
                 }
             }
             else
             {
-                LoadedProperties = new FField[0];
+                LoadedProperties = new FProperty[0];
             }
 
             ScriptBytecodeSize = reader.ReadInt32(); // # of bytecode instructions
@@ -329,10 +307,7 @@ namespace UAssetAPI
                 writer.Write(LoadedProperties.Length);
                 for (int i = 0; i < LoadedProperties.Length; i++)
                 {
-                    writer.WriteFName(LoadedProperties[i].Type, Asset);
-                    writer.WriteFName(LoadedProperties[i].Name, Asset);
-                    writer.Write((uint)LoadedProperties[i].Flags);
-                    writer.Write(LoadedProperties[i].Extras);
+                    MainSerializer.WriteFProperty(LoadedProperties[i], Asset, writer);
                 }
             }
 
