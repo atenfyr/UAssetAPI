@@ -818,7 +818,7 @@ namespace UAssetAPI
             WorldTileInfo = null;
             if (WorldTileInfoDataOffset > 0)
             {
-                reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
+                //reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
                 WorldTileInfo = new FWorldTileInfo();
                 WorldTileInfo.Read(reader, this);
             }
