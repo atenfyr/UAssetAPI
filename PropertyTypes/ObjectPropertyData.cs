@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -31,9 +30,10 @@ namespace UAssetAPI.PropertyTypes
         public void SetCurrentIndex(int newIndex)
         {
             CurrentIndex = newIndex;
-            if (CurrentIndex < 0 && UAPUtils.GetNormalIndex(CurrentIndex) >= 0)
+            int normalIndex = UAPUtils.GetNormalIndex(CurrentIndex);
+            if (CurrentIndex < 0 && normalIndex >= 0 && normalIndex < Asset.Imports.Count)
             {
-                Value = Asset.Imports[UAPUtils.GetNormalIndex(CurrentIndex)]; // link reference
+                Value = Asset.Imports[normalIndex];
             }
             else
             {
@@ -50,21 +50,21 @@ namespace UAssetAPI.PropertyTypes
 
             if (Value != null) CurrentIndex = Value.Index;
             writer.Write(CurrentIndex);
-            return 4;
+            return sizeof(int);
         }
 
         public override string ToString()
         {
             if (CurrentIndex > 0) return Convert.ToString(CurrentIndex);
             if (Value == null) return "null";
-            return Value.ObjectName.Value.Value;
+            return Value.ObjectName.ToString();
         }
 
         public override void FromString(string[] d)
         {
             if (int.TryParse(d[0], out int res))
             {
-                CurrentIndex = res;
+                SetCurrentIndex(res);
                 return;
             }
 
