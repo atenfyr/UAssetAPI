@@ -185,7 +185,7 @@ namespace UAssetAPI.FieldTypes
 
     }
 
-    public class FClassProperty : FProperty
+    public class FClassProperty : FObjectProperty
     {
         // UClass*
         public int MetaClass;
