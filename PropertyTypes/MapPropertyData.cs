@@ -46,10 +46,12 @@ namespace UAssetAPI.PropertyTypes
                     if (strucType == null) strucType = new FName("Generic");
 
                     StructPropertyData data = new StructPropertyData(name, asset, strucType);
+                    data.Offset = reader.BaseStream.Position;
                     data.Read(reader, false, leng);
                     return data;
                 default:
                     var res = MainSerializer.TypeToClass(type, name, asset, null, leng);
+                    res.Offset = reader.BaseStream.Position;
                     res.Read(reader, includeHeader, leng);
                     return res;
             }

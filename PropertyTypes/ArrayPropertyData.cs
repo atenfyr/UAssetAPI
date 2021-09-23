@@ -60,6 +60,7 @@ namespace UAssetAPI.PropertyTypes
                     for (int i = 0; i < numEntries; i++)
                     {
                         var data = new StructPropertyData(name, Asset, fullType);
+                        data.Offset = reader.BaseStream.Position;
                         data.Read(reader, false, structLength);
                         data.StructGUID = structGUID;
                         results[i] = data;
