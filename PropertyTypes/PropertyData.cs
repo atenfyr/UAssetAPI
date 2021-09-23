@@ -31,6 +31,7 @@ namespace UAssetAPI.PropertyTypes
         }
 
         private static FName FallbackPropertyType = new FName(string.Empty);
+        public virtual bool HasCustomStructSerialization { get { return false; } }
         public virtual FName PropertyType { get { return FallbackPropertyType; } }
 
         public virtual void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

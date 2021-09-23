@@ -11,6 +11,17 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI
 {
+    internal class RegistryEntry
+    {
+        internal Type PropertyType;
+        internal bool HasCustomStructSerialization;
+
+        public RegistryEntry()
+        {
+
+        }
+    }
+
     /**
      * Main serializer for most property types
      */
@@ -20,12 +31,12 @@ namespace UAssetAPI
         private static PropertyData lastType;
 #endif
 
-        private static IDictionary<string, Type> propertyTypeRegistry = null;
+        internal static IDictionary<string, RegistryEntry> PropertyTypeRegistry = null;
         private static Type registryParentDataType = typeof(PropertyData);
         private static void InitializePropertyTypeRegistry()
         {
-            if (propertyTypeRegistry != null) return;
-            propertyTypeRegistry = new Dictionary<string, Type>();
+            if (PropertyTypeRegistry != null) return;
+            PropertyTypeRegistry = new Dictionary<string, RegistryEntry>();
 
             Assembly[] allAssemblies = new Assembly[1];
             allAssemblies[0] = registryParentDataType.Assembly;
@@ -38,10 +49,17 @@ namespace UAssetAPI
                     Type currentPropertyDataType = allPropertyDataTypes[j];
                     if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) continue;
 
-                    FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(Activator.CreateInstance(currentPropertyDataType), null) as FName;
-                    if (returnedPropType == null) continue;
+                    var testInstance = Activator.CreateInstance(currentPropertyDataType);
 
-                    propertyTypeRegistry[returnedPropType.Value.Value] = currentPropertyDataType;
+                    FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(testInstance, null) as FName;
+                    if (returnedPropType == null) continue;
+                    bool? returnedHasCustomStructSerialization = currentPropertyDataType.GetProperty("HasCustomStructSerialization")?.GetValue(testInstance, null) as bool?;
+                    if (returnedHasCustomStructSerialization == null) continue;
+
+                    RegistryEntry res = new RegistryEntry();
+                    res.PropertyType = currentPropertyDataType;
+                    res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
+                    PropertyTypeRegistry[returnedPropType.Value.Value] = res;
                 }
             }
         }
@@ -51,9 +69,9 @@ namespace UAssetAPI
             InitializePropertyTypeRegistry();
 
             PropertyData data = null;
-            if (propertyTypeRegistry.ContainsKey(type.Value.Value))
+            if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
             {
-                data = (PropertyData)Activator.CreateInstance(propertyTypeRegistry[type.Value.Value], name, asset);
+                data = (PropertyData)Activator.CreateInstance(PropertyTypeRegistry[type.Value.Value].PropertyType, name, asset);
             }
             else
             {

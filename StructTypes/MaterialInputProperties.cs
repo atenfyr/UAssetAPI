@@ -59,6 +59,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("ExpressionInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -95,6 +96,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("MaterialAttributesInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -131,6 +133,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("ColorMaterialInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -172,6 +175,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("ScalarMaterialInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -213,6 +217,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("ShadingModelMaterialInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -254,6 +259,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("VectorMaterialInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
@@ -295,6 +301,7 @@ namespace UAssetAPI.StructTypes
         }
 
         private static readonly FName CurrentPropertyType = new FName("Vector2MaterialInput");
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
