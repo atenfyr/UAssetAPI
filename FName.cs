@@ -77,8 +77,8 @@ namespace UAssetAPI
 
         public override bool Equals(object obj)
         {
-            FName name = obj as FName;
-            if (name == null) return false;
+            if (!(obj is FName name)) return false;
+            if (name == obj) return true;
             return this.Value == name.Value && this.Number == name.Number;
         }
 

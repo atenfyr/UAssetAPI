@@ -42,7 +42,7 @@ namespace UAssetAPI.PropertyTypes
                 }
 
                 if (reader.ReadFName(Asset).Value.Value != ArrayType.Value.Value) throw new FormatException("Invalid array type");
-                reader.ReadInt64(); // length value
+                long structLength = reader.ReadInt64(); // length value
 
                 FName fullType = reader.ReadFName(Asset);
                 Guid structGUID = new Guid(reader.ReadBytes(16));
@@ -60,7 +60,7 @@ namespace UAssetAPI.PropertyTypes
                     for (int i = 0; i < numEntries; i++)
                     {
                         var data = new StructPropertyData(name, Asset, fullType);
-                        data.Read(reader, false, 0);
+                        data.Read(reader, false, structLength);
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }

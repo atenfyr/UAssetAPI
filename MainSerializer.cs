@@ -68,6 +68,11 @@ namespace UAssetAPI
         {
             InitializePropertyTypeRegistry();
 
+            long startingOffset = 0;
+            if (reader != null) startingOffset = reader.BaseStream.Position;
+
+            if (type.Value.Value == "None") return null;
+
             PropertyData data = null;
             if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
             {
@@ -104,12 +109,15 @@ namespace UAssetAPI
             if (reader != null)
             {
                 data.Read(reader, includeHeader, leng);
+                if (data.Offset == 0) data.Offset = startingOffset; // fallback
             }
+
             return data;
         }
 
         public static PropertyData Read(UAsset asset, BinaryReader reader, bool includeHeader)
         {
+            long startingOffset = reader.BaseStream.Position;
             FName name = reader.ReadFName(asset);
             if (name.Value.Value == "None") return null;
 
@@ -118,6 +126,7 @@ namespace UAssetAPI
             int leng = reader.ReadInt32();
             int duplicationIndex = reader.ReadInt32();
             PropertyData result = TypeToClass(type, name, asset, reader, leng, duplicationIndex, includeHeader);
+            result.Offset = startingOffset;
             return result;
         }
 

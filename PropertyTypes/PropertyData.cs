@@ -6,6 +6,7 @@ namespace UAssetAPI.PropertyTypes
     {
         public FName Name = new FName("");
         public int DuplicationIndex = 0;
+        public long Offset; // offset in the file it was originally parsed in; for display only, has no value in the API itself
         public UAsset Asset;
         public object RawValue;
 

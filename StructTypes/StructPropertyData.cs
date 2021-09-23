@@ -8,6 +8,7 @@ namespace UAssetAPI.StructTypes
     public class StructPropertyData : PropertyData<IList<PropertyData>> // List
     {
         public FName StructType = null;
+        public bool SerializeNone = true;
         public Guid StructGUID = Guid.Empty; // usually set to 0
 
         public StructPropertyData(FName name, UAsset asset) : base(name, asset)
@@ -59,8 +60,18 @@ namespace UAssetAPI.StructTypes
             }
 
             MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
+            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
-            if (targetEntry != null && targetEntry.HasCustomStructSerialization)
+            if (StructType.Value.Value == "RichCurveKey" && Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+
+            if (leng1 == 0)
+            {
+                SerializeNone = false;
+                Value = new List<PropertyData>();
+                return;
+            }
+
+            if (targetEntry != null && hasCustomStructSerialization)
             {
                 ReadOnce(reader, targetEntry.PropertyType);
             }
@@ -100,8 +111,12 @@ namespace UAssetAPI.StructTypes
             }
 
             MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
+            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
-            if (targetEntry != null && targetEntry.HasCustomStructSerialization) return WriteOnce(writer);
+            if (StructType.Value.Value == "RichCurveKey" && Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+
+            if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
+            if (Value.Count == 0 && !SerializeNone) return 0;
             return WriteNTPL(writer);
         }
 

@@ -48,7 +48,7 @@ namespace UAssetAPI.StructTypes
             {
                 writer.Write(Value[i]);
             }
-            return sizeof(float) * Value.Length;
+            return sizeof(int) + sizeof(float) * Value.Length;
         }
 
         public override void FromString(string[] d)
