@@ -9,14 +9,24 @@ namespace UAssetAPI.PropertyTypes
 {
     public class UnknownPropertyData : PropertyData<byte[]>
     {
+        public FName SerializingPropertyType = CurrentPropertyType;
+
         public UnknownPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("UnknownProperty");
+
         }
 
         public UnknownPropertyData()
         {
-            Type = new FName("UnknownProperty");
+
+        }
+
+        private static readonly FName CurrentPropertyType = new FName("UnknownProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
+
+        public void SetSerializingPropertyType(FName newType)
+        {
+            SerializingPropertyType = newType;
         }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes;
@@ -8,198 +11,73 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI
 {
-    /*
-        Main serializer for most category types
-    */
-
+    /**
+     * Main serializer for most property types
+     */
     public static class MainSerializer
     {
 #if DEBUG
         private static PropertyData lastType;
 #endif
 
+        private static IDictionary<string, Type> propertyTypeRegistry = null;
+        private static Type registryParentDataType = typeof(PropertyData);
+        private static void InitializePropertyTypeRegistry()
+        {
+            if (propertyTypeRegistry != null) return;
+            propertyTypeRegistry = new Dictionary<string, Type>();
+
+            Assembly[] allAssemblies = new Assembly[1];
+            allAssemblies[0] = registryParentDataType.Assembly;
+
+            for (int i = 0; i < allAssemblies.Length; i++)
+            {
+                Type[] allPropertyDataTypes = allAssemblies[i].GetTypes().Where(t => t.IsSubclassOf(registryParentDataType)).ToArray();
+                for (int j = 0; j < allPropertyDataTypes.Length; j++)
+                {
+                    Type currentPropertyDataType = allPropertyDataTypes[j];
+                    if (currentPropertyDataType == null || currentPropertyDataType.ContainsGenericParameters) continue;
+
+                    FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(Activator.CreateInstance(currentPropertyDataType), null) as FName;
+                    if (returnedPropType == null) continue;
+
+                    propertyTypeRegistry[returnedPropType.Value.Value] = currentPropertyDataType;
+                }
+            }
+        }
+
         public static PropertyData TypeToClass(FName type, FName name, UAsset asset, BinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
-            /*
-                TODO:
-                    * MovieSceneFrameRange, MovieSceneFloatChannel, & co.
-            */
+            InitializePropertyTypeRegistry();
 
-            PropertyData data;
-            switch (type.Value.Value)
+            PropertyData data = null;
+            if (propertyTypeRegistry.ContainsKey(type.Value.Value))
             {
-                case "BoolProperty":
-                    data = new BoolPropertyData(name, asset);
-                    break;
-                case "Int8Property":
-                    data = new Int8PropertyData(name, asset);
-                    break;
-                case "Int16Property":
-                    data = new Int16PropertyData(name, asset);
-                    break;
-                case "IntProperty":
-                    data = new IntPropertyData(name, asset);
-                    break;
-                case "Int64Property":
-                    data = new Int64PropertyData(name, asset);
-                    break;
-                case "UInt16Property":
-                    data = new UInt16PropertyData(name, asset);
-                    break;
-                case "UInt32Property":
-                    data = new UInt32PropertyData(name, asset);
-                    break;
-                case "UInt64Property":
-                    data = new UInt64PropertyData(name, asset);
-                    break;
-                case "FloatProperty":
-                    data = new FloatPropertyData(name, asset);
-                    break;
-                case "TextProperty":
-                    data = new TextPropertyData(name, asset);
-                    break;
-                case "StrProperty":
-                    data = new StrPropertyData(name, asset);
-                    break;
-                case "ObjectProperty":
-                    data = new ObjectPropertyData(name, asset);
-                    break;
-                case "EnumProperty":
-                    data = new EnumPropertyData(name, asset);
-                    break;
-                case "ByteProperty":
-                    data = new BytePropertyData(name, asset);
-                    break;
-                case "NameProperty":
-                    data = new NamePropertyData(name, asset);
-                    break;
-                case "ArrayProperty":
-                    data = new ArrayPropertyData(name, asset);
-                    break;
-                case "SetProperty":
-                    data = new SetPropertyData(name, asset);
-                    break;
-                case "MapProperty":
-                    data = new MapPropertyData(name, asset);
-                    break;
-                case "StructProperty":
-                    data = new StructPropertyData(name, asset);
-                    break;
-                case "Guid":
-                    data = new GuidPropertyData(name, asset);
-                    break;
-                case "LinearColor":
-                    data = new LinearColorPropertyData(name, asset);
-                    break;
-                case "Color":
-                    data = new ColorPropertyData(name, asset);
-                    break;
-                case "Vector":
-                    data = new VectorPropertyData(name, asset);
-                    break;
-                case "Vector2D":
-                    data = new Vector2DPropertyData(name, asset);
-                    break;
-                case "Box":
-                    data = new BoxPropertyData(name, asset);
-                    break;
-                case "IntPoint":
-                    data = new IntPointPropertyData(name, asset);
-                    break;
-                case "DateTime":
-                    data = new DateTimePropertyData(name, asset);
-                    break;
-                case "Timespan":
-                    data = new TimespanPropertyData(name, asset);
-                    break;
-                case "Rotator":
-                    data = new RotatorPropertyData(name, asset);
-                    break;
-                case "Quat":
-                    data = new QuatPropertyData(name, asset);
-                    break;
-                case "Vector4":
-                    data = new Vector4PropertyData(name, asset);
-                    break;
-                case "GameplayTagContainer":
-                    data = new GameplayTagContainerPropertyData(name, asset);
-                    break;
-                case "PerPlatformInt":
-                    data = new PerPlatformIntPropertyData(name, asset);
-                    break;
-                case "PerPlatformFloat":
-                    data = new PerPlatformFloatPropertyData(name, asset);
-                    break;
-                case "PerPlatformBool":
-                    data = new PerPlatformBoolPropertyData(name, asset);
-                    break;
-                case "SoftObjectPath":
-                    data = new SoftObjectPathPropertyData(name, asset);
-                    break;
-                case "SoftAssetPath":
-                    data = new SoftAssetPathPropertyData(name, asset);
-                    break;
-                case "SoftClassPath":
-                    data = new SoftClassPathPropertyData(name, asset);
-                    break;
-                case "RichCurveKey":
-                    data = new RichCurveKeyProperty(name, asset);
-                    break;
-                case "ViewTargetBlendParams":
-                    data = new ViewTargetBlendParamsPropertyData(name, asset);
-                    break;
-                case "ExpressionInput":
-                    data = new ExpressionInputPropertyData(name, asset);
-                    break;
-                case "MaterialAttributesInput":
-                    data = new MaterialAttributesInputPropertyData(name, asset);
-                    break;
-                case "ColorMaterialInput":
-                    data = new ColorMaterialInputPropertyData(name, asset);
-                    break;
-                case "ScalarMaterialInput":
-                    data = new ScalarMaterialInputPropertyData(name, asset);
-                    break;
-                case "ShadingModelMaterialInput":
-                    data = new ShadingModelMaterialInputPropertyData(name, asset);
-                    break;
-                case "VectorMaterialInput":
-                    data = new VectorMaterialInputPropertyData(name, asset);
-                    break;
-                case "Vector2MaterialInput":
-                    data = new Vector2MaterialInputPropertyData(name, asset);
-                    break;
-                case "SoftObjectProperty":
-                    data = new SoftObjectPropertyData(name, asset);
-                    break;
-                case "AssetObjectProperty":
-                    data = new AssetObjectPropertyData(name, asset);
-                    break;
-                case "MulticastDelegateProperty":
-                    data = new MulticastDelegatePropertyData(name, asset);
-                    break;
-                default:
-#if DEBUG
-                    Debug.WriteLine("-----------");
-                    Debug.WriteLine("Parsing unknown type " + type.ToString());
-                    Debug.WriteLine("Length: " + leng);
-                    if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
-                    Debug.WriteLine("Last type: " + lastType.Type.ToString());
-                    if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType.ToString());
-                    Debug.WriteLine("-----------");
-#endif
-                    if (leng > 0)
-                    {
-                        data = new UnknownPropertyData(name, asset);
-                        data.Type = type;
-                    }
-                    else
-                    {
-                        if (reader == null) throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + ")");
-                        throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + " at " + reader.BaseStream.Position + ")");
-                    }
-                    break;
+                data = (PropertyData)Activator.CreateInstance(propertyTypeRegistry[type.Value.Value], name, asset);
             }
+            else
+            {
+#if DEBUG
+                Debug.WriteLine("-----------");
+                Debug.WriteLine("Parsing unknown type " + type.ToString());
+                Debug.WriteLine("Length: " + leng);
+                if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
+                Debug.WriteLine("Last type: " + lastType.PropertyType.ToString());
+                if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType.ToString());
+                Debug.WriteLine("-----------");
+#endif
+                if (leng > 0)
+                {
+                    data = new UnknownPropertyData(name, asset);
+                    ((UnknownPropertyData)data).SetSerializingPropertyType(type);
+                }
+                else
+                {
+                    if (reader == null) throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + ")");
+                    throw new FormatException("Unknown property type: " + type.ToString() + " (on " + name.ToString() + " at " + reader.BaseStream.Position + ")");
+                }
+            }
+
 #if DEBUG
             lastType = data;
 #endif
@@ -248,7 +126,14 @@ namespace UAssetAPI
             if (property == null) return 0;
 
             writer.WriteFName(property.Name, asset);
-            writer.WriteFName(property.Type, asset);
+            if (property is UnknownPropertyData unknownProp)
+            {
+                writer.WriteFName(unknownProp.SerializingPropertyType, asset);
+            }
+            else
+            {
+                writer.WriteFName(property.PropertyType, asset);
+            }
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((int)0); // initial length
             writer.Write(property.DuplicationIndex);

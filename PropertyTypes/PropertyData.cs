@@ -5,7 +5,6 @@ namespace UAssetAPI.PropertyTypes
     public abstract class PropertyData
     {
         public FName Name = new FName("");
-        public FName Type = new FName("");
         public int DuplicationIndex = 0;
         public UAsset Asset;
         public object RawValue;
@@ -30,6 +29,9 @@ namespace UAssetAPI.PropertyTypes
         {
 
         }
+
+        private static FName FallbackPropertyType = new FName(string.Empty);
+        public virtual FName PropertyType { get { return FallbackPropertyType; } }
 
         public virtual void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

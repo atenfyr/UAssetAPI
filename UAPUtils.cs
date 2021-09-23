@@ -46,30 +46,16 @@ namespace UAssetAPI
             return ReadFStringWithEncoding(reader)?.Value;
         }
 
-        public static string ReadFStringWithGUID(this BinaryReader reader, out uint guid)
-        {
-            string str = reader.ReadFString();
-            if (!string.IsNullOrEmpty(str))
-            {
-                guid = reader.ReadUInt32();
-            }
-            else
-            {
-                guid = 0;
-            }
-            return str;
-        }
-
-        public static FString ReadFStringWithGUIDAndEncoding(this BinaryReader reader, out uint guid)
+        public static FString ReadNameMapString(this BinaryReader reader, out uint hashes)
         {
             FString str = reader.ReadFStringWithEncoding();
             if (!string.IsNullOrEmpty(str.Value))
             {
-                guid = reader.ReadUInt32();
+                hashes = reader.ReadUInt32();
             }
             else
             {
-                guid = 0;
+                hashes = 0;
             }
             return str;
         }

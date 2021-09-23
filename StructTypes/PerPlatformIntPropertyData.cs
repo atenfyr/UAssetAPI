@@ -9,13 +9,16 @@ namespace UAssetAPI.StructTypes
     {
         public PerPlatformIntPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("PerPlatformInt");
+
         }
 
         public PerPlatformIntPropertyData()
         {
-            Type = new FName("PerPlatformInt");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("PerPlatformInt");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public GuidPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Guid");
+
         }
 
         public GuidPropertyData()
         {
-            Type = new FName("Guid");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Guid");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

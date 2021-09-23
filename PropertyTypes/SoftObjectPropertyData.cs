@@ -8,13 +8,16 @@ namespace UAssetAPI.PropertyTypes
 
         public AssetObjectPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("AssetObjectProperty");
+
         }
 
         public AssetObjectPropertyData()
         {
-            Type = new FName("AssetObjectProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("AssetObjectProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -54,13 +57,16 @@ namespace UAssetAPI.PropertyTypes
 
         public SoftObjectPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("SoftObjectProperty");
+
         }
 
         public SoftObjectPropertyData()
         {
-            Type = new FName("SoftObjectProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("SoftObjectProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -113,13 +119,16 @@ namespace UAssetAPI.PropertyTypes
 
         public SoftObjectPathPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("SoftObjectPath");
+
         }
 
         public SoftObjectPathPropertyData()
         {
-            Type = new FName("SoftObjectPath");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("SoftObjectPath");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

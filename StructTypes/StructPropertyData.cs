@@ -12,21 +12,22 @@ namespace UAssetAPI.StructTypes
 
         public StructPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("StructProperty");
             Value = new List<PropertyData>();
         }
 
         public StructPropertyData(FName name, UAsset asset, FName forcedType) : base(name, asset)
         {
             StructType = forcedType;
-            Type = new FName("StructProperty");
             Value = new List<PropertyData>();
         }
 
         public StructPropertyData()
         {
-            Type = new FName("StructProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("StructProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         private void ReadOnce<T>(BinaryReader reader) where T: PropertyData, new()
         {

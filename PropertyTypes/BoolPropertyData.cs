@@ -7,13 +7,16 @@ namespace UAssetAPI.PropertyTypes
     {
         public BoolPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("BoolProperty");
+
         }
 
         public BoolPropertyData()
         {
-            Type = new FName("BoolProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("BoolProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

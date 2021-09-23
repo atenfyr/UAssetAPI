@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public VectorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Vector");
+
         }
 
         public VectorPropertyData()
         {
-            Type = new FName("Vector");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Vector");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public IntPointPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("IntPoint");
+
         }
 
         public IntPointPropertyData()
         {
-            Type = new FName("IntPoint");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("IntPoint");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

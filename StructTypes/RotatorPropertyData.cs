@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public RotatorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Rotator");
+
         }
 
         public RotatorPropertyData()
         {
-            Type = new FName("Rotator");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Rotator");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

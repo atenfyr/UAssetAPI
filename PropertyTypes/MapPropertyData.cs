@@ -13,15 +13,16 @@ namespace UAssetAPI.PropertyTypes
 
         public MapPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("MapProperty");
             Value = new OrderedDictionary();
         }
 
         public MapPropertyData()
         {
-            Type = new FName("MapProperty");
             Value = new OrderedDictionary();
         }
+
+        private static readonly FName CurrentPropertyType = new FName("MapProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         private PropertyData MapTypeToClass(FName type, FName name, UAsset asset, BinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
@@ -113,8 +114,8 @@ namespace UAssetAPI.PropertyTypes
                 if (Value.Count > 0)
                 {
                     DictionaryEntry firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
-                    writer.WriteFName(((PropertyData)firstEntry.Key).Type, Asset);
-                    writer.WriteFName(((PropertyData)firstEntry.Value).Type, Asset);
+                    writer.WriteFName(((PropertyData)firstEntry.Key).PropertyType, Asset);
+                    writer.WriteFName(((PropertyData)firstEntry.Value).PropertyType, Asset);
                 }
                 else
                 {

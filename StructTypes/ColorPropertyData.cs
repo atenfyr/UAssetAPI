@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public ColorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Color");
+
         }
 
         public ColorPropertyData()
         {
-            Type = new FName("Color");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Color");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

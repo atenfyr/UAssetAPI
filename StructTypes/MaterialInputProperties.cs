@@ -50,13 +50,16 @@ namespace UAssetAPI.StructTypes
     {
         public ExpressionInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("ExpressionInput");
+
         }
 
         public ExpressionInputPropertyData()
         {
-            Type = new FName("ExpressionInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("ExpressionInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -83,13 +86,16 @@ namespace UAssetAPI.StructTypes
     {
         public MaterialAttributesInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("MaterialAttributesInput");
+
         }
 
         public MaterialAttributesInputPropertyData()
         {
-            Type = new FName("MaterialAttributesInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("MaterialAttributesInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -116,13 +122,16 @@ namespace UAssetAPI.StructTypes
     {
         public ColorMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("ColorMaterialInput");
+
         }
 
         public ColorMaterialInputPropertyData()
         {
-            Type = new FName("ColorMaterialInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("ColorMaterialInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -154,13 +163,16 @@ namespace UAssetAPI.StructTypes
     {
         public ScalarMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("ScalarMaterialInput");
+
         }
 
         public ScalarMaterialInputPropertyData()
         {
-            Type = new FName("ScalarMaterialInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("ScalarMaterialInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -192,13 +204,16 @@ namespace UAssetAPI.StructTypes
     {
         public ShadingModelMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("ShadingModelMaterialInput");
+
         }
 
         public ShadingModelMaterialInputPropertyData()
         {
-            Type = new FName("ShadingModelMaterialInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("ShadingModelMaterialInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -230,13 +245,16 @@ namespace UAssetAPI.StructTypes
     {
         public VectorMaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("VectorMaterialInput");
+
         }
 
         public VectorMaterialInputPropertyData()
         {
-            Type = new FName("VectorMaterialInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("VectorMaterialInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -268,13 +286,16 @@ namespace UAssetAPI.StructTypes
     {
         public Vector2MaterialInputPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Vector2MaterialInput");
+
         }
 
         public Vector2MaterialInputPropertyData()
         {
-            Type = new FName("Vector2MaterialInput");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Vector2MaterialInput");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

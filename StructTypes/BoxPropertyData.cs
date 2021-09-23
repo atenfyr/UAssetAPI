@@ -10,13 +10,16 @@ namespace UAssetAPI.StructTypes
 
         public BoxPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("Box");
+
         }
 
         public BoxPropertyData()
         {
-            Type = new FName("Box");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("Box");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

@@ -8,13 +8,16 @@ namespace UAssetAPI.StructTypes
     {
         public DateTimePropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("DateTime");
+
         }
 
         public DateTimePropertyData()
         {
-            Type = new FName("DateTime");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("DateTime");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

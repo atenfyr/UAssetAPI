@@ -8,13 +8,16 @@ namespace UAssetAPI.PropertyTypes
 
         public EnumPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("EnumProperty");
+
         }
 
         public EnumPropertyData()
         {
-            Type = new FName("EnumProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("EnumProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

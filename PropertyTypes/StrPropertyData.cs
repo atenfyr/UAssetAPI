@@ -9,13 +9,16 @@ namespace UAssetAPI.PropertyTypes
 
         public StrPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("StrProperty");
+
         }
 
         public StrPropertyData()
         {
-            Type = new FName("StrProperty");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("StrProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

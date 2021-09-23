@@ -9,13 +9,16 @@ namespace UAssetAPI.StructTypes
     {
         public PerPlatformFloatPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("PerPlatformFloat");
+
         }
 
         public PerPlatformFloatPropertyData()
         {
-            Type = new FName("PerPlatformFloat");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("PerPlatformFloat");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

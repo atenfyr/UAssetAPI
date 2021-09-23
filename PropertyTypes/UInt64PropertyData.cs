@@ -7,13 +7,16 @@ namespace UAssetAPI.PropertyTypes
     {
         public UInt64PropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("UInt64Property");
+
         }
 
         public UInt64PropertyData()
         {
-            Type = new FName("UInt64Property");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("UInt64Property");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

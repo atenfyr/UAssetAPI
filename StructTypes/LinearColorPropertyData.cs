@@ -1,7 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
-using System;
-using System.Diagnostics;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
@@ -48,13 +47,16 @@ namespace UAssetAPI.StructTypes
     {
         public LinearColorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("LinearColor");
+
         }
 
         public LinearColorPropertyData()
         {
-            Type = new FName("LinearColor");
+
         }
+
+        private static readonly FName CurrentPropertyType = new FName("LinearColor");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

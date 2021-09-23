@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using UAssetAPI.StructTypes;
 
 namespace UAssetAPI.PropertyTypes
@@ -11,17 +10,18 @@ namespace UAssetAPI.PropertyTypes
 
         public SetPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Type = new FName("SetProperty");
             Value = new PropertyData[0];
             RemovedItems = new PropertyData[0];
         }
 
         public SetPropertyData()
         {
-            Type = new FName("SetProperty");
             Value = new PropertyData[0];
             RemovedItems = new PropertyData[0];
         }
+
+        private static readonly FName CurrentPropertyType = new FName("SetProperty");
+        public override FName PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -41,7 +41,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override int Write(BinaryWriter writer, bool includeHeader)
         {
-            if (Value.Length > 0) ArrayType = Value[0].Type;
+            if (Value.Length > 0) ArrayType = Value[0].PropertyType;
 
             if (includeHeader)
             {

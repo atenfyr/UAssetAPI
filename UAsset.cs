@@ -460,7 +460,7 @@ namespace UAssetAPI
         /**
          * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.
          */
-        public Dictionary<FString, uint> OverrideGuids;
+        public Dictionary<FString, uint> OverrideNameMapHashes;
 
         /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
         internal int SectionSixOffset = 0;
@@ -687,13 +687,14 @@ namespace UAssetAPI
             // Name map
             reader.BaseStream.Seek(NameOffset, SeekOrigin.Begin);
 
-            OverrideGuids = new Dictionary<FString, uint>();
+            OverrideNameMapHashes = new Dictionary<FString, uint>();
             ClearNameIndexList();
             for (int i = 0; i < NameCount; i++)
             {
-                var str = reader.ReadFStringWithGUIDAndEncoding(out uint guid);
-                if (guid == 0) OverrideGuids.Add(str, 0);
-                AddNameReference(str, true);
+                FString nameInMap = reader.ReadNameMapString(out uint hashes);
+                uint expectedHashes = CRCGenerator.GenerateHash(nameInMap);
+                if (hashes != expectedHashes) OverrideNameMapHashes.Add(nameInMap, 0);
+                AddNameReference(nameInMap, true);
             }
 
             // Imports
@@ -1074,9 +1075,9 @@ namespace UAssetAPI
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
                 writer.WriteFString(nameMapIndexList[i]);
-                if (OverrideGuids.ContainsKey(nameMapIndexList[i]))
+                if (OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
                 {
-                    writer.Write(OverrideGuids[nameMapIndexList[i]]);
+                    writer.Write(OverrideNameMapHashes[nameMapIndexList[i]]);
                 }
                 else
                 {
