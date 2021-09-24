@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace UAssetAPI.FieldTypes
 {
@@ -114,18 +113,23 @@ namespace UAssetAPI.FieldTypes
 
     public class FEnumProperty : FProperty
     {
-        // UEnum* Enum; // The enum represented by this property
-        // FNumericProperty* UnderlyingProp; // The property which represents the underlying type of the enum
+        public int Enum; // A pointer to the UEnum represented by this property
+        public FProperty UnderlyingProp; // The FNumericProperty which represents the underlying type of the enum
 
-        public FNumericProperty UnderlyingProp;
         public override void Read(BinaryReader reader, UAsset asset)
         {
-            throw new NotImplementedException("FEnumProperty is currently unimplemented, please let me know if you see this message");
+            base.Read(reader, asset);
+
+            Enum = reader.ReadInt32();
+            UnderlyingProp = MainSerializer.ReadFProperty(asset, reader);
         }
 
         public override void Write(BinaryWriter writer, UAsset asset)
         {
-            throw new NotImplementedException("FEnumProperty is currently unimplemented, please let me know if you see this message");
+            base.Write(writer, asset);
+
+            writer.Write(Enum);
+            MainSerializer.WriteFProperty(UnderlyingProp, asset, writer);
         }
     }
 
@@ -328,16 +332,18 @@ namespace UAssetAPI.FieldTypes
 
     public class FByteProperty : FProperty
     {
-        public int Enum; // The enum represented by this property
+        public int Enum; // A pointer to the UEnum represented by this property
 
         public override void Read(BinaryReader reader, UAsset asset)
         {
-            throw new NotImplementedException("FByteProperty is currently unimplemented, please let me know if you see this message");
+            base.Read(reader, asset);
+            Enum = reader.ReadInt32();
         }
 
         public override void Write(BinaryWriter writer, UAsset asset)
         {
-            throw new NotImplementedException("FByteProperty is currently unimplemented, please let me know if you see this message");
+            base.Write(writer, asset);
+            writer.Write(Enum);
         }
     }
 

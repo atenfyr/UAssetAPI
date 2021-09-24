@@ -905,6 +905,10 @@ namespace UAssetAPI
                                 Exports[i] = new EnumExport(Exports[i]);
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
+                            case "Function":
+                                Exports[i] = new FunctionExport(Exports[i]);
+                                Exports[i].Read(reader, (int)nextStarting);
+                                break;
                             default:
                                 Exports[i] = new NormalExport(Exports[i]);
                                 Exports[i].Read(reader, (int)nextStarting);

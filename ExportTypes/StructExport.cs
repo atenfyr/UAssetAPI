@@ -22,7 +22,7 @@ namespace UAssetAPI
         public FProperty[] LoadedProperties;
 
         /**
-         * # of bytecode instructions
+         * Number of bytecode instructions
          */
         public int ScriptBytecodeSize;
 

@@ -30,10 +30,11 @@ namespace UAssetAPI.StructTypes
         private static readonly FName CurrentPropertyType = new FName("StructProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        private void ReadOnce(BinaryReader reader, Type T)
+        private void ReadOnce(BinaryReader reader, Type T, long offset)
         {
             var data = Activator.CreateInstance(T, Name, Asset) as PropertyData;
             if (data == null) return;
+            data.Offset = offset;
             data.Read(reader, false, 0);
             Value = new List<PropertyData> { data };
         }
@@ -73,7 +74,7 @@ namespace UAssetAPI.StructTypes
 
             if (targetEntry != null && hasCustomStructSerialization)
             {
-                ReadOnce(reader, targetEntry.PropertyType);
+                ReadOnce(reader, targetEntry.PropertyType, reader.BaseStream.Position);
             }
             else
             {

@@ -47,6 +47,7 @@
     <Compile Include="ExportTypes\DataTableExport.cs" />
     <Compile Include="ExportTypes\LevelExport.cs" />
     <Compile Include="ExportTypes\NormalExport.cs" />
+    <Compile Include="ExportTypes\FunctionExport.cs" />
     <Compile Include="ExportTypes\RawExport.cs" />
     <Compile Include="ExportTypes\EnumExport.cs" />
     <Compile Include="ExportTypes\StringTableExport.cs" />
