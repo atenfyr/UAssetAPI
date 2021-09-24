@@ -43,6 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomVersion.cs" />
+    <Compile Include="ExportTypes\ClassExport.cs" />
+    <Compile Include="ExportTypes\DataTableExport.cs" />
+    <Compile Include="ExportTypes\LevelExport.cs" />
+    <Compile Include="ExportTypes\NormalExport.cs" />
+    <Compile Include="ExportTypes\RawExport.cs" />
+    <Compile Include="ExportTypes\EnumExport.cs" />
+    <Compile Include="ExportTypes\StringTableExport.cs" />
+    <Compile Include="ExportTypes\StructExport.cs" />
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />
@@ -51,7 +59,7 @@
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
     <Compile Include="StructTypes\WeightedRandomSamplerPropertyData.cs" />
     <Compile Include="UAsset.cs" />
-    <Compile Include="Export.cs" />
+    <Compile Include="ExportTypes\Export.cs" />
     <Compile Include="ExportDetails.cs" />
     <Compile Include="CRCGenerator.cs" />
     <Compile Include="PropertyTypes\ArrayPropertyData.cs" />

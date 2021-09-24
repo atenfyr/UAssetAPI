@@ -900,6 +900,11 @@ namespace UAssetAPI
                                 Exports[i] = new DataTableExport(Exports[i]);
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
+                            case "Enum":
+                            case "UserDefinedEnum":
+                                Exports[i] = new EnumExport(Exports[i]);
+                                Exports[i].Read(reader, (int)nextStarting);
+                                break;
                             default:
                                 Exports[i] = new NormalExport(Exports[i]);
                                 Exports[i].Read(reader, (int)nextStarting);
