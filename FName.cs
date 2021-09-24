@@ -62,7 +62,7 @@ namespace UAssetAPI
         /** Inverse of FName.ToString() */
         public static FName FromString(string val)
         {
-            if (val == "null") return null;
+            if (val == null || val == "null") return null;
             if (val[val.Length - 1] != ')') return new FName(val);
 
             int locLastLeftBracket = val.LastIndexOf('(');
