@@ -207,7 +207,7 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FSoftClassProperty : FProperty
+    public class FSoftClassProperty : FSoftObjectProperty
     {
         // UClass*
         public int MetaClass;
