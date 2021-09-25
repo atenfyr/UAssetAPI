@@ -58,6 +58,7 @@
     <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
+    <Compile Include="StructTypes\SoftObjectPathPropertyData.cs" />
     <Compile Include="StructTypes\WeightedRandomSamplerPropertyData.cs" />
     <Compile Include="UAsset.cs" />
     <Compile Include="ExportTypes\Export.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="PropertyTypes\SetPropertyData.cs" />
     <Compile Include="PropertyTypes\BoolPropertyData.cs" />
     <Compile Include="PropertyTypes\BytePropertyData.cs" />
-    <Compile Include="PropertyTypes\SoftClassPathPropertyData.cs" />
+    <Compile Include="StructTypes\SoftClassPathPropertyData.cs" />
     <Compile Include="PropertyTypes\UnknownPropertyData.cs" />
     <Compile Include="StructTypes\ColorPropertyData.cs" />
     <Compile Include="StructTypes\MaterialInputProperties.cs" />
