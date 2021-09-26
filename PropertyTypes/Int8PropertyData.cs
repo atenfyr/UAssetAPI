@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a 8-bit signed integer variable.
+    /// Describes an 8-bit signed integer variable.
     /// </summary>
     public class Int8PropertyData : PropertyData<sbyte>
     {

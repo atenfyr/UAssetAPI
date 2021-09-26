@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a property which UAssetAPI has no serialization for.
+    /// Describes a property which UAssetAPI has no specific serialization for, and is instead represented as an array of bytes as a fallback.
     /// </summary>
     public class UnknownPropertyData : PropertyData<byte[]>
     {
