@@ -17,6 +17,7 @@ namespace UAssetAPI
 
         public override string ToString()
         {
+            if (this == null || Value == null) return "null";
             return Value;
         }
 

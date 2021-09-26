@@ -540,163 +540,163 @@ namespace UAssetAPI
         BeforeCustomVersionWasAdded = 0,
 
         /// <summary> Localizable text gathered and stored in packages is now flagged with a localizable text gathering process version</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_STREAMABLE_TEXTURE_AABB)]
         GatheredTextProcessVersionFlagging,
 
         /// <summary> Fixed several issues with the gathered text cache stored in package headers</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         GatheredTextPackageCacheFixesV1,
 
         /// <summary> Added support for "root" meta-data (meta-data not associated with a particular object in a package)</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         RootMetaDataSupport,
 
         /// <summary> Fixed issues with how Blueprint bytecode was cached</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         GatheredTextPackageCacheFixesV2,
 
         /// <summary> Updated FFormatArgumentData to allow variant data to be marshaled from a BP into C++</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         TextFormatArgumentDataIsVariant,
 
         /// <summary> Changes to SplineComponent</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         SplineComponentCurvesInStruct,
 
         /// <summary> Updated ComboBox to support toggling the menu open, better controller support</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_COMPRESSED_SHADER_RESOURCES)]
         ComboBoxControllerSupportUpdate,
 
         /// <summary> Refactor mesh editor materials</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_COMPRESSED_SHADER_RESOURCES)]
         RefactorMeshEditorMaterials,
 
         /// <summary> Added UFontFace assets</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)]
         AddedFontFaceAssets,
 
         /// <summary> Add UPROPERTY for TMap of Mesh section, so the serialize will be done normally (and export to text will work correctly)</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         UPropertryForMeshSection,
 
         /// <summary> Update the schema of all widget blueprints to use the WidgetGraphSchema</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         WidgetGraphSchema,
 
         /// <summary> Added a specialized content slot to the background blur widget</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         AddedBackgroundBlurContentSlot,
 
         /// <summary> Updated UserDefinedEnums to have stable keyed display names</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         StableUserDefinedEnumDisplayNames,
 
         /// <summary> Added "Inline" option to UFontFace assets</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         AddedInlineFontFaceAssets,
 
         /// <summary> Fix a serialization issue with static mesh FMeshSectionInfoMap FProperty</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         UPropertryForMeshSectionSerialize,
 
         /// <summary> Adding a version bump for the new fast widget construction in case of problems.</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)]
         FastWidgetTemplates,
 
         /// <summary> Update material thumbnails to be more intelligent on default primitive shape for certain material types</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)]
         MaterialThumbnailRenderingChanges,
 
         /// <summary> Introducing a new clipping system for Slate/UMG</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         NewSlateClippingSystem,
 
         /// <summary> MovieScene Meta Data added as native Serialization</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         MovieSceneMetaDataSerialization,
 
         /// <summary> Text gathered from properties now adds two variants: a version without the package localization ID (for use at runtime), and a version with it (which is editor-only)</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         GatheredTextEditorOnlyPackageLocId,
 
         /// <summary> Added AlwaysSign to FNumberFormattingOptions</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         AddedAlwaysSignNumberFormattingOption,
 
         /// <summary> Added additional objects that must be serialized as part of this new material feature</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         AddedMaterialSharedInputs,
 
         /// <summary> Added morph target section indices</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         AddedMorphTargetSectionIndices,
 
         /// <summary> Serialize the instanced static mesh render data, to avoid building it at runtime</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         SerializeInstancedStaticMeshRenderData,
 
         /// <summary> Change to MeshDescription serialization (moved to release)</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         MeshDescriptionNewSerialization_MovedToRelease,
 
         /// <summary> New format for mesh description attributes</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         MeshDescriptionNewAttributeFormat,
 
         /// <summary> Switch root component of SceneCapture actors from MeshComponent to SceneComponent</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         ChangeSceneCaptureRootComponent,
 
         /// <summary> StaticMesh serializes MeshDescription instead of RawMesh</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         StaticMeshDeprecatedRawMesh,
 
         /// <summary> MeshDescriptionBulkData contains a Guid used as a DDC key</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         MeshDescriptionBulkDataGuid,
 
         /// <summary> Change to MeshDescription serialization (removed FMeshPolygon::HoleContours)</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         MeshDescriptionRemovedHoles,
 
         /// <summary> Change to the WidgetCompoent WindowVisibilty default value</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         ChangedWidgetComponentWindowVisibilityDefault,
 
         /// <summary> Avoid keying culture invariant display strings during serialization to avoid non-deterministic cooking issues</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         CultureInvariantTextSerializationKeyStability,
 
         /// <summary> Change to UScrollBar and UScrollBox thickness property (removed implicit padding of 2, so thickness value must be incremented by 4).</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         ScrollBarThicknessChange,
 
         /// <summary> Deprecated LandscapeHoleMaterial</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         RemoveLandscapeHoleMaterial,
 
         /// <summary> MeshDescription defined by triangles instead of arbitrary polygons</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         MeshDescriptionTriangles,
 
         /// <summary> Add weighted area and angle when computing the normals</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         ComputeWeightedNormals,
 
         /// <summary> SkeletalMesh now can be rebuild in editor, no more need to re-import</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         SkeletalMeshBuildRefactor,
 
         /// <summary> Move all SkeletalMesh source data into a private uasset in the same package has the skeletalmesh</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         SkeletalMeshMoveEditorSourceDataToPrivateAsset,
 
         /// <summary> Parse text only if the number is inside the limits of its type</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         NumberParsingOptionsNumberLimitsAndClamping,
 
         /// <summary> Make sure we can have more then 255 material in the skeletal mesh source data</summary>
-        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         SkeletalMeshSourceDataSupport16bitOfMaterialNumber,
 
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
