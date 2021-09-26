@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a function bound to an Object.
+    /// </summary>
     public class FMulticastDelegate
     {
         /** Uncertain what this is for; if you find out, please let me know */
@@ -22,7 +25,9 @@ namespace UAssetAPI.PropertyTypes
         }
     }
 
-
+    /// <summary>
+    /// Describes a list of functions bound to an Object.
+    /// </summary>
     public class MulticastDelegatePropertyData : PropertyData<FMulticastDelegate[]>
     {
         public MulticastDelegatePropertyData(FName name, UAsset asset) : base(name, asset)

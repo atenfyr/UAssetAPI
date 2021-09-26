@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a boolean.
+    /// </summary>
     public class BoolPropertyData : PropertyData<bool>
     {
         public BoolPropertyData(FName name, UAsset asset) : base(name, asset)

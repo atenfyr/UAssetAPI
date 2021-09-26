@@ -5,6 +5,9 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// An entry in a <see cref="DataTable"/>.
+    /// </summary>
     public struct DataTableEntry
     {
         public StructPropertyData Data;
@@ -17,6 +20,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// Imported spreadsheet table.
+    /// </summary>
     public class DataTable
     {
         public List<DataTableEntry> Table;
@@ -32,6 +38,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// Imported spreadsheet table.
+    /// </summary>
     public class DataTableExport : NormalExport
     {
         public DataTable Data2;

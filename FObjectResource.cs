@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UAssetAPI
+﻿namespace UAssetAPI
 {
     /// <summary>
     /// Base class for UObject resource types. FObjectResources are used to store UObjects on disk
-    /// via FLinker's ImportMap (for resources contained in other packages) and ExportMap (for resources
+    /// via the import map (for resources contained in other packages) and export map (for resources
     /// contained within the same package).
     /// </summary>
     public class FObjectResource
     {
-        ///<summary>The name of the UObject represented by this resource.</summary>\
+        ///<summary>The name of the UObject represented by this resource.</summary>
         [FObjectExportField(0)]
         public FName ObjectName;
 

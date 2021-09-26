@@ -3,6 +3,9 @@ using System.Text;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes an FString.
+    /// </summary>
     public class StrPropertyData : PropertyData<FString>
     {
         public StrPropertyData(FName name, UAsset asset) : base(name, asset)

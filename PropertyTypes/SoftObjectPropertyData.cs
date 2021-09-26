@@ -2,6 +2,9 @@
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Synonym for <see cref="SoftObjectPropertyData"/>.
+    /// </summary>
     public class AssetObjectPropertyData : PropertyData<FString>
     {
         public uint ID = 0;
@@ -51,6 +54,9 @@ namespace UAssetAPI.PropertyTypes
         }
     }
 
+    /// <summary>
+    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Synonym for <see cref="AssetObjectPropertyData"/>.
+    /// </summary>
     public class SoftObjectPropertyData : PropertyData<FName>
     {
         public uint ID = 0;

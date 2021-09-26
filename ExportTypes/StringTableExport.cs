@@ -13,6 +13,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// A string table. Holds Key->SourceString pairs of text.
+    /// </summary>
     public class StringTableExport : NormalExport
     {
         public StringTable Data2;

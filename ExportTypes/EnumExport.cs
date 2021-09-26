@@ -12,6 +12,9 @@ namespace UAssetAPI
 		EnumClass
     }
 
+    /// <summary>
+    /// Reflection data for an enumeration.
+    /// </summary>
     public class UEnum
     {
         /// <summary>List of pairs of all enum names and values.</summary>
@@ -108,7 +111,9 @@ namespace UAssetAPI
         }
     }
 
-
+    /// <summary>
+    /// Export data for an enumeration.
+    /// </summary>
     public class EnumExport : NormalExport
     {
         /// <summary>The enum that is stored in this export.</summary>

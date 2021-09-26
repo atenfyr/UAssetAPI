@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a reference variable to another object (import/export) which may be null. See <see cref="FPackageIndex"/>.
+    /// </summary>
     public class ObjectPropertyData : PropertyData<FPackageIndex>
     {
         public ObjectPropertyData(FName name, UAsset asset) : base(name, asset)

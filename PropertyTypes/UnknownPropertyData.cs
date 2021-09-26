@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a property which UAssetAPI has no serialization for.
+    /// </summary>
     public class UnknownPropertyData : PropertyData<byte[]>
     {
         public FName SerializingPropertyType = CurrentPropertyType;

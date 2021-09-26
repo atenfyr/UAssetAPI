@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a 32-bit signed integer variable.
+    /// </summary>
     public class IntPropertyData : PropertyData<int>
     {
         public IntPropertyData(FName name, UAsset asset) : base(name, asset)

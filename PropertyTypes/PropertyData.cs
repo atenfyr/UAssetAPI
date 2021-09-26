@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Generic standard property class.
+    /// </summary>
     public abstract class PropertyData : ICloneable
     {
         /// <summary>

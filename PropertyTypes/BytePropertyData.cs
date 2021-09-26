@@ -10,6 +10,9 @@ namespace UAssetAPI.PropertyTypes
         Long,
     }
 
+    /// <summary>
+    /// Describes a byte or an enumeration value.
+    /// </summary>
     public class BytePropertyData : PropertyData<int>
     {
         public BytePropertyType ByteType;

@@ -3,19 +3,20 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI
 {
-    /**
-     * World layer information for tile tagging
-     */
+    /// <summary>
+    /// World layer information for tile tagging
+    /// </summary>
     public class FWorldTileLayer
     {
-        /** Human readable name for this layer */
+        /// <summary>Human readable name for this layer</summary>
         public FString Name;
 
-        /** Reserved for additional options */
+        /// <summary>Reserved for additional options</summary>
         public int Reserved0;
+        /// <summary>Reserved for additional options</summary
         public IntPointPropertyData Reserved1;
 
-        /** Distance starting from where tiles belonging to this layer will be streamed in */
+        /// <summary>Distance starting from where tiles belonging to this layer will be streamed in</summary>
         public int StreamingDistance;
         public bool DistanceStreamingEnabled;
 
@@ -70,18 +71,21 @@ namespace UAssetAPI
         }
     }
 
-    /** 
-     * Describes LOD entry in a world tile 
-     */
+    /// <summary>
+    /// Describes LOD entry in a world tile
+    /// </summary>
     public class FWorldTileLODInfo
     {
-        /** Relative to LOD0 streaming distance, absolute distance = LOD0 + StreamingDistanceDelta */
+        /// <summary>Relative to LOD0 streaming distance, absolute distance = LOD0 + StreamingDistanceDelta</summary>
         public int RelativeStreamingDistance;
 
-        /** Reserved for additional options */
+        /// <summary>Reserved for additional options</summary>
         public float Reserved0;
+        /// <summary>Reserved for additional options</summary>
         public float Reserved1;
+        /// <summary>Reserved for additional options</summary>
         public int Reserved2;
+        /// <summary>Reserved for additional options</summary>
         public int Reserved3;
 
         public FWorldTileLODInfo(int relativeStreamingDistance, float reserved0, float reserved1, int reserved2, int reserved3)
@@ -117,27 +121,27 @@ namespace UAssetAPI
         }
     }
 
-    /** 
-     * Tile information used by WorldComposition. 
-     * Defines properties necessary for tile positioning in the world. Stored with package summary 
-     */
+    /// <summary>
+    /// Tile information used by WorldComposition.
+    /// Defines properties necessary for tile positioning in the world. Stored with package summary
+    /// </summary>
     public class FWorldTileInfo
     {
-        /** Tile position in the world relative to parent */
+        /// <summary>Tile position in the world relative to parent</summary>
         public int[] Position; // FIntVector
-        /** Absolute tile position in the world. Calculated in runtime */
+        /// <summary>Absolute tile position in the world. Calculated in runtime</summary>
         public int[] AbsolutePosition; // FIntVector
-        /** Tile bounding box  */
+        /// <summary>Tile bounding box</summary>
         public BoxPropertyData Bounds;
-        /** Tile assigned layer  */
+        /// <summary>Tile assigned layer</summary>
         public FWorldTileLayer Layer;
-        /** Whether to hide sub-level tile in tile view*/
+        /// <summary>Whether to hide sub-level tile in tile view</summary>
         public bool bHideInTileView;
-        /** Parent tile package name */
+        /// <summary>Parent tile package name</summary>
         public FString ParentTilePackageName;
-        /** LOD information */
+        /// <summary>LOD information</summary>
         public FWorldTileLODInfo[] LODList;
-        /** Sorting order */
+        /// <summary>Sorting order</summary>
         public int ZOrder;
 
         public void Read(BinaryReader reader, UAsset asset)

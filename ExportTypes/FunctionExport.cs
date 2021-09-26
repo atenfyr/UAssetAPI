@@ -2,6 +2,9 @@ using System.IO;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// Export data for a blueprint function.
+    /// </summary>
     public class FunctionExport : StructExport
     {
         public FunctionExport(Export super) : base(super)

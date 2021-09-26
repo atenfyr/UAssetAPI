@@ -11,8 +11,6 @@ namespace UAssetAPI
     {
 
     }
-
-    // Used in ClassExport
     public struct FunctionDataEntry
     {
         public FName Name;
@@ -44,6 +42,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// Represents an object class.
+    /// </summary>
     public class ClassExport : StructExport
     {
         /// <summary>
@@ -68,7 +69,7 @@ namespace UAssetAPI
 
         /// <summary>
         /// The list of interfaces which this class implements, along with the pointer property that is located at the offset of the interface's vtable.
-        /// If the interface class isn't native, the property will be null.
+        /// If the interface class isn't native, the property will be empty.
         /// </summary>
         public SerializedInterfaceReference[] Interfaces;
 

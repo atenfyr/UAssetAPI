@@ -4,6 +4,9 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes an array.
+    /// </summary>
     public class ArrayPropertyData : PropertyData<PropertyData[]> // Array
     {
         public FName ArrayType;

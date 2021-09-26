@@ -29,7 +29,7 @@ namespace UAssetAPI
         /// <summary>
         /// Returns true if this is an index into the import map.
         /// </summary>
-        /// <returns>Is this an index into the import map?</returns>
+        /// <returns>true if this is an index into the import map, false otherwise</returns>
         public bool IsImport()
         {
             return Index < 0;
@@ -38,23 +38,23 @@ namespace UAssetAPI
         /// <summary>
         /// Returns true if this is an index into the export map.
         /// </summary>
-        /// <returns>Is this an index into the export map?</returns>
+        /// <returns>true if this is an index into the export map, false otherwise</returns>
         public bool IsExport()
         {
             return Index > 0;
         }
 
         /// <summary>
-        /// Return true if this is null (i.e. neither an import nor an export)
+        /// Return true if this represents null (i.e. neither an import nor an export)
         /// </summary>
-        /// <returns>Does this index represent null?</returns>
+        /// <returns>true if this index represents null, false otherwise</returns>
         public bool IsNull()
         {
-            return Index == 0;
+            return this == null || Index == 0;
         }
 
         /// <summary>
-        /// Creates a FPackageIndex from an import index.
+        /// Creates a FPackageIndex from an index in the import map.
         /// </summary>
         /// <param name="importIndex">An import index to create an FPackageIndex from.</param>
         /// <returns>An FPackageIndex created from the import index.</returns>
@@ -66,7 +66,7 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Creates a FPackageIndex from an export index.
+        /// Creates a FPackageIndex from an index in the export map.
         /// </summary>
         /// <param name="exportIndex">An export index to create an FPackageIndex from.</param>
         /// <returns>An FPackageIndex created from the export index.</returns>

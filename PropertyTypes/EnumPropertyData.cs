@@ -2,6 +2,9 @@
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes an enumeration value.
+    /// </summary>
     public class EnumPropertyData : PropertyData<FName>
     {
         public FName EnumType;

@@ -13,6 +13,9 @@ namespace UAssetAPI.PropertyTypes
         InitializedFromString = 1 << 4
     }
 
+    /// <summary>
+    /// Describes an FText.
+    /// </summary>
     public class TextPropertyData : PropertyData<FString>
     {
         /// <summary>Flags with various information on what sort of FText this is</summary>

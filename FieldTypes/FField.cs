@@ -38,6 +38,9 @@ namespace UAssetAPI.FieldTypes
         COND_Max = 16
     };
 
+    /// <summary>
+    /// Base class of reflection data objects.
+    /// </summary>
     public class FField
     {
         public FName SerializedType;
@@ -62,6 +65,9 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
+    /// <summary>
+    /// An UnrealScript variable.
+    /// </summary>
     public abstract class FProperty : FField
     {
         public int ArrayDim;

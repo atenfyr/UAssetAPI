@@ -4,6 +4,9 @@ using UAssetAPI.FieldTypes;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// Base export for all UObject types that contain fields.
+    /// </summary>
     public class StructExport : NormalExport
     {
         /// <summary>

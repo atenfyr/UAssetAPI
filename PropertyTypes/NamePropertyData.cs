@@ -1,9 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes an FName.
+    /// </summary>
     public class NamePropertyData : PropertyData<FName>
     {
         public NamePropertyData(FName name, UAsset asset) : base(name, asset)

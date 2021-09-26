@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UAssetAPI
 {
-    /*
-        Unreal string - consists of a string and an encoding
-    */
+    /// <summary>
+    /// Unreal string - consists of a string and an encoding
+    /// </summary>
     public class FString : ICloneable
     {
         public string Value;
         public Encoding Encoding;
-
         public override string ToString()
         {
             if (this == null || Value == null) return "null";
@@ -52,13 +47,14 @@ namespace UAssetAPI
         }
     }
 
-    /*
-        Unreal name - consists of an FString (which is serialized as an index in the name map) and an instance number
-    */
+    /// <summary>
+    /// Unreal name - consists of an FString (which is serialized as an index in the name map) and an instance number
+    /// </summary>
     public class FName : ICloneable
     {
         public FString Value;
-        public int Number; // Instance number
+        /// <summary>Instance number</summary>
+        public int Number; 
 
         public override string ToString()
         {

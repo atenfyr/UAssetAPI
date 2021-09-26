@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -7,6 +6,9 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a map (<see cref="OrderedDictionary"/>).
+    /// </summary>
     public class MapPropertyData : PropertyData<OrderedDictionary> // Map
     {
         public FName[] dummyEntry = new FName[] { new FName(string.Empty), new FName(string.Empty) };

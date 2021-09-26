@@ -3,6 +3,9 @@ using UAssetAPI.StructTypes;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a set.
+    /// </summary>
     public class SetPropertyData : ArrayPropertyData
     {
         public PropertyData[] RemovedItems;

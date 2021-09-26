@@ -3,6 +3,9 @@ using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
+    /// <summary>
+    /// Describes a 32-bit unsigned integer variable.
+    /// </summary>
     public class UInt32PropertyData : PropertyData<uint>
     {
         public UInt32PropertyData(FName name, UAsset asset) : base(name, asset)
