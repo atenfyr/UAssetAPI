@@ -11,6 +11,7 @@ namespace UAssetAPI.StructTypes
 {
     public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
+        public byte[] Extras;
         public int OutputIndex;
         public NamePropertyData InputName;
         public NamePropertyData ExpressionName;
@@ -30,7 +31,7 @@ namespace UAssetAPI.StructTypes
             OutputIndex = reader.ReadInt32();
             InputName = new NamePropertyData(Name, Asset);
             InputName.Read(reader, false, 0);
-            reader.ReadBytes(20); // always 0s
+            Extras = reader.ReadBytes(20); // always 0s
             ExpressionName = new NamePropertyData(Name, Asset);
             ExpressionName.Read(reader, false, 0);
             return;
@@ -40,7 +41,7 @@ namespace UAssetAPI.StructTypes
         {
             writer.Write(OutputIndex);
             int nameSizeA = InputName.Write(writer, false);
-            writer.Write(new byte[20]); // always 0s
+            writer.Write(Extras); // always 0s
             int nameSizeB = ExpressionName.Write(writer, false);
             return nameSizeA + nameSizeB + sizeof(int) + 20;
         }

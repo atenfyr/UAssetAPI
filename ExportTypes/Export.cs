@@ -2,10 +2,9 @@
 
 namespace UAssetAPI
 {
-    /**
-     * UObject resource type for objects that are contained within this package and can
-     * be referenced by other packages.
-     */
+    /// <summary>
+    /// UObject resource type for objects that are contained within this package and can be referenced by other packages.
+    /// </summary>
     public class Export
     {
         public ExportDetails ReferenceData;

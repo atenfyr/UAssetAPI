@@ -4,6 +4,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// A regular export, with no export-specific custom serialization. Serialized as a None-terminated property list.
+    /// </summary>
     public class NormalExport : Export
     {
         public IList<PropertyData> Data;

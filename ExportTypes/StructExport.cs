@@ -6,29 +6,29 @@ namespace UAssetAPI
 {
     public class StructExport : NormalExport
     {
-        /**
-         * Struct this inherits from, may be null
-         */
+        /// <summary>
+        /// Struct this inherits from, may be null
+        /// </summary>
         public int SuperStruct;
 
-        /**
-         * List of child fields
-         */
+        /// <summary>
+        /// List of child fields
+        /// </summary>
         public int[] Children;
 
-        /**
-         * Properties serialized with this struct definition
-         */
+        /// <summary>
+        /// Properties serialized with this struct definition
+        /// </summary>
         public FProperty[] LoadedProperties;
 
-        /**
-         * Number of bytecode instructions
-         */
+        /// <summary>
+        /// Number of bytecode instructions
+        /// </summary>
         public int ScriptBytecodeSize;
 
-        /**
-         * Raw bytecode instructions
-         */
+        /// <summary>
+        /// Raw bytecode instructions
+        /// </summary>
         public byte[] ScriptBytecode;
 
         public StructExport(Export super) : base(super)

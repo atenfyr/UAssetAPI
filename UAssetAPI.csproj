@@ -76,7 +76,7 @@
     <Compile Include="StructTypes\PerPlatformBoolPropertyData.cs" />
     <Compile Include="StructTypes\PerPlatformIntPropertyData.cs" />
     <Compile Include="StructTypes\RichCurveKeyProperty.cs" />
-    <Compile Include="PropertyTypes\SoftAssetPathPropertyData.cs" />
+    <Compile Include="StructTypes\SoftAssetPathPropertyData.cs" />
     <Compile Include="StructTypes\TimespanPropertyData.cs" />
     <Compile Include="StructTypes\DateTimePropertyData.cs" />
     <Compile Include="PropertyTypes\EnumPropertyData.cs" />

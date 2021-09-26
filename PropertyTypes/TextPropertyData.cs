@@ -1,15 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class TextPropertyData : PropertyData<string[]>
+    [Flags]
+    public enum ETextFlag
     {
-        public int Flag;
+        Transient = (1 << 0),
+        CultureInvariant = (1 << 1),
+        ConvertedProperty = (1 << 2),
+        Immutable = (1 << 3),
+        InitializedFromString = (1 << 4),
+    }
+
+    // WIP revamp
+    public class TextPropertyData : PropertyData<FString[]>
+    {
+        public ETextFlag Flags;
         public TextHistoryType HistoryType = TextHistoryType.Base;
         public FName StringTable = null;
-        public byte[] Extras;
+        public FString CultureInvariantString = null;
         public FString BaseBlankString;
 
         public TextPropertyData(FName name, UAsset asset) : base(name, asset)
@@ -32,32 +42,47 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            Flag = reader.ReadInt32();
-            HistoryType = (TextHistoryType)reader.ReadSByte();
-
-            switch(HistoryType)
+            if (Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
             {
-                case TextHistoryType.None:
-                    Extras = reader.ReadBytes(4);
-                    List<string> ValueList = new List<string>();
-                    for (int i = 0; i < BitConverter.ToInt32(Extras, 0); i++)
-                    {
-                        ValueList.Add(reader.ReadFString());
-                    }
-                    Value = ValueList.ToArray();
-                    break;
-                case TextHistoryType.Base:
-                    Extras = new byte[0];
-                    BaseBlankString = reader.ReadFStringWithEncoding();
-                    Value = new string[] { reader.ReadFString(), reader.ReadFString() };
-                    break;
-                case TextHistoryType.StringTableEntry:
-                    Extras = new byte[0];
-                    StringTable = reader.ReadFName(Asset);
-                    Value = new string[] { reader.ReadFString() };
-                    break;
-                default:
-                    throw new FormatException("Unimplemented reader for " + HistoryType.ToString());
+                FString SourceStringToImplantIntoHistory = reader.ReadFStringWithEncoding();
+                if (Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
+                {
+                    FString Namespace = reader.ReadFStringWithEncoding();
+                    FString Key = reader.ReadFStringWithEncoding();
+                }
+                else
+                {
+                    FString DisplayString = reader.ReadFStringWithEncoding();
+                }
+            }
+
+            Flags = (ETextFlag)reader.ReadUInt32();
+
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
+            {
+                HistoryType = (TextHistoryType)reader.ReadSByte();
+
+                switch (HistoryType)
+                {
+                    case TextHistoryType.None:
+                        Value = new FString[0];
+                        bool bHasCultureInvariantString = reader.ReadInt32() == 1;
+                        if (bHasCultureInvariantString)
+                        {
+                            CultureInvariantString = reader.ReadFStringWithEncoding();
+                        }
+                        break;
+                    case TextHistoryType.Base:
+                        BaseBlankString = reader.ReadFStringWithEncoding();
+                        Value = new FString[] { reader.ReadFStringWithEncoding(), reader.ReadFStringWithEncoding() };
+                        break;
+                    case TextHistoryType.StringTableEntry:
+                        StringTable = reader.ReadFName(Asset);
+                        Value = new FString[] { reader.ReadFStringWithEncoding() };
+                        break;
+                    default:
+                        throw new FormatException("Unimplemented reader for " + HistoryType.ToString());
+                }
             }
         }
 
@@ -69,18 +94,20 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int here = (int)writer.BaseStream.Position;
-            writer.Write(Flag);
+            writer.Write((uint)Flags);
             writer.Write((byte)HistoryType);
-            writer.Write(Extras);
 
             switch(HistoryType)
             {
                 case TextHistoryType.None:
-                    writer.Seek(-4, SeekOrigin.Current);
-                    writer.Write(Value.Length);
-                    foreach (string val in Value)
+                    if (CultureInvariantString == null || string.IsNullOrEmpty(CultureInvariantString.Value))
                     {
-                        writer.WriteFString(val);
+                        writer.Write(0);
+                    }
+                    else
+                    {
+                        writer.Write(1);
+                        writer.WriteFString(CultureInvariantString);
                     }
                     break;
                 case TextHistoryType.Base:
@@ -118,19 +145,19 @@ namespace UAssetAPI.PropertyTypes
             if (d[1] != null)
             {
                 HistoryType = TextHistoryType.Base;
-                Value = new string[] { d[0], d[1] };
+                Value = new FString[] { new FString(d[0]), new FString(d[1]) };
                 return;
             }
 
             if (d[0].Equals("null"))
             {
                 HistoryType = TextHistoryType.None;
-                Value = new string[] { };
+                Value = new FString[] { };
                 return;
             }
 
             HistoryType = TextHistoryType.StringTableEntry;
-            Value = new string[] { d[0] };
+            Value = new FString[] { new FString(d[0]) };
         }
     }
 }

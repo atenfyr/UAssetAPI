@@ -46,50 +46,50 @@ namespace UAssetAPI
 
     public class ClassExport : StructExport
     {
-        /**
-         * Map of all functions by name contained in this class
-         */
+        /// <summary>
+        /// Map of all functions by name contained in this class
+        /// </summary>
         public FunctionDataEntry[] FuncMap; // TMap<FName, UFunction*>
 
-        /**
-         * Class flags; See EClassFlags for more information
-         */
+        /// <summary>
+        /// Class flags; See <see cref="EClassFlags"/> for more information
+        /// </summary>
         public EClassFlags ClassFlags;
 
-        /**
-         * The required type for the outer of instances of this class
-         */
+        /// <summary>
+        /// The required type for the outer of instances of this class
+        /// </summary>
         public int ClassWithin;
 
-        /**
-         * Which Name.ini file to load Config variables out of
-         */
+        /// <summary>
+        /// Which Name.ini file to load Config variables out of
+        /// </summary>
         public FName ClassConfigName;
 
-        /**
-	     * The list of interfaces which this class implements, along with the pointer property that is located at the offset of the interface's vtable.
-	     * If the interface class isn't native, the property will be null.
-	     */
+        /// <summary>
+        /// The list of interfaces which this class implements, along with the pointer property that is located at the offset of the interface's vtable.
+        /// If the interface class isn't native, the property will be null.
+        /// </summary>
         public SerializedInterfaceReference[] Interfaces;
 
-        /**
-         * This is the blueprint that caused the generation of this class, or null if it is a native compiled-in class
-         */
+        /// <summary>
+        /// This is the blueprint that caused the generation of this class, or null if it is a native compiled-in class
+        /// </summary>
         public int ClassGeneratedBy;
 
-        /**
-         * Does this class use deprecated script order?
-         */
+        /// <summary>
+        /// Does this class use deprecated script order?
+        /// </summary>
         public bool bDeprecatedForceScriptOrder;
 
-        /**
-         * Used to check if the class was cooked or not
-         */
+        /// <summary>
+        /// Used to check if the class was cooked or not
+        /// </summary>
         public bool bCooked;
 
-        /**
-         * The class default object; used for delta serialization and object initialization
-         */
+        /// <summary>
+        /// The class default object; used for delta serialization and object initialization
+        /// </summary>
         public int ClassDefaultObject;
 
         public ClassExport(Export super) : base(super)

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace UAssetAPI
 {
-    /** How this enum is declared in C++, affects the internal naming of enum values */
+    /// <summary>How this enum is declared in C++, affects the internal naming of enum values</summary> */
     public enum ECppForm
     {
         Regular,
@@ -14,10 +14,10 @@ namespace UAssetAPI
 
     public class UEnum
     {
-        /** List of pairs of all enum names and values. */
+        /// <summary>List of pairs of all enum names and values.</summary>
         public List<Tuple<FName, long>> Names;
 
-        /** How the enum was originally defined. */
+        /// <summary>How the enum was originally defined.</summary>
         public ECppForm CppForm = ECppForm.Regular;
 
         public void Read(BinaryReader reader, UAsset asset)
@@ -111,7 +111,7 @@ namespace UAssetAPI
 
     public class EnumExport : NormalExport
     {
-        /** The enum that is stored in this export. */
+        /// <summary>The enum that is stored in this export.</summary>
         public UEnum Enum;
 
         public EnumExport(Export super) : base(super)

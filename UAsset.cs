@@ -75,41 +75,31 @@ namespace UAssetAPI
 
     public class UAsset
     {
-        /**
-         * The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
-         */
+        /// <summary>
+        /// The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
+        /// </summary>
         public string FilePath;
 
-        /**
-         * Will export data be serialized?
-         */
-        public bool WillWriteExportData = true;
-
-        /**
-         * Should the original copy of this asset be stored in memory as a byte array for reference when serializing, as opposed to accessing the file from disk?
-         */
-        public bool WillStoreOriginalCopyInMemory = false;
-
-        /**
-         * Should the asset be separated into .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
-         */
+        /// <summary>
+        /// Should the asset be separated into .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
+        /// </summary>
         public bool UseSeparateBulkDataFiles = false;
 
-        /**
-         * The original copy in memory to use as reference if WillStoreOriginalCopyInMemory is set to true.
-         */
+        /// <summary>
+        /// The original copy in memory to use as reference if WillStoreOriginalCopyInMemory is set to true.
+        /// </summary>
         public byte[] OriginalCopy;
 
-        /**
-         * The version of the Unreal Engine that will be used to parse this asset if it is unversioned.
-         */
+        /// <summary>
+        /// The version of the Unreal Engine that will be used to parse this asset if it is unversioned.
+        /// </summary>
         public UE4Version EngineVersion = UE4Version.UNKNOWN;
 
         public bool VerifyParsing()
         {
             MemoryStream f = this.PathToStream(FilePath);
             f.Seek(0, SeekOrigin.Begin);
-            MemoryStream newDataStream = WriteData(new BinaryReader(f));
+            MemoryStream newDataStream = WriteData();
             f.Seek(0, SeekOrigin.Begin);
 
             if (f.Length != newDataStream.Length) return false;
@@ -236,7 +226,6 @@ namespace UAssetAPI
             parentClassExportName = parentClassLink.ObjectName;
             parentClassPath = GetImportAt((int)parentClassLink.OuterIndex).ObjectName;
         }
-
         public int GetCustomVersion(Guid key)
         {
             for (int i = 0; i < CustomVersionContainer.Count; i++)
@@ -250,7 +239,6 @@ namespace UAssetAPI
 
             return -1; // https://github.com/EpicGames/UnrealEngine/blob/99b6e203a15d04fc7bbbf554c421a985c1ccb8f1/Engine/Source/Runtime/Core/Private/Serialization/Archive.cpp#L578
         }
-
         public int GetCustomVersion(string friendlyName)
         {
             for (int i = 0; i < CustomVersionContainer.Count; i++)
@@ -264,7 +252,6 @@ namespace UAssetAPI
 
             return -1;
         }
-
         public T GetCustomVersion<T>()
         {
             Type customVersionEnumType = typeof(T);
@@ -291,7 +278,6 @@ namespace UAssetAPI
 
             return (T)(object)-1;
         }
-
         public int SearchForLink(FName classPackage, FName className, int outerIndex, FName objectName)
         {
             int currentPos = 0;
@@ -310,7 +296,6 @@ namespace UAssetAPI
 
             return 0;
         }
-
         public int SearchForLink(FName classPackage, FName className, FName objectName)
         {
             int currentPos = 0;
@@ -328,7 +313,6 @@ namespace UAssetAPI
 
             return 0;
         }
-
         public int SearchForLink(FName objectName)
         {
             int currentPos = 0;
@@ -356,170 +340,170 @@ namespace UAssetAPI
          */
         public int LegacyFileVersion;
 
-        /**
-         * Should this asset not serialize its engine and custom versions?
-         */
+        /// <summary>
+        /// Should this asset not serialize its engine and custom versions?
+        /// </summary>
         public bool IsUnversioned;
 
-        /**
-         * The licensee file version. Used by some games to add their own Engine-level versioning.
-         */
+        /// <summary>
+        /// The licensee file version. Used by some games to add their own Engine-level versioning.
+        /// </summary>
         public int FileVersionLicenseeUE4;
 
-        /**
-         * All the custom versions stored in the archive.
-         */
+        /// <summary>
+        /// All the custom versions stored in the archive.
+        /// </summary>
         public List<CustomVersion> CustomVersionContainer = null;
 
-        /**
-         * List of object imports. UAssetAPI used to call these "links."
-         */
+        /// <summary>
+        /// List of object imports. UAssetAPI used to call these "links."
+        /// </summary>
         public List<Import> Imports;
 
-        /**
-         * List of object exports. UAssetAPI used to call these "categories."
-         */
+        /// <summary>
+        /// List of object exports. UAssetAPI used to call these "categories."
+        /// </summary>
         public List<Export> Exports;
 
-        /**
-         * List of dependency lists for each export.
-         */
+        /// <summary>
+        /// List of dependency lists for each export.
+        /// </summary>
         public List<int[]> DependsMap;
 
-        /**
-         * List of packages that are soft referenced by this package.
-         */
+        /// <summary>
+        /// List of packages that are soft referenced by this package.
+        /// </summary>
         public List<string> SoftPackageReferenceList;
 
-        /**
-         * Uncertain
-         */
+        /// <summary>
+        /// Uncertain
+        /// </summary>
         public List<int> AssetRegistryData;
 
-        /**
-         * Tile information used by WorldComposition.
-         * Defines properties necessary for tile positioning in the world.
-         */
+        /// <summary>
+        /// Tile information used by WorldComposition.
+        /// Defines properties necessary for tile positioning in the world.
+        /// </summary>
         public FWorldTileInfo WorldTileInfo;
 
-        /**
-	     * List of imports and exports that must be serialized before other exports...all packed together, see FirstExportDependency.
-	     */
+        /// <summary>
+        /// List of imports and exports that must be serialized before other exports...all packed together, see FirstExportDependency.
+        /// </summary>
         public List<int> PreloadDependencies;
 
-        /**
-	     * Data about previous versions of this package.
-	     */
+        /// <summary>
+        /// Data about previous versions of this package.
+        /// </summary>
         public List<FGenerationInfo> Generations;
 
-        /**
-	     * Current ID for this package. Effectively unused.
-	     */
+        /// <summary>
+        /// Current ID for this package. Effectively unused.
+        /// </summary>
         public Guid PackageGuid;
 
-        /**
-	     * Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
-	     */
+        /// <summary>
+        /// Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
+        /// </summary>
         public FEngineVersion RecordedEngineVersion;
 
-        /**
-	     * Engine version this package is compatible with. Assets saved by Hotfix releases and engine versions that maintain binary compatibility will have
-	     * a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
-	     */
+        /// <summary>
+        /// Engine version this package is compatible with. Assets saved by Hotfix releases and engine versions that maintain binary compatibility will have
+        /// a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
+        /// </summary>
         public FEngineVersion RecordedCompatibleWithEngineVersion;
 
-        /**
-         * Streaming install ChunkIDs
-         */
+        /// <summary>
+        /// Streaming install ChunkIDs
+        /// </summary>
         public int[] ChunkIDs;
 
-        /**
-         * The flags for this package.
-         */
+        /// <summary>
+        /// The flags for this package.
+        /// </summary>
         public EPackageFlags PackageFlags;
 
-        /**
-         * Value that is used to determine if the package was saved by Epic, a licensee, modder, etc.
-         */
+        /// <summary>
+        /// Value that is used to determine if the package was saved by Epic, a licensee, modder, etc.
+        /// </summary>
         public uint PackageSource;
 
-        /**
-         * The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
-         */
+        /// <summary>
+        /// The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
+        /// </summary>
         public FString FolderName;
 
-        /**
-         * In MapProperties that have StructProperties as their keys or values, there is no deterministic, universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists
-         */
+        /// <summary>
+        /// In MapProperties that have StructProperties as their keys or values, there is no deterministic, universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists
+        /// </summary>
         public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
         {
             { "ColorDatabase", new Tuple<FName, FName>(null, new FName("LinearColor")) },
             { "PlayerCharacterIDs", new Tuple<FName, FName>(new FName("Guid"), null) }
         };
 
-        /**
-         * External programs often leave name map hashes blank, so in this map we preserve those changes to avoid confusion.
-         */
+        /// <summary>
+        /// External programs often improperly specify name map hashes, so in this map we can preserve those changes to avoid confusion.
+        /// </summary>
         public Dictionary<FString, uint> OverrideNameMapHashes;
 
-        /* This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map */
+        /// <summary>This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI header refers to just the data before the start of the name map</summary>
         internal int SectionSixOffset = 0;
 
-        /* Number of names used in this package */
+        /// <summary>Number of names used in this package</summary>
         internal int NameCount = 0;
 
-        /* Location into the file on disk for the name data */
+        /// <summary>Location into the file on disk for the name data</summary>
         internal int NameOffset;
 
-        /* Number of gatherable text data items in this package */
+        /// <summary>Number of gatherable text data items in this package</summary>
         internal int GatherableTextDataCount;
 
-        /* Location into the file on disk for the gatherable text data items */
+        /// <summary>Location into the file on disk for the gatherable text data items</summary>
         internal int GatherableTextDataOffset;
 
-        /* Number of exports contained in this package */
+        /// <summary>Number of exports contained in this package</summary>
         internal int ExportCount = 0;
 
-        /* Location into the file on disk for the "Export Details" data */
+        /// <summary>Location into the file on disk for the "Export Details" data</summary>
         internal int ExportOffset = 0;
 
-        /* Number of imports contained in this package */
+        /// <summary>Number of imports contained in this package</summary>
         internal int ImportCount = 0;
 
-        /* Location into the file on disk for the ImportMap data */
+        /// <summary>Location into the file on disk for the ImportMap data</summary>
         internal int ImportOffset = 0;
 
-        /* Location into the file on disk for the DependsMap data */
+        /// <summary>Location into the file on disk for the DependsMap data</summary>
         internal int DependsOffset = 0;
 
-        /* Number of soft package references contained in this package */
+        /// <summary>Number of soft package references contained in this package</summary>
         internal int SoftPackageReferencesCount = 0;
 
-        /* Location into the file on disk for the soft package reference list */
+        /// <summary>Location into the file on disk for the soft package reference list</summary>
         internal int SoftPackageReferencesOffset = 0;
 
-        /* Location into the file on disk for the SearchableNamesMap data */
+        /// <summary>Location into the file on disk for the SearchableNamesMap data</summary>
         internal int SearchableNamesOffset;
 
-        /* Thumbnail table offset */
+        /// <summary>Thumbnail table offset</summary>
         internal int ThumbnailTableOffset;
 
-        /* Should be zero */
+        /// <summary>Should be zero</summary>
         internal uint CompressionFlags;
 
-        /* Location into the file on disk for the asset registry tag data */
+        /// <summary>Location into the file on disk for the asset registry tag data</summary>
         internal int AssetRegistryDataOffset;
 
-        /* Offset to the location in the file where the bulkdata starts */
+        /// <summary>Offset to the location in the file where the bulkdata starts</summary>
         internal long BulkDataStartOffset;
 
-        /* Offset to the location in the file where the FWorldTileInfo data start */
+        /// <summary>Offset to the location in the file where the FWorldTileInfo data start</summary>
         internal int WorldTileInfoDataOffset;
 
-        /* Number of preload dependencies contained in this package */
+        /// <summary>Number of preload dependencies contained in this package</summary>
         internal int PreloadDependencyCount;
 
-        /* Location into the file on disk for the preload dependency data */
+        /// <summary>Location into the file on disk for the preload dependency data</summary>
         internal int PreloadDependencyOffset;
 
         internal bool doWeHaveDependsMap = true;
@@ -527,16 +511,46 @@ namespace UAssetAPI
         internal bool doWeHaveAssetRegistryData = true;
         internal bool doWeHaveWorldTileInfo = true;
 
-        // Do not directly add values to here under any circumstances; use AddNameReference instead
+        /// <summary>
+        /// Internal list of name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
+        /// </summary>
         private List<FString> nameMapIndexList;
+
+        /// <summary>
+        /// Internal lookup for name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
+        /// </summary>
         private Dictionary<int, int> nameMapLookup = new Dictionary<int, int>();
 
-        private void Assert(bool v)
+        /// <summary>
+        /// Copies a portion of a stream to another stream.
+        /// </summary>
+        /// <param name="input">The input stream.</param>
+        /// <param name="output">The output stream.</param>
+        /// <param name="start">The offset in the input stream to start copying from.</param>
+        /// <param name="leng">The length in bytes of the data to be copied.</param>
+        private static void CopySplitUp(Stream input, Stream output, int start, int leng)
         {
-            if (!v) throw new FormatException("Failed assertion while reading asset summary");
+            input.Seek(start, SeekOrigin.Begin);
+            output.Seek(0, SeekOrigin.Begin);
+
+            byte[] buffer = new byte[32768];
+            int read;
+            while (leng > 0 && (read = input.Read(buffer, 0, Math.Min(buffer.Length, leng))) > 0)
+            {
+                output.Write(buffer, 0, read);
+                leng -= read;
+            }
         }
 
-        public static uint UASSET_MAGIC = 2653586369;
+        /// <summary>
+        /// Magic numbers for the .uasset format
+        /// </summary>
+        private static readonly uint UASSET_MAGIC = 2653586369;
+
+        /// <summary>
+        /// Reads the initial portion of the asset (everything before the name map).
+        /// </summary>
+        /// <param name="reader"></param>
         private void ReadHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -679,6 +693,12 @@ namespace UAssetAPI
             }
         }
 
+        /// <summary>
+        /// Reads an asset into memory.
+        /// </summary>
+        /// <param name="reader">The input reader.</param>
+        /// <param name="manualSkips">An array of export indexes to skip parsing. For most applications, this should be left blank.</param>
+        /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
@@ -938,9 +958,12 @@ namespace UAssetAPI
             }
         }
 
-        private byte[] MakeHeader(BinaryReader reader)
+        /// <summary>
+        /// Serializes the initial portion of the asset from memory.
+        /// </summary>
+        /// <returns>A byte array which represents the serialized binary data of the initial portion of the asset.</returns>
+        private byte[] MakeHeader()
         {
-            reader.BaseStream.Seek(0, SeekOrigin.Begin);
             var stre = new MemoryStream(this.NameOffset);
             BinaryWriter writer = new BinaryWriter(stre);
 
@@ -1069,14 +1092,18 @@ namespace UAssetAPI
             return stre.ToArray();
         }
 
-        public MemoryStream WriteData(BinaryReader reader)
+        /// <summary>
+        /// Serializes an asset from memory.
+        /// </summary>
+        /// <returns>A stream that the asset has been serialized to.</returns>
+        public MemoryStream WriteData()
         {
             var stre = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stre);
 
             // Header
             writer.Seek(0, SeekOrigin.Begin);
-            writer.Write(MakeHeader(reader));
+            writer.Write(MakeHeader());
 
             // Name map
             this.NameOffset = (int)writer.BaseStream.Position;
@@ -1250,32 +1277,17 @@ namespace UAssetAPI
             int oldOffset = this.SectionSixOffset;
             this.SectionSixOffset = (int)writer.BaseStream.Position;
             long[] categoryStarts = new long[this.Exports.Count];
-            if (WillWriteExportData)
+            if (this.Exports.Count > 0)
             {
-                if (this.Exports.Count > 0)
-                {
-                    for (int i = 0; i < this.Exports.Count; i++)
-                    {
-                        categoryStarts[i] = writer.BaseStream.Position;
-                        Export us = this.Exports[i];
-                        us.Write(writer);
-                        writer.Write(us.Extras);
-                    }
-                }
-                writer.Write(new byte[] { 0xC1, 0x83, 0x2A, 0x9E });
-            }
-            else // Old behavior
-            {
-                reader.BaseStream.Seek(oldOffset, SeekOrigin.Begin);
-                writer.Write(reader.ReadBytes((int)reader.BaseStream.Length - oldOffset));
-
-                int additionalOffset = this.SectionSixOffset - oldOffset;
                 for (int i = 0; i < this.Exports.Count; i++)
                 {
-                    ExportDetails us = this.Exports[i].ReferenceData;
-                    categoryStarts[i] = us.SerialOffset + additionalOffset;
+                    categoryStarts[i] = writer.BaseStream.Position;
+                    Export us = this.Exports[i];
+                    us.Write(writer);
+                    writer.Write(us.Extras);
                 }
             }
+            writer.Write(new byte[] { 0xC1, 0x83, 0x2A, 0x9E });
 
             this.BulkDataStartOffset = (int)stre.Length - 4;
 
@@ -1335,77 +1347,19 @@ namespace UAssetAPI
                 }
             }
 
-            /*Debug.WriteLine(this.NameOffset);
-            Debug.WriteLine(this.ImportOffset);
-            Debug.WriteLine(this.ExportOffset);
-            Debug.WriteLine(this.DependsOffset);
-            Debug.WriteLine(this.SoftPackageReferencesOffset);
-            Debug.WriteLine(this.AssetRegistryDataOffset);
-            Debug.WriteLine(this.PreloadDependencyOffset);*/
-
             // Rewrite Header
             writer.Seek(0, SeekOrigin.Begin);
-            writer.Write(MakeHeader(reader));
+            writer.Write(MakeHeader());
 
             writer.Seek(0, SeekOrigin.Begin);
             return stre;
         }
 
-        private static void CopySplitUp(Stream input, Stream output, int start, int leng)
-        {
-            input.Seek(start, SeekOrigin.Begin);
-            output.Seek(0, SeekOrigin.Begin);
-
-            byte[] buffer = new byte[32768];
-            int read;
-            while (leng > 0 && (read = input.Read(buffer, 0, Math.Min(buffer.Length, leng))) > 0)
-            {
-                output.Write(buffer, 0, read);
-                leng -= read;
-            }
-        }
-
-        public void Write(string outputPath)
-        {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
-
-            MemoryStream newData;
-            if (WillStoreOriginalCopyInMemory)
-            {
-                newData = WriteData(new BinaryReader(new MemoryStream(OriginalCopy)));
-            }
-            else
-            {
-                using (FileStream f = File.Open(FilePath, FileMode.Open, FileAccess.Read))
-                {
-                    f.Seek(0, SeekOrigin.Begin);
-                    newData = WriteData(new BinaryReader(f));
-                }
-            }
-
-            if (this.UseSeparateBulkDataFiles && this.Exports.Count > 0)
-            {
-                long breakingOffPoint = this.Exports[0].ReferenceData.SerialOffset;
-                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
-                {
-                    CopySplitUp(newData, f, 0, (int)breakingOffPoint);
-                }
-
-                using (FileStream f = File.Open(Path.ChangeExtension(outputPath, "uexp"), FileMode.Create, FileAccess.Write))
-                {
-                    CopySplitUp(newData, f, (int)breakingOffPoint, (int)(newData.Length - breakingOffPoint));
-                }
-            }
-            else
-            {
-                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
-                {
-                    newData.CopyTo(f);
-                }
-            }
-
-        }
-
+        /// <summary>
+        /// Creates a MemoryStream from an asset path.
+        /// </summary>
+        /// <param name="p">The path to the input file.</param>
+        /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
         public MemoryStream PathToStream(string p)
         {
             using (FileStream origStream = File.Open(p, FileMode.Open))
@@ -1434,82 +1388,86 @@ namespace UAssetAPI
             }
         }
 
+        /// <summary>
+        /// Creates a BinaryReader from an asset path.
+        /// </summary>
+        /// <param name="p">The path to the input file.</param>
+        /// <returns>A new BinaryReader that stores the binary data of the input file.</returns>
         public BinaryReader PathToReader(string p)
         {
             return new BinaryReader(PathToStream(p));
         }
 
-        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        /// <summary>
+        /// Serializes and writes an asset to disk from memory.
+        /// </summary>
+        /// <param name="outputPath">The path on disk to write the asset to.</param>
+        public void Write(string outputPath)
+        {
+            if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
+
+            MemoryStream newData = WriteData();
+
+            if (this.UseSeparateBulkDataFiles && this.Exports.Count > 0)
+            {
+                long breakingOffPoint = this.Exports[0].ReferenceData.SerialOffset;
+                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
+                {
+                    CopySplitUp(newData, f, 0, (int)breakingOffPoint);
+                }
+
+                using (FileStream f = File.Open(Path.ChangeExtension(outputPath, "uexp"), FileMode.Create, FileAccess.Write))
+                {
+                    CopySplitUp(newData, f, (int)breakingOffPoint, (int)(newData.Length - breakingOffPoint));
+                }
+            }
+            else
+            {
+                using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
+                {
+                    newData.CopyTo(f);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="path">The path of the asset file that this instance will read from.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             this.FilePath = path;
             EngineVersion = engineVersion;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
-
-            var ourReader = PathToReader(path);
-            Read(ourReader);
-
-            if (WillStoreOriginalCopyInMemory)
-            {
-                ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
-                OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
-            }
-        }
-
-        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
-        {
-            this.FilePath = path;
-            EngineVersion = engineVersion;
             CustomVersionContainer = defaultCustomVersionContainer;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
 
-            var ourReader = PathToReader(path);
-            Read(ourReader);
-
-            if (WillStoreOriginalCopyInMemory)
-            {
-                ourReader.BaseStream.Seek(0, SeekOrigin.Begin);
-                OriginalCopy = ourReader.ReadBytes((int)ourReader.BaseStream.Length);
-            }
+            Read(PathToReader(path));
         }
 
-        public UAsset()
-        {
-
-        }
-
-        // If willStoreOriginalCopyInMemory is true when calling the following constructors, then you must set OriginalCopy yourself
-        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
-        {
-            EngineVersion = engineVersion;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
-        }
-
-        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        /// <summary>
+        /// Reads an asset from a BinaryReader and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="reader">The asset BinaryReader that this instance will read from.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             EngineVersion = engineVersion;
             CustomVersionContainer = defaultCustomVersionContainer;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
-        }
-
-        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
-        {
-            EngineVersion = engineVersion;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
             Read(reader);
         }
 
-        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null, bool willStoreOriginalCopyInMemory = false, bool willWriteExportData = true)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
+        /// </summary>
+        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             EngineVersion = engineVersion;
             CustomVersionContainer = defaultCustomVersionContainer;
-            WillStoreOriginalCopyInMemory = willStoreOriginalCopyInMemory;
-            WillWriteExportData = willWriteExportData;
-            Read(reader);
         }
     }
 }

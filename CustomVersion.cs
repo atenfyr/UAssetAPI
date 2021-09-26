@@ -3,11 +3,14 @@ using System.Collections.Generic;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// A custom version. Controls more specific serialization than the main engine object version does.
+    /// </summary>
     public class CustomVersion
     {
-        /**
-         * Static map of custom version GUIDs to the class or object that they represent in the Unreal Engine. This list is not necessarily exhaustive, so feel free to add to it if need be
-         */
+        /// <summary>
+        /// Static map of custom version GUIDs to the object or enum that they represent in the Unreal Engine. This list is not necessarily exhaustive, so feel free to add to it if need be.
+        /// </summary>
         public static readonly Dictionary<Guid, string> GuidToCustomVersionStringMap = new Dictionary<Guid, string>()
         {
             { UnusedCustomVersionKey, "UnusedCustomVersionKey" },
@@ -55,13 +58,26 @@ namespace UAssetAPI
             // etc.
         };
 
+        /// <summary>
+        /// A GUID that represents an unused custom version.
+        /// </summary>
         public static readonly Guid UnusedCustomVersionKey = UAPUtils.GUID(0, 0, 0, 0xF99D40C1);
 
+        /// <summary>
+        /// Returns the name of the object or enum that a custom version GUID represents, as specified in <see cref="GuidToCustomVersionStringMap"/>.
+        /// </summary>
+        /// <param name="guid">A GUID that represents a custom version.</param>
+        /// <returns>A string that represents the friendly name of the corresponding custom version.</returns>
         public static string GetCustomVersionFriendlyNameFromGuid(Guid guid)
         {
             return GuidToCustomVersionStringMap.ContainsKey(guid) ? GuidToCustomVersionStringMap[guid] : null;
         }
 
+        /// <summary>
+        /// Returns the GUID of the custom version that the object or enum name provided represents.
+        /// </summary>
+        /// <param name="friendlyName">The name of a custom version object or enum.</param>
+        /// <returns>A GUID that represents the custom version</returns>
         public static Guid GetCustomVersionGuidFromFriendlyName(string friendlyName)
         {
             foreach (KeyValuePair<Guid, string> entry in GuidToCustomVersionStringMap)
@@ -75,6 +91,11 @@ namespace UAssetAPI
         public string FriendlyName = null;
         public int Version;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomVersion"/> class given an object or enum name and a version number.
+        /// </summary>
+        /// <param name="friendlyName"></param>
+        /// <param name="version"></param>
         public CustomVersion(string friendlyName, int version)
         {
             Key = GetCustomVersionGuidFromFriendlyName(friendlyName);
@@ -82,6 +103,11 @@ namespace UAssetAPI
             Version = version;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomVersion"/> class given a custom version GUID and a version number.
+        /// </summary>
+        /// <param name="friendlyName"></param>
+        /// <param name="version"></param>
         public CustomVersion(Guid key, int version)
         {
             Key = key;
@@ -89,15 +115,21 @@ namespace UAssetAPI
             Version = version;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomVersion"/> class.
+        /// </summary>
         public CustomVersion()
         {
-
+            Key = UnusedCustomVersionKey;
+            Version = 0;
         }
     }
 
     /* Below are some enums of custom versions we need for serialization */
 
-    /* This attribute represents the engine version at the time that the custom version was implemented */
+    /// <summary>
+    /// Represents the engine version at the time that a custom version was implemented.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class IntroducedAttribute : Attribute
     {
@@ -109,21 +141,24 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// Custom serialization version for changes made in the //Fortnite/Main stream.
+    /// </summary>
     public enum FFortniteMainBranchObjectVersion
     {
-        // Before any version changes were made
+        /// <summary> Before any version changes were made</summary>
         [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         BeforeCustomVersionWasAdded = 0,
 
-        // World composition tile offset changed from 2d to 3d
+        /// <summary> World composition tile offset changed from 2d to 3d</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         WorldCompositionTile3DOffset,
 
-        // Minor material serialization optimization
+        /// <summary> Minor material serialization optimization</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         MaterialInstanceSerializeOptimization_ShaderFName,
 
-        // Refactored cull distances to account for HLOD, explicit override and globals in priority
+        /// <summary> Refactored cull distances to account for HLOD, explicit override and globals in priority</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         CullDistanceRefactor_RemovedDefaultDistance,
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
@@ -131,365 +166,539 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         CullDistanceRefactor_NeverCullALODActorsByDefault,
 
-        // Support to remove morphtarget generated by bRemapMorphtarget
+        /// <summary> Support to remove morphtarget generated by bRemapMorphtarget</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         SaveGeneratedMorphTargetByEngine,
 
-        // Convert reduction setting options
+        /// <summary> Convert reduction setting options</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         ConvertReductionSettingOptions,
 
-        // Serialize the type of blending used for landscape layer weight static params
+        /// <summary> Serialize the type of blending used for landscape layer weight static params</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         StaticParameterTerrainLayerWeightBlendType,
 
-        // Fix up None Named animation curve names,
+        /// <summary> Fix up None Named animation curve names,</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         FixUpNoneNameAnimationCurves,
 
-        // Ensure ActiveBoneIndices to have parents even not skinned for old assets
+        /// <summary> Ensure ActiveBoneIndices to have parents even not skinned for old assets</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         EnsureActiveBoneIndicesToContainParents,
 
-        // Serialize the instanced static mesh render data, to avoid building it at runtime
+        /// <summary> Serialize the instanced static mesh render data, to avoid building it at runtime</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         SerializeInstancedStaticMeshRenderData,
 
-        // Cache material quality node usage
+        /// <summary> Cache material quality node usage</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         CachedMaterialQualityNodeUsage,
 
-        // Font outlines no longer apply to drop shadows for new objects but we maintain the opposite way for backwards compat
+        /// <summary> Font outlines no longer apply to drop shadows for new objects but we maintain the opposite way for backwards compat</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         FontOutlineDropShadowFixup,
 
-        // New skeletal mesh import workflow (Geometry only or animation only re-import )
+        /// <summary> New skeletal mesh import workflow (Geometry only or animation only re-import )</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         NewSkeletalMeshImporterWorkflow,
 
-        // Migrate data from previous data structure to new one to support materials per LOD on the Landscape
+        /// <summary> Migrate data from previous data structure to new one to support materials per LOD on the Landscape</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         NewLandscapeMaterialPerLOD,
 
-        // New Pose Asset data type
+        /// <summary> New Pose Asset data type</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         RemoveUnnecessaryTracksFromPose,
 
-        // Migrate Foliage TLazyObjectPtr to TSoftObjectPtr
+        /// <summary> Migrate Foliage TLazyObjectPtr to TSoftObjectPtr</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         FoliageLazyObjPtrToSoftObjPtr,
 
-        // TimelineTemplates store their derived names instead of dynamically generating
-        // This code tied to this version was reverted and redone at a later date
+        /// <summary> TimelineTemplates store their derived names instead of dynamically generating. This code tied to this version was reverted and redone at a later date</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         REVERTED_StoreTimelineNamesInTemplate,
 
-        // Added BakePoseOverride for LOD setting
+        /// <summary> Added BakePoseOverride for LOD setting</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         AddBakePoseOverrideForSkeletalMeshReductionSetting,
 
-        // TimelineTemplates store their derived names instead of dynamically generating
+        /// <summary> TimelineTemplates store their derived names instead of dynamically generating</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         StoreTimelineNamesInTemplate,
 
-        // New Pose Asset data type
+        /// <summary> New Pose Asset data type</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         WidgetStopDuplicatingAnimations,
 
-        // Allow reducing of the base LOD, we need to store some imported model data so we can reduce again from the same data.
+        /// <summary> Allow reducing of the base LOD, we need to store some imported model data so we can reduce again from the same data.</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         AllowSkeletalMeshToReduceTheBaseLOD,
 
-        // Curve Table size reduction
+        /// <summary> Curve Table size reduction</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         ShrinkCurveTableSize,
 
-        // Widgets upgraded with WidgetStopDuplicatingAnimations, may not correctly default-to-self for the widget parameter.
+        /// <summary> Widgets upgraded with WidgetStopDuplicatingAnimations, may not correctly default-to-self for the widget parameter.</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         WidgetAnimationDefaultToSelfFail,
 
-        // HUDWidgets now require an element tag
+        /// <summary> HUDWidgets now require an element tag</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         FortHUDElementNowRequiresTag,
 
-        // Animation saved as bulk data when cooked
+        /// <summary> Animation saved as bulk data when cooked</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         FortMappedCookedAnimation,
 
-        // Support Virtual Bone in Retarget Manager
+        /// <summary> Support Virtual Bone in Retarget Manager</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         SupportVirtualBoneInRetargeting,
 
-        // Fixup bad defaults in water metadata
+        /// <summary> Fixup bad defaults in water metadata</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         FixUpWaterMetadata,
 
-        // Move the location of water metadata
+        /// <summary> Move the location of water metadata</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         MoveWaterMetadataToActor,
 
-        // Replaced lake collision component
+        /// <summary> Replaced lake collision component</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         ReplaceLakeCollision,
 
-        // Anim layer node names are now conformed by Guid
+        /// <summary> Anim layer node names are now conformed by Guid</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         AnimLayerGuidConformation,
 
-        // Ocean collision component has become dynamic
+        /// <summary> Ocean collision component has become dynamic</summary>
         [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         MakeOceanCollisionTransient,
 
-        // FFieldPath will serialize the owner struct reference and only a short path to its property
+        /// <summary> FFieldPath will serialize the owner struct reference and only a short path to its property</summary>
         [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         FFieldPathOwnerSerialization,
 
-        // Simplified WaterBody post process material handling
+        /// <summary> Simplified WaterBody post process material handling</summary>
         [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         FixUpUnderwaterPostProcessMaterial,
 
-        // A single water exclusion volume can now exclude N water bodies
+        /// <summary> A single water exclusion volume can now exclude N water bodies</summary>
         [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         SupportMultipleWaterBodiesPerExclusionVolume,
 
-        // Serialize rigvm operators one by one instead of the full byte code array to ensure determinism
+        /// <summary> Serialize rigvm operators one by one instead of the full byte code array to ensure determinism</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         RigVMByteCodeDeterminism,
 
-        // Serialize the physical materials generated by the render material
+        /// <summary> Serialize the physical materials generated by the render material</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         LandscapePhysicalMaterialRenderData,
 
-        // RuntimeVirtualTextureVolume fix transforms
+        /// <summary> RuntimeVirtualTextureVolume fix transforms</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         FixupRuntimeVirtualTextureVolume,
 
-        // Retrieve water body collision components that were lost in cooked builds
+        /// <summary> Retrieve water body collision components that were lost in cooked builds</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         FixUpRiverCollisionComponents,
 
-        // Fix duplicate spline mesh components on rivers
+        /// <summary> Fix duplicate spline mesh components on rivers</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         FixDuplicateRiverSplineMeshCollisionComponents,
 
-        // Indicates level has stable actor guids
+        /// <summary> Indicates level has stable actor guids</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         ContainsStableActorGUIDs,
 
-        // Levelset Serialization support for BodySetup.
+        /// <summary> Levelset Serialization support for BodySetup.</summary>
         [Introduced(UE4Version.VER_UE4_NON_OUTER_PACKAGE_IMPORT)]
         LevelsetSerializationSupportForBodySetup,
 
-        // Moving Chaos solver properties to allow them to exist in the project physics settings
+        /// <summary> Moving Chaos solver properties to allow them to exist in the project physics settings</summary>
         [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
         ChaosSolverPropertiesMoved,
 
-        // Moving some UFortGameFeatureData properties and behaviors into the UGameFeatureAction pattern
+        /// <summary> Moving some UFortGameFeatureData properties and behaviors into the UGameFeatureAction pattern</summary>
         [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
         GameFeatureData_MovedComponentListAndCheats,
 
-        // Add centrifugal forces for cloth
+        /// <summary> Add centrifugal forces for cloth</summary>
         [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
         ChaosClothAddfictitiousforces,
 
-        // Chaos Convex StructureData supports different index sizes based on num verts/planes
-        // Chaos FConvex uses array of FVec3s for vertices instead of particles
-        // (Merged from //UE4/Main)
+        /// <summary> Chaos Convex StructureData supports different index sizes based on num verts/planes. Chaos FConvex uses array of FVec3s for vertices instead of particles (Merged from //UE4/Main)</summary>
         [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
         ChaosConvexVariableStructureDataAndVerticesArray,
 
-        // Remove the WaterVelocityHeightTexture dependency on MPC_Landscape and LandscapeWaterIndo
+        /// <summary> Remove the WaterVelocityHeightTexture dependency on MPC_Landscape and LandscapeWaterIndo</summary>
         [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
         RemoveLandscapeWaterInfo,
 
-        // -----<new versions can be added above this line>-------------------------------------------------
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     };
 
+    /// <summary>
+    /// Custom serialization version for changes made in Dev-Framework stream.
+    /// </summary>
     public enum FFrameworkObjectVersion
     {
-        // Before any version changes were made
+        /// <summary> Before any version changes were made</summary>
         [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         BeforeCustomVersionWasAdded = 0,
 
-        // BodySetup's default instance collision profile is used by default when creating a new instance.
+        /// <summary> BodySetup's default instance collision profile is used by default when creating a new instance.</summary>
         [Introduced(UE4Version.VER_UE4_STREAMABLE_TEXTURE_AABB)]
         UseBodySetupCollisionProfile,
 
-        // Regenerate subgraph arrays correctly in animation blueprints to remove duplicates and add
-        // missing graphs that appear read only when edited
+        /// <summary> Regenerate subgraph arrays correctly in animation blueprints to remove duplicates and add missing graphs that appear read only when edited</summary>
         [Introduced(UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)]
         AnimBlueprintSubgraphFix,
 
-        // Static and skeletal mesh sockets now use the specified scale
+        /// <summary> Static and skeletal mesh sockets now use the specified scale</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         MeshSocketScaleUtilization,
 
-        // Attachment rules are now explicit in how they affect location, rotation and scale
+        /// <summary> Attachment rules are now explicit in how they affect location, rotation and scale</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         ExplicitAttachmentRules,
 
-        // Moved compressed anim data from uasset to the DDC
+        /// <summary> Moved compressed anim data from uasset to the DDC</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         MoveCompressedAnimDataToTheDDC,
 
-        // Some graph pins created using legacy code seem to have lost the RF_Transactional flag,
-        // which causes issues with undo. Restore the flag at this version
+        /// <summary> Some graph pins created using legacy code seem to have lost the RF_Transactional flag, which causes issues with undo. Restore the flag at this version</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         FixNonTransactionalPins,
 
-        // Create new struct for SmartName, and use that for CurveName
+        /// <summary> Create new struct for SmartName, and use that for CurveName</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         SmartNameRefactor,
 
-        // Add Reference Skeleton to Rig
+        /// <summary> Add Reference Skeleton to Rig</summary>
         [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
         AddSourceReferenceSkeletonToRig,
 
-        // Refactor ConstraintInstance so that we have an easy way to swap behavior paramters
+        /// <summary> Refactor ConstraintInstance so that we have an easy way to swap behavior paramters</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         ConstraintInstanceBehaviorParameters,
 
-        // Pose Asset support mask per bone
+        /// <summary> Pose Asset support mask per bone</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         PoseAssetSupportPerBoneMask,
 
-        // Physics Assets now use SkeletalBodySetup instead of BodySetup
+        /// <summary> Physics Assets now use SkeletalBodySetup instead of BodySetup</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         PhysAssetUseSkeletalBodySetup,
 
-        // Remove SoundWave CompressionName
+        /// <summary> Remove SoundWave CompressionName</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         RemoveSoundWaveCompressionName,
 
-        // Switched render data for clothing over to unreal data, reskinned to the simulation mesh
+        /// <summary> Switched render data for clothing over to unreal data, reskinned to the simulation mesh</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         AddInternalClothingGraphicalSkinning,
 
-        // Wheel force offset is now applied at the wheel instead of vehicle COM
+        /// <summary> Wheel force offset is now applied at the wheel instead of vehicle COM</summary>
         [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
         WheelOffsetIsFromWheel,
 
-        // Move curve metadata to be saved in skeleton
-        // Individual asset still saves some flag - i.e. disabled curve and editable or not, but 
-        // major flag - i.e. material types - moves to skeleton and handle in one place
+        /// <summary> Move curve metadata to be saved in skeleton. Individual asset still saves some flag - i.e. disabled curve and editable or not, but major flag - i.e. material types - moves to skeleton and handle in one place</summary>
         [Introduced(UE4Version.VER_UE4_COMPRESSED_SHADER_RESOURCES)]
         MoveCurveTypesToSkeleton,
 
-        // Cache destructible overlaps on save
+        /// <summary> Cache destructible overlaps on save</summary>
         [Introduced(UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)]
         CacheDestructibleOverlaps,
 
-        // Added serialization of materials applied to geometry cache objects
+        /// <summary> Added serialization of materials applied to geometry cache objects</summary>
         [Introduced(UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)]
         GeometryCacheMissingMaterials,
 
-        // Switch static & skeletal meshes to calculate LODs based on resolution-independent screen size
+        /// <summary> Switch static & skeletal meshes to calculate LODs based on resolution-independent screen size</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         LODsUseResolutionIndependentScreenSize,
 
-        // Blend space post load verification
+        /// <summary> Blend space post load verification</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         BlendSpacePostLoadSnapToGrid,
 
-        // Addition of rate scales to blend space samples
+        /// <summary> Addition of rate scales to blend space samples</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         SupportBlendSpaceRateScale,
 
-        // LOD hysteresis also needs conversion from the LODsUseResolutionIndependentScreenSize version
+        /// <summary> LOD hysteresis also needs conversion from the LODsUseResolutionIndependentScreenSize version</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         LODHysteresisUseResolutionIndependentScreenSize,
 
-        // AudioComponent override subtitle priority default change
+        /// <summary> AudioComponent override subtitle priority default change</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         ChangeAudioComponentOverrideSubtitlePriorityDefault,
 
-        // Serialize hard references to sound files when possible
+        /// <summary> Serialize hard references to sound files when possible</summary>
         [Introduced(UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)]
         HardSoundReferences,
 
-        // Enforce const correctness in Animation Blueprint function graphs
+        /// <summary> Enforce const correctness in Animation Blueprint function graphs</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         EnforceConstInAnimBlueprintFunctionGraphs,
 
-        // Upgrade the InputKeySelector to use a text style
+        /// <summary> Upgrade the InputKeySelector to use a text style</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         InputKeySelectorTextStyle,
 
-        // Represent a pins container type as an enum not 3 independent booleans
+        /// <summary> Represent a pins container type as an enum not 3 independent booleans</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         EdGraphPinContainerType,
 
-        // Switch asset pins to store as string instead of hard object reference
+        /// <summary> Switch asset pins to store as string instead of hard object reference</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         ChangeAssetPinsToString,
 
-        // Fix Local Variables so that the properties are correctly flagged as blueprint visible
+        /// <summary> Fix Local Variables so that the properties are correctly flagged as blueprint visible</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         LocalVariablesBlueprintVisible,
 
-        // Stopped serializing UField_Next so that UFunctions could be serialized in dependently of a UClass
-        // in order to allow us to do all UFunction loading in a single pass (after classes and CDOs are created):
+        /// <summary> Stopped serializing UField_Next so that UFunctions could be serialized in dependently of a UClass in order to allow us to do all UFunction loading in a single pass (after classes and CDOs are created):</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         RemoveUField_Next,
 
-        // Fix User Defined structs so that all members are correct flagged blueprint visible 
+        /// <summary> Fix User Defined structs so that all members are correct flagged blueprint visible </summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         UserDefinedStructsBlueprintVisible,
 
-        // FMaterialInput and FEdGraphPin store their name as FName instead of FString
+        /// <summary> FMaterialInput and FEdGraphPin store their name as FName instead of FString</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         PinsStoreFName,
 
-        // User defined structs store their default instance, which is used for initializing instances
+        /// <summary> User defined structs store their default instance, which is used for initializing instances</summary>
         [Introduced(UE4Version.VER_UE4_POINTLIGHT_SOURCE_ORIENTATION)]
         UserDefinedStructsStoreDefaultInstance,
 
-        // Function terminator nodes serialize an FMemberReference rather than a name/class pair
+        /// <summary> Function terminator nodes serialize an FMemberReference rather than a name/class pair</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         FunctionTerminatorNodesUseMemberReference,
 
-        // Custom event and non-native interface event implementations add 'const' to reference parameters
+        /// <summary> Custom event and non-native interface event implementations add 'const' to reference parameters</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
         EditableEventsUseConstRefParameters,
 
-        // No longer serialize the legacy flag that indicates this state, as it is now implied since we don't serialize the skeleton CDO
+        /// <summary> No longer serialize the legacy flag that indicates this state, as it is now implied since we don't serialize the skeleton CDO</summary>
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         BlueprintGeneratedClassIsAlwaysAuthoritative,
 
-        // Enforce visibility of blueprint functions - e.g. raise an error if calling a private function from another blueprint:
+        /// <summary> Enforce visibility of blueprint functions - e.g. raise an error if calling a private function from another blueprint:</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         EnforceBlueprintFunctionVisibility,
 
-        // ActorComponents now store their serialization index
+        /// <summary> ActorComponents now store their serialization index</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         StoringUCSSerializationIndex,
 
-        // -----<new versions can be added above this line>-------------------------------------------------
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     };
 
+    /// <summary>
+    /// Custom serialization version for changes made in Dev-Core stream.
+    /// </summary>
     public enum FCoreObjectVersion
     {
-        // Before any version changes were made
+        /// <summary> Before any version changes were made</summary>
         [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         BeforeCustomVersionWasAdded = 0,
+
         [Introduced(UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)]
         MaterialInputNativeSerialize,
+
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         EnumProperties,
+
         [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
         SkeletalMaterialEditorDataStripping,
+
         [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
         FProperties,
 
-        // -----<new versions can be added above this line>-------------------------------------------------
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    };
+
+    /// <summary>
+    /// Custom serialization version for changes made in Dev-Editor stream.
+    /// </summary>
+    public enum FEditorObjectVersion
+    {
+        /// <summary> Before any version changes were made</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary> Localizable text gathered and stored in packages is now flagged with a localizable text gathering process version</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        GatheredTextProcessVersionFlagging,
+
+        /// <summary> Fixed several issues with the gathered text cache stored in package headers</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        GatheredTextPackageCacheFixesV1,
+
+        /// <summary> Added support for "root" meta-data (meta-data not associated with a particular object in a package)</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        RootMetaDataSupport,
+
+        /// <summary> Fixed issues with how Blueprint bytecode was cached</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        GatheredTextPackageCacheFixesV2,
+
+        /// <summary> Updated FFormatArgumentData to allow variant data to be marshaled from a BP into C++</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        TextFormatArgumentDataIsVariant,
+
+        /// <summary> Changes to SplineComponent</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        SplineComponentCurvesInStruct,
+
+        /// <summary> Updated ComboBox to support toggling the menu open, better controller support</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        ComboBoxControllerSupportUpdate,
+
+        /// <summary> Refactor mesh editor materials</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        RefactorMeshEditorMaterials,
+
+        /// <summary> Added UFontFace assets</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedFontFaceAssets,
+
+        /// <summary> Add UPROPERTY for TMap of Mesh section, so the serialize will be done normally (and export to text will work correctly)</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        UPropertryForMeshSection,
+
+        /// <summary> Update the schema of all widget blueprints to use the WidgetGraphSchema</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        WidgetGraphSchema,
+
+        /// <summary> Added a specialized content slot to the background blur widget</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedBackgroundBlurContentSlot,
+
+        /// <summary> Updated UserDefinedEnums to have stable keyed display names</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        StableUserDefinedEnumDisplayNames,
+
+        /// <summary> Added "Inline" option to UFontFace assets</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedInlineFontFaceAssets,
+
+        /// <summary> Fix a serialization issue with static mesh FMeshSectionInfoMap FProperty</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        UPropertryForMeshSectionSerialize,
+
+        /// <summary> Adding a version bump for the new fast widget construction in case of problems.</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        FastWidgetTemplates,
+
+        /// <summary> Update material thumbnails to be more intelligent on default primitive shape for certain material types</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MaterialThumbnailRenderingChanges,
+
+        /// <summary> Introducing a new clipping system for Slate/UMG</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        NewSlateClippingSystem,
+
+        /// <summary> MovieScene Meta Data added as native Serialization</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MovieSceneMetaDataSerialization,
+
+        /// <summary> Text gathered from properties now adds two variants: a version without the package localization ID (for use at runtime), and a version with it (which is editor-only)</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        GatheredTextEditorOnlyPackageLocId,
+
+        /// <summary> Added AlwaysSign to FNumberFormattingOptions</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedAlwaysSignNumberFormattingOption,
+
+        /// <summary> Added additional objects that must be serialized as part of this new material feature</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedMaterialSharedInputs,
+
+        /// <summary> Added morph target section indices</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        AddedMorphTargetSectionIndices,
+
+        /// <summary> Serialize the instanced static mesh render data, to avoid building it at runtime</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        SerializeInstancedStaticMeshRenderData,
+
+        /// <summary> Change to MeshDescription serialization (moved to release)</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MeshDescriptionNewSerialization_MovedToRelease,
+
+        /// <summary> New format for mesh description attributes</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MeshDescriptionNewAttributeFormat,
+
+        /// <summary> Switch root component of SceneCapture actors from MeshComponent to SceneComponent</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        ChangeSceneCaptureRootComponent,
+
+        /// <summary> StaticMesh serializes MeshDescription instead of RawMesh</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        StaticMeshDeprecatedRawMesh,
+
+        /// <summary> MeshDescriptionBulkData contains a Guid used as a DDC key</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MeshDescriptionBulkDataGuid,
+
+        /// <summary> Change to MeshDescription serialization (removed FMeshPolygon::HoleContours)</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MeshDescriptionRemovedHoles,
+
+        /// <summary> Change to the WidgetCompoent WindowVisibilty default value</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        ChangedWidgetComponentWindowVisibilityDefault,
+
+        /// <summary> Avoid keying culture invariant display strings during serialization to avoid non-deterministic cooking issues</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        CultureInvariantTextSerializationKeyStability,
+
+        /// <summary> Change to UScrollBar and UScrollBox thickness property (removed implicit padding of 2, so thickness value must be incremented by 4).</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        ScrollBarThicknessChange,
+
+        /// <summary> Deprecated LandscapeHoleMaterial</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        RemoveLandscapeHoleMaterial,
+
+        /// <summary> MeshDescription defined by triangles instead of arbitrary polygons</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        MeshDescriptionTriangles,
+
+        /// <summary> Add weighted area and angle when computing the normals</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        ComputeWeightedNormals,
+
+        /// <summary> SkeletalMesh now can be rebuild in editor, no more need to re-import</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        SkeletalMeshBuildRefactor,
+
+        /// <summary> Move all SkeletalMesh source data into a private uasset in the same package has the skeletalmesh</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        SkeletalMeshMoveEditorSourceDataToPrivateAsset,
+
+        /// <summary> Parse text only if the number is inside the limits of its type</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        NumberParsingOptionsNumberLimitsAndClamping,
+
+        /// <summary> Make sure we can have more then 255 material in the skeletal mesh source data</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        SkeletalMeshSourceDataSupport16bitOfMaterialNumber,
+
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]

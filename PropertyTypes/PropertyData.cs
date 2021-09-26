@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public abstract class PropertyData
+    public abstract class PropertyData : ICloneable
     {
         public FName Name = new FName("");
         public int DuplicationIndex = 0;
@@ -49,6 +50,11 @@ namespace UAssetAPI.PropertyTypes
         public virtual void FromString(string[] d)
         {
 
+        }
+
+        public object Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 
