@@ -829,8 +829,7 @@ namespace UAssetAPI
             for (int i = 0; i < NameCount; i++)
             {
                 FString nameInMap = reader.ReadNameMapString(out uint hashes);
-                uint expectedHashes = CRCGenerator.GenerateHash(nameInMap);
-                if (hashes != expectedHashes) OverrideNameMapHashes.Add(nameInMap, 0);
+                if (hashes == 0) OverrideNameMapHashes[nameInMap] = 0;
                 AddNameReference(nameInMap, true);
             }
 
