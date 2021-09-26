@@ -69,5 +69,11 @@ namespace UAssetAPI.PropertyTypes
                 Value = null;
             }
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            EnumPropertyData cloningProperty = (EnumPropertyData)res;
+            cloningProperty.EnumType = (FName)this.EnumType?.Clone();
+        }
     }
 }

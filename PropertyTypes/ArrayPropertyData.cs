@@ -141,5 +141,12 @@ namespace UAssetAPI.PropertyTypes
         {
             if (d[4] != null) ArrayType = FName.FromString(d[4]);
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            ArrayPropertyData cloningProperty = (ArrayPropertyData)res;
+            cloningProperty.ArrayType = (FName)this.ArrayType?.Clone();
+            cloningProperty.DummyStruct = (StructPropertyData)this.DummyStruct?.Clone();
+        }
     }
 }

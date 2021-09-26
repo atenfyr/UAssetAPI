@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -135,6 +136,30 @@ namespace UAssetAPI.PropertyTypes
 
             writer.Write(Value.Count);
             return WriteRawMap(writer, Value) + 8;
+        }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            MapPropertyData cloningProperty = (MapPropertyData)res;
+
+            OrderedDictionary newDict = new OrderedDictionary();
+            foreach (DictionaryEntry entry in this.Value)
+            {
+                newDict[(entry.Key as PropertyData).Clone()] = (entry.Value as PropertyData).Clone();
+            }
+            cloningProperty.Value = newDict;
+
+            newDict = new OrderedDictionary();
+            foreach (DictionaryEntry entry in this.KeysToRemove)
+            {
+                newDict[(entry.Key as PropertyData).Clone()] = (entry.Value as PropertyData).Clone();
+            }
+            cloningProperty.KeysToRemove = newDict;
+
+            if (this.dummyEntry != null && this.dummyEntry.Length == 2)
+            {
+                cloningProperty.dummyEntry = new FName[] { (FName)this.dummyEntry[0].Clone(), (FName)this.dummyEntry[1].Clone() };
+            }
         }
     }
 }

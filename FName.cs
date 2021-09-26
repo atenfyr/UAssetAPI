@@ -10,7 +10,7 @@ namespace UAssetAPI
     /*
         Unreal string - consists of a string and an encoding
     */
-    public class FString
+    public class FString : ICloneable
     {
         public string Value;
         public Encoding Encoding;
@@ -33,6 +33,11 @@ namespace UAssetAPI
             return Value.GetHashCode();
         }
 
+        public object Clone()
+        {
+            return new FString(Value, Encoding);
+        }
+
         public FString(string value, Encoding encoding = null)
         {
             if (encoding == null) encoding = Encoding.ASCII;
@@ -50,7 +55,7 @@ namespace UAssetAPI
     /*
         Unreal name - consists of an FString (which is serialized as an index in the name map) and an instance number
     */
-    public class FName
+    public class FName : ICloneable
     {
         public FString Value;
         public int Number; // Instance number
@@ -86,6 +91,11 @@ namespace UAssetAPI
         public override int GetHashCode()
         {
             return Value.GetHashCode() ^ Number.GetHashCode();
+        }
+
+        public object Clone()
+        {
+            return new FName((FString)Value.Clone(), Number);
         }
 
         public FName(string value, int number = 0)

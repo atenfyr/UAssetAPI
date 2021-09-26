@@ -54,5 +54,12 @@ namespace UAssetAPI.PropertyTypes
         {
             return Convert.ToString(Value);
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            UnknownPropertyData cloningProperty = (UnknownPropertyData)res;
+
+            cloningProperty.SerializingPropertyType = (FName)SerializingPropertyType.Clone();
+        }
     }
 }

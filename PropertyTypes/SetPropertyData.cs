@@ -57,5 +57,20 @@ namespace UAssetAPI.PropertyTypes
             int leng1 = removedItemsDummy.Write(writer, false);
             return leng1 + base.Write(writer, false);
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            base.HandleCloned(res);
+            SetPropertyData cloningProperty = (SetPropertyData)res;
+
+            PropertyData[] newData = new PropertyData[this.RemovedItems.Length];
+            for (int i = 0; i < this.Value.Length; i++)
+            {
+                newData[i] = (PropertyData)this.Value[i].Clone();
+            }
+            cloningProperty.RemovedItems = newData;
+
+            cloningProperty.RemovedItemsDummyStruct = (StructPropertyData)this.RemovedItemsDummyStruct.Clone();
+        }
     }
 }

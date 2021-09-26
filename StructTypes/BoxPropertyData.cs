@@ -70,5 +70,17 @@ namespace UAssetAPI.StructTypes
             }
             return oup.Remove(oup.Length - 2) + ")";
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            BoxPropertyData cloningProperty = (BoxPropertyData)res;
+
+            VectorPropertyData[] newData = new VectorPropertyData[this.Value.Length];
+            for (int i = 0; i < this.Value.Length; i++)
+            {
+                newData[i] = (VectorPropertyData)this.Value[i].Clone();
+            }
+            cloningProperty.Value = newData;
+        }
     }
 }

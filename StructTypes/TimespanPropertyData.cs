@@ -50,5 +50,11 @@ namespace UAssetAPI.StructTypes
         {
             return Value.ToString();
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            TimespanPropertyData cloningProperty = (TimespanPropertyData)res;
+            cloningProperty.Value = new TimeSpan(cloningProperty.Value.Ticks);
+        }
     }
 }

@@ -99,5 +99,12 @@ namespace UAssetAPI.StructTypes
 
             return oup;
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            WeightedRandomSamplerPropertyData cloningProperty = (WeightedRandomSamplerPropertyData)res;
+            cloningProperty.Prob = (float[])this.Prob.Clone();
+            cloningProperty.Alias = (int[])this.Alias.Clone();
+        }
     }
 }

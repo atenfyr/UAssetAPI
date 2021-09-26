@@ -61,5 +61,11 @@ namespace UAssetAPI.StructTypes
             if (!int.TryParse(d[3], out int colorA)) return;
             Value = Color.FromArgb(colorA, colorR, colorG, colorB);
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            ColorPropertyData cloningProperty = (ColorPropertyData)res;
+            cloningProperty.Value = Color.FromArgb(this.Value.ToArgb());
+        }
     }
 }

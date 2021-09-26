@@ -3,10 +3,8 @@ using System.Text;
 
 namespace UAssetAPI.PropertyTypes
 {
-    public class StrPropertyData : PropertyData<string>
+    public class StrPropertyData : PropertyData<FString>
     {
-        public Encoding Encoding = Encoding.ASCII;
-
         public StrPropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
@@ -27,9 +25,7 @@ namespace UAssetAPI.PropertyTypes
                 reader.ReadByte();
             }
 
-            FString ustr = reader.ReadFStringWithEncoding();
-            if (ustr != null) Encoding = ustr.Encoding;
-            Value = ustr != null ? ustr.Value : null;
+            Value = reader.ReadFStringWithEncoding();
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -40,19 +36,20 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int here = (int)writer.BaseStream.Position;
-            writer.WriteFString(new FString(Value, Encoding));
+            writer.WriteFString(Value);
             return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
         {
-            return Value;
+            return Value.ToString();
         }
 
         public override void FromString(string[] d)
         {
-            Value = d[0];
-            if (d.Length >= 5) Encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
+            var encoding = Encoding.ASCII;
+            if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
+            Value = new FString(d[0], encoding);
         }
     }
 }

@@ -125,5 +125,19 @@ namespace UAssetAPI.StructTypes
         {
             if (d[4] != null) StructType = FName.FromString(d[4]);
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            StructPropertyData cloningProperty = (StructPropertyData)res;
+            cloningProperty.StructType = (FName)this.StructType.Clone();
+            cloningProperty.StructGUID = new Guid(this.StructGUID.ToByteArray());
+
+            List<PropertyData> newData = new List<PropertyData>(this.Value.Count);
+            for (int i = 0; i < this.Value.Count; i++)
+            {
+                newData.Add((PropertyData)this.Value[i].Clone());
+            }
+            cloningProperty.Value = newData;
+        }
     }
 }

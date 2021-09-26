@@ -178,5 +178,14 @@ namespace UAssetAPI.PropertyTypes
         {
             throw new NotImplementedException("TextPropertyData.FromString is currently unimplemented");
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            TextPropertyData cloningProperty = (TextPropertyData)res;
+
+            cloningProperty.TableId = (FName)TableId.Clone();
+            cloningProperty.Namespace = (FString)Namespace.Clone();
+            cloningProperty.Namespace = (FString)CultureInvariantString.Clone();
+        }
     }
 }

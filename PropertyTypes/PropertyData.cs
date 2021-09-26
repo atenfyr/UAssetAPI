@@ -52,9 +52,23 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
+        /// <summary>
+        /// Performs a deep clone of the current PropertyData instance.
+        /// </summary>
+        /// <returns>A deep copy of the current property.</returns>
         public object Clone()
         {
-            throw new NotImplementedException();
+            var res = (PropertyData)MemberwiseClone();
+            res.Name = (FName)this.Name.Clone();
+            if (res.RawValue is ICloneable cloneableValue) res.RawValue = cloneableValue.Clone();
+
+            HandleCloned(res);
+            return res;
+        }
+
+        protected virtual void HandleCloned(PropertyData res)
+        {
+            // Child classes can implement this for custom cloning behavior
         }
     }
 

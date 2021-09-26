@@ -45,6 +45,14 @@ namespace UAssetAPI.StructTypes
             int nameSizeB = ExpressionName.Write(writer, false);
             return nameSizeA + nameSizeB + sizeof(int) + 20;
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
+            cloningProperty.InputName = (NamePropertyData)this.InputName.Clone();
+            cloningProperty.InputName = (NamePropertyData)this.ExpressionName.Clone();
+            cloningProperty.Extras = (byte[])this.Extras.Clone();
+        }
     }
 
     public class ExpressionInputPropertyData : MaterialInputPropertyData<int>

@@ -50,5 +50,12 @@ namespace UAssetAPI.StructTypes
         {
             if (Guid.TryParse(d[0], out Guid res)) Value = res;
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            GuidPropertyData cloningProperty = (GuidPropertyData)res;
+
+            cloningProperty.Value = new Guid(Value.ToByteArray());
+        }
     }
 }

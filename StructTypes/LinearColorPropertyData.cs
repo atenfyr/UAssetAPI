@@ -22,7 +22,7 @@ namespace UAssetAPI.StructTypes
         }
     }
 
-    public class LinearColor
+    public class LinearColor : ICloneable
     {
         public float R;
         public float G;
@@ -40,6 +40,11 @@ namespace UAssetAPI.StructTypes
             this.G = G;
             this.B = B;
             this.A = A;
+        }
+
+        public object Clone()
+        {
+            return new LinearColor(this.R, this.G, this.B, this.A);
         }
     }
 

@@ -83,5 +83,18 @@ namespace UAssetAPI.PropertyTypes
         {
             
         }
+
+        protected override void HandleCloned(PropertyData res)
+        {
+            MulticastDelegatePropertyData cloningProperty = (MulticastDelegatePropertyData)res;
+
+            FMulticastDelegate[] newData = new FMulticastDelegate[this.Value.Length];
+            for (int i = 0; i < this.Value.Length; i++)
+            {
+                newData[i] = new FMulticastDelegate(this.Value[i].Number, (FName)this.Value[i].Delegate.Clone());
+            }
+
+            cloningProperty.Value = newData;
+        }
     }
 }
