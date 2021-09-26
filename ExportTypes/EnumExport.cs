@@ -119,7 +119,12 @@ namespace UAssetAPI
 
         }
 
-        public EnumExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public EnumExport(UAsset asset, byte[] extras) : base(asset, extras)
+        {
+
+        }
+
+        public EnumExport()
         {
 
         }

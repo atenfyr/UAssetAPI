@@ -1,33 +1,23 @@
 ﻿namespace UAssetAPI
 {
-    /**
-     * UObject resource type for objects that are referenced by this package, but contained
-     * within another package.
-     */
-    public class Import
+    /// <summary>
+    /// UObject resource type for objects that are referenced by this package, but contained within another package.
+    /// </summary>
+    public class Import : FObjectResource
     {
         public FName ClassPackage;
         public FName ClassName;
-        public int OuterIndex;
-        public FName ObjectName;
-        public int Index;
 
-        public Import(string classPackage, string className, int outerIndex, string objectName, int index = 0)
+        public Import(string classPackage, string className, int outerIndex, string objectName) : base(new FName(objectName), outerIndex)
         {
             ClassPackage = new FName(classPackage);
             ClassName = new FName(className);
-            OuterIndex = outerIndex;
-            ObjectName = new FName(objectName);
-            Index = index;
         }
 
-        public Import(FName classPackage, FName className, int outerIndex, FName objectName, int index = 0)
+        public Import(FName classPackage, FName className, int outerIndex, FName objectName) : base(objectName, outerIndex)
         {
             ClassPackage = classPackage;
             ClassName = className;
-            OuterIndex = outerIndex;
-            ObjectName = objectName;
-            Index = index;
         }
 
         public Import()

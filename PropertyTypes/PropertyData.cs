@@ -5,10 +5,26 @@ namespace UAssetAPI.PropertyTypes
 {
     public abstract class PropertyData : ICloneable
     {
+        /// <summary>
+        /// The name of this property.
+        /// </summary>
         public FName Name = new FName("");
+
+        /// <summary>
+        /// The duplication index of this property. Used to distinguish properties with the same name in the same struct.
+        /// </summary>
         public int DuplicationIndex = 0;
-        public long Offset; // offset in the file it was originally parsed in; for display only, has no value in the API itself
+
+        /// <summary>
+        /// The offset of this property in the file it was originally parsed in. This is for the user only, and has no bearing in the API itself.
+        /// </summary>
+        public long Offset;
+
+        /// <summary>
+        /// The asset that this property is parsed with.
+        /// </summary>
         public UAsset Asset;
+
         public object RawValue;
 
         public void SetObject(object value)
@@ -74,6 +90,9 @@ namespace UAssetAPI.PropertyTypes
 
     public abstract class PropertyData<T> : PropertyData
     {
+        /// <summary>
+        /// The main value of this property. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+        /// </summary>
         public T Value
         {
             get => GetObject<T>();

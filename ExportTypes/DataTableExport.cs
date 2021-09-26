@@ -41,9 +41,14 @@ namespace UAssetAPI
 
         }
 
-        public DataTableExport(DataTable data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public DataTableExport(DataTable data, UAsset asset, byte[] extras) : base(asset, extras)
         {
             Data2 = data;
+        }
+
+        public DataTableExport()
+        {
+
         }
 
         public override void Read(BinaryReader reader, int nextStarting)
@@ -54,9 +59,9 @@ namespace UAssetAPI
             FName decidedStructType = new FName("Generic");
             foreach (PropertyData thisData in Data)
             {
-                if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)
+                if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData && thisObjData.Value.IsImport())
                 {
-                    decidedStructType = thisObjData.Value.ObjectName;
+                    decidedStructType = thisObjData.ToImport().ObjectName;
                     break;
                 }
             }
@@ -89,7 +94,7 @@ namespace UAssetAPI
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = thisObjData.Value.ObjectName;
+                    decidedStructType = thisObjData.ToImport().ObjectName;
                     break;
                 }
             }

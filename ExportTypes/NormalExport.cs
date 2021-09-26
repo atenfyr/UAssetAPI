@@ -13,19 +13,23 @@ namespace UAssetAPI
 
         public NormalExport(Export super)
         {
-            ReferenceData = super.ReferenceData;
             Asset = super.Asset;
             Extras = super.Extras;
         }
 
-        public NormalExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(UAsset asset, byte[] extras) : base(asset, extras)
         {
 
         }
 
-        public NormalExport(IList<PropertyData> data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public NormalExport(IList<PropertyData> data, UAsset asset, byte[] extras) : base(asset, extras)
         {
             Data = data;
+        }
+
+        public NormalExport()
+        {
+
         }
 
         public override void Read(BinaryReader reader, int nextStarting = 0)

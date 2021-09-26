@@ -55,6 +55,8 @@
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />
+    <Compile Include="FObjectResource.cs" />
+    <Compile Include="FPackageIndex.cs" />
     <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
@@ -62,7 +64,6 @@
     <Compile Include="StructTypes\WeightedRandomSamplerPropertyData.cs" />
     <Compile Include="UAsset.cs" />
     <Compile Include="ExportTypes\Export.cs" />
-    <Compile Include="ExportDetails.cs" />
     <Compile Include="CRCGenerator.cs" />
     <Compile Include="PropertyTypes\ArrayPropertyData.cs" />
     <Compile Include="PropertyTypes\SetPropertyData.cs" />

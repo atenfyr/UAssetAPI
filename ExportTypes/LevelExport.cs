@@ -32,11 +32,15 @@ namespace UAssetAPI
 
         }
 
-        public LevelExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public LevelExport(UAsset asset, byte[] extras) : base(asset, extras)
         {
 
         }
 
+        public LevelExport()
+        {
+
+        }
         public override void Read(BinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);

@@ -59,7 +59,7 @@ namespace UAssetAPI
         /// <summary>
         /// The required type for the outer of instances of this class
         /// </summary>
-        public int ClassWithin;
+        public FPackageIndex ClassWithin;
 
         /// <summary>
         /// Which Name.ini file to load Config variables out of
@@ -75,7 +75,7 @@ namespace UAssetAPI
         /// <summary>
         /// This is the blueprint that caused the generation of this class, or null if it is a native compiled-in class
         /// </summary>
-        public int ClassGeneratedBy;
+        public FPackageIndex ClassGeneratedBy;
 
         /// <summary>
         /// Does this class use deprecated script order?
@@ -90,14 +90,19 @@ namespace UAssetAPI
         /// <summary>
         /// The class default object; used for delta serialization and object initialization
         /// </summary>
-        public int ClassDefaultObject;
+        public FPackageIndex ClassDefaultObject;
 
         public ClassExport(Export super) : base(super)
         {
 
         }
 
-        public ClassExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public ClassExport(UAsset asset, byte[] extras) : base(asset, extras)
+        {
+
+        }
+
+        public ClassExport()
         {
 
         }
@@ -123,7 +128,7 @@ namespace UAssetAPI
                 ClassFlags ^= EClassFlags.CLASS_NotPlaceable;
             }
 
-            ClassWithin = reader.ReadInt32();
+            ClassWithin = new FPackageIndex(reader.ReadInt32());
             ClassConfigName = reader.ReadFName(Asset);
             Asset.AddNameReference(ClassConfigName.Value);
 
@@ -137,7 +142,7 @@ namespace UAssetAPI
             }
 
             // Linking procedure here; I don't think anything is really serialized during this
-            ClassGeneratedBy = reader.ReadInt32();
+            ClassGeneratedBy = new FPackageIndex(reader.ReadInt32());
 
             long currentOffset = reader.BaseStream.Position;
             if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
@@ -164,7 +169,7 @@ namespace UAssetAPI
                 bCooked = reader.ReadInt32() == 1;
             }
 
-            ClassDefaultObject = reader.ReadInt32();
+            ClassDefaultObject = new FPackageIndex(reader.ReadInt32());
 
             // CDO serialization usually comes after this export has finished serializing
         }
@@ -187,7 +192,7 @@ namespace UAssetAPI
             }
             writer.Write((uint)serializingClassFlags);
 
-            writer.Write(ClassWithin);
+            writer.Write(ClassWithin.Index);
             writer.WriteFName(ClassConfigName, Asset);
 
             if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
@@ -196,7 +201,7 @@ namespace UAssetAPI
             }
 
             // Linking procedure here; I don't think anything is really serialized during this
-            writer.Write(ClassGeneratedBy);
+            writer.Write(ClassGeneratedBy.Index);
 
             if (Asset.EngineVersion >= UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
@@ -212,7 +217,7 @@ namespace UAssetAPI
                 writer.Write(bCooked ? 1 : 0);
             }
 
-            writer.Write(ClassDefaultObject);
+            writer.Write(ClassDefaultObject.Index);
         }
 
         private void SerializeInterfaces(BinaryWriter writer)

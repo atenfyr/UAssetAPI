@@ -90,19 +90,9 @@ namespace UAssetAPI
             else return val;
         }
 
-        public static int GetImportIndex(int index)
-        {
-            return -(index + 1);
-        }
-
-        public static int GetNormalIndex(int index)
-        {
-            return -(index + 1);
-        }
-
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)
         {
-            FString refer = asset.GetImportObjectName(j).Value;
+            FString refer = new FPackageIndex(j).ToImport(asset).ObjectName.Value;
             if (!asset.NameReferenceContains(refer)) return refer;
             return asset.GetNameReferenceWithoutZero(asset.SearchNameReference(refer));
         }

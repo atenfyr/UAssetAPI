@@ -22,9 +22,14 @@ namespace UAssetAPI
 
         }
 
-        public StringTableExport(StringTable data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public StringTableExport(StringTable data, UAsset asset, byte[] extras) : base(asset, extras)
         {
             Data2 = data;
+        }
+
+        public StringTableExport()
+        {
+
         }
 
         public override void Read(BinaryReader reader, int nextStarting)

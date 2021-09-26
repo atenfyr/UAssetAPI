@@ -11,12 +11,11 @@ namespace UAssetAPI
 
         public RawExport(Export super)
         {
-            ReferenceData = super.ReferenceData;
             Asset = super.Asset;
             Extras = super.Extras;
         }
 
-        public RawExport(byte[] data, ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public RawExport(byte[] data, UAsset asset, byte[] extras) : base(asset, extras)
         {
             Data = data;
         }

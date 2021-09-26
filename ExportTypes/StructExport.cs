@@ -9,12 +9,12 @@ namespace UAssetAPI
         /// <summary>
         /// Struct this inherits from, may be null
         /// </summary>
-        public int SuperStruct;
+        public FPackageIndex SuperStruct;
 
         /// <summary>
         /// List of child fields
         /// </summary>
-        public int[] Children;
+        public FPackageIndex[] Children;
 
         /// <summary>
         /// Properties serialized with this struct definition
@@ -36,25 +36,29 @@ namespace UAssetAPI
 
         }
 
-        public StructExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public StructExport(UAsset asset, byte[] extras) : base(asset, extras)
         {
 
         }
 
+        public StructExport()
+        {
+
+        }
         public override void Read(BinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
             reader.ReadInt32();
 
-            SuperStruct = reader.ReadInt32();
+            SuperStruct = new FPackageIndex(reader.ReadInt32());
 
             if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
                 int numIndexEntries = reader.ReadInt32();
-                Children = new int[numIndexEntries];
+                Children = new FPackageIndex[numIndexEntries];
                 for (int i = 0; i < numIndexEntries; i++)
                 {
-                    Children[i] = reader.ReadInt32();
+                    Children[i] = new FPackageIndex(reader.ReadInt32());
                 }
             }
             else
@@ -87,14 +91,14 @@ namespace UAssetAPI
             base.Write(writer);
             writer.Write((int)0);
 
-            writer.Write(SuperStruct);
+            writer.Write(SuperStruct.Index);
 
             if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
                 writer.Write(Children.Length);
                 for (int i = 0; i < Children.Length; i++)
                 {
-                    writer.Write(Children[i]);
+                    writer.Write(Children[i].Index);
                 }
             }
             else

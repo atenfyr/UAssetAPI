@@ -6,12 +6,16 @@ namespace UAssetAPI
     {
         public FunctionExport(Export super) : base(super)
         {
-            ReferenceData = super.ReferenceData;
             Asset = super.Asset;
             Extras = super.Extras;
         }
 
-        public FunctionExport(ExportDetails reference, UAsset asset, byte[] extras) : base(reference, asset, extras)
+        public FunctionExport(UAsset asset, byte[] extras) : base(asset, extras)
+        {
+
+        }
+
+        public FunctionExport()
         {
 
         }
