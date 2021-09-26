@@ -27,6 +27,16 @@ namespace UAssetAPI
         public int Index;
 
         /// <summary>
+        /// Returns an FPackageIndex based off of the index provided. Equivalent to <see cref="FPackageIndex(int)"/>.
+        /// </summary>
+        /// <param name="index">The index to create a new FPackageIndex with.</param>
+        /// <returns>A new FPackageIndex with the index provided.</returns>
+        public static FPackageIndex FromRawIndex(int index)
+        {
+            return new FPackageIndex(index);
+        }
+
+        /// <summary>
         /// Returns true if this is an index into the import map.
         /// </summary>
         /// <returns>true if this is an index into the import map, false otherwise</returns>
@@ -86,7 +96,9 @@ namespace UAssetAPI
         public Import ToImport(UAsset asset)
         {
             if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
-            return asset.Imports[-Index - 1];
+            int newIndex = -Index - 1;
+            if (newIndex < 0 || newIndex >= asset.Imports.Count) return null;
+            return asset.Imports[newIndex];
         }
 
         /// <summary>
@@ -98,7 +110,9 @@ namespace UAssetAPI
         public Export ToExport(UAsset asset)
         {
             if (!IsExport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
-            return asset.Exports[Index - 1];
+            int newIndex = Index - 1;
+            if (newIndex < 0 || newIndex >= asset.Exports.Count) return null;
+            return asset.Exports[newIndex];
         }
 
         public override bool Equals(object obj)
