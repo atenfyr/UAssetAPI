@@ -20,6 +20,11 @@ namespace UAssetAPI
             Data = data;
         }
 
+        public RawExport()
+        {
+
+        }
+
         public override void Write(BinaryWriter writer)
         {
             writer.Write(Data);

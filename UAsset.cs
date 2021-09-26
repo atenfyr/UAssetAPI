@@ -986,7 +986,7 @@ namespace UAssetAPI
                     {
                         if (forceReads == null || !forceReads.Contains(i))
                         {
-                            Exports[i] = new RawExport(Exports[i]);
+                            Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
                             ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
                             continue;
                         }
@@ -997,7 +997,7 @@ namespace UAssetAPI
                         long nextStarting = reader.BaseStream.Length - 4;
                         if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].SerialOffset;
 
-                        switch (Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value)
+                        switch (Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString())
                         {
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
@@ -1066,7 +1066,7 @@ namespace UAssetAPI
                         Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
                         reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        Exports[i] = new RawExport(Exports[i]);
+                        Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
                         ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
                     }
                 }
