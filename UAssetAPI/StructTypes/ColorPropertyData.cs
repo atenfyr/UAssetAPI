@@ -27,9 +27,9 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            byte R = reader.ReadByte();
-            byte G = reader.ReadByte();
             byte B = reader.ReadByte();
+            byte G = reader.ReadByte();
+            byte R = reader.ReadByte();
             byte A = reader.ReadByte();
             Value = Color.FromArgb(A, R, G, B);
         }
@@ -41,9 +41,9 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(Value.R);
-            writer.Write(Value.G);
             writer.Write(Value.B);
+            writer.Write(Value.G);
+            writer.Write(Value.R);
             writer.Write(Value.A);
             return sizeof(byte) * 4;
         }
