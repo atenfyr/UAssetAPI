@@ -111,7 +111,6 @@ namespace UAssetAPI.Tests
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestDuplicateNameMapEntries/BIOME_AzureWeald.uasset", "TestDuplicateNameMapEntries")]
         [DeploymentItem(@"TestAssets/TestDuplicateNameMapEntries/BIOME_AzureWeald.uexp", "TestDuplicateNameMapEntries")]
-
         public void TestDuplicateNameMapEntries()
         {
             var tester = new UAsset(Path.Combine("TestDuplicateNameMapEntries", "BIOME_AzureWeald.uasset"), UE4Version.VER_UE4_25);
@@ -184,7 +183,6 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestAstroneerAssets/Augment_BroadBrush.uasset", "TestAstroneerAssets")]
         [DeploymentItem(@"TestAssets/TestAstroneerAssets/LargeResourceCanister_IT.uasset", "TestAstroneerAssets")]
         [DeploymentItem(@"TestAssets/TestAstroneerAssets/ResourceProgressCurve.uasset", "TestAstroneerAssets")]
-
         public void TestAstroneerAssets()
         {
             string[] allTestingAssets = GetAllTestAssets("TestAstroneerAssets");
@@ -205,7 +203,6 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestBloodstainedAssets/m01SIP_000_Gimmick.umap", "TestBloodstainedAssets")]
         [DeploymentItem(@"TestAssets/TestBloodstainedAssets/m02VIL_004_Gimmick.umap", "TestBloodstainedAssets")]
         [DeploymentItem(@"TestAssets/TestBloodstainedAssets/PB_DT_RandomizerRoomCheck.uasset", "TestBloodstainedAssets")]
-
         public void TestBloodstainedAssets()
         {
             string[] allTestingAssets = GetAllTestAssets("TestBloodstainedAssets");
