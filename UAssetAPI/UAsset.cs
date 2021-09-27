@@ -140,7 +140,7 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Clears the name map.
+        /// Clears the name map. This method should be used with extreme caution, as it may break unparsed references to the name map.
         /// </summary>
         public void ClearNameIndexList()
         {
@@ -220,7 +220,7 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Adds a new import to the import map.
+        /// Adds a new import to the import map. You can also add directly to the <see cref="Imports"/> list.
         /// </summary>
         /// <param name="classPackage">The ClassPackage that the new import will have.</param>
         /// <param name="className">The ClassName that the new import will have.</param>
@@ -235,7 +235,7 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Adds a new import to the import map.
+        /// Adds a new import to the import map. You can also add directly to the <see cref="Imports"/> list.
         /// </summary>
         /// <param name="li">The new import to add to the import map.</param>
         /// <returns>The FPackageIndex corresponding to the newly-added import.</returns>
@@ -322,6 +322,7 @@ namespace UAssetAPI
         /// </summary>
         /// <typeparam name="T">The enum type of the custom version to retrieve.</typeparam>
         /// <returns>The enum value of the requested custom version.</returns>
+        /// <exception cref="ArgumentException">Thrown when T is not an enumerated type.</exception>
         public T GetCustomVersion<T>()
         {
             Type customVersionEnumType = typeof(T);
@@ -503,9 +504,9 @@ namespace UAssetAPI
         public FWorldTileInfo WorldTileInfo;
 
         /// <summary>
-        /// List of imports and exports that must be serialized before other exports...all packed together, see FirstExportDependency.
+        /// List of imports and exports that must be serialized before other exports...all packed together, see <see cref="Export.FirstExportDependency"/>.
         /// </summary>
-        public List<int> PreloadDependencies;
+        public List<FPackageIndex> PreloadDependencies;
 
         /// <summary>
         /// Data about previous versions of this package.
@@ -539,7 +540,7 @@ namespace UAssetAPI
         public EPackageFlags PackageFlags;
 
         /// <summary>
-        /// Value that is used to determine if the package was saved by Epic, a licensee, modder, etc.
+        /// Value that is used by the Unreal Engine to determine if the package was saved by Epic, a licensee, modder, etc.
         /// </summary>
         public uint PackageSource;
 
@@ -549,7 +550,7 @@ namespace UAssetAPI
         public FString FolderName;
 
         /// <summary>
-        /// In MapProperties that have StructProperties as their keys or values, there is no deterministic, universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
+        /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
         /// </summary>
         public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
         {
@@ -668,6 +669,7 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="reader"></param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         private void ReadHeader(BinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -816,6 +818,9 @@ namespace UAssetAPI
         /// <param name="reader">The input reader.</param>
         /// <param name="manualSkips">An array of export indexes to skip parsing. For most applications, this should be left blank.</param>
         /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
+
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
@@ -968,10 +973,10 @@ namespace UAssetAPI
             if (this.UseSeparateBulkDataFiles)
             {
                 reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
-                PreloadDependencies = new List<int>();
+                PreloadDependencies = new List<FPackageIndex>();
                 for (int i = 0; i < PreloadDependencyCount; i++)
                 {
-                    PreloadDependencies.Add(reader.ReadInt32());
+                    PreloadDependencies.Add(new FPackageIndex(reader.ReadInt32()));
                 }
             }
 
@@ -1379,7 +1384,7 @@ namespace UAssetAPI
                 this.PreloadDependencyCount = this.PreloadDependencies.Count;
                 for (int i = 0; i < this.PreloadDependencies.Count; i++)
                 {
-                    writer.Write(this.PreloadDependencies[i]);
+                    writer.Write(this.PreloadDependencies[i].Index);
                 }
             }
 
@@ -1545,9 +1550,11 @@ namespace UAssetAPI
         /// <summary>
         /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
-        /// <param name="path">The path of the asset file that this instance will read from.</param>
-        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             this.FilePath = path;
@@ -1560,9 +1567,11 @@ namespace UAssetAPI
         /// <summary>
         /// Reads an asset from a BinaryReader and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
-        /// <param name="reader">The asset BinaryReader that this instance will read from.</param>
-        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             EngineVersion = engineVersion;
@@ -1573,8 +1582,8 @@ namespace UAssetAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
         /// </summary>
-        /// <param name="engineVersion">The version of the Unreal Engine that this asset was serialized with. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
         public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             EngineVersion = engineVersion;
