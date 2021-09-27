@@ -43,7 +43,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value == null ? "null" : Value.ToString();
         }
 
         public override void FromString(string[] d)

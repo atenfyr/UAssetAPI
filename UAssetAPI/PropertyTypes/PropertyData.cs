@@ -19,9 +19,9 @@ namespace UAssetAPI.PropertyTypes
         public int DuplicationIndex = 0;
 
         /// <summary>
-        /// The offset of this property in the file it was originally parsed in. This is for the user only, and has no bearing in the API itself.
+        /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
         /// </summary>
-        public long Offset;
+        public long Offset = -1;
 
         /// <summary>
         /// The asset that this property is parsed with.

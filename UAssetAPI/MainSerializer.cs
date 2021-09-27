@@ -106,8 +106,8 @@ namespace UAssetAPI
                 Debug.WriteLine("Parsing unknown type " + type.ToString());
                 Debug.WriteLine("Length: " + leng);
                 if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
-                Debug.WriteLine("Last type: " + lastType.PropertyType.ToString());
-                if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType.ToString());
+                Debug.WriteLine("Last type: " + lastType.PropertyType?.ToString());
+                if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType?.ToString());
                 Debug.WriteLine("-----------");
 #endif
                 if (leng > 0)
@@ -201,6 +201,7 @@ namespace UAssetAPI
         {
             if (property == null) return 0;
 
+            property.Offset = writer.BaseStream.Position;
             writer.WriteFName(property.Name, asset);
             if (property is UnknownPropertyData unknownProp)
             {

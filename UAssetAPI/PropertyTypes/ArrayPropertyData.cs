@@ -120,6 +120,7 @@ namespace UAssetAPI.PropertyTypes
                 for (int i = 0; i < Value.Length; i++)
                 {
                     ((StructPropertyData)Value[i]).StructType = fullType;
+                    Value[i].Offset = writer.BaseStream.Position;
                     Value[i].Write(writer, false);
                 }
 
@@ -133,6 +134,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 for (int i = 0; i < Value.Length; i++)
                 {
+                    Value[i].Offset = writer.BaseStream.Position;
                     Value[i].Write(writer, false);
                 }
             }

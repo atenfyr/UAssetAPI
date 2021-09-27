@@ -106,7 +106,9 @@ namespace UAssetAPI.PropertyTypes
             int here = (int)writer.BaseStream.Position;
             foreach (DictionaryEntry entry in map)
             {
+                ((PropertyData)entry.Key).Offset = writer.BaseStream.Position;
                 ((PropertyData)entry.Key).Write(writer, false);
+                ((PropertyData)entry.Value).Offset = writer.BaseStream.Position;
                 ((PropertyData)entry.Value).Write(writer, false);
             }
             return (int)writer.BaseStream.Position - here;
