@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
@@ -6,35 +7,20 @@ using UAssetAPI.StructTypes;
 namespace UAssetAPI
 {
     /// <summary>
-    /// An entry in a <see cref="DataTable"/>.
-    /// </summary>
-    public struct DataTableEntry
-    {
-        public StructPropertyData Data;
-        public int DuplicateIndex;
-
-        public DataTableEntry(StructPropertyData data, int duplicateIndex)
-        {
-            Data = data;
-            DuplicateIndex = duplicateIndex;
-        }
-    }
-
-    /// <summary>
     /// Imported spreadsheet table.
     /// </summary>
     public class DataTable
     {
-        public List<DataTableEntry> Table;
+        public List<StructPropertyData> Data;
 
         public DataTable()
         {
-            Table = new List<DataTableEntry>();
+            Data = new List<StructPropertyData>();
         }
 
-        public DataTable(List<DataTableEntry> data)
+        public DataTable(List<StructPropertyData> data)
         {
-            Table = data;
+            Data = data;
         }
     }
 
@@ -43,7 +29,7 @@ namespace UAssetAPI
     /// </summary>
     public class DataTableExport : NormalExport
     {
-        public DataTable Data2;
+        public DataTable Table;
 
         public DataTableExport(Export super) : base(super)
         {
@@ -52,7 +38,7 @@ namespace UAssetAPI
 
         public DataTableExport(DataTable data, UAsset asset, byte[] extras) : base(asset, extras)
         {
-            Data2 = data;
+            Table = data;
         }
 
         public DataTableExport()
@@ -77,19 +63,18 @@ namespace UAssetAPI
 
             reader.ReadInt32();
 
-            Data2 = new DataTable();
+            Table = new DataTable();
 
             int numEntries = reader.ReadInt32();
             for (int i = 0; i < numEntries; i++)
             {
-                FString rowName = Asset.GetNameReference(reader.ReadInt32());
-                int duplicateIndex = reader.ReadInt32();
-                var nextStruct = new StructPropertyData(new FName(rowName), Asset)
+                FName rowName = reader.ReadFName(Asset);
+                var nextStruct = new StructPropertyData(rowName, Asset)
                 {
                     StructType = decidedStructType
                 };
-                nextStruct.Read(reader, false, 0);
-                Data2.Table.Add(new DataTableEntry(nextStruct, duplicateIndex));
+                nextStruct.Read(reader, false, 1);
+                Table.Data.Add(nextStruct);
             }
         }
 
@@ -110,14 +95,13 @@ namespace UAssetAPI
 
             writer.Write((int)0);
 
-            writer.Write(Data2.Table.Count);
-            for (int i = 0; i < Data2.Table.Count; i++)
+            writer.Write(Table.Data.Count);
+            for (int i = 0; i < Table.Data.Count; i++)
             {
-                var thisDataTableEntry = Data2.Table[i];
-                thisDataTableEntry.Data.StructType = decidedStructType;
-                writer.Write((int)Asset.SearchNameReference(thisDataTableEntry.Data.Name.Value));
-                writer.Write(thisDataTableEntry.DuplicateIndex);
-                thisDataTableEntry.Data.Write(writer, false);
+                var thisDataTableEntry = Table.Data[i];
+                thisDataTableEntry.StructType = decidedStructType;
+                writer.WriteFName(thisDataTableEntry.Name, Asset);
+                thisDataTableEntry.Write(writer, false);
             }
         }
     }

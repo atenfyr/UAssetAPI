@@ -117,9 +117,6 @@
     <Compile Include="UE4Version.cs" />
     <Compile Include="UAPUtils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
