@@ -27,11 +27,7 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            byte B = reader.ReadByte();
-            byte G = reader.ReadByte();
-            byte R = reader.ReadByte();
-            byte A = reader.ReadByte();
-            Value = Color.FromArgb(A, R, G, B);
+            Value = Color.FromArgb(reader.ReadInt32());
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -41,11 +37,8 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(Value.B);
-            writer.Write(Value.G);
-            writer.Write(Value.R);
-            writer.Write(Value.A);
-            return sizeof(byte) * 4;
+            writer.Write(Value.ToArgb());
+            return sizeof(int);
         }
 
         public override string ToString()
