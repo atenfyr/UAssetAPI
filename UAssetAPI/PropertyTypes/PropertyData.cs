@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Generic property class.
+    /// Generic Unreal property class.
     /// </summary>
     public abstract class PropertyData : ICloneable
     {
@@ -65,7 +65,6 @@ namespace UAssetAPI.PropertyTypes
             return 0;
         }
 
-
         public virtual void FromString(string[] d)
         {
 
@@ -94,7 +93,7 @@ namespace UAssetAPI.PropertyTypes
     public abstract class PropertyData<T> : PropertyData
     {
         /// <summary>
-        /// The main value of this property. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+        /// The main value of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
         /// </summary>
         public T Value
         {
@@ -107,7 +106,7 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        public PropertyData()
+        public PropertyData() : base()
         {
 
         }

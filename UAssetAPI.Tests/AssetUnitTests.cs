@@ -50,7 +50,7 @@ namespace UAssetAPI.Tests
         public void TestCustomSerializationStructsInMap()
         {
             var tester = new UAsset(Path.Combine("TestCustomSerializationStructsInMap", "wtf.uasset"), UE4Version.VER_UE4_25);
-            Assert.IsTrue(tester.VerifyParsing());
+            Assert.IsTrue(tester.VerifyBinaryEquality());
 
             // Get the first property in export 2, which should be a map
             Export exportTwo = FPackageIndex.FromRawIndex(2).ToExport(tester);
@@ -82,7 +82,7 @@ namespace UAssetAPI.Tests
         public void TestImproperNameMapHashes()
         {
             var tester = new UAsset(Path.Combine("TestImproperNameMapHashes", "OC_Gatling_DamageB_B.uasset"), UE4Version.VER_UE4_25);
-            Assert.IsTrue(tester.VerifyParsing());
+            Assert.IsTrue(tester.VerifyBinaryEquality());
 
             Dictionary<string, bool> testingEntries = new Dictionary<string, bool>();
             testingEntries["/Game/WeaponsNTools/GatlingGun/Overclocks/OC_BonusesAndPenalties/OC_Bonus_MovmentBonus_150p"] = false;
@@ -143,7 +143,7 @@ namespace UAssetAPI.Tests
         public void TestUnknownProperties()
         {
             var tester = new UAsset(Path.Combine("TestUnknownProperties", "BP_DetPack_Charge.uasset"), UE4Version.VER_UE4_25);
-            Assert.IsTrue(tester.VerifyParsing());
+            Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
             // Check that only the expected unknown properties are present
@@ -190,7 +190,7 @@ namespace UAssetAPI.Tests
             {
                 Debug.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, UE4Version.VER_UE4_23);
-                Assert.IsTrue(tester.VerifyParsing());
+                Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
             }
         }
@@ -210,7 +210,7 @@ namespace UAssetAPI.Tests
             {
                 Debug.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, UE4Version.VER_UE4_18);
-                Assert.IsTrue(tester.VerifyParsing());
+                Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
             }
         }

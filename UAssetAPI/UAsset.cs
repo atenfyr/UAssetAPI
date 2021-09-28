@@ -104,10 +104,10 @@ namespace UAssetAPI
         public UE4Version EngineVersion = UE4Version.UNKNOWN;
 
         /// <summary>
-        /// Checks whether or not this asset maintains binary equality when seralized without any changes.
+        /// Checks whether or not this asset maintains binary equality when serialized.
         /// </summary>
-        /// <returns>Whether or not the asset verified parsing.</returns>
-        public bool VerifyParsing()
+        /// <returns>Whether or not the asset maintained binary equality.</returns>
+        public bool VerifyBinaryEquality()
         {
             MemoryStream f = this.PathToStream(FilePath);
             f.Seek(0, SeekOrigin.Begin);
@@ -220,22 +220,7 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Adds a new import to the import map. You can also add directly to the <see cref="Imports"/> list.
-        /// </summary>
-        /// <param name="classPackage">The ClassPackage that the new import will have.</param>
-        /// <param name="className">The ClassName that the new import will have.</param>
-        /// <param name="outerIndex">The CuterIndex that the new import will have.</param>
-        /// <param name="objectName">The ObjectName that the new import will have.</param>
-        /// <returns>The new import that was added to the import map.</returns>
-        public Import AddImport(string classPackage, string className, int outerIndex, string objectName)
-        {
-            Import nuevo = new Import(classPackage, className, outerIndex, objectName);
-            Imports.Add(nuevo);
-            return nuevo;
-        }
-
-        /// <summary>
-        /// Adds a new import to the import map. You can also add directly to the <see cref="Imports"/> list.
+        /// Adds a new import to the import map. This is equivalent to adding directly to the <see cref="Imports"/> list.
         /// </summary>
         /// <param name="li">The new import to add to the import map.</param>
         /// <returns>The FPackageIndex corresponding to the newly-added import.</returns>
@@ -246,9 +231,9 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Searches for and returns a ClassExport in this asset.
+        /// Searches for and returns this asset's ClassExport, if one exists.
         /// </summary>
-        /// <returns>A ClassExport if one exists, otherwise null.</returns>
+        /// <returns>The asset's ClassExport if one exists, otherwise null.</returns>
         public ClassExport GetClassExport()
         {
             foreach (Export cat in Exports)
@@ -342,8 +327,8 @@ namespace UAssetAPI
             for (int i = allVals.Length - 1; i >= 0; i--)
             {
                 T val = allVals[i];
-                var attributes = customVersionEnumType.GetMember(val.ToString())[0].GetCustomAttributes(typeof(IntroducedAttribute), false);
-                if (attributes.Length <= 0) continue;
+                var attributes = customVersionEnumType.GetMember(val.ToString())?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
+                if (attributes == null || attributes.Length <= 0) continue;
                 if (EngineVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return val;
             }
 
@@ -820,7 +805,6 @@ namespace UAssetAPI
         /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-
         public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
