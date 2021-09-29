@@ -33,11 +33,13 @@ namespace UAssetAPI
 
         public static bool operator ==(FString one, FString two)
         {
+            if (one is null || two is null) return one is null && two is null;
             return one.Equals(two);
         }
 
         public static bool operator !=(FString one, FString two)
         {
+            if (one is null || two is null) return !(one is null && two is null);
             return !one.Equals(two);
         }
 
@@ -103,11 +105,13 @@ namespace UAssetAPI
 
         public static bool operator ==(FName one, FName two)
         {
+            if (one is null || two is null) return one is null && two is null;
             return one.Equals(two);
         }
 
         public static bool operator !=(FName one, FName two)
         {
+            if (one == null || two == null) return !(one is null && two is null);
             return !one.Equals(two);
         }
 

@@ -1,27 +1,8 @@
 using System.IO;
+using System.Linq;
 
 namespace UAssetAPI
 {
-    /// <summary>
-    /// An entry in a ClassExport's function map (<see cref="ClassExport.FuncMap"/>). A hashtable is not used for the sake of guaranteeing order.
-    /// </summary>
-    public struct FunctionDataEntry
-    {
-        public FName Name;
-        public int Category;
-
-        public FunctionDataEntry(FName name, int category)
-        {
-            Name = name;
-            Category = category;
-        }
-
-        public override string ToString()
-        {
-            return "(" + Name.ToString() + ", " + Category + ")";
-        }
-    }
-
     /// <summary>
     /// An interface that a UClass (<see cref="ClassExport"/>) implements.
     /// </summary>
@@ -47,7 +28,7 @@ namespace UAssetAPI
         /// <summary>
         /// Map of all functions by name contained in this class
         /// </summary>
-        public FunctionDataEntry[] FuncMap; // TMap<FName, UFunction*>
+        public TMap<FName, FPackageIndex> FuncMap;
 
         /// <summary>
         /// Class flags; See <see cref="EClassFlags"/> for more information
@@ -110,13 +91,13 @@ namespace UAssetAPI
             base.Read(reader, nextStarting);
 
             int numFuncIndexEntries = reader.ReadInt32();
-            FuncMap = new FunctionDataEntry[numFuncIndexEntries];
+            FuncMap = new TMap<FName, FPackageIndex>();
             for (int i = 0; i < numFuncIndexEntries; i++)
             {
                 FName functionName = reader.ReadFName(Asset);
-                int functionCategory = reader.ReadInt32();
+                FPackageIndex functionExport = FPackageIndex.FromRawIndex(reader.ReadInt32());
 
-                FuncMap[i] = new FunctionDataEntry(functionName, functionCategory);
+                FuncMap.Add(functionName, functionExport);
             }
 
             ClassFlags = (EClassFlags)reader.ReadUInt32();
@@ -176,11 +157,11 @@ namespace UAssetAPI
         {
             base.Write(writer);
 
-            writer.Write(FuncMap.Length);
-            for (int i = 0; i < FuncMap.Length; i++)
+            writer.Write(FuncMap.Count);
+            for (int i = 0; i < FuncMap.Count; i++)
             {
-                writer.WriteFName(FuncMap[i].Name, Asset);
-                writer.Write((int)FuncMap[i].Category);
+                writer.WriteFName(FuncMap.Keys.ElementAt(i), Asset);
+                writer.Write(FuncMap[i].Index);
             }
 
             EClassFlags serializingClassFlags = ClassFlags;
