@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class UInt16PropertyData : PropertyData<ushort>
     {
-        public UInt16PropertyData(FName name, UAsset asset) : base(name, asset)
+        public UInt16PropertyData(FName name) : base(name)
         {
 
         }
@@ -21,7 +21,7 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("UInt16Property");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -31,7 +31,7 @@ namespace UAssetAPI.PropertyTypes
             Value = reader.ReadUInt16();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -47,7 +47,7 @@ namespace UAssetAPI.PropertyTypes
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             Value = 0;
             if (ushort.TryParse(d[0], out ushort res)) Value = res;

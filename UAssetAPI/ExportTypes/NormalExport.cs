@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -9,7 +10,7 @@ namespace UAssetAPI
     /// </summary>
     public class NormalExport : Export
     {
-        public IList<PropertyData> Data;
+        public List<PropertyData> Data;
 
         public NormalExport(Export super)
         {
@@ -22,7 +23,7 @@ namespace UAssetAPI
 
         }
 
-        public NormalExport(IList<PropertyData> data, UAsset asset, byte[] extras) : base(asset, extras)
+        public NormalExport(List<PropertyData> data, UAsset asset, byte[] extras) : base(asset, extras)
         {
             Data = data;
         }
@@ -32,7 +33,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read(BinaryReader reader, int nextStarting = 0)
+        public override void Read(AssetBinaryReader reader, int nextStarting = 0)
         {
             Data = new List<PropertyData>();
             PropertyData bit;
@@ -42,14 +43,14 @@ namespace UAssetAPI
             }
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             for (int j = 0; j < Data.Count; j++)
             {
                 PropertyData current = Data[j];
                 MainSerializer.Write(current, Asset, writer, true);
             }
-            writer.WriteFName(new FName("None"), Asset);
+            writer.Write(new FName("None"));
         }
     }
 }

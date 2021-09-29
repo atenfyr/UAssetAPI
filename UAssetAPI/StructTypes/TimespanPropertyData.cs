@@ -17,7 +17,7 @@ namespace UAssetAPI.StructTypes
     /// </summary>
     public class TimespanPropertyData : PropertyData<TimeSpan>
     {
-        public TimespanPropertyData(FName name, UAsset asset) : base(name, asset)
+        public TimespanPropertyData(FName name) : base(name)
         {
 
         }
@@ -31,7 +31,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -41,7 +41,7 @@ namespace UAssetAPI.StructTypes
             Value = new TimeSpan(reader.ReadInt64()); // number of ticks
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -52,7 +52,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(long);
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             Value = TimeSpan.Parse(d[0]);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -6,16 +7,19 @@ namespace UAssetAPI.PropertyTypes
     /// <summary>
     /// Generic Unreal property class.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public abstract class PropertyData : ICloneable
     {
         /// <summary>
         /// The name of this property.
         /// </summary>
+        [JsonProperty]
         public FName Name = new FName("");
 
         /// <summary>
         /// The duplication index of this property. Used to distinguish properties with the same name in the same struct.
         /// </summary>
+        [JsonProperty]
         public int DuplicationIndex = 0;
 
         /// <summary>
@@ -27,11 +31,6 @@ namespace UAssetAPI.PropertyTypes
         /// An optional tag which can be set on any property. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public object Tag;
-
-        /// <summary>
-        /// The asset that this property is parsed with.
-        /// </summary>
-        public UAsset Asset;
 
         public object RawValue;
 
@@ -45,10 +44,9 @@ namespace UAssetAPI.PropertyTypes
             return (T)RawValue;
         }
 
-        public PropertyData(FName name, UAsset asset)
+        public PropertyData(FName name)
         {
             Name = name;
-            Asset = asset;
         }
 
         public PropertyData()
@@ -67,7 +65,7 @@ namespace UAssetAPI.PropertyTypes
         /// <param name="includeHeader">Whether or not to also read the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
         /// <param name="leng1">An estimate for the length of the data being read out.</param>
         /// <param name="leng2">A second estimate for the length of the data being read out.</param>
-        public virtual void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public virtual void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
 
         }
@@ -77,8 +75,8 @@ namespace UAssetAPI.PropertyTypes
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
         /// <param name="includeHeader">Whether or not to also write the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
-        /// <returns>The length of the data that was written.</returns>
-        public virtual int Write(BinaryWriter writer, bool includeHeader)
+        /// <returns>The length in bytes of the data that was written.</returns>
+        public virtual int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             return 0;
         }
@@ -87,7 +85,8 @@ namespace UAssetAPI.PropertyTypes
         /// Sets certain fields of the property based off of an array of strings.
         /// </summary>
         /// <param name="d">An array of strings to derive certain fields from.</param>
-        public virtual void FromString(string[] d)
+        /// <param name="asset">The asset that the property belongs to.</param>
+        public virtual void FromString(string[] d, UAsset asset)
         {
 
         }
@@ -117,13 +116,14 @@ namespace UAssetAPI.PropertyTypes
         /// <summary>
         /// The main value of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
         /// </summary>
+        [JsonProperty]
         public T Value
         {
             get => GetObject<T>();
             set => SetObject(value);
         }
 
-        public PropertyData(FName name, UAsset asset) : base(name, asset)
+        public PropertyData(FName name) : base(name)
         {
 
         }

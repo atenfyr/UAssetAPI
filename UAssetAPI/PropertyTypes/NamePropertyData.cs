@@ -7,7 +7,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class NamePropertyData : PropertyData<FName>
     {
-        public NamePropertyData(FName name, UAsset asset) : base(name, asset)
+        public NamePropertyData(FName name) : base(name)
         {
 
         }
@@ -20,24 +20,24 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("NameProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            Value = reader.ReadFName(Asset);
+            Value = reader.ReadFName();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
                 writer.Write((byte)0);
             }
 
-            writer.WriteFName(Value, Asset);
+            writer.Write(Value);
             return sizeof(int) * 2;
         }
 
@@ -46,7 +46,7 @@ namespace UAssetAPI.PropertyTypes
             return Value == null ? "null" : Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             Value = FName.FromString(d[0]);
         }

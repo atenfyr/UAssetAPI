@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -11,18 +12,22 @@ namespace UAssetAPI.StructTypes
     public class QuatPropertyData : PropertyData
     {
         /// <summary>The quaternion's X-component.</summary>
+        [JsonProperty]
         public float X;
 
         /// <summary>The quaternion's Y-component.</summary>
+        [JsonProperty]
         public float Y;
 
         /// <summary>The quaternion's Z-component.</summary>
+        [JsonProperty]
         public float Z;
 
         /// <summary>The quaternion's W-component.</summary>
+        [JsonProperty]
         public float W;
 
-        public QuatPropertyData(FName name, UAsset asset) : base(name, asset)
+        public QuatPropertyData(FName name) : base(name)
         {
 
         }
@@ -36,7 +41,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -49,7 +54,7 @@ namespace UAssetAPI.StructTypes
             W = reader.ReadSingle();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -63,7 +68,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(float) * 4;
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             if (float.TryParse(d[0], out float res1)) X = res1;
             if (float.TryParse(d[1], out float res2)) Y = res2;

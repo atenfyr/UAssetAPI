@@ -1,11 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace UAssetAPI
 {
+    public class FPackageIndexJsonConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(FPackageIndex);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue((value as FPackageIndex).Index);
+        }
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return new FPackageIndex(Convert.ToInt32(reader.Value));
+        }
+    }
+
     /// <summary>
     /// Wrapper for index into an ImportMap or ExportMap.
     /// 
@@ -15,6 +36,7 @@ namespace UAssetAPI
     /// Values less than zero indicate that this is an index into the ImportMap.
     /// The actual array index will be (-FPackageIndex - 1)
     /// </summary>
+    [JsonConverter(typeof(FPackageIndexJsonConverter))]
     public class FPackageIndex
     {
         /// <summary>

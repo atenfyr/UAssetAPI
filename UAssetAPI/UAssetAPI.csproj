@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetBinaryWriter.cs" />
+    <Compile Include="AssetBinaryReader.cs" />
     <Compile Include="CustomVersion.cs" />
     <Compile Include="ExportTypes\ClassExport.cs" />
     <Compile Include="ExportTypes\DataTableExport.cs" />
@@ -118,6 +120,10 @@
     <Compile Include="UE4Version.cs" />
     <Compile Include="UAPUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

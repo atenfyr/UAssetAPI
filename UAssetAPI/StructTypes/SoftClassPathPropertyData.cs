@@ -5,7 +5,7 @@
     /// </summary>
     public class SoftClassPathPropertyData : SoftObjectPathPropertyData
     {
-        public SoftClassPathPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SoftClassPathPropertyData(FName name) : base(name)
         {
 
         }

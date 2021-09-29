@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
@@ -7,9 +8,10 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class AssetObjectPropertyData : PropertyData<FString>
     {
+        [JsonProperty]
         public uint ID = 0;
 
-        public AssetObjectPropertyData(FName name, UAsset asset) : base(name, asset)
+        public AssetObjectPropertyData(FName name) : base(name)
         {
 
         }
@@ -22,24 +24,24 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("AssetObjectProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            Value = reader.ReadFStringWithEncoding();
+            Value = reader.ReadFString();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
                 writer.Write((byte)0);
             }
 
-            return writer.WriteFString(Value);
+            return writer.Write(Value);
         }
 
         public override string ToString()
@@ -47,9 +49,9 @@ namespace UAssetAPI.PropertyTypes
             return "(" + Value + ", " + ID + ")";
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
-            Asset.AddNameReference(new FString(d[0]));
+            asset.AddNameReference(new FString(d[0]));
             Value = new FString(d[0]);
         }
     }
@@ -59,9 +61,10 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class SoftObjectPropertyData : PropertyData<FName>
     {
+        [JsonProperty]
         public uint ID = 0;
 
-        public SoftObjectPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SoftObjectPropertyData(FName name) : base(name)
         {
 
         }
@@ -74,25 +77,25 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("SoftObjectProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            Value = reader.ReadFName(Asset);
+            Value = reader.ReadFName();
             ID = reader.ReadUInt32();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
                 writer.Write((byte)0);
             }
 
-            writer.WriteFName(Value, Asset);
+            writer.Write(Value);
             writer.Write(ID);
             return sizeof(int) * 3;
         }
@@ -102,10 +105,10 @@ namespace UAssetAPI.PropertyTypes
             return "(" + Value.ToString() + ", " + ID + ")";
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             FName output = FName.FromString(d[0]);
-            Asset.AddNameReference(output.Value);
+            asset.AddNameReference(output.Value);
             Value = output;
 
             if (uint.TryParse(d[1], out uint res2))

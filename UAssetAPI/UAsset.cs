@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -41,22 +45,23 @@ namespace UAssetAPI
         /// <summary>Branch name.</summary>
         public FString Branch;
 
-        public void Write(BinaryWriter writer)
+        public void Write(AssetBinaryWriter writer)
         {
+            if (Branch?.Value == string.Empty) Branch = null;
             writer.Write(Major);
             writer.Write(Minor);
             writer.Write(Patch);
             writer.Write(Changelist);
-            writer.WriteFString(Branch);
+            writer.Write(Branch);
         }
 
-        public FEngineVersion(BinaryReader reader)
+        public FEngineVersion(AssetBinaryReader reader)
         {
             Major = reader.ReadUInt16();
             Minor = reader.ReadUInt16();
             Patch = reader.ReadUInt16();
             Changelist = reader.ReadUInt32();
-            Branch = reader.ReadFStringWithEncoding();
+            Branch = reader.ReadFString();
         }
 
         public FEngineVersion(ushort major, ushort minor, ushort patch, uint changelist, FString branch)
@@ -91,6 +96,7 @@ namespace UAssetAPI
         /// <summary>
         /// The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
         /// </summary>
+        [JsonIgnore]
         public string FilePath;
 
         /// <summary>
@@ -130,12 +136,24 @@ namespace UAssetAPI
             return true;
         }
 
+        private void FixNameMapLookupIfNeeded()
+        {
+            if (nameMapIndexList.Count > 0 && nameMapLookup.Count == 0)
+            {
+                for (int i = 0; i < nameMapIndexList.Count; i++)
+                {
+                    nameMapLookup[nameMapIndexList[i].GetHashCode()] = i;
+                }
+            }
+        }
+
         /// <summary>
         /// Returns the name map as a read-only list of FStrings.
         /// </summary>
         /// <returns>The name map as a read-only list of FStrings.</returns>
         public IReadOnlyList<FString> GetNameMapIndexList()
         {
+            FixNameMapLookupIfNeeded();
             return nameMapIndexList.AsReadOnly();
         }
 
@@ -155,6 +173,7 @@ namespace UAssetAPI
         /// <param name="value">The value that will be replaced in the name map.</param>
         public void SetNameReference(int index, FString value)
         {
+            FixNameMapLookupIfNeeded();
             nameMapIndexList[index] = value;
             nameMapLookup[value.GetHashCode()] = index;
         }
@@ -166,6 +185,7 @@ namespace UAssetAPI
         /// <returns>The value at the index provided.</returns>
         public FString GetNameReference(int index)
         {
+            FixNameMapLookupIfNeeded();
             if (index < 0) return new FString(Convert.ToString(-index));
             if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
@@ -178,6 +198,7 @@ namespace UAssetAPI
         /// <returns>The value at the index provided.</returns>
         public FString GetNameReferenceWithoutZero(int index)
         {
+            FixNameMapLookupIfNeeded();
             if (index <= 0) return new FString(Convert.ToString(-index));
             if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
@@ -190,6 +211,7 @@ namespace UAssetAPI
         /// <returns>true if the value appears in the name map, otherwise false.</returns>
         public bool NameReferenceContains(FString search)
         {
+            FixNameMapLookupIfNeeded();
             return nameMapLookup.ContainsKey(search.GetHashCode());
         }
 
@@ -201,6 +223,7 @@ namespace UAssetAPI
         /// <exception cref="UAssetAPI.NameMapOutOfRangeException">Thrown when the value provided does not appear in the name map.</exception>
         public int SearchNameReference(FString search)
         {
+            FixNameMapLookupIfNeeded();
             if (NameReferenceContains(search)) return nameMapLookup[search.GetHashCode()];
             throw new NameMapOutOfRangeException(search);
         }
@@ -213,6 +236,7 @@ namespace UAssetAPI
         /// <returns>The index of the new value in the name map. If the value already existed in the name map beforehand, that index will be returned instead.</returns>
         public int AddNameReference(FString name, bool forceAddDuplicates = false)
         {
+            FixNameMapLookupIfNeeded();
             if (!forceAddDuplicates && NameReferenceContains(name)) return SearchNameReference(name);
             nameMapIndexList.Add(name);
             nameMapLookup[name.GetHashCode()] = nameMapIndexList.Count - 1;
@@ -475,7 +499,7 @@ namespace UAssetAPI
         /// <summary>
         /// List of packages that are soft referenced by this package.
         /// </summary>
-        public List<string> SoftPackageReferenceList;
+        public List<FString> SoftPackageReferenceList;
 
         /// <summary>
         /// Uncertain
@@ -522,6 +546,7 @@ namespace UAssetAPI
         /// <summary>
         /// The flags for this package.
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public EPackageFlags PackageFlags;
 
         /// <summary>
@@ -546,6 +571,7 @@ namespace UAssetAPI
         /// <summary>
         /// External programs often improperly specify name map hashes, so in this map we can preserve those changes to avoid confusion.
         /// </summary>
+        [JsonIgnore]
         public Dictionary<FString, uint> OverrideNameMapHashes;
 
         /// <summary>This is called "TotalHeaderSize" in UE4 where header refers to the whole summary, whereas in UAssetAPI "header" refers to just the data before the start of the name map</summary>
@@ -558,9 +584,11 @@ namespace UAssetAPI
         internal int NameOffset;
 
         /// <summary>Number of gatherable text data items in this package</summary>
+        [JsonProperty]
         internal int GatherableTextDataCount;
 
         /// <summary>Location into the file on disk for the gatherable text data items</summary>
+        [JsonProperty]
         internal int GatherableTextDataOffset;
 
         /// <summary>Number of exports contained in this package</summary>
@@ -585,12 +613,15 @@ namespace UAssetAPI
         internal int SoftPackageReferencesOffset = 0;
 
         /// <summary>Location into the file on disk for the SearchableNamesMap data</summary>
+        [JsonProperty]
         internal int SearchableNamesOffset;
 
         /// <summary>Thumbnail table offset</summary>
+        [JsonProperty]
         internal int ThumbnailTableOffset;
 
         /// <summary>Should be zero</summary>
+        [JsonProperty]
         internal uint CompressionFlags;
 
         /// <summary>Location into the file on disk for the asset registry tag data</summary>
@@ -608,14 +639,19 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the preload dependency data</summary>
         internal int PreloadDependencyOffset;
 
+        [JsonProperty]
         internal bool doWeHaveDependsMap = true;
+        [JsonProperty]
         internal bool doWeHaveSoftPackageReferences = true;
+        [JsonProperty]
         internal bool doWeHaveAssetRegistryData = true;
+        [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
 
         /// <summary>
         /// Internal list of name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
         /// </summary>
+        [JsonProperty("NameMap")]
         private List<FString> nameMapIndexList;
 
         /// <summary>
@@ -655,7 +691,7 @@ namespace UAssetAPI
         /// <param name="reader"></param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        private void ReadHeader(BinaryReader reader)
+        private void ReadHeader(AssetBinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
@@ -697,7 +733,7 @@ namespace UAssetAPI
             }
 
             SectionSixOffset = reader.ReadInt32(); // 24
-            FolderName = reader.ReadFStringWithEncoding();
+            FolderName = reader.ReadFString();
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
@@ -805,7 +841,7 @@ namespace UAssetAPI
         /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public void Read(BinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
+        public void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             // Header
             ReadHeader(reader);
@@ -829,7 +865,7 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(ImportOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ImportCount; i++)
                 {
-                    Imports.Add(new Import(reader.ReadFName(this), reader.ReadFName(this), reader.ReadInt32(), reader.ReadFName(this)));
+                    Imports.Add(new Import(reader.ReadFName(), reader.ReadFName(), reader.ReadInt32(), reader.ReadFName()));
                 }
             }
 
@@ -848,7 +884,7 @@ namespace UAssetAPI
                         newExport.TemplateIndex = new FPackageIndex(reader.ReadInt32());
                     }
                     newExport.OuterIndex = reader.ReadInt32();
-                    newExport.ObjectName = reader.ReadFName(this);
+                    newExport.ObjectName = reader.ReadFName();
                     newExport.ObjectFlags = (EObjectFlags)reader.ReadUInt32();
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
@@ -908,7 +944,7 @@ namespace UAssetAPI
             }
 
             // SoftPackageReferenceList
-            SoftPackageReferenceList = new List<string>();
+            SoftPackageReferenceList = new List<FString>();
             if (SoftPackageReferencesOffset > 0)
             {
                 reader.BaseStream.Seek(SoftPackageReferencesOffset, SeekOrigin.Begin);
@@ -1068,7 +1104,7 @@ namespace UAssetAPI
         private byte[] MakeHeader()
         {
             var stre = new MemoryStream(this.NameOffset);
-            BinaryWriter writer = new BinaryWriter(stre);
+            AssetBinaryWriter writer = new AssetBinaryWriter(stre, this);
 
             writer.Write(UAsset.UASSET_MAGIC);
             writer.Write(LegacyFileVersion);
@@ -1106,7 +1142,7 @@ namespace UAssetAPI
             }
 
             writer.Write(SectionSixOffset);
-            writer.WriteFString(FolderName);
+            writer.Write(FolderName);
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
@@ -1202,7 +1238,7 @@ namespace UAssetAPI
         public MemoryStream WriteData()
         {
             var stre = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stre);
+            AssetBinaryWriter writer = new AssetBinaryWriter(stre, this);
 
             // Header
             writer.Seek(0, SeekOrigin.Begin);
@@ -1213,8 +1249,8 @@ namespace UAssetAPI
             this.NameCount = this.nameMapIndexList.Count;
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
-                writer.WriteFString(nameMapIndexList[i]);
-                if (OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
+                writer.Write(nameMapIndexList[i]);
+                if (OverrideNameMapHashes != null && OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
                 {
                     writer.Write(OverrideNameMapHashes[nameMapIndexList[i]]);
                 }
@@ -1231,10 +1267,10 @@ namespace UAssetAPI
                 this.ImportCount = this.Imports.Count;
                 for (int i = 0; i < this.Imports.Count; i++)
                 {
-                    writer.WriteFName(this.Imports[i].ClassPackage, this);
-                    writer.WriteFName(this.Imports[i].ClassName, this);
+                    writer.Write(this.Imports[i].ClassPackage);
+                    writer.Write(this.Imports[i].ClassName);
                     writer.Write(this.Imports[i].OuterIndex);
-                    writer.WriteFName(this.Imports[i].ObjectName, this);
+                    writer.Write(this.Imports[i].ObjectName);
                 }
             }
             else
@@ -1257,7 +1293,7 @@ namespace UAssetAPI
                         writer.Write(us.TemplateIndex.Index);
                     }
                     writer.Write(us.OuterIndex);
-                    writer.WriteFName(us.ObjectName, this);
+                    writer.Write(us.ObjectName);
                     writer.Write((uint)us.ObjectFlags);
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
@@ -1325,7 +1361,7 @@ namespace UAssetAPI
                 this.SoftPackageReferencesCount = this.SoftPackageReferenceList.Count;
                 for (int i = 0; i < this.SoftPackageReferenceList.Count; i++)
                 {
-                    writer.WriteFString(this.SoftPackageReferenceList[i]);
+                    writer.Write(this.SoftPackageReferenceList[i]);
                 }
             }
             else
@@ -1371,6 +1407,10 @@ namespace UAssetAPI
                     writer.Write(this.PreloadDependencies[i].Index);
                 }
             }
+            else
+            {
+                this.PreloadDependencyCount = -1;
+            }
 
             // Export data
             int oldOffset = this.SectionSixOffset;
@@ -1410,7 +1450,7 @@ namespace UAssetAPI
                         writer.Write(us.TemplateIndex.Index);
                     }
                     writer.Write(us.OuterIndex);
-                    writer.WriteFName(us.ObjectName, this);
+                    writer.Write(us.ObjectName);
                     writer.Write((uint)us.ObjectFlags);
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
@@ -1492,9 +1532,9 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="p">The path to the input file.</param>
         /// <returns>A new BinaryReader that stores the binary data of the input file.</returns>
-        public BinaryReader PathToReader(string p)
+        public AssetBinaryReader PathToReader(string p)
         {
-            return new BinaryReader(PathToStream(p));
+            return new AssetBinaryReader(PathToStream(p), this);
         }
 
         /// <summary>
@@ -1528,7 +1568,32 @@ namespace UAssetAPI
                     newData.CopyTo(f);
                 }
             }
+        }
 
+        /// <summary>
+        /// Serializes this asset as JSON.
+        /// </summary>
+        /// <returns>A JSON string that represents the asset.</returns>
+        public string SerializeJson()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+            });
+        }
+
+        /// <summary>
+        /// Reads an asset from serialized JSON and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="json"></param>
+        public static UAsset DeserializeJson(string json)
+        {
+            UAsset res = JsonConvert.DeserializeObject<UAsset>(json, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+            });
+            foreach (Export ex in res.Exports) ex.Asset = res;
+            return res;
         }
 
         /// <summary>
@@ -1556,7 +1621,7 @@ namespace UAssetAPI
         /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(BinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
+        public UAsset(AssetBinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
         {
             EngineVersion = engineVersion;
             CustomVersionContainer = defaultCustomVersionContainer;
@@ -1572,6 +1637,14 @@ namespace UAssetAPI
         {
             EngineVersion = engineVersion;
             CustomVersionContainer = defaultCustomVersionContainer;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
+        /// </summary>
+        public UAsset()
+        {
+
         }
     }
 }

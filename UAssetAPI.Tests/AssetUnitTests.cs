@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -255,6 +256,30 @@ namespace UAssetAPI.Tests
             // Save and check that it's binary equal to what we originally had
             tester2.Write(tester2.FilePath);
             Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestDatatables", "PB_DT_RandomizerRoomCheck.uasset")).SequenceEqual(File.ReadAllBytes(Path.Combine("TestDatatables", "MODIFIED.uasset"))));
+        }
+
+        private void TestJsonOnFile(string file, UE4Version version)
+        {
+            var tester = new UAsset(Path.Combine("TestJson", file), version);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+
+            string jsonSerializedAsset = tester.SerializeJson();
+            File.WriteAllText(Path.Combine("TestJson", "raw.json"), jsonSerializedAsset);
+
+            var tester2 = UAsset.DeserializeJson(jsonSerializedAsset);
+            tester2.Write(Path.Combine("TestJson", "MODIFIED.uasset"));
+            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestJson", file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestJson", "MODIFIED.uasset"))));
+
+        }
+
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
+        public void TestJson()
+        {
+            TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", UE4Version.VER_UE4_18);
+            TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
         }
     }
 }

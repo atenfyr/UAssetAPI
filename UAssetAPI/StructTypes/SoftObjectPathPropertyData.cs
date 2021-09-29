@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
@@ -11,15 +12,18 @@ namespace UAssetAPI.StructTypes
     public class SoftObjectPathPropertyData : PropertyData
     {
         /// <summary>Asset path, patch to a top level object in a package. This is /package/path.assetname</summary>
+        [JsonProperty]
         public FName AssetPathName;
 
         /// <summary>Optional FString for subobject within an asset. This is the sub path after the :</summary>
+        [JsonProperty]
         public FString SubPathString;
 
         /// <summary>Used in older versions of the Unreal Engine.</summary>
+        [JsonProperty]
         public FString Path;
 
-        public SoftObjectPathPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SoftObjectPathPropertyData(FName name) : base(name)
         {
 
         }
@@ -33,25 +37,25 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            if (reader.Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
-                Path = reader.ReadFStringWithEncoding();
+                Path = reader.ReadFString();
             }
             else
             {
-                AssetPathName = reader.ReadFName(Asset);
-                SubPathString = reader.ReadFStringWithEncoding();
+                AssetPathName = reader.ReadFName();
+                SubPathString = reader.ReadFString();
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -60,14 +64,14 @@ namespace UAssetAPI.StructTypes
 
             int here = (int)writer.BaseStream.Position;
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            if (writer.Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
-                writer.WriteFString(Path);
+                writer.Write(Path);
             }
             else
             {
-                writer.WriteFName(AssetPathName, Asset);
-                writer.WriteFString(SubPathString);
+                writer.Write(AssetPathName);
+                writer.Write(SubPathString);
             }
 
             return (int)writer.BaseStream.Position - here;
@@ -78,10 +82,10 @@ namespace UAssetAPI.StructTypes
             return "(" + AssetPathName.ToString() + ", " + SubPathString.ToString() + ")";
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             FName output = FName.FromString(d[0]);
-            Asset.AddNameReference(output.Value);
+            asset.AddNameReference(output.Value);
             AssetPathName = output;
 
             if (d.Length > 1)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -6,11 +7,14 @@ namespace UAssetAPI.PropertyTypes
     /// <summary>
     /// Describes a function bound to an Object.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class FMulticastDelegate
     {
         /** Uncertain what this is for; if you find out, please let me know */
+        [JsonProperty]
         public int Number;
         /** Uncertain what this is for; if you find out, please let me know */
+        [JsonProperty]
         public FName Delegate;
 
         public FMulticastDelegate(int number, FName @delegate)
@@ -30,7 +34,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class MulticastDelegatePropertyData : PropertyData<FMulticastDelegate[]>
     {
-        public MulticastDelegatePropertyData(FName name, UAsset asset) : base(name, asset)
+        public MulticastDelegatePropertyData(FName name) : base(name)
         {
 
         }
@@ -43,7 +47,7 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("MulticastDelegateProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -54,11 +58,11 @@ namespace UAssetAPI.PropertyTypes
             Value = new FMulticastDelegate[numVals];
             for (int i = 0; i < numVals; i++)
             {
-                Value[i] = new FMulticastDelegate(reader.ReadInt32(), reader.ReadFName(Asset));
+                Value[i] = new FMulticastDelegate(reader.ReadInt32(), reader.ReadFName());
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -69,7 +73,7 @@ namespace UAssetAPI.PropertyTypes
             for (int i = 0; i < Value.Length; i++)
             {
                 writer.Write(Value[i].Number);
-                writer.WriteFName(Value[i].Delegate, Asset);
+                writer.Write(Value[i].Delegate);
             }
             return sizeof(int) + sizeof(int) * 3 * Value.Length;
         }
@@ -84,7 +88,7 @@ namespace UAssetAPI.PropertyTypes
             return oup.Substring(0, oup.Length - 2) + ")";
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             
         }

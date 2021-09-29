@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class BoolPropertyData : PropertyData<bool>
     {
-        public BoolPropertyData(FName name, UAsset asset) : base(name, asset)
+        public BoolPropertyData(FName name) : base(name)
         {
 
         }
@@ -21,7 +21,7 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("BoolProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             Value = reader.ReadBoolean();
             if (includeHeader)
@@ -30,7 +30,7 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             writer.Write(Value);
             if (includeHeader)
@@ -45,7 +45,7 @@ namespace UAssetAPI.PropertyTypes
             return Convert.ToString(Value);
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             Value = d[0].Equals("1") || d[0].ToLowerInvariant().Equals("true");
         }

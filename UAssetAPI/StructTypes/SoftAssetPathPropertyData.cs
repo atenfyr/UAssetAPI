@@ -2,7 +2,7 @@
 {
     public class SoftAssetPathPropertyData : SoftObjectPathPropertyData
     {
-        public SoftAssetPathPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SoftAssetPathPropertyData(FName name) : base(name)
         {
 
         }

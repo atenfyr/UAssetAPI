@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -6,11 +7,14 @@ namespace UAssetAPI.StructTypes
 {
     public class WeightedRandomSamplerPropertyData : PropertyData
     {
+        [JsonProperty]
         public float[] Prob;
+        [JsonProperty]
         public int[] Alias;
+        [JsonProperty]
         public float TotalWeight;
 
-        public WeightedRandomSamplerPropertyData(FName name, UAsset asset) : base(name, asset)
+        public WeightedRandomSamplerPropertyData(FName name) : base(name)
         {
 
         }
@@ -24,7 +28,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -48,7 +52,7 @@ namespace UAssetAPI.StructTypes
             TotalWeight = reader.ReadSingle();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -72,7 +76,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(int) + sizeof(float) * Prob.Length + sizeof(int) + sizeof(int) * Alias.Length + sizeof(float);
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
 
         }

@@ -18,7 +18,7 @@ namespace UAssetAPI.StructTypes
         /// <summary>Vector's Z-component.</summary>
         public float Z;
 
-        public VectorPropertyData(FName name, UAsset asset) : base(name, asset)
+        public VectorPropertyData(FName name) : base(name)
         {
 
         }
@@ -32,7 +32,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -44,7 +44,7 @@ namespace UAssetAPI.StructTypes
             Z = reader.ReadSingle();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -57,7 +57,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(float) * 3;
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             if (float.TryParse(d[0], out float res1)) X = res1;
             if (float.TryParse(d[1], out float res2)) Y = res2;

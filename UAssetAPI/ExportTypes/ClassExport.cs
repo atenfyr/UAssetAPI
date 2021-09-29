@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 
@@ -28,6 +29,7 @@ namespace UAssetAPI
         /// <summary>
         /// Map of all functions by name contained in this class
         /// </summary>
+        [JsonConverter(typeof(TMapJsonConverter<FName, FPackageIndex>))]
         public TMap<FName, FPackageIndex> FuncMap;
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
 
@@ -94,7 +96,7 @@ namespace UAssetAPI
             FuncMap = new TMap<FName, FPackageIndex>();
             for (int i = 0; i < numFuncIndexEntries; i++)
             {
-                FName functionName = reader.ReadFName(Asset);
+                FName functionName = reader.ReadFName();
                 FPackageIndex functionExport = FPackageIndex.FromRawIndex(reader.ReadInt32());
 
                 FuncMap.Add(functionName, functionExport);
@@ -108,7 +110,7 @@ namespace UAssetAPI
             }
 
             ClassWithin = new FPackageIndex(reader.ReadInt32());
-            ClassConfigName = reader.ReadFName(Asset);
+            ClassConfigName = reader.ReadFName();
             Asset.AddNameReference(ClassConfigName.Value);
 
             int numInterfaces = 0;
@@ -153,14 +155,14 @@ namespace UAssetAPI
             // CDO serialization usually comes after this export has finished serializing
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
 
             writer.Write(FuncMap.Count);
             for (int i = 0; i < FuncMap.Count; i++)
             {
-                writer.WriteFName(FuncMap.Keys.ElementAt(i), Asset);
+                writer.Write(FuncMap.Keys.ElementAt(i));
                 writer.Write(FuncMap[i].Index);
             }
 
@@ -172,7 +174,7 @@ namespace UAssetAPI
             writer.Write((uint)serializingClassFlags);
 
             writer.Write(ClassWithin.Index);
-            writer.WriteFName(ClassConfigName, Asset);
+            writer.Write(ClassConfigName);
 
             if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
@@ -189,7 +191,7 @@ namespace UAssetAPI
 
             writer.Write(bDeprecatedForceScriptOrder ? 1 : 0);
 
-            writer.WriteFName(new FName("None"), Asset);
+            writer.Write(new FName("None"));
 
             if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
             {

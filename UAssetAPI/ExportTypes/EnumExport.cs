@@ -23,14 +23,14 @@ namespace UAssetAPI
         /// <summary>How the enum was originally defined.</summary>
         public ECppForm CppForm = ECppForm.Regular;
 
-        public void Read(BinaryReader reader, UAsset asset)
+        public void Read(AssetBinaryReader reader, UAsset asset)
         {
             if (asset.EngineVersion < UE4Version.VER_UE4_TIGHTLY_PACKED_ENUMS)
             {
                 int numEntries = reader.ReadInt32();
                 for (int i = 0; i < numEntries; i++)
                 {
-                    FName tempName = reader.ReadFName(asset);
+                    FName tempName = reader.ReadFName();
                     Names.Add(new Tuple<FName, long>(tempName, i));
                 }
             }
@@ -39,7 +39,7 @@ namespace UAssetAPI
                 int numEntries = reader.ReadInt32();
                 for (int i = 0; i < numEntries; i++)
                 {
-                    FName tempName = reader.ReadFName(asset);
+                    FName tempName = reader.ReadFName();
                     byte tempVal = reader.ReadByte();
                     Names.Add(new Tuple<FName, long>(tempName, tempVal));
                 }
@@ -49,7 +49,7 @@ namespace UAssetAPI
                 int numEntries = reader.ReadInt32();
                 for (int i = 0; i < numEntries; i++)
                 {
-                    FName tempName = reader.ReadFName(asset);
+                    FName tempName = reader.ReadFName();
                     long tempVal = reader.ReadInt64();
                     Names.Add(new Tuple<FName, long>(tempName, tempVal));
                 }
@@ -66,7 +66,7 @@ namespace UAssetAPI
             }
         }
 
-        public void Write(BinaryWriter writer, UAsset asset)
+        public void Write(AssetBinaryWriter writer, UAsset asset)
         {
             writer.Write(Names.Count);
             if (asset.EngineVersion < UE4Version.VER_UE4_TIGHTLY_PACKED_ENUMS)
@@ -75,14 +75,14 @@ namespace UAssetAPI
                 for (int i = 0; i < Names.Count; i++) namesForSerialization.Add(Names[i].Item2, Names[i].Item1);
                 for (int i = 0; i < Names.Count; i++)
                 {
-                    if (namesForSerialization.ContainsKey(i)) writer.WriteFName(namesForSerialization[i], asset);
+                    if (namesForSerialization.ContainsKey(i)) writer.Write(namesForSerialization[i]);
                 }
             }
             else if (asset.GetCustomVersion<FCoreObjectVersion>() < FCoreObjectVersion.EnumProperties)
             {
                 for (int i = 0; i < Names.Count; i++)
                 {
-                    writer.WriteFName(Names[i].Item1, asset);
+                    writer.Write(Names[i].Item1);
                     writer.Write((byte)Names[i].Item2);
                 }
             }
@@ -90,7 +90,7 @@ namespace UAssetAPI
             {
                 for (int i = 0; i < Names.Count; i++)
                 {
-                    writer.WriteFName(Names[i].Item1, asset);
+                    writer.Write(Names[i].Item1);
                     writer.Write(Names[i].Item2);
                 }
             }
@@ -134,7 +134,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
             reader.ReadInt32();
@@ -143,7 +143,7 @@ namespace UAssetAPI
             Enum.Read(reader, Asset);
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
             writer.Write((int)0);

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 
 namespace UAssetAPI.PropertyTypes
 {
@@ -7,9 +8,10 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class EnumPropertyData : PropertyData<FName>
     {
+        [JsonProperty]
         public FName EnumType;
 
-        public EnumPropertyData(FName name, UAsset asset) : base(name, asset)
+        public EnumPropertyData(FName name) : base(name)
         {
 
         }
@@ -22,24 +24,24 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("EnumProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
-                EnumType = reader.ReadFName(Asset);
+                EnumType = reader.ReadFName();
                 reader.ReadByte(); // null byte
             }
-            Value = reader.ReadFName(Asset);
+            Value = reader.ReadFName();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
-                writer.WriteFName(EnumType, Asset);
+                writer.Write(EnumType);
                 writer.Write((byte)0);
             }
-            writer.WriteFName(Value, Asset);
+            writer.Write(Value);
             return sizeof(int) * 2;
         }
 
@@ -48,12 +50,12 @@ namespace UAssetAPI.PropertyTypes
             return Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             if (d[0] != "null" && d[0] != null)
             {
                 FName output = FName.FromString(d[0]);
-                Asset.AddNameReference(output.Value);
+                asset.AddNameReference(output.Value);
                 EnumType = output;
             }
             else
@@ -64,7 +66,7 @@ namespace UAssetAPI.PropertyTypes
             if (d[1] != "null" && d[1] != null)
             {
                 FName output = FName.FromString(d[1]);
-                Asset.AddNameReference(output.Value);
+                asset.AddNameReference(output.Value);
                 Value = output;
             }
             else

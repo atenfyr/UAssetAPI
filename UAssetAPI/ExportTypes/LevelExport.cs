@@ -5,10 +5,10 @@ namespace UAssetAPI
 {
     public class NamespacedString
     {
-        public string Namespace;
-        public string Value;
+        public FString Namespace;
+        public FString Value;
 
-        public NamespacedString(string Namespace, string Value)
+        public NamespacedString(FString Namespace, FString Value)
         {
             this.Namespace = Namespace;
             this.Value = Value;
@@ -41,7 +41,7 @@ namespace UAssetAPI
         {
 
         }
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
 
@@ -71,7 +71,7 @@ namespace UAssetAPI
             reader.ReadByte();
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
 
@@ -82,9 +82,9 @@ namespace UAssetAPI
                 writer.Write(IndexData[i]);
             }
 
-            writer.WriteFString(LevelType.Namespace);
+            writer.Write(LevelType.Namespace);
             writer.Write((int)0);
-            writer.WriteFString(LevelType.Value);
+            writer.Write(LevelType.Value);
 
             writer.Write((long)0);
             writer.Write(FlagsProbably);

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -6,9 +6,10 @@ namespace UAssetAPI.StructTypes
 {
     public class BoxPropertyData : PropertyData<VectorPropertyData[]> // Min, Max, IsValid
     {
+        [JsonProperty]
         public bool IsValid;
 
-        public BoxPropertyData(FName name, UAsset asset) : base(name, asset)
+        public BoxPropertyData(FName name) : base(name)
         {
 
         }
@@ -22,7 +23,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -32,7 +33,7 @@ namespace UAssetAPI.StructTypes
             Value = new VectorPropertyData[2];
             for (int i = 0; i < 2; i++)
             {
-                var next = new VectorPropertyData(Name, Asset);
+                var next = new VectorPropertyData(Name);
                 next.Read(reader, false, 0);
                 Value[i] = next;
             }
@@ -40,7 +41,7 @@ namespace UAssetAPI.StructTypes
             IsValid = reader.ReadBoolean();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -56,7 +57,7 @@ namespace UAssetAPI.StructTypes
             return totalSize + sizeof(bool);
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             IsValid = d[0].Equals("1") || d[0].ToLower().Equals("true");
         }

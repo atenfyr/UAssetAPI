@@ -10,7 +10,7 @@ namespace UAssetAPI.StructTypes
     /// </summary>
     public class PerPlatformFloatPropertyData : PropertyData<float[]>
     {
-        public PerPlatformFloatPropertyData(FName name, UAsset asset) : base(name, asset)
+        public PerPlatformFloatPropertyData(FName name) : base(name)
         {
 
         }
@@ -24,7 +24,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -39,7 +39,7 @@ namespace UAssetAPI.StructTypes
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -54,7 +54,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(int) + sizeof(float) * Value.Length;
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             var valueList = new List<float>();
             if (float.TryParse(d[0], out float res1)) valueList.Add(res1);

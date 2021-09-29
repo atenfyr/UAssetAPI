@@ -5,9 +5,9 @@ namespace UAssetAPI
 {
     public class StringTable : List<FString>
     {
-        public string Name;
+        public FString Name;
 
-        public StringTable(string name) : base()
+        public StringTable(FString name) : base()
         {
             Name = name;
         }
@@ -35,7 +35,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
 
@@ -46,24 +46,24 @@ namespace UAssetAPI
             int numEntries = reader.ReadInt32() * 2;
             for (int i = 0; i < numEntries; i++)
             {
-                FString x = reader.ReadFStringWithEncoding();
+                FString x = reader.ReadFString();
                 Data2.Add(x);
             }
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
 
             writer.Write((int)0);
 
-            writer.WriteFString(Data2.Name);
+            writer.Write(Data2.Name);
 
             writer.Write(Data2.Count / 2);
             int lenData = (Data2.Count / 2) * 2;
             for (int i = 0; i < lenData; i++)
             {
-                writer.WriteFString(Data2[i]);
+                writer.Write(Data2[i]);
             }
         }
     }

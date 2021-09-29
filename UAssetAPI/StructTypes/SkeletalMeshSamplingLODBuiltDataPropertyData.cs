@@ -5,7 +5,7 @@ namespace UAssetAPI.StructTypes
 {
     public class SkeletalMeshSamplingLODBuiltDataPropertyData : PropertyData<SkeletalMeshAreaWeightedTriangleSamplerPropertyData>
     {
-        public SkeletalMeshSamplingLODBuiltDataPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SkeletalMeshSamplingLODBuiltDataPropertyData(FName name) : base(name)
         {
 
         }
@@ -15,25 +15,24 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(new FName("AreaWeightedTriangleSampler"), Asset);
+            Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(new FName("AreaWeightedTriangleSampler"));
             Value.Read(reader, false, 0);
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
                 writer.Write((byte)0);
             }
 
-            Value.Asset = Asset;
             return Value.Write(writer, false);
         }
 

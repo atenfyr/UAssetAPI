@@ -1,15 +1,64 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text;
 
 namespace UAssetAPI
 {
+    public class FStringJsonConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(FString);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue((value as FString).Value);
+        }
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return new FString(Convert.ToString(reader.Value));
+        }
+    }
+
+    public class FNameJsonConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(FName);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue((value as FName).ToString());
+        }
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return FName.FromString(Convert.ToString(reader.Value));
+        }
+    }
+
     /// <summary>
     /// Unreal string - consists of a string and an encoding
     /// </summary>
+    [JsonConverter(typeof(FStringJsonConverter))]
     public class FString : ICloneable
     {
         public string Value;
         public Encoding Encoding;
+
         public override string ToString()
         {
             if (this == null || Value == null) return "null";
@@ -70,6 +119,7 @@ namespace UAssetAPI
     /// <summary>
     /// Unreal name - consists of an FString (which is serialized as an index in the name map) and an instance number
     /// </summary>
+    [JsonConverter(typeof(FNameJsonConverter))]
     public class FName : ICloneable
     {
         public FString Value;
@@ -85,7 +135,7 @@ namespace UAssetAPI
         public static FName FromString(string val)
         {
             if (val == null || val == "null") return null;
-            if (val[val.Length - 1] != ')') return new FName(val);
+            if (val.Length == 0 || val[val.Length - 1] != ')') return new FName(val);
 
             int locLastLeftBracket = val.LastIndexOf('(');
             if (locLastLeftBracket < 0) return new FName(val);

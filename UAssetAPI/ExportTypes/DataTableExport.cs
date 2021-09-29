@@ -46,7 +46,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
 
@@ -56,7 +56,7 @@ namespace UAssetAPI
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData && thisObjData.Value.IsImport())
                 {
-                    decidedStructType = thisObjData.ToImport().ObjectName;
+                    decidedStructType = thisObjData.ToImport(reader.Asset).ObjectName;
                     break;
                 }
             }
@@ -68,8 +68,8 @@ namespace UAssetAPI
             int numEntries = reader.ReadInt32();
             for (int i = 0; i < numEntries; i++)
             {
-                FName rowName = reader.ReadFName(Asset);
-                var nextStruct = new StructPropertyData(rowName, Asset)
+                FName rowName = reader.ReadFName();
+                var nextStruct = new StructPropertyData(rowName)
                 {
                     StructType = decidedStructType
                 };
@@ -78,7 +78,7 @@ namespace UAssetAPI
             }
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
 
@@ -88,7 +88,7 @@ namespace UAssetAPI
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)
                 {
-                    decidedStructType = thisObjData.ToImport().ObjectName;
+                    decidedStructType = thisObjData.ToImport(writer.Asset).ObjectName;
                     break;
                 }
             }
@@ -100,7 +100,7 @@ namespace UAssetAPI
             {
                 var thisDataTableEntry = Table.Data[i];
                 thisDataTableEntry.StructType = decidedStructType;
-                writer.WriteFName(thisDataTableEntry.Name, Asset);
+                writer.Write(thisDataTableEntry.Name);
                 thisDataTableEntry.Write(writer, false);
             }
         }

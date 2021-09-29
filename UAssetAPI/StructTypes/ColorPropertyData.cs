@@ -9,7 +9,7 @@ namespace UAssetAPI.StructTypes
     /// </summary>
     public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
-        public ColorPropertyData(FName name, UAsset asset) : base(name, asset)
+        public ColorPropertyData(FName name) : base(name)
         {
 
         }
@@ -23,7 +23,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -33,7 +33,7 @@ namespace UAssetAPI.StructTypes
             Value = Color.FromArgb(reader.ReadInt32());
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -49,7 +49,7 @@ namespace UAssetAPI.StructTypes
             return Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             if (!int.TryParse(d[0], out int colorR)) return;
             if (!int.TryParse(d[1], out int colorG)) return;

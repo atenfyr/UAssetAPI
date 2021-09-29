@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -19,17 +21,28 @@ namespace UAssetAPI.PropertyTypes
     public class TextPropertyData : PropertyData<FString>
     {
         /// <summary>Flags with various information on what sort of FText this is</summary>
+        [JsonProperty]
         public ETextFlag Flags = 0;
         /// <summary>The HistoryType of this FText.</summary>
+        [JsonProperty]
+        [JsonConverter(typeof(StringEnumConverter))]
         public TextHistoryType HistoryType = TextHistoryType.Base;
         /// <summary>The string table ID being referenced, if applicable</summary>
+        [JsonProperty]
         public FName TableId = null;
         /// <summary>A namespace to use when parsing texts that use LOCTEXT</summary>
+        [JsonProperty]
         public FString Namespace = null;
         /// <summary>The source string for this FText. In the Unreal Engine, this is also known as SourceString.</summary>
+        [JsonProperty]
         public FString CultureInvariantString = null;
 
-        public TextPropertyData(FName name, UAsset asset) : base(name, asset)
+        public bool ShouldSerializeTableId()
+        {
+            return HistoryType == TextHistoryType.StringTableEntry;
+        }
+
+        public TextPropertyData(FName name) : base(name)
         {
 
         }
@@ -42,31 +55,31 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("TextProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (reader.Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
             {
-                CultureInvariantString = reader.ReadFStringWithEncoding();
-                if (Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
+                CultureInvariantString = reader.ReadFString();
+                if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
                 {
-                    Namespace = reader.ReadFStringWithEncoding();
-                    Value = reader.ReadFStringWithEncoding();
+                    Namespace = reader.ReadFString();
+                    Value = reader.ReadFString();
                 }
                 else
                 {
                     Namespace = null;
-                    Value = reader.ReadFStringWithEncoding();
+                    Value = reader.ReadFString();
                 }
             }
 
             Flags = (ETextFlag)reader.ReadUInt32();
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
             {
                 HistoryType = (TextHistoryType)reader.ReadSByte();
 
@@ -74,23 +87,23 @@ namespace UAssetAPI.PropertyTypes
                 {
                     case TextHistoryType.None:
                         Value = null;
-                        if (Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.CultureInvariantTextSerializationKeyStability)
+                        if (reader.Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.CultureInvariantTextSerializationKeyStability)
                         {
                             bool bHasCultureInvariantString = reader.ReadInt32() == 1;
                             if (bHasCultureInvariantString)
                             {
-                                CultureInvariantString = reader.ReadFStringWithEncoding();
+                                CultureInvariantString = reader.ReadFString();
                             }
                         }
                         break;
                     case TextHistoryType.Base:
-                        Namespace = reader.ReadFStringWithEncoding();
-                        Value = reader.ReadFStringWithEncoding();
-                        CultureInvariantString = reader.ReadFStringWithEncoding();
+                        Namespace = reader.ReadFString();
+                        Value = reader.ReadFString();
+                        CultureInvariantString = reader.ReadFString();
                         break;
                     case TextHistoryType.StringTableEntry:
-                        TableId = reader.ReadFName(Asset);
-                        Value = reader.ReadFStringWithEncoding();
+                        TableId = reader.ReadFName();
+                        Value = reader.ReadFString();
                         break;
                     default:
                         throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString());
@@ -98,7 +111,7 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -107,30 +120,30 @@ namespace UAssetAPI.PropertyTypes
 
             int here = (int)writer.BaseStream.Position;
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (writer.Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
             {
-                writer.WriteFString(CultureInvariantString);
-                if (Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
+                writer.Write(CultureInvariantString);
+                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
                 {
-                    writer.WriteFString(Namespace);
-                    writer.WriteFString(Value);
+                    writer.Write(Namespace);
+                    writer.Write(Value);
                 }
                 else
                 {
-                    writer.WriteFString(Value);
+                    writer.Write(Value);
                 }
             }
 
             writer.Write((uint)Flags);
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
             {
                 writer.Write((sbyte)HistoryType);
 
                 switch (HistoryType)
                 {
                     case TextHistoryType.None:
-                        if (Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.CultureInvariantTextSerializationKeyStability)
+                        if (writer.Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.CultureInvariantTextSerializationKeyStability)
                         {
                             if (CultureInvariantString == null || string.IsNullOrEmpty(CultureInvariantString.Value))
                             {
@@ -139,18 +152,18 @@ namespace UAssetAPI.PropertyTypes
                             else
                             {
                                 writer.Write(1);
-                                writer.WriteFString(CultureInvariantString);
+                                writer.Write(CultureInvariantString);
                             }
                         }
                         break;
                     case TextHistoryType.Base:
-                        writer.WriteFString(Namespace);
-                        writer.WriteFString(Value);
-                        writer.WriteFString(CultureInvariantString);
+                        writer.Write(Namespace);
+                        writer.Write(Value);
+                        writer.Write(CultureInvariantString);
                         break;
                     case TextHistoryType.StringTableEntry:
-                        writer.WriteFName(TableId, Asset);
-                        writer.WriteFString(Value);
+                        writer.Write(TableId);
+                        writer.Write(Value);
                         break;
                     default:
                         throw new NotImplementedException("Unimplemented writer for " + HistoryType.ToString());
@@ -177,7 +190,7 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             throw new NotImplementedException("TextPropertyData.FromString is currently unimplemented");
         }

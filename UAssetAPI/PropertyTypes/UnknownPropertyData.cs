@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -8,9 +9,10 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class UnknownPropertyData : PropertyData<byte[]>
     {
+        [JsonProperty]
         public FName SerializingPropertyType = CurrentPropertyType;
 
-        public UnknownPropertyData(FName name, UAsset asset) : base(name, asset)
+        public UnknownPropertyData(FName name) : base(name)
         {
 
         }
@@ -28,7 +30,7 @@ namespace UAssetAPI.PropertyTypes
             SerializingPropertyType = newType;
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -38,7 +40,7 @@ namespace UAssetAPI.PropertyTypes
             Value = reader.ReadBytes((int)leng1);
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {

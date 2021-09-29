@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -30,17 +31,26 @@ namespace UAssetAPI.StructTypes
 
     public class RichCurveKeyPropertyData : PropertyData
     {
+        [JsonProperty]
         public RichCurveInterpMode InterpMode;
+        [JsonProperty]
         public RichCurveTangentMode TangentMode;
+        [JsonProperty]
         public RichCurveTangentWeightMode TangentWeightMode;
+        [JsonProperty]
         public float Time;
+        [JsonProperty]
         public float Value;
+        [JsonProperty]
         public float ArriveTangent;
+        [JsonProperty]
         public float ArriveTangentWeight;
+        [JsonProperty]
         public float LeaveTangent;
+        [JsonProperty]
         public float LeaveTangentWeight;
 
-        public RichCurveKeyPropertyData(FName name, UAsset asset) : base(name, asset)
+        public RichCurveKeyPropertyData(FName name) : base(name)
         {
 
         }
@@ -54,7 +64,7 @@ namespace UAssetAPI.StructTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -72,7 +82,7 @@ namespace UAssetAPI.StructTypes
             LeaveTangentWeight = reader.ReadSingle();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -91,7 +101,7 @@ namespace UAssetAPI.StructTypes
             return sizeof(float) * 6 + sizeof(sbyte) * 3;
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             Enum.TryParse(d[0], out InterpMode);
             Enum.TryParse(d[1], out TangentMode);

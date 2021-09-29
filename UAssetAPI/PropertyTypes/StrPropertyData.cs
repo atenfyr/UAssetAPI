@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class StrPropertyData : PropertyData<FString>
     {
-        public StrPropertyData(FName name, UAsset asset) : base(name, asset)
+        public StrPropertyData(FName name) : base(name)
         {
 
         }
@@ -21,17 +21,17 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("StrProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 reader.ReadByte();
             }
 
-            Value = reader.ReadFStringWithEncoding();
+            Value = reader.ReadFString();
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -39,7 +39,7 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int here = (int)writer.BaseStream.Position;
-            writer.WriteFString(Value);
+            writer.Write(Value);
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -48,7 +48,7 @@ namespace UAssetAPI.PropertyTypes
             return Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             var encoding = Encoding.ASCII;
             if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);

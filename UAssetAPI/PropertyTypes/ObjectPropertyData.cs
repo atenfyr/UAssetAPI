@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -8,7 +9,7 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class ObjectPropertyData : PropertyData<FPackageIndex>
     {
-        public ObjectPropertyData(FName name, UAsset asset) : base(name, asset)
+        public ObjectPropertyData(FName name) : base(name)
         {
 
         }
@@ -53,9 +54,9 @@ namespace UAssetAPI.PropertyTypes
         /// </summary>
         /// <returns>The import that this ObjectProperty represents in the import map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the import map.</exception>
-        public Import ToImport()
+        public Import ToImport(UAsset asset)
         {
-            return Value.ToImport(Asset);
+            return Value.ToImport(asset);
         }
 
         /// <summary>
@@ -63,12 +64,12 @@ namespace UAssetAPI.PropertyTypes
         /// </summary>
         /// <returns>The export that this ObjectProperty represents in the the export map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
-        public Export ToExport()
+        public Export ToExport(UAsset asset)
         {
-            return Value.ToExport(Asset);
+            return Value.ToExport(asset);
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -78,7 +79,7 @@ namespace UAssetAPI.PropertyTypes
             Value = new FPackageIndex(reader.ReadInt32());
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -94,7 +95,7 @@ namespace UAssetAPI.PropertyTypes
             return Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
             if (int.TryParse(d[0], out int res))
             {

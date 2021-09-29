@@ -2,7 +2,7 @@
 {
     public class SkeletalMeshAreaWeightedTriangleSamplerPropertyData : WeightedRandomSamplerPropertyData
     {
-        public SkeletalMeshAreaWeightedTriangleSamplerPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SkeletalMeshAreaWeightedTriangleSamplerPropertyData(FName name) : base(name)
         {
 
         }

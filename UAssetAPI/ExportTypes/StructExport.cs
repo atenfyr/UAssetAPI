@@ -48,7 +48,7 @@ namespace UAssetAPI
         {
 
         }
-        public override void Read(BinaryReader reader, int nextStarting)
+        public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
             reader.ReadInt32();
@@ -89,7 +89,7 @@ namespace UAssetAPI
             ScriptBytecode = reader.ReadBytes(ScriptStorageSize);
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
             writer.Write((int)0);

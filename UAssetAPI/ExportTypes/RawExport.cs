@@ -25,7 +25,7 @@ namespace UAssetAPI
 
         }
 
-        public override void Write(BinaryWriter writer)
+        public override void Write(AssetBinaryWriter writer)
         {
             writer.Write(Data);
         }

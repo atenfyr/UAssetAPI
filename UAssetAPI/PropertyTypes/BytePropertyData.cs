@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -15,10 +17,13 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class BytePropertyData : PropertyData<int>
     {
+        [JsonProperty]
+        [JsonConverter(typeof(StringEnumConverter))]
         public BytePropertyType ByteType;
+        [JsonProperty]
         public int EnumType = 0;
 
-        public BytePropertyData(FName name, UAsset asset) : base(name, asset)
+        public BytePropertyData(FName name) : base(name)
         {
 
         }
@@ -31,7 +36,7 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("ByteProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             ReadCustom(reader, includeHeader, leng1, leng2, true);
         }
@@ -65,7 +70,7 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
@@ -86,27 +91,28 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        public FString GetEnumBase()
+        public FString GetEnumBase(UAsset asset)
         {
             if (EnumType <= 0) return new FString("null");
-            return Asset.GetNameReference(EnumType);
+            return asset.GetNameReference(EnumType);
         }
 
-        public FString GetEnumFull()
+        public FString GetEnumFull(UAsset asset)
         {
             if (Value <= 0) return new FString("null");
-            return Asset.GetNameReference(Value);
+            return asset.GetNameReference(Value);
         }
 
         public override string ToString()
         {
             if (ByteType == BytePropertyType.Byte) return Convert.ToString(Value);
-            return GetEnumFull().Value;
+            //return GetEnumFull().Value;
+            return Value.ToString();
         }
 
-        public override void FromString(string[] d)
+        public override void FromString(string[] d, UAsset asset)
         {
-            EnumType = Asset.AddNameReference(new FString(d[0]));
+            EnumType = asset.AddNameReference(new FString(d[0]));
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -115,7 +121,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.Long;
-                Value = Asset.AddNameReference(new FString(d[1]));
+                Value = asset.AddNameReference(new FString(d[1]));
             }
         }
     }

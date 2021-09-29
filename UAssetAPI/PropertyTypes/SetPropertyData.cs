@@ -11,7 +11,7 @@ namespace UAssetAPI.PropertyTypes
         public PropertyData[] RemovedItems;
         public StructPropertyData RemovedItemsDummyStruct;
 
-        public SetPropertyData(FName name, UAsset asset) : base(name, asset)
+        public SetPropertyData(FName name) : base(name)
         {
             Value = new PropertyData[0];
             RemovedItems = new PropertyData[0];
@@ -26,15 +26,15 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("SetProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
-                ArrayType = reader.ReadFName(Asset);
+                ArrayType = reader.ReadFName();
                 reader.ReadByte(); // null byte
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"), Asset);
+            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
             RemovedItems = removedItemsDummy.Value;
@@ -42,17 +42,17 @@ namespace UAssetAPI.PropertyTypes
             base.Read(reader, false, leng1, leng2);
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (Value.Length > 0) ArrayType = Value[0].PropertyType;
 
             if (includeHeader)
             {
-                writer.WriteFName(ArrayType, Asset);
+                writer.Write(ArrayType);
                 writer.Write((byte)0);
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"), Asset);
+            var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.DummyStruct = RemovedItemsDummyStruct;
             removedItemsDummy.Value = RemovedItems;

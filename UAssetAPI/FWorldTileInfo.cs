@@ -20,11 +20,11 @@ namespace UAssetAPI
         public int StreamingDistance;
         public bool DistanceStreamingEnabled;
 
-        public void Read(BinaryReader reader, UAsset asset)
+        public void Read(AssetBinaryReader reader, UAsset asset)
         {
-            Name = reader.ReadFStringWithEncoding();
+            Name = reader.ReadFString();
             Reserved0 = reader.ReadInt32();
-            Reserved1 = new IntPointPropertyData(new FName(string.Empty), asset);
+            Reserved1 = new IntPointPropertyData(new FName(string.Empty));
             Reserved1.Read(reader, false, 0, 0);
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
@@ -38,11 +38,10 @@ namespace UAssetAPI
             }
         }
 
-        public void Write(BinaryWriter writer, UAsset asset)
+        public void Write(AssetBinaryWriter writer, UAsset asset)
         {
-            writer.WriteFString(this.Name);
+            writer.Write(this.Name);
             writer.Write(Reserved0);
-            Reserved1.Asset = asset;
             Reserved1.Write(writer, false);
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
@@ -97,7 +96,7 @@ namespace UAssetAPI
             Reserved3 = reserved3;
         }
 
-        public void Read(BinaryReader reader, UAsset asset)
+        public void Read(AssetBinaryReader reader, UAsset asset)
         {
             RelativeStreamingDistance = reader.ReadInt32();
             Reserved0 = reader.ReadSingle();
@@ -106,7 +105,7 @@ namespace UAssetAPI
             Reserved3 = reader.ReadInt32();
         }
 
-        public void Write(BinaryWriter writer, UAsset asset)
+        public void Write(AssetBinaryWriter writer, UAsset asset)
         {
             writer.Write(RelativeStreamingDistance);
             writer.Write(Reserved0);
@@ -144,7 +143,7 @@ namespace UAssetAPI
         /// <summary>Sorting order</summary>
         public int ZOrder;
 
-        public void Read(BinaryReader reader, UAsset asset)
+        public void Read(AssetBinaryReader reader, UAsset asset)
         {
             Position = new int[3];
             AbsolutePosition = new int[3];
@@ -161,7 +160,7 @@ namespace UAssetAPI
                 Position[1] = reader.ReadInt32();
                 Position[2] = reader.ReadInt32();
             }
-            Bounds = new BoxPropertyData(new FName(), asset);
+            Bounds = new BoxPropertyData(new FName());
             Bounds.Read(reader, false, 0, 0);
             Layer = new FWorldTileLayer();
             Layer.Read(reader, asset);
@@ -169,7 +168,7 @@ namespace UAssetAPI
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 bHideInTileView = reader.ReadInt32() == 1;
-                ParentTilePackageName = reader.ReadFStringWithEncoding();
+                ParentTilePackageName = reader.ReadFString();
             }
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)
@@ -198,7 +197,7 @@ namespace UAssetAPI
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public void Write(BinaryWriter writer, UAsset asset)
+        public void Write(AssetBinaryWriter writer, UAsset asset)
         {
             if (asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.WorldCompositionTile3DOffset)
             {
@@ -211,14 +210,13 @@ namespace UAssetAPI
                 writer.Write(Position[1]);
                 writer.Write(Position[2]);
             }
-            Bounds.Asset = asset;
             Bounds.Write(writer, false);
             Layer.Write(writer, asset);
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 writer.Write(bHideInTileView ? 1 : 0);
-                writer.WriteFString(ParentTilePackageName);
+                writer.Write(ParentTilePackageName);
             }
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)

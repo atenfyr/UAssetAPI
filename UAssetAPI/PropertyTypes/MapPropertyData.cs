@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -11,10 +12,32 @@ namespace UAssetAPI.PropertyTypes
     /// </summary>
     public class MapPropertyData : PropertyData<TMap<PropertyData, PropertyData>> // Map
     {
-        public FName[] dummyEntry = new FName[] { new FName(string.Empty), new FName(string.Empty) };
+        /// <summary>
+        /// Used when the length of the map is zero.
+        /// </summary>]
+        [JsonProperty]
+        public FName KeyType;
+
+        /// <summary>
+        /// Used when the length of the map is zero.
+        /// </summary>
+        [JsonProperty]
+        public FName ValueType;
+
+        public bool ShouldSerializeKeyType()
+        {
+            return Value.Count == 0;
+        }
+
+        public bool ShouldSerializeValueType()
+        {
+            return Value.Count == 0;
+        }
+
+        [JsonProperty]
         public TMap<PropertyData, PropertyData> KeysToRemove = null;
 
-        public MapPropertyData(FName name, UAsset asset) : base(name, asset)
+        public MapPropertyData(FName name) : base(name)
         {
             Value = new TMap<PropertyData, PropertyData>();
         }
@@ -27,40 +50,40 @@ namespace UAssetAPI.PropertyTypes
         private static readonly FName CurrentPropertyType = new FName("MapProperty");
         public override FName PropertyType { get { return CurrentPropertyType; } }
 
-        private PropertyData MapTypeToClass(FName type, FName name, UAsset asset, BinaryReader reader, int leng, bool includeHeader, bool isKey)
+        private PropertyData MapTypeToClass(FName type, FName name, AssetBinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
             switch (type.Value.Value)
             {
                 case "StructProperty":
                     FName strucType = null;
 
-                    if (asset.MapStructTypeOverride.ContainsKey(name.Value.Value))
+                    if (reader.Asset.MapStructTypeOverride.ContainsKey(name.Value.Value))
                     {
                         if (isKey)
                         {
-                            strucType = asset.MapStructTypeOverride[name.Value.Value].Item1;
+                            strucType = reader.Asset.MapStructTypeOverride[name.Value.Value].Item1;
                         }
                         else
                         {
-                            strucType = asset.MapStructTypeOverride[name.Value.Value].Item2;
+                            strucType = reader.Asset.MapStructTypeOverride[name.Value.Value].Item2;
                         }
                     }
 
                     if (strucType == null) strucType = new FName("Generic");
 
-                    StructPropertyData data = new StructPropertyData(name, asset, strucType);
+                    StructPropertyData data = new StructPropertyData(name, strucType);
                     data.Offset = reader.BaseStream.Position;
                     data.Read(reader, false, 1);
                     return data;
                 default:
-                    var res = MainSerializer.TypeToClass(type, name, asset, null, leng);
+                    var res = MainSerializer.TypeToClass(type, name, reader.Asset, null, leng);
                     res.Offset = reader.BaseStream.Position;
                     res.Read(reader, includeHeader, leng);
                     return res;
             }
         }
 
-        private TMap<PropertyData, PropertyData> ReadRawMap(BinaryReader reader, FName type1, FName type2, int numEntries)
+        private TMap<PropertyData, PropertyData> ReadRawMap(AssetBinaryReader reader, FName type1, FName type2, int numEntries)
         {
             var resultingDict = new TMap<PropertyData, PropertyData>();
 
@@ -68,8 +91,8 @@ namespace UAssetAPI.PropertyTypes
             PropertyData data2 = null;
             for (int i = 0; i < numEntries; i++)
             {
-                data1 = MapTypeToClass(type1, Name, Asset, reader, 0, false, true);
-                data2 = MapTypeToClass(type2, Name, Asset, reader, 0, false, false);
+                data1 = MapTypeToClass(type1, Name, reader, 0, false, true);
+                data2 = MapTypeToClass(type2, Name, reader, 0, false, false);
 
                 resultingDict.Add(data1, data2);
             }
@@ -77,13 +100,13 @@ namespace UAssetAPI.PropertyTypes
             return resultingDict;
         }
 
-        public override void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             FName type1 = null, type2 = null;
             if (includeHeader)
             {
-                type1 = reader.ReadFName(Asset);
-                type2 = reader.ReadFName(Asset);
+                type1 = reader.ReadFName();
+                type2 = reader.ReadFName();
                 reader.ReadByte();
             }
 
@@ -96,12 +119,13 @@ namespace UAssetAPI.PropertyTypes
             int numEntries = reader.ReadInt32();
             if (numEntries == 0)
             {
-                dummyEntry = new FName[] { type1, type2 };
+                KeyType = type1;
+                ValueType = type2;
             }
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
-        private int WriteRawMap(BinaryWriter writer, TMap<PropertyData, PropertyData> map)
+        private int WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
             int here = (int)writer.BaseStream.Position;
             foreach (var entry in map)
@@ -114,19 +138,19 @@ namespace UAssetAPI.PropertyTypes
             return (int)writer.BaseStream.Position - here;
         }
 
-        public override int Write(BinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
             {
                 if (Value.Count > 0)
                 {
-                    writer.WriteFName(Value.Keys.ElementAt(0).PropertyType, Asset);
-                    writer.WriteFName(Value[0].PropertyType, Asset);
+                    writer.Write(Value.Keys.ElementAt(0).PropertyType);
+                    writer.Write(Value[0].PropertyType);
                 }
                 else
                 {
-                    writer.WriteFName(dummyEntry[0], Asset);
-                    writer.WriteFName(dummyEntry[1], Asset);
+                    writer.Write(KeyType);
+                    writer.Write(ValueType);
                 }
                 writer.Write((byte)0);
             }
@@ -159,10 +183,8 @@ namespace UAssetAPI.PropertyTypes
             }
             cloningProperty.KeysToRemove = newDict;
 
-            if (this.dummyEntry != null && this.dummyEntry.Length == 2)
-            {
-                cloningProperty.dummyEntry = new FName[] { (FName)this.dummyEntry[0].Clone(), (FName)this.dummyEntry[1].Clone() };
-            }
+            cloningProperty.KeyType = (FName)this.KeyType.Clone();
+            cloningProperty.ValueType = (FName)this.ValueType.Clone();
         }
     }
 }
