@@ -111,7 +111,7 @@ namespace UAssetAPI
 
         public static bool operator !=(FName one, FName two)
         {
-            if (one == null || two == null) return !(one is null && two is null);
+            if (one is null || two is null) return !(one is null && two is null);
             return !one.Equals(two);
         }
 
