@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a reference variable to another object (import/export) which may be null. See <see cref="FPackageIndex"/>.
+    /// Describes a reference variable to another object (import/export) which may be null (<see cref="FPackageIndex"/>).
     /// </summary>
     public class ObjectPropertyData : PropertyData<FPackageIndex>
     {

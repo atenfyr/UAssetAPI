@@ -4,6 +4,17 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// Implements a date and time.
+    ///
+    /// Values of this type represent dates and times between Midnight 00:00:00, January 1, 0001 and
+    /// Midnight 23:59:59.9999999, December 31, 9999 in the Gregorian calendar. Internally, the time
+    /// values are stored in ticks of 0.1 microseconds (= 100 nanoseconds) since January 1, 0001.
+    ///
+    /// The companion class <see cref="TimespanPropertyData"/> (<see cref="TimeSpan"/>) is provided for
+    /// enabling date and time based arithmetic, such as calculating the difference between two dates
+    /// or adding a certain amount of time to a given date.
+    /// </summary>
     public class DateTimePropertyData : PropertyData<DateTime>
     {
         public DateTimePropertyData(FName name, UAsset asset) : base(name, asset)

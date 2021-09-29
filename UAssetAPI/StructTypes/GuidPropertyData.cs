@@ -4,6 +4,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// Describes a 128-bit <see cref="Guid"/>.
+    /// </summary>
     public class GuidPropertyData : PropertyData<Guid>
     {
         public GuidPropertyData(FName name, UAsset asset) : base(name, asset)

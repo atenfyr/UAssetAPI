@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a 64-bit unsigned integer variable.
+    /// Describes a 64-bit unsigned integer variable (<see cref="ulong"/>).
     /// </summary>
     public class UInt64PropertyData : PropertyData<ulong>
     {

@@ -9,19 +9,19 @@ namespace UAssetAPI.PropertyTypes
     /// <summary>
     /// Describes a map (<see cref="OrderedDictionary"/>).
     /// </summary>
-    public class MapPropertyData : PropertyData<OrderedDictionary> // Map
+    public class MapPropertyData : PropertyData<TMap<PropertyData, PropertyData>> // Map
     {
         public FName[] dummyEntry = new FName[] { new FName(string.Empty), new FName(string.Empty) };
-        public OrderedDictionary KeysToRemove = null;
+        public TMap<PropertyData, PropertyData> KeysToRemove = null;
 
         public MapPropertyData(FName name, UAsset asset) : base(name, asset)
         {
-            Value = new OrderedDictionary();
+            Value = new TMap<PropertyData, PropertyData>();
         }
 
         public MapPropertyData()
         {
-            Value = new OrderedDictionary();
+            Value = new TMap<PropertyData, PropertyData>();
         }
 
         private static readonly FName CurrentPropertyType = new FName("MapProperty");
@@ -60,9 +60,9 @@ namespace UAssetAPI.PropertyTypes
             }
         }
 
-        private OrderedDictionary ReadRawMap(BinaryReader reader, FName type1, FName type2, int numEntries)
+        private TMap<PropertyData, PropertyData> ReadRawMap(BinaryReader reader, FName type1, FName type2, int numEntries)
         {
-            var resultingDict = new OrderedDictionary();
+            var resultingDict = new TMap<PropertyData, PropertyData>();
 
             PropertyData data1 = null;
             PropertyData data2 = null;
@@ -101,15 +101,15 @@ namespace UAssetAPI.PropertyTypes
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
-        private int WriteRawMap(BinaryWriter writer, OrderedDictionary map)
+        private int WriteRawMap(BinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
             int here = (int)writer.BaseStream.Position;
-            foreach (DictionaryEntry entry in map)
+            foreach (var entry in map)
             {
-                ((PropertyData)entry.Key).Offset = writer.BaseStream.Position;
-                ((PropertyData)entry.Key).Write(writer, false);
-                ((PropertyData)entry.Value).Offset = writer.BaseStream.Position;
-                ((PropertyData)entry.Value).Write(writer, false);
+                entry.Key.Offset = writer.BaseStream.Position;
+                entry.Key.Write(writer, false);
+                entry.Value.Offset = writer.BaseStream.Position;
+                entry.Value.Write(writer, false);
             }
             return (int)writer.BaseStream.Position - here;
         }
@@ -120,9 +120,8 @@ namespace UAssetAPI.PropertyTypes
             {
                 if (Value.Count > 0)
                 {
-                    DictionaryEntry firstEntry = Value.Cast<DictionaryEntry>().ElementAt(0);
-                    writer.WriteFName(((PropertyData)firstEntry.Key).PropertyType, Asset);
-                    writer.WriteFName(((PropertyData)firstEntry.Value).PropertyType, Asset);
+                    writer.WriteFName(Value.Keys.ElementAt(0).PropertyType, Asset);
+                    writer.WriteFName(Value[0].PropertyType, Asset);
                 }
                 else
                 {
@@ -146,17 +145,17 @@ namespace UAssetAPI.PropertyTypes
         {
             MapPropertyData cloningProperty = (MapPropertyData)res;
 
-            OrderedDictionary newDict = new OrderedDictionary();
-            foreach (DictionaryEntry entry in this.Value)
+            var newDict = new TMap<PropertyData, PropertyData>();
+            foreach (var entry in this.Value)
             {
-                newDict[(entry.Key as PropertyData).Clone()] = (entry.Value as PropertyData).Clone();
+                newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
             }
             cloningProperty.Value = newDict;
 
-            newDict = new OrderedDictionary();
-            foreach (DictionaryEntry entry in this.KeysToRemove)
+            newDict = new TMap<PropertyData, PropertyData>();
+            foreach (var entry in this.KeysToRemove)
             {
-                newDict[(entry.Key as PropertyData).Clone()] = (entry.Value as PropertyData).Clone();
+                newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
             }
             cloningProperty.KeysToRemove = newDict;
 

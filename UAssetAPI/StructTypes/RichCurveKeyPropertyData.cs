@@ -28,7 +28,7 @@ namespace UAssetAPI.StructTypes
         WeightedBoth
     }
 
-    public class RichCurveKeyProperty : PropertyData
+    public class RichCurveKeyPropertyData : PropertyData
     {
         public RichCurveInterpMode InterpMode;
         public RichCurveTangentMode TangentMode;
@@ -40,12 +40,12 @@ namespace UAssetAPI.StructTypes
         public float LeaveTangent;
         public float LeaveTangentWeight;
 
-        public RichCurveKeyProperty(FName name, UAsset asset) : base(name, asset)
+        public RichCurveKeyPropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
         }
 
-        public RichCurveKeyProperty()
+        public RichCurveKeyPropertyData()
         {
 
         }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace UAssetAPI
 {
-    /// <summary>How this enum is declared in C++, affects the internal naming of enum values</summary> */
+    /// <summary>How this enum is declared in C++. Affects the internal naming of enum values.</summary>
     public enum ECppForm
     {
         Regular,

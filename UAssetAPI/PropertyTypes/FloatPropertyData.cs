@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes an IEEE 32-bit floating point variable.
+    /// Describes an IEEE 32-bit floating point variable (<see cref="float"/>).
     /// </summary>
     public class FloatPropertyData : PropertyData<float>
     {

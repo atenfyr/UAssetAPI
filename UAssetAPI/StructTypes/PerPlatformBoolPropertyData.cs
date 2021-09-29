@@ -5,6 +5,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// <see cref="BoolPropertyData"/> (<see cref="bool"/>) property with per-platform overrides.
+    /// </summary>
     public class PerPlatformBoolPropertyData : PropertyData<bool[]>
     {
         public PerPlatformBoolPropertyData(FName name, UAsset asset) : base(name, asset)

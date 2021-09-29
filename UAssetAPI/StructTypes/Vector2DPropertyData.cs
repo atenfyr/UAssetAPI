@@ -4,8 +4,17 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class Vector2DPropertyData : PropertyData<float[]> // X, Y
+    /// <summary>
+    /// A vector in 2-D space composed of components (X, Y) with floating point precision.
+    /// </summary>
+    public class Vector2DPropertyData : PropertyData
     {
+        /// <summary>Vector's X-component.</summary>
+        public float X;
+
+        /// <summary>Vector's Y-component.</summary>
+        public float Y;
+
         public Vector2DPropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
@@ -27,11 +36,8 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            Value = new float[2];
-            for (int i = 0; i < 2; i++)
-            {
-                Value[i] = reader.ReadSingle();
-            }
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -41,28 +47,20 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            for (int i = 0; i < 2; i++)
-            {
-                writer.Write(Value[i]);
-            }
+            writer.Write(X);
+            writer.Write(Y);
             return sizeof(float) * 2;
         }
 
         public override void FromString(string[] d)
         {
-            Value = new float[2];
-            if (float.TryParse(d[0], out float res1)) Value[0] = res1;
-            if (float.TryParse(d[1], out float res2)) Value[1] = res2;
+            if (float.TryParse(d[0], out float res1)) X = res1;
+            if (float.TryParse(d[1], out float res2)) Y = res2;
         }
 
         public override string ToString()
         {
-            string oup = "(";
-            for (int i = 0; i < Value.Length; i++)
-            {
-                oup += Convert.ToString(Value[i]) + ", ";
-            }
-            return oup.Remove(oup.Length - 2) + ")";
+            return "(" + X + ", " + Y + ")";
         }
     }
 }

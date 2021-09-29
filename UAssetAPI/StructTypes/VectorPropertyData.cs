@@ -4,8 +4,20 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class VectorPropertyData : PropertyData<float[]> // X, Y, Z
+    /// <summary>
+    /// A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
+    /// </summary>
+    public class VectorPropertyData : PropertyData
     {
+        /// <summary>Vector's X-component.</summary>
+        public float X;
+
+        /// <summary>Vector's Y-component.</summary>
+        public float Y;
+
+        /// <summary>Vector's Z-component.</summary>
+        public float Z;
+
         public VectorPropertyData(FName name, UAsset asset) : base(name, asset)
         {
 
@@ -27,11 +39,9 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            Value = new float[3];
-            for (int i = 0; i < 3; i++)
-            {
-                Value[i] = reader.ReadSingle();
-            }
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            Z = reader.ReadSingle();
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -41,29 +51,22 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            for (int i = 0; i < 3; i++)
-            {
-                writer.Write(Value[i]);
-            }
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Z);
             return sizeof(float) * 3;
         }
 
         public override void FromString(string[] d)
         {
-            Value = new float[3];
-            if (float.TryParse(d[0], out float res1)) Value[0] = res1;
-            if (float.TryParse(d[1], out float res2)) Value[1] = res2;
-            if (float.TryParse(d[2], out float res3)) Value[2] = res3;
+            if (float.TryParse(d[0], out float res1)) X = res1;
+            if (float.TryParse(d[1], out float res2)) Y = res2;
+            if (float.TryParse(d[2], out float res3)) Z = res3;
         }
 
         public override string ToString()
         {
-            string oup = "(";
-            for (int i = 0; i < Value.Length; i++)
-            {
-                oup += Convert.ToString(Value[i]) + ", ";
-            }
-            return oup.Remove(oup.Length - 2) + ")";
+            return "(" + X + ", " + Y + ", " + Z + ")";
         }
     }
 }

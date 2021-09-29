@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a 32-bit unsigned integer variable.
+    /// Describes a 32-bit unsigned integer variable (<see cref="uint"/>).
     /// </summary>
     public class UInt32PropertyData : PropertyData<uint>
     {

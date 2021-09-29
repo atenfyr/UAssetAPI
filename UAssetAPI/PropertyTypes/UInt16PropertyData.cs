@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a 16-bit unsigned integer variable.
+    /// Describes a 16-bit unsigned integer variable (<see cref="ushort"/>).
     /// </summary>
     public class UInt16PropertyData : PropertyData<ushort>
     {

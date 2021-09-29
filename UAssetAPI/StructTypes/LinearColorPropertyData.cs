@@ -22,6 +22,9 @@ namespace UAssetAPI.StructTypes
         }
     }
 
+    /// <summary>
+    /// A linear, 32-bit/component floating point RGBA color.
+    /// </summary>
     public class LinearColor : ICloneable
     {
         public float R;

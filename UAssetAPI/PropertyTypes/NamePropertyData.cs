@@ -3,7 +3,7 @@
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes an FName.
+    /// Describes an <see cref="FName"/>.
     /// </summary>
     public class NamePropertyData : PropertyData<FName>
     {

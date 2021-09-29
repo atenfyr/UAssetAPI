@@ -63,6 +63,7 @@
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
     <Compile Include="StructTypes\SoftObjectPathPropertyData.cs" />
     <Compile Include="StructTypes\WeightedRandomSamplerPropertyData.cs" />
+    <Compile Include="TMap.cs" />
     <Compile Include="UAsset.cs" />
     <Compile Include="ExportTypes\Export.cs" />
     <Compile Include="CRCGenerator.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="StructTypes\GameplayTagContainerPropertyData.cs" />
     <Compile Include="StructTypes\PerPlatformBoolPropertyData.cs" />
     <Compile Include="StructTypes\PerPlatformIntPropertyData.cs" />
-    <Compile Include="StructTypes\RichCurveKeyProperty.cs" />
+    <Compile Include="StructTypes\RichCurveKeyPropertyData.cs" />
     <Compile Include="StructTypes\SoftAssetPathPropertyData.cs" />
     <Compile Include="StructTypes\TimespanPropertyData.cs" />
     <Compile Include="StructTypes\DateTimePropertyData.cs" />

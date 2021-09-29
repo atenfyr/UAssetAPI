@@ -4,7 +4,7 @@ using System.IO;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes a boolean.
+    /// Describes a boolean (<see cref="bool"/>).
     /// </summary>
     public class BoolPropertyData : PropertyData<bool>
     {

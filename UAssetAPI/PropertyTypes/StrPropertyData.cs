@@ -4,7 +4,7 @@ using System.Text;
 namespace UAssetAPI.PropertyTypes
 {
     /// <summary>
-    /// Describes an FString.
+    /// Describes an <see cref="FString"/>.
     /// </summary>
     public class StrPropertyData : PropertyData<FString>
     {

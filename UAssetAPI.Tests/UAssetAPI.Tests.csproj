@@ -66,25 +66,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestAssets\TestAstroneerAssets\Augment_BroadBrush.uasset">
+    <None Include="TestAssets\TestManyAssets\Astroneer\Augment_BroadBrush.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestAstroneerAssets\LargeResourceCanister_IT.uasset">
+    <None Include="TestAssets\TestManyAssets\Astroneer\LargeResourceCanister_IT.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestAstroneerAssets\ResourceProgressCurve.uasset">
+    <None Include="TestAssets\TestManyAssets\Astroneer\ResourceProgressCurve.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestBloodstainedAssets\m01SIP_000_BG.umap">
+    <None Include="TestAssets\TestManyAssets\Bloodstained\m01SIP_000_BG.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestBloodstainedAssets\m01SIP_000_Gimmick.umap">
+    <None Include="TestAssets\TestManyAssets\Bloodstained\m01SIP_000_Gimmick.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestBloodstainedAssets\m02VIL_004_Gimmick.umap">
+    <None Include="TestAssets\TestManyAssets\Bloodstained\m02VIL_004_Gimmick.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestBloodstainedAssets\PB_DT_RandomizerRoomCheck.uasset">
+    <None Include="TestAssets\TestManyAssets\Bloodstained\PB_DT_RandomizerRoomCheck.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestAssets\TestCustomSerializationStructsInMap\wtf.uasset">
@@ -111,10 +111,10 @@
     <None Include="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestAstroneerAssets\DebugMenu.uasset">
+    <None Include="TestAssets\TestManyAssets\Astroneer\DebugMenu.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestAssets\TestAstroneerAssets\Staging_T2.umap">
+    <None Include="TestAssets\TestManyAssets\Astroneer\Staging_T2.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

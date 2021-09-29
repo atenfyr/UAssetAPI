@@ -4,6 +4,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// Describes a color with 8 bits of precision per channel.
+    /// </summary>
     public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
         public ColorPropertyData(FName name, UAsset asset) : base(name, asset)

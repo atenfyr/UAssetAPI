@@ -18,9 +18,27 @@ namespace UAssetAPI
 
         public override bool Equals(object obj)
         {
-            FString str = obj as FString;
-            if (str == null) return false;
-            return this.Value == str.Value && this.Encoding == str.Encoding;
+            if (obj is FString fStr)
+            {
+                if (fStr == null) return false;
+                return this.Value == fStr.Value && this.Encoding == fStr.Encoding;
+            }
+            else if (obj is string str)
+            {
+                return this.Value == str;
+            }
+
+            return false;
+        }
+
+        public static bool operator ==(FString one, FString two)
+        {
+            return one.Equals(two);
+        }
+
+        public static bool operator !=(FString one, FString two)
+        {
+            return !one.Equals(two);
         }
 
         public override int GetHashCode()
@@ -80,8 +98,17 @@ namespace UAssetAPI
         public override bool Equals(object obj)
         {
             if (!(obj is FName name)) return false;
-            if (name == obj) return true;
-            return this.Value == name.Value && this.Number == name.Number;
+            return (this.Value == name.Value || this.Value.Value == name.Value.Value) && this.Number == name.Number;
+        }
+
+        public static bool operator ==(FName one, FName two)
+        {
+            return one.Equals(two);
+        }
+
+        public static bool operator !=(FName one, FName two)
+        {
+            return !one.Equals(two);
         }
 
         public override int GetHashCode()

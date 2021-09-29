@@ -2,15 +2,9 @@ using System.IO;
 
 namespace UAssetAPI
 {
-    public class FunctionData
-    {
-
-    }
-
-    public class FunctionCategory : Export
-    {
-
-    }
+    /// <summary>
+    /// An entry in a ClassExport's function map (<see cref="ClassExport.FuncMap"/>). A hashtable is not used for the sake of guaranteeing order.
+    /// </summary>
     public struct FunctionDataEntry
     {
         public FName Name;
@@ -28,6 +22,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// An interface that a UClass (<see cref="ClassExport"/>) implements.
+    /// </summary>
     public struct SerializedInterfaceReference
     {
         public int Class;

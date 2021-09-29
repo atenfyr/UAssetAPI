@@ -5,6 +5,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// <see cref="FloatPropertyData"/> (<see cref="float"/>) property with per-platform overrides.
+    /// </summary>
     public class PerPlatformFloatPropertyData : PropertyData<float[]>
     {
         public PerPlatformFloatPropertyData(FName name, UAsset asset) : base(name, asset)

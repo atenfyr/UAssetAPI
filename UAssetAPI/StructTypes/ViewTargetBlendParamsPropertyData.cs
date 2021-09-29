@@ -4,6 +4,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// Options that define how to blend when changing view targets in <see cref="ViewTargetBlendParamsPropertyData"/>.
+    /// </summary>
     public enum ViewTargetBlendFunction
     {
         /** Camera does a simple linear interpolation. */
@@ -19,7 +22,10 @@ namespace UAssetAPI.StructTypes
         VTBlend_MAX,
     }
 
-    // Referred to as FViewTargetTransitionParams in the UE4 src
+    /// <summary>
+    /// A set of parameters to describe how to transition between view targets.
+    /// Referred to as FViewTargetTransitionParams in the Unreal Engine.
+    /// </summary>
     public class ViewTargetBlendParamsPropertyData : PropertyData
     {
         public float BlendTime;

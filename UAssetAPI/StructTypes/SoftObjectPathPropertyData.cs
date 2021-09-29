@@ -3,9 +3,21 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class SoftObjectPathPropertyData : PropertyData<FName>
+    /// <summary>
+    /// A struct that contains a string reference to an object, either a top level asset or a subobject.
+    /// This can be used to make soft references to assets that are loaded on demand.
+    /// This is stored internally as an FName pointing to the top level asset (/package/path.assetname) and an option a string subobject path.
+    /// </summary>
+    public class SoftObjectPathPropertyData : PropertyData
     {
-        public uint ID = 0;
+        /// <summary>Asset path, patch to a top level object in a package. This is /package/path.assetname</summary>
+        public FName AssetPathName;
+
+        /// <summary>Optional FString for subobject within an asset. This is the sub path after the :</summary>
+        public FString SubPathString;
+
+        /// <summary>Used in older versions of the Unreal Engine.</summary>
+        public FString Path;
 
         public SoftObjectPathPropertyData(FName name, UAsset asset) : base(name, asset)
         {
@@ -28,8 +40,15 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            Value = reader.ReadFName(Asset);
-            ID = reader.ReadUInt32();
+            if (Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            {
+                Path = reader.ReadFStringWithEncoding();
+            }
+            else
+            {
+                AssetPathName = reader.ReadFName(Asset);
+                SubPathString = reader.ReadFStringWithEncoding();
+            }
         }
 
         public override int Write(BinaryWriter writer, bool includeHeader)
@@ -39,29 +58,35 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.WriteFName(Value, Asset);
-            writer.Write(ID);
-            return sizeof(int) * 3;
+            int here = (int)writer.BaseStream.Position;
+
+            if (Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            {
+                writer.WriteFString(Path);
+            }
+            else
+            {
+                writer.WriteFName(AssetPathName, Asset);
+                writer.WriteFString(SubPathString);
+            }
+
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
         {
-            return "(" + Value.ToString() + ", " + ID + ")";
+            return "(" + AssetPathName.ToString() + ", " + SubPathString.ToString() + ")";
         }
 
         public override void FromString(string[] d)
         {
             FName output = FName.FromString(d[0]);
             Asset.AddNameReference(output.Value);
-            Value = output;
+            AssetPathName = output;
 
-            if (uint.TryParse(d[1], out uint res2))
+            if (d.Length > 1)
             {
-                ID = res2;
-            }
-            else
-            {
-                ID = 0;
+                SubPathString = new FString(d[1]);
             }
         }
     }

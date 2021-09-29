@@ -62,9 +62,10 @@ namespace UAssetAPI.Tests
             MapPropertyData testMap = (MapPropertyData)exportTwoNormal.Data[0];
 
             // Get the first entry of the map
-            DictionaryEntry firstEntry = testMap.Value.Cast<DictionaryEntry>().ElementAt(0);
-            StructPropertyData entryKey = (StructPropertyData)firstEntry.Key;
-            StructPropertyData entryValue = (StructPropertyData)firstEntry.Value;
+            StructPropertyData entryKey = testMap?.Value?.Keys?.ElementAt(0) as StructPropertyData;
+            StructPropertyData entryValue = testMap?.Value?[0] as StructPropertyData;
+            Assert.IsNotNull(entryKey?.Value?[0]);
+            Assert.IsNotNull(entryValue?.Value?[0]);
 
             // Check that the properties are correct
             Assert.IsTrue(entryKey.Value[0] is VectorPropertyData);
@@ -174,45 +175,86 @@ namespace UAssetAPI.Tests
             }
         }
 
-        /// <summary>
-        /// In this test, we examine a few assets from Astroneer (4.23) and ensure that they parse correctly and maintain binary equality.
-        /// </summary>
-        [TestMethod]
-        [DeploymentItem(@"TestAssets/TestAstroneerAssets/DebugMenu.uasset", "TestAstroneerAssets")]
-        [DeploymentItem(@"TestAssets/TestAstroneerAssets/Staging_T2.umap", "TestAstroneerAssets")]
-        [DeploymentItem(@"TestAssets/TestAstroneerAssets/Augment_BroadBrush.uasset", "TestAstroneerAssets")]
-        [DeploymentItem(@"TestAssets/TestAstroneerAssets/LargeResourceCanister_IT.uasset", "TestAstroneerAssets")]
-        [DeploymentItem(@"TestAssets/TestAstroneerAssets/ResourceProgressCurve.uasset", "TestAstroneerAssets")]
-        public void TestAstroneerAssets()
+        private void TestManyAssetsSubsection(string game, UE4Version version)
         {
-            string[] allTestingAssets = GetAllTestAssets("TestAstroneerAssets");
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestManyAssets", game));
             foreach (string assetPath in allTestingAssets)
             {
                 Debug.WriteLine(assetPath);
-                var tester = new UAsset(assetPath, UE4Version.VER_UE4_23);
+                var tester = new UAsset(assetPath, version);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
             }
         }
 
         /// <summary>
-        /// In this test, we examine a few assets from Bloodstained (4.18) and ensure that they parse correctly and maintain binary equality.
+        /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestBloodstainedAssets/m01SIP_000_BG.umap", "TestBloodstainedAssets")]
-        [DeploymentItem(@"TestAssets/TestBloodstainedAssets/m01SIP_000_Gimmick.umap", "TestBloodstainedAssets")]
-        [DeploymentItem(@"TestAssets/TestBloodstainedAssets/m02VIL_004_Gimmick.umap", "TestBloodstainedAssets")]
-        [DeploymentItem(@"TestAssets/TestBloodstainedAssets/PB_DT_RandomizerRoomCheck.uasset", "TestBloodstainedAssets")]
-        public void TestBloodstainedAssets()
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/DebugMenu.uasset", "TestManyAssets/Astroneer")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestManyAssets/Astroneer")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/LargeResourceCanister_IT.uasset", "TestManyAssets/Astroneer")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/ResourceProgressCurve.uasset", "TestManyAssets/Astroneer")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_BG.umap", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_Gimmick.umap", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestManyAssets/Bloodstained")]
+        public void TestManyAssets()
         {
-            string[] allTestingAssets = GetAllTestAssets("TestBloodstainedAssets");
-            foreach (string assetPath in allTestingAssets)
+            TestManyAssetsSubsection("Astroneer", UE4Version.VER_UE4_23);
+            TestManyAssetsSubsection("Bloodstained", UE4Version.VER_UE4_18);
+        }
+
+        /// <summary>
+        /// In this test, we examine and modify a DataTable to ensure that it parses correctly and maintains binary equality.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestDataTables")]
+        public void TestDataTables()
+        {
+            var tester = new UAsset(Path.Combine("TestDatatables", "PB_DT_RandomizerRoomCheck.uasset"), UE4Version.VER_UE4_18);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            Assert.IsTrue(tester.Exports.Count == 1);
+
+            var ourDataTableExport = tester.Exports[0] as DataTableExport;
+            var ourTable = ourDataTableExport?.Table;
+            Assert.IsNotNull(ourTable);
+
+            // Check out the first entry to make sure it's parsing alright, and flip all the flags for later testing
+            StructPropertyData firstEntry = ourTable.Data[0];
+
+            bool didFindTestName = false;
+            for (int i = 0; i < firstEntry.Value.Count; i++)
             {
-                Debug.WriteLine(assetPath);
-                var tester = new UAsset(assetPath, UE4Version.VER_UE4_18);
-                Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                var propData = firstEntry.Value[i];
+                Debug.WriteLine(i + ": " + propData.Name + ", " + propData.PropertyType);
+                if (propData.Name == new FName("AcceleratorANDDoubleJump")) didFindTestName = true;
+                if (propData is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
             }
+            Assert.IsTrue(didFindTestName);
+
+            // Save the modified table
+            tester.Write(Path.Combine("TestDatatables", "MODIFIED.uasset"));
+
+            // Load the modified table back in and make sure we're good
+            var tester2 = new UAsset(Path.Combine("TestDatatables", "MODIFIED.uasset"), UE4Version.VER_UE4_18);
+            Assert.IsTrue(tester2.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            Assert.IsTrue(tester2.Exports.Count == 1);
+
+            // Flip the flags back to what they originally were
+            firstEntry = (tester2.Exports[0] as DataTableExport)?.Table?.Data?[0];
+            Assert.IsNotNull(firstEntry);
+            for (int i = 0; i < firstEntry.Value.Count; i++)
+            {
+                if (firstEntry.Value[i] is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
+            }
+
+            // Save and check that it's binary equal to what we originally had
+            tester2.Write(tester2.FilePath);
+            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestDatatables", "PB_DT_RandomizerRoomCheck.uasset")).SequenceEqual(File.ReadAllBytes(Path.Combine("TestDatatables", "MODIFIED.uasset"))));
         }
     }
 }

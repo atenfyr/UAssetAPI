@@ -91,6 +91,7 @@ namespace UAssetAPI
         /// Miscellaneous, unparsed export data, stored as a byte array.
         /// </summary>
         public byte[] Extras;
+
         /// <summary>
         /// The asset that this export is parsed with.
         /// </summary>
@@ -164,6 +165,11 @@ namespace UAssetAPI
             return res;
         }
 
+        /// <summary>
+        /// Creates a child export instance with the same export details as the current export.
+        /// </summary>
+        /// <typeparam name="T">The type of child export to create.</typeparam>
+        /// <returns>An instance of the child export type provided with the export details copied over.</returns>
         public T ConvertToChildExport<T>() where T : Export, new()
         {
             InitAllFields();

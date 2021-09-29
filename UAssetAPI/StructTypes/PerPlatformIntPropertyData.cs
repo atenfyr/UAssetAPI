@@ -5,6 +5,9 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
+    /// <summary>
+    /// <see cref="IntPropertyData"/> (<see cref="int"/>) property with per-platform overrides.
+    /// </summary>
     public class PerPlatformIntPropertyData : PropertyData<int[]>
     {
         public PerPlatformIntPropertyData(FName name, UAsset asset) : base(name, asset)

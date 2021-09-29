@@ -24,6 +24,11 @@ namespace UAssetAPI.PropertyTypes
         public long Offset = -1;
 
         /// <summary>
+        /// An optional tag which can be set on any property. This is for the user only, and has no bearing in the API itself.
+        /// </summary>
+        public object Tag;
+
+        /// <summary>
         /// The asset that this property is parsed with.
         /// </summary>
         public UAsset Asset;
@@ -55,16 +60,33 @@ namespace UAssetAPI.PropertyTypes
         public virtual bool HasCustomStructSerialization { get { return false; } }
         public virtual FName PropertyType { get { return FallbackPropertyType; } }
 
+        /// <summary>
+        /// Reads out an asset from a BinaryReader.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from.</param>
+        /// <param name="includeHeader">Whether or not to also read the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
+        /// <param name="leng1">An estimate for the length of the data being read out.</param>
+        /// <param name="leng2">A second estimate for the length of the data being read out.</param>
         public virtual void Read(BinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
 
         }
 
+        /// <summary>
+        /// Writes an asset to a BinaryWriter.
+        /// </summary>
+        /// <param name="writer">The BinaryWriter to write from.</param>
+        /// <param name="includeHeader">Whether or not to also write the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
+        /// <returns>The length of the data that was written.</returns>
         public virtual int Write(BinaryWriter writer, bool includeHeader)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Sets certain fields of the property based off of an array of strings.
+        /// </summary>
+        /// <param name="d">An array of strings to derive certain fields from.</param>
         public virtual void FromString(string[] d)
         {
 
