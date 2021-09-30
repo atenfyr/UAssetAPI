@@ -10,8 +10,15 @@ namespace UAssetAPI.PropertyTypes
     /// <summary>
     /// Describes a map (<see cref="OrderedDictionary"/>).
     /// </summary>
-    public class MapPropertyData : PropertyData<TMap<PropertyData, PropertyData>> // Map
+    public class MapPropertyData : PropertyData
     {
+        /// <summary>
+        /// The map that this property represents.
+        /// </summary>
+        [JsonProperty]
+        [JsonConverter(typeof(TMapJsonConverter<PropertyData, PropertyData>))]
+        public TMap<PropertyData, PropertyData> Value;
+
         /// <summary>
         /// Used when the length of the map is zero.
         /// </summary>]
@@ -35,6 +42,7 @@ namespace UAssetAPI.PropertyTypes
         }
 
         [JsonProperty]
+        [JsonConverter(typeof(TMapJsonConverter<PropertyData, PropertyData>))]
         public TMap<PropertyData, PropertyData> KeysToRemove = null;
 
         public MapPropertyData(FName name) : base(name)

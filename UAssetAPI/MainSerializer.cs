@@ -34,10 +34,21 @@ namespace UAssetAPI
         private static PropertyData lastType;
 #endif
 
+        private static IDictionary<string, RegistryEntry> _propertyTypeRegistry;
+
         /// <summary>
         /// The property type registry. Maps serialized property names to their types.
         /// </summary>
-        internal static IDictionary<string, RegistryEntry> PropertyTypeRegistry = null;
+        internal static IDictionary<string, RegistryEntry> PropertyTypeRegistry
+        {
+            get
+            {
+                InitializePropertyTypeRegistry();
+                return _propertyTypeRegistry;
+            }
+            set => _propertyTypeRegistry = value; // I hope you know what you're doing!
+        }
+
         private static Type registryParentDataType = typeof(PropertyData);
 
         /// <summary>
@@ -45,8 +56,8 @@ namespace UAssetAPI
         /// </summary>
         private static void InitializePropertyTypeRegistry()
         {
-            if (PropertyTypeRegistry != null) return;
-            PropertyTypeRegistry = new Dictionary<string, RegistryEntry>();
+            if (_propertyTypeRegistry != null) return;
+            _propertyTypeRegistry = new Dictionary<string, RegistryEntry>();
 
             Assembly[] allAssemblies = new Assembly[1];
             allAssemblies[0] = registryParentDataType.Assembly;
@@ -69,7 +80,7 @@ namespace UAssetAPI
                     RegistryEntry res = new RegistryEntry();
                     res.PropertyType = currentPropertyDataType;
                     res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
-                    PropertyTypeRegistry[returnedPropType.Value.Value] = res;
+                    _propertyTypeRegistry[returnedPropType.Value.Value] = res;
                 }
             }
         }
@@ -87,8 +98,6 @@ namespace UAssetAPI
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
         public static PropertyData TypeToClass(FName type, FName name, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
-            InitializePropertyTypeRegistry();
-
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
 

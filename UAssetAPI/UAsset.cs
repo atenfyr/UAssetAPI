@@ -2,11 +2,11 @@
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UAssetAPI.FieldTypes;
+using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
 {
@@ -91,6 +91,11 @@ namespace UAssetAPI
 
     public class UAsset
     {
+        /// <summary>
+        /// Agent string to provide context in serialized JSON.
+        /// </summary>
+        public readonly string Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version;
+
         /// <summary>
         /// The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
         /// </summary>
@@ -1571,19 +1576,18 @@ namespace UAssetAPI
 
         private static JsonSerializerSettings jsonSettings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.Objects,
             NullValueHandling = NullValueHandling.Include,
             FloatParseHandling = FloatParseHandling.Double,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Converters = new List<JsonConverter>()
             {
                 new FSignedZeroJsonConverter(),
                 new FNameJsonConverter(),
                 new FStringJsonConverter(),
                 new FPackageIndexJsonConverter(),
-                new TMapJsonConverter<FName, FPackageIndex>(),
                 new StringEnumConverter()
             }
-
         };
 
         /// <summary>
@@ -1603,6 +1607,27 @@ namespace UAssetAPI
         public static UAsset DeserializeJson(string json)
         {
             UAsset res = JsonConvert.DeserializeObject<UAsset>(json, jsonSettings);
+            foreach (Export ex in res.Exports) ex.Asset = res;
+            return res;
+        }
+
+        /// <summary>
+        /// Reads an asset from serialized JSON and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="stream">A stream containing serialized JSON string to parse.</param>
+        public static UAsset DeserializeJson(Stream stream)
+        {
+            var serializer = JsonSerializer.Create(jsonSettings);
+            UAsset res;
+
+            using (var sr = new StreamReader(stream))
+            {
+                using (var jsonTextReader = new JsonTextReader(sr))
+                {
+                    res = serializer.Deserialize<UAsset>(jsonTextReader);
+                }
+            }
+
             foreach (Export ex in res.Exports) ex.Asset = res;
             return res;
         }

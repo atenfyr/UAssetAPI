@@ -268,21 +268,28 @@ namespace UAssetAPI.Tests
             string jsonSerializedAsset = tester.SerializeJson();
             File.WriteAllText(Path.Combine("TestJson", "raw.json"), jsonSerializedAsset);
 
-            var tester2 = UAsset.DeserializeJson(jsonSerializedAsset);
+            var tester2 = UAsset.DeserializeJson(File.ReadAllText(Path.Combine("TestJson", "raw.json")));
             tester2.Write(Path.Combine("TestJson", "MODIFIED.uasset"));
-            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestJson", file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestJson", "MODIFIED.uasset"))));
 
+            // For the assets we're testing binary equality is maintained and can be used as a metric of success, but binary equality is not guaranteed for most assets
+            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestJson", file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestJson", "MODIFIED.uasset"))));
         }
 
+        /// <summary>
+        /// In this test, we serialize some assets to JSON and back to test if the JSON serialization system is functionality.
+        /// </summary>
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
         public void TestJson()
         {
             TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", UE4Version.VER_UE4_18);
             TestJsonOnFile("m02VIL_004_Gimmick.umap", UE4Version.VER_UE4_18);
             TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
+            TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
         }
     }
 }
