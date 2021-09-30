@@ -1,32 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 
 namespace UAssetAPI
 {
-    public class FPackageIndexJsonConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(FPackageIndex);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue((value as FPackageIndex).Index);
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return new FPackageIndex(Convert.ToInt32(reader.Value));
-        }
-    }
-
     /// <summary>
     /// Wrapper for index into an ImportMap or ExportMap.
     /// 

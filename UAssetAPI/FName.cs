@@ -1,55 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.Text;
 
 namespace UAssetAPI
 {
-    public class FStringJsonConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(FString);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue((value as FString).Value);
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return new FString(Convert.ToString(reader.Value));
-        }
-    }
-
-    public class FNameJsonConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(FName);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue((value as FName).ToString());
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return FName.FromString(Convert.ToString(reader.Value));
-        }
-    }
-
     /// <summary>
     /// Unreal string - consists of a string and an encoding
     /// </summary>
@@ -104,7 +59,7 @@ namespace UAssetAPI
 
         public FString(string value, Encoding encoding = null)
         {
-            if (encoding == null) encoding = Encoding.ASCII;
+            if (encoding == null) encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
 
             Value = value;
             Encoding = encoding;
@@ -183,7 +138,7 @@ namespace UAssetAPI
             }
             else
             {
-                Value = new FString(value, Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode);
+                Value = new FString(value);
             }
             Number = number;
         }

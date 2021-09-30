@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace UAssetAPI.PropertyTypes
@@ -6,8 +7,15 @@ namespace UAssetAPI.PropertyTypes
     /// <summary>
     /// Describes an IEEE 32-bit floating point variable (<see cref="float"/>).
     /// </summary>
-    public class FloatPropertyData : PropertyData<float>
+    public class FloatPropertyData : PropertyData
     {
+        /// <summary>
+        /// The float that this property represents.
+        /// </summary>
+        [JsonProperty]
+        [JsonConverter(typeof(FSignedZeroJsonConverter))]
+        public float Value;
+
         public FloatPropertyData(FName name) : base(name)
         {
 

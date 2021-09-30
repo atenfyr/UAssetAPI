@@ -260,6 +260,7 @@ namespace UAssetAPI.Tests
 
         private void TestJsonOnFile(string file, UE4Version version)
         {
+            Debug.WriteLine(file);
             var tester = new UAsset(Path.Combine("TestJson", file), version);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
@@ -275,10 +276,12 @@ namespace UAssetAPI.Tests
 
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
         public void TestJson()
         {
             TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", UE4Version.VER_UE4_18);
+            TestJsonOnFile("m02VIL_004_Gimmick.umap", UE4Version.VER_UE4_18);
             TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
         }
     }

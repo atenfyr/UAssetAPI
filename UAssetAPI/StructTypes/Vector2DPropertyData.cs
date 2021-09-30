@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
@@ -10,9 +11,11 @@ namespace UAssetAPI.StructTypes
     public class Vector2DPropertyData : PropertyData
     {
         /// <summary>Vector's X-component.</summary>
+        [JsonProperty]
         public float X;
 
         /// <summary>Vector's Y-component.</summary>
+        [JsonProperty]
         public float Y;
 
         public Vector2DPropertyData(FName name) : base(name)

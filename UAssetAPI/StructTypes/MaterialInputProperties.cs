@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
     public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
+        [JsonProperty]
         public byte[] Extras;
+        [JsonProperty]
         public int OutputIndex;
-        public NamePropertyData InputName;
-        public NamePropertyData ExpressionName;
+        [JsonProperty]
+        public FName InputName;
+        [JsonProperty]
+        public FName ExpressionName;
 
         public MaterialInputPropertyData()
         {
@@ -29,28 +27,26 @@ namespace UAssetAPI.StructTypes
         protected void ReadExpressionInput(AssetBinaryReader reader, bool includeHeader, long leng)
         {
             OutputIndex = reader.ReadInt32();
-            InputName = new NamePropertyData(Name);
-            InputName.Read(reader, false, 0);
+            InputName = reader.ReadFName();
             Extras = reader.ReadBytes(20); // always 0s
-            ExpressionName = new NamePropertyData(Name);
-            ExpressionName.Read(reader, false, 0);
+            ExpressionName = reader.ReadFName();
             return;
         }
 
         protected int WriteExpressionInput(AssetBinaryWriter writer, bool includeHeader)
         {
             writer.Write(OutputIndex);
-            int nameSizeA = InputName.Write(writer, false);
+            writer.Write(InputName);
             writer.Write(Extras); // always 0s
-            int nameSizeB = ExpressionName.Write(writer, false);
-            return nameSizeA + nameSizeB + sizeof(int) + 20;
+            writer.Write(ExpressionName);
+            return (sizeof(int) * 2) * 2 + sizeof(int) + 20;
         }
 
         protected override void HandleCloned(PropertyData res)
         {
             MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
-            cloningProperty.InputName = (NamePropertyData)this.InputName.Clone();
-            cloningProperty.InputName = (NamePropertyData)this.ExpressionName.Clone();
+            cloningProperty.InputName = (FName)this.InputName.Clone();
+            cloningProperty.InputName = (FName)this.ExpressionName.Clone();
             cloningProperty.Extras = (byte[])this.Extras.Clone();
         }
     }

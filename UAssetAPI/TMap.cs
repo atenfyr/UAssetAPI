@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,52 +34,6 @@ using System.Reflection;
 
 namespace UAssetAPI
 {
-    public class TMapJsonConverter<TKey, TValue> : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return typeof(IOrderedDictionary).IsAssignableFrom(objectType);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            ICollection keys = ((IOrderedDictionary)value).Keys;
-            ICollection values = ((IOrderedDictionary)value).Values;
-            IEnumerator valueEnumerator = values.GetEnumerator();
-
-            writer.WriteStartArray();
-            foreach (object key in keys)
-            {
-                valueEnumerator.MoveNext();
-
-                writer.WriteStartArray();
-                serializer.Serialize(writer, key);
-                serializer.Serialize(writer, valueEnumerator.Current);
-                writer.WriteEndArray();
-            }
-            writer.WriteEndArray();
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var dictionary = new TMap<TKey, TValue>();
-            JToken tokens = JToken.Load(reader);
-
-            foreach (var eachToken in tokens)
-            {
-                TKey key = eachToken[0].ToObject<TKey>(serializer);
-                TValue value = eachToken[1].ToObject<TValue>(serializer);
-                dictionary.Add(key, value);
-            }
-            return dictionary;
-        }
-    }
-
     internal static class StringExtensions
     {
         /// <summary>

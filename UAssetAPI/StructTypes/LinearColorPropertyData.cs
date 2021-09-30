@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Drawing;
 using System.IO;
 using UAssetAPI.PropertyTypes;
@@ -27,9 +28,13 @@ namespace UAssetAPI.StructTypes
     /// </summary>
     public class LinearColor : ICloneable
     {
+        [JsonProperty]
         public float R;
+        [JsonProperty]
         public float G;
+        [JsonProperty]
         public float B;
+        [JsonProperty]
         public float A;
 
         public LinearColor()

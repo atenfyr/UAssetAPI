@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -47,7 +46,6 @@ namespace UAssetAPI
 
         public void Write(AssetBinaryWriter writer)
         {
-            if (Branch?.Value == string.Empty) Branch = null;
             writer.Write(Major);
             writer.Write(Minor);
             writer.Write(Patch);
@@ -282,10 +280,10 @@ namespace UAssetAPI
 
             Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
             if (parentClassLink == null) return;
-            if (parentClassLink.OuterIndex >= 0) return;
+            if (parentClassLink.OuterIndex.Index >= 0) return;
 
             parentClassExportName = parentClassLink.ObjectName;
-            parentClassPath = new FPackageIndex((int)parentClassLink.OuterIndex).ToImport(this).ObjectName;
+            parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
         }
 
         /// <summary>
@@ -367,7 +365,7 @@ namespace UAssetAPI
         /// <param name="outerIndex">The CuterIndex that the requested import will have.</param>
         /// <param name="objectName">The ObjectName that the requested import will have.</param>
         /// <returns>The index of the requested import in the name map, or zero if one could not be found.</returns>
-        public int SearchForImport(FName classPackage, FName className, int outerIndex, FName objectName)
+        public int SearchForImport(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName)
         {
             int currentPos = 0;
             for (int i = 0; i < Imports.Count; i++)
@@ -562,6 +560,7 @@ namespace UAssetAPI
         /// <summary>
         /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
         /// </summary>
+        [JsonIgnore]
         public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
         {
             { "ColorDatabase", new Tuple<FName, FName>(null, new FName("LinearColor")) },
@@ -865,7 +864,7 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(ImportOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ImportCount; i++)
                 {
-                    Imports.Add(new Import(reader.ReadFName(), reader.ReadFName(), reader.ReadInt32(), reader.ReadFName()));
+                    Imports.Add(new Import(reader.ReadFName(), reader.ReadFName(), new FPackageIndex(reader.ReadInt32()), reader.ReadFName()));
                 }
             }
 
@@ -883,7 +882,7 @@ namespace UAssetAPI
                     {
                         newExport.TemplateIndex = new FPackageIndex(reader.ReadInt32());
                     }
-                    newExport.OuterIndex = reader.ReadInt32();
+                    newExport.OuterIndex = new FPackageIndex(reader.ReadInt32());
                     newExport.ObjectName = reader.ReadFName();
                     newExport.ObjectFlags = (EObjectFlags)reader.ReadUInt32();
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
@@ -1269,7 +1268,7 @@ namespace UAssetAPI
                 {
                     writer.Write(this.Imports[i].ClassPackage);
                     writer.Write(this.Imports[i].ClassName);
-                    writer.Write(this.Imports[i].OuterIndex);
+                    writer.Write(this.Imports[i].OuterIndex.Index);
                     writer.Write(this.Imports[i].ObjectName);
                 }
             }
@@ -1292,7 +1291,7 @@ namespace UAssetAPI
                     {
                         writer.Write(us.TemplateIndex.Index);
                     }
-                    writer.Write(us.OuterIndex);
+                    writer.Write(us.OuterIndex.Index);
                     writer.Write(us.ObjectName);
                     writer.Write((uint)us.ObjectFlags);
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
@@ -1449,7 +1448,7 @@ namespace UAssetAPI
                     {
                         writer.Write(us.TemplateIndex.Index);
                     }
-                    writer.Write(us.OuterIndex);
+                    writer.Write(us.OuterIndex.Index);
                     writer.Write(us.ObjectName);
                     writer.Write((uint)us.ObjectFlags);
                     if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
@@ -1570,28 +1569,40 @@ namespace UAssetAPI
             }
         }
 
+        private static JsonSerializerSettings jsonSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Include,
+            FloatParseHandling = FloatParseHandling.Double,
+            Converters = new List<JsonConverter>()
+            {
+                new FSignedZeroJsonConverter(),
+                new FNameJsonConverter(),
+                new FStringJsonConverter(),
+                new FPackageIndexJsonConverter(),
+                new TMapJsonConverter<FName, FPackageIndex>(),
+                new StringEnumConverter()
+            }
+
+        };
+
         /// <summary>
         /// Serializes this asset as JSON.
         /// </summary>
-        /// <returns>A JSON string that represents the asset.</returns>
-        public string SerializeJson()
+        /// <param name="jsonFormatting">The formatting to use for the returned JSON string.</param>
+        /// <returns>A serialized JSON string that represents the asset.</returns>
+        public string SerializeJson(Formatting jsonFormatting = Formatting.None)
         {
-            return JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-            });
+            return JsonConvert.SerializeObject(this, jsonFormatting, jsonSettings);
         }
 
         /// <summary>
         /// Reads an asset from serialized JSON and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
-        /// <param name="json"></param>
+        /// <param name="json">A serialized JSON string to parse.</param>
         public static UAsset DeserializeJson(string json)
         {
-            UAsset res = JsonConvert.DeserializeObject<UAsset>(json, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-            });
+            UAsset res = JsonConvert.DeserializeObject<UAsset>(json, jsonSettings);
             foreach (Export ex in res.Exports) ex.Asset = res;
             return res;
         }

@@ -13,9 +13,9 @@
 
         ///<summary>Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage</summary>
         [FObjectExportField(1)]
-        public int OuterIndex;
+        public FPackageIndex OuterIndex;
 
-        public FObjectResource(FName objectName, int outerIndex)
+        public FObjectResource(FName objectName, FPackageIndex outerIndex)
         {
             ObjectName = objectName;
             OuterIndex = outerIndex;
