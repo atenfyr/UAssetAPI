@@ -38,6 +38,7 @@ namespace UAssetAPI
         /// <summary>
         /// Provides a more natural way to call String.Format() on a string.
         /// </summary>
+        /// <param name="s">The string to format.</param>
         /// <param name="args">An object array that contains zero or more objects to format</param>
         public static string FormatWith(this string s, params object[] args)
         {
@@ -48,6 +49,7 @@ namespace UAssetAPI
         /// <summary>
         /// Provides a more natural way to call String.Format() on a string.
         /// </summary>
+        /// <param name="s">The string to format.</param>
         /// <param name="provider">An object that supplies the culture specific formatting</param>
         /// <param name="args">An object array that contains zero or more objects to format</param>
         public static string FormatWith(this string s, IFormatProvider provider, params object[] args)

@@ -581,7 +581,7 @@
 		VER_UE4_BLUEPRINT_CUSTOM_EVENT_CONST_INPUT,
 		/// <summary>Renamed HighFrequencyGain to LowPassFilterFrequency</summary>
 		VER_UE4_USE_LOW_PASS_FILTER_FREQ,
-		/// <summary>UAnimBlueprintGeneratedClass can be replaced by a dynamic class. Use TSubclassOf<UAnimInstance> instead.</summary>
+		/// <summary>UAnimBlueprintGeneratedClass can be replaced by a dynamic class. Use TSubclassOf UAnimInstance instead.</summary>
 		VER_UE4_NO_ANIM_BP_CLASS_IN_GAMEPLAY_CODE,
 		/// <summary>The SCS keeps a list of all nodes in its hierarchy rather than recursively building it each time it is requested</summary>
 		VER_UE4_SCS_STORES_ALLNODES_ARRAY,

@@ -13,7 +13,7 @@ namespace UAssetAPI
 
         /// <summary>Reserved for additional options</summary>
         public int Reserved0;
-        /// <summary>Reserved for additional options</summary
+        /// <summary>Reserved for additional options</summary>
         public IntPointPropertyData Reserved1;
 
         /// <summary>Distance starting from where tiles belonging to this layer will be streamed in</summary>

@@ -94,8 +94,8 @@ namespace UAssetAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomVersion"/> class given an object or enum name and a version number.
         /// </summary>
-        /// <param name="friendlyName"></param>
-        /// <param name="version"></param>
+        /// <param name="friendlyName">The friendly name to use when initializing this custom version.</param>
+        /// <param name="version">The version number to use when initializing this custom version.</param>
         public CustomVersion(string friendlyName, int version)
         {
             Key = GetCustomVersionGuidFromFriendlyName(friendlyName);
@@ -106,8 +106,8 @@ namespace UAssetAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomVersion"/> class given a custom version GUID and a version number.
         /// </summary>
-        /// <param name="friendlyName"></param>
-        /// <param name="version"></param>
+        /// <param name="key">The GUID to use when initializing this custom version.</param>
+        /// <param name="version">The version number to use when initializing this custom version.</param>
         public CustomVersion(Guid key, int version)
         {
             Key = key;
@@ -417,7 +417,7 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)]
         GeometryCacheMissingMaterials,
 
-        /// <summary> Switch static & skeletal meshes to calculate LODs based on resolution-independent screen size</summary>
+        /// <summary> Switch static and skeletal meshes to calculate LODs based on resolution-independent screen size</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
         LODsUseResolutionIndependentScreenSize,
 

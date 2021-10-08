@@ -55,7 +55,13 @@ namespace UAssetAPI.PropertyTypes
         }
 
         private static FName FallbackPropertyType = new FName(string.Empty);
+        /// <summary>
+        /// Determines whether or not this particular property has custom serialization within a StructProperty.
+        /// </summary>
         public virtual bool HasCustomStructSerialization { get { return false; } }
+        /// <summary>
+        /// The type of this property as an FName.
+        /// </summary>
         public virtual FName PropertyType { get { return FallbackPropertyType; } }
 
         /// <summary>

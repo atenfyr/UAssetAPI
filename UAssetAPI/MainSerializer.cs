@@ -91,7 +91,7 @@ namespace UAssetAPI
         /// <param name="type">The serialized type of this property.</param>
         /// <param name="name">The serialized name of this property.</param>
         /// <param name="asset">The UAsset which this property is contained within.</param>
-        /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(BinaryReader, bool, long, long)"/> method manually.</param>
+        /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
         /// <param name="duplicationIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
