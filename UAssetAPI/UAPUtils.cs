@@ -1,11 +1,58 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace UAssetAPI
 {
     public static class UAPUtils
     {
+        public static List<T> FindAllInstances<T>(object parent) where T : class
+        {
+            HashSet<object> yaExplorado = new HashSet<object>();
+            List<T> res = new List<T>();
+
+            FindAllInstances(parent, yaExplorado, res);
+
+            return res;
+        }
+
+        private static void FindAllInstances<T>(object value, HashSet<object> yaExplorado, List<T> res) where T : class
+        {
+            if (value == null) return;
+            if (yaExplorado.Contains(value)) return;
+
+            yaExplorado.Add(value);
+
+            if (value is IEnumerable enumerable)
+            {
+                foreach (object item in enumerable)
+                {
+                    FindAllInstances<T>(item, yaExplorado, res);
+                }
+            }
+            else
+            {
+                if (value is T match) res.Add(match);
+
+                PropertyInfo[] properties = value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty);
+                foreach (PropertyInfo property in properties)
+                {
+                    if (property.GetIndexParameters().Length > 0) continue;
+                    FindAllInstances<T>(property.GetValue(value, null), yaExplorado, res);
+                }
+
+                FieldInfo[] fields = value.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                foreach (FieldInfo field in fields)
+                {
+                    FindAllInstances<T>(field.GetValue(value), yaExplorado, res);
+                }
+            }
+        }
+
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;

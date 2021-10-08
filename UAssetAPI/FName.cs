@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.ComponentModel;
 using System.Text;
 
 namespace UAssetAPI
@@ -79,7 +78,7 @@ namespace UAssetAPI
     {
         public FString Value;
         /// <summary>Instance number</summary>
-        public int Number; 
+        public int Number;
 
         public override string ToString()
         {

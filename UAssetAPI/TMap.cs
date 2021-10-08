@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Reflection;
 
 /*
     The code in this file is modified from mattmc3's dotmore @ https://github.com/mattmc3/dotmore/tree/b032bbf871d46bffd698c9b7a233c533d9d2f0ebs for usage in UAssetAPI.
@@ -270,7 +269,7 @@ namespace UAssetAPI
         }
 
         #endregion
-
+        
         #region Constructors
 
         public TMap()

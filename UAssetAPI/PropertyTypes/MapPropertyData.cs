@@ -42,8 +42,7 @@ namespace UAssetAPI.PropertyTypes
         }
 
         [JsonProperty]
-        [JsonConverter(typeof(TMapJsonConverter<PropertyData, PropertyData>))]
-        public TMap<PropertyData, PropertyData> KeysToRemove = null;
+        public PropertyData[] KeysToRemove = null;
 
         public MapPropertyData(FName name) : base(name)
         {
@@ -119,9 +118,10 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int numKeysToRemove = reader.ReadInt32();
-            if (numKeysToRemove > 0) // i haven't ever actually seen this case but the engine has it so here's an untested implementation of it for now
+            KeysToRemove = new PropertyData[numKeysToRemove];
+            for (int i = 0; i < numKeysToRemove; i++)
             {
-                KeysToRemove = ReadRawMap(reader, type1, type2, numKeysToRemove);
+                KeysToRemove[i] = MapTypeToClass(type1, Name, reader, 0, false, true);
             }
 
             int numEntries = reader.ReadInt32();
@@ -133,9 +133,8 @@ namespace UAssetAPI.PropertyTypes
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
-        private int WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
+        private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
-            int here = (int)writer.BaseStream.Position;
             foreach (var entry in map)
             {
                 entry.Key.Offset = writer.BaseStream.Position;
@@ -143,7 +142,6 @@ namespace UAssetAPI.PropertyTypes
                 entry.Value.Offset = writer.BaseStream.Position;
                 entry.Value.Write(writer, false);
             }
-            return (int)writer.BaseStream.Position - here;
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -163,14 +161,21 @@ namespace UAssetAPI.PropertyTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(KeysToRemove?.Count ?? 0);
-            if (KeysToRemove != null && KeysToRemove.Count > 0)
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(KeysToRemove?.Length ?? 0);
+            if (KeysToRemove != null)
             {
-                WriteRawMap(writer, KeysToRemove);
+                for (int i = 0; i < KeysToRemove.Length; i++)
+                {
+                    var entry = KeysToRemove[i];
+                    entry.Offset = writer.BaseStream.Position;
+                    entry.Write(writer, false);
+                }
             }
 
             writer.Write(Value.Count);
-            return WriteRawMap(writer, Value) + 8;
+            WriteRawMap(writer, Value);
+            return (int)writer.BaseStream.Position - here;
         }
 
         protected override void HandleCloned(PropertyData res)
@@ -184,12 +189,7 @@ namespace UAssetAPI.PropertyTypes
             }
             cloningProperty.Value = newDict;
 
-            newDict = new TMap<PropertyData, PropertyData>();
-            foreach (var entry in this.KeysToRemove)
-            {
-                newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
-            }
-            cloningProperty.KeysToRemove = newDict;
+            cloningProperty.KeysToRemove = (PropertyData[])this.KeysToRemove.Clone();
 
             cloningProperty.KeyType = (FName)this.KeyType.Clone();
             cloningProperty.ValueType = (FName)this.ValueType.Clone();
