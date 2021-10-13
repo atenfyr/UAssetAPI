@@ -201,6 +201,7 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_Gimmick.umap", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_ItemMaster.uasset", "TestManyAssets/Bloodstained")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", UE4Version.VER_UE4_23);
@@ -276,7 +277,7 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// In this test, we serialize some assets to JSON and back to test if the JSON serialization system is functionality.
+        /// In this test, we serialize some assets to JSON and back to test if the JSON serialization system is functional.
         /// </summary>
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]

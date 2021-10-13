@@ -93,6 +93,9 @@
     <None Include="TestAssets\TestManyAssets\Bloodstained\m02VIL_004_Gimmick.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestAssets\TestManyAssets\Bloodstained\PB_DT_ItemMaster.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestAssets\TestManyAssets\Bloodstained\PB_DT_RandomizerRoomCheck.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

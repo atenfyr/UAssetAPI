@@ -23,12 +23,17 @@ namespace UAssetAPI
             return (algor1 & 0xFFFF) | ((algor2 & 0xFFFF) << 16);
         }
 
+        private static char ToUpper(char input)
+        {
+            return (char)((uint)input - ((((uint)input - 'a' < 26u) ? 1 : 0) << 5));
+        }
+
         private static uint Strihash_DEPRECATED(string text, Encoding encoding)
         {
             uint hash = 0;
             for (int i = 0; i < text.Length; i++)
             {
-                char B = char.ToUpperInvariant(text[i]);
+                char B = ToUpper(text[i]);
                 byte[] rawDataForCharacter = encoding.GetBytes(new char[1] { B });
                 foreach (byte rawByte in rawDataForCharacter)
                 {
