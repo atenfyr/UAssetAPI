@@ -76,7 +76,7 @@ namespace UAssetAPI
                 LoadedProperties = new FProperty[numProps];
                 for (int i = 0; i < numProps; i++)
                 {
-                    LoadedProperties[i] = MainSerializer.ReadFProperty(Asset, reader);
+                    LoadedProperties[i] = MainSerializer.ReadFProperty(reader);
                 }
             }
             else
@@ -115,7 +115,7 @@ namespace UAssetAPI
                 writer.Write(LoadedProperties.Length);
                 for (int i = 0; i < LoadedProperties.Length; i++)
                 {
-                    MainSerializer.WriteFProperty(LoadedProperties[i], Asset, writer);
+                    MainSerializer.WriteFProperty(LoadedProperties[i], writer);
                 }
             }
 

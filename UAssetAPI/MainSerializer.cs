@@ -148,11 +148,10 @@ namespace UAssetAPI
         /// <summary>
         /// Reads a property into memory.
         /// </summary>
-        /// <param name="asset">The UAsset which this property is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the property to be read.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>The property read from disk.</returns>
-        public static PropertyData Read(UAsset asset, AssetBinaryReader reader, bool includeHeader)
+        public static PropertyData Read(AssetBinaryReader reader, bool includeHeader)
         {
             long startingOffset = reader.BaseStream.Position;
             FName name = reader.ReadFName();
@@ -162,7 +161,7 @@ namespace UAssetAPI
 
             int leng = reader.ReadInt32();
             int duplicationIndex = reader.ReadInt32();
-            PropertyData result = TypeToClass(type, name, asset, reader, leng, duplicationIndex, includeHeader);
+            PropertyData result = TypeToClass(type, name, reader.Asset, reader, leng, duplicationIndex, includeHeader);
             result.Offset = startingOffset;
             return result;
         }
@@ -172,17 +171,16 @@ namespace UAssetAPI
         /// <summary>
         /// Reads an FProperty into memory. Primarily used as a part of <see cref="StructExport"/> serialization.
         /// </summary>
-        /// <param name="asset">The UAsset which this FProperty is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the FProperty to be read.</param>
         /// <returns>The FProperty read from disk.</returns>
-        public static FProperty ReadFProperty(UAsset asset, AssetBinaryReader reader)
+        public static FProperty ReadFProperty(AssetBinaryReader reader)
         {
             FName serializedType = reader.ReadFName();
             Type requestedType = Type.GetType("UAssetAPI.FieldTypes.F" + allNonLetters.Replace(serializedType.Value.Value, string.Empty));
             if (requestedType == null) requestedType = typeof(FGenericProperty);
             var res = (FProperty)Activator.CreateInstance(requestedType);
             res.SerializedType = serializedType;
-            res.Read(reader, asset);
+            res.Read(reader);
             return res;
         }
 
@@ -190,23 +188,21 @@ namespace UAssetAPI
         /// Serializes an FProperty from memory.
         /// </summary>
         /// <param name="prop">The FProperty to serialize.</param>
-        /// <param name="asset">The UAsset which this FProperty is contained within.</param>
         /// <param name="writer">The BinaryWriter to serialize the FProperty to.</param>
-        public static void WriteFProperty(FProperty prop, UAsset asset, AssetBinaryWriter writer)
+        public static void WriteFProperty(FProperty prop, AssetBinaryWriter writer)
         {
             writer.Write(prop.SerializedType);
-            prop.Write(writer, asset);
+            prop.Write(writer);
         }
 
         /// <summary>
         /// Serializes a property from memory.
         /// </summary>
         /// <param name="property">The property to serialize.</param>
-        /// <param name="asset">The UAsset which this property is contained within.</param>
         /// <param name="writer">The BinaryWriter to serialize the property to.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>The serial offset where the length of the property is stored.</returns>
-        public static int Write(PropertyData property, UAsset asset, AssetBinaryWriter writer, bool includeHeader)
+        public static int Write(PropertyData property, AssetBinaryWriter writer, bool includeHeader)
         {
             if (property == null) return 0;
 

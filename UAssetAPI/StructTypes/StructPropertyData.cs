@@ -47,7 +47,7 @@ namespace UAssetAPI.StructTypes
         {
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
-            while ((data = MainSerializer.Read(reader.Asset, reader, true)) != null)
+            while ((data = MainSerializer.Read(reader, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -100,7 +100,7 @@ namespace UAssetAPI.StructTypes
             {
                 foreach (var t in Value)
                 {
-                    MainSerializer.Write(t, writer.Asset, writer, true);
+                    MainSerializer.Write(t, writer, true);
                 }
             }
             writer.Write(new FName("None"));

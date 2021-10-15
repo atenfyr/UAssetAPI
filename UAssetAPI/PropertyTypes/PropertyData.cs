@@ -28,7 +28,7 @@ namespace UAssetAPI.PropertyTypes
         public long Offset = -1;
 
         /// <summary>
-        /// An optional tag which can be set on any property. This is for the user only, and has no bearing in the API itself.
+        /// An optional tag which can be set on any property in memory. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public object Tag;
 
@@ -65,7 +65,7 @@ namespace UAssetAPI.PropertyTypes
         public virtual FName PropertyType { get { return FallbackPropertyType; } }
 
         /// <summary>
-        /// Reads out an asset from a BinaryReader.
+        /// Reads out a property from a BinaryReader.
         /// </summary>
         /// <param name="reader">The BinaryReader to read from.</param>
         /// <param name="includeHeader">Whether or not to also read the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
@@ -77,7 +77,7 @@ namespace UAssetAPI.PropertyTypes
         }
 
         /// <summary>
-        /// Writes an asset to a BinaryWriter.
+        /// Writes a property to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
         /// <param name="includeHeader">Whether or not to also write the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
