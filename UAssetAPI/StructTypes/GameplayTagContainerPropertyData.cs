@@ -4,16 +4,16 @@ using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI.StructTypes
 {
-    public class GameplayTagContainerPropertyData : PropertyData<NamePropertyData[]>
+    public class GameplayTagContainerPropertyData : PropertyData<FName[]>
     {
         public GameplayTagContainerPropertyData(FName name) : base(name)
         {
-
+            Value = new FName[0];
         }
 
         public GameplayTagContainerPropertyData()
         {
-
+            Value = new FName[0];
         }
 
         private static readonly FName CurrentPropertyType = new FName("GameplayTagContainer");
@@ -28,11 +28,10 @@ namespace UAssetAPI.StructTypes
             }
 
             int numEntries = reader.ReadInt32();
-            Value = new NamePropertyData[numEntries];
+            Value = new FName[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                Value[i] = new NamePropertyData(new FName("TagName"));
-                Value[i].Read(reader, false, sizeof(int) * 2);
+                Value[i] = reader.ReadFName();
             }
         }
 
@@ -47,7 +46,8 @@ namespace UAssetAPI.StructTypes
             int totalSize = sizeof(int);
             for (int i = 0; i < Value.Length; i++)
             {
-                totalSize += Value[i].Write(writer, false);
+                writer.Write(Value[i]);
+                totalSize += sizeof(int) * 2;
             }
             return totalSize;
         }
@@ -66,10 +66,10 @@ namespace UAssetAPI.StructTypes
         {
             GameplayTagContainerPropertyData cloningProperty = (GameplayTagContainerPropertyData)res;
 
-            NamePropertyData[] newData = new NamePropertyData[this.Value.Length];
+            FName[] newData = new FName[this.Value.Length];
             for (int i = 0; i < this.Value.Length; i++)
             {
-                newData[i] = (NamePropertyData)this.Value[i].Clone();
+                newData[i] = (FName)this.Value[i].Clone();
             }
             cloningProperty.Value = newData;
         }

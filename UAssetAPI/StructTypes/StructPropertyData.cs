@@ -129,6 +129,7 @@ namespace UAssetAPI.StructTypes
         public override void FromString(string[] d, UAsset asset)
         {
             if (d[4] != null) StructType = FName.FromString(d[4]);
+            if (StructType == null) StructType = new FName("Generic");
         }
 
         protected override void HandleCloned(PropertyData res)
