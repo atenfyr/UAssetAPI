@@ -10,6 +10,11 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_InstanceDelegate; } }
 
+        /// <summary>
+        /// The name of the function assigned to the delegate.
+        /// </summary>
+        public FName FunctionName;
+
         public EX_InstanceDelegate()
         {
 
@@ -21,7 +26,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            FunctionName = reader.XFER_FUNC_NAME();
         }
 
         /// <summary>
@@ -31,6 +36,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFER_FUNC_NAME(FunctionName);
             return 0;
         }
     }

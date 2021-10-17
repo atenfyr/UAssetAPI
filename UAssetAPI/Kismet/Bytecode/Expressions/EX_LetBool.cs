@@ -10,6 +10,15 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_LetBool; } }
 
+        /// <summary>
+        /// Variable expression.
+        /// </summary>
+        public Expression VariableExpression;
+
+        /// <summary>
+        /// Assignment expression.
+        /// </summary>
+        public Expression AssignmentExpression;
         public EX_LetBool()
         {
 
@@ -21,7 +30,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            VariableExpression = ExpressionSerializer.ReadExpression(reader);
+            AssignmentExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +41,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            ExpressionSerializer.WriteExpression(VariableExpression, writer);
+            ExpressionSerializer.WriteExpression(AssignmentExpression, writer);
             return 0;
         }
     }

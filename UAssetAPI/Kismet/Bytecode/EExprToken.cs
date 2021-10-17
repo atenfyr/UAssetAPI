@@ -121,7 +121,7 @@
 		EX_DeprecatedOp4A = 0x4A,
 		/// <summary>const reference to a delegate or normal function object</summary>
 		EX_InstanceDelegate = 0x4B,
-		/// <summary>push an address on to the execution flow stack for future execution when a EX_PopExecutionFlow is executed.   Execution continues on normally and doesn't change to the pushed address.</summary>
+		/// <summary>push an address on to the execution flow stack for future execution when a EX_PopExecutionFlow is executed. Execution continues on normally and doesn't change to the pushed address.</summary>
 		EX_PushExecutionFlow = 0x4C,
 		/// <summary>continue execution at the last address previously pushed onto the execution flow stack.</summary>
 		EX_PopExecutionFlow = 0x4D,
@@ -129,7 +129,7 @@
 		EX_ComputedJump = 0x4E,
 		/// <summary>continue execution at the last address previously pushed onto the execution flow stack, if the condition is not true.</summary>
 		EX_PopExecutionFlowIfNot = 0x4F,
-		/// <summary>Breakpoint.  Only observed in the editor, otherwise it behaves like EX_Nothing.</summary>
+		/// <summary>Breakpoint. Only observed in the editor, otherwise it behaves like EX_Nothing.</summary>
 		EX_Breakpoint = 0x50,
 		/// <summary>Call a function through a native interface variable</summary>
 		EX_InterfaceContext = 0x51,

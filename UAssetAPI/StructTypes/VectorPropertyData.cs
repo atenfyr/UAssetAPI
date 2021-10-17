@@ -8,20 +8,8 @@ namespace UAssetAPI.StructTypes
     /// <summary>
     /// A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
     /// </summary>
-    public class VectorPropertyData : PropertyData
+    public class VectorPropertyData : PropertyData<FVector>
     {
-        /// <summary>Vector's X-component.</summary>
-        [JsonProperty]
-        public float X;
-
-        /// <summary>Vector's Y-component.</summary>
-        [JsonProperty]
-        public float Y;
-
-        /// <summary>Vector's Z-component.</summary>
-        [JsonProperty]
-        public float Z;
-
         public VectorPropertyData(FName name) : base(name)
         {
 
@@ -43,9 +31,7 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            Z = reader.ReadSingle();
+            Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -55,22 +41,23 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(X);
-            writer.Write(Y);
-            writer.Write(Z);
+            writer.Write(Value.X);
+            writer.Write(Value.Y);
+            writer.Write(Value.Z);
             return sizeof(float) * 3;
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (float.TryParse(d[0], out float res1)) X = res1;
-            if (float.TryParse(d[1], out float res2)) Y = res2;
-            if (float.TryParse(d[2], out float res3)) Z = res3;
+            float.TryParse(d[0], out float X);
+            float.TryParse(d[1], out float Y);
+            float.TryParse(d[2], out float Z);
+            Value = new FVector(X, Y, Z);
         }
 
         public override string ToString()
         {
-            return "(" + X + ", " + Y + ", " + Z + ")";
+            return "(" + Value.X + ", " + Value.Y + ", " + Value.Z + ")";
         }
     }
 }

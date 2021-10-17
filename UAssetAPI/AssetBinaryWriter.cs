@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -99,6 +100,46 @@ namespace UAssetAPI
         {
             this.Write(Asset.SearchNameReference(name.Value));
             this.Write(name.Number);
+        }
+
+        public void XFERSTRING(string val)
+        {
+            this.Write(Encoding.ASCII.GetBytes(val + "\0"));
+        }
+
+        public void XFERUNICODESTRING(string val)
+        {
+            this.Write(Encoding.Unicode.GetBytes(val + "\0"));
+        }
+
+        public void XFERNAME(FName val)
+        {
+            this.Write(val);
+        }
+
+        public void XFER_FUNC_NAME(FName val)
+        {
+            this.XFERNAME(val);
+        }
+
+        public void XFERPTR(ulong val)
+        {
+            this.Write(val);
+        }
+
+        public void XFER_FUNC_POINTER(ulong val)
+        {
+            this.XFERPTR(val);
+        }
+
+        public void XFER_PROP_POINTER(ulong val)
+        {
+            this.XFERPTR(val);
+        }
+
+        public void XFER_OBJECT_POINTER(ulong val)
+        {
+            this.XFERPTR(val);
         }
     }
 }

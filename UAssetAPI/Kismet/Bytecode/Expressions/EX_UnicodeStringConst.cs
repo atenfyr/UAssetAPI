@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_UnicodeStringConst"/> instruction.
     /// </summary>
-    public class EX_UnicodeStringConst : Expression
+    public class EX_UnicodeStringConst : Expression<string>
     {
         /// <summary>
         /// The token of this expression.
@@ -21,7 +21,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Value = reader.XFERUNICODESTRING();
         }
 
         /// <summary>
@@ -31,6 +31,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFERUNICODESTRING(Value);
             return 0;
         }
     }

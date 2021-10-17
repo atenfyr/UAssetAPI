@@ -10,6 +10,16 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_RemoveMulticastDelegate; } }
 
+        /// <summary>
+        /// Delegate property to assign to.
+        /// </summary>
+        public Expression Delegate;
+
+        /// <summary>
+        /// Delegate to add to the MC delegate for broadcast.
+        /// </summary>
+        public Expression DelegateToAdd;
+
         public EX_RemoveMulticastDelegate()
         {
 
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Delegate = ExpressionSerializer.ReadExpression(reader);
+            DelegateToAdd = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            ExpressionSerializer.WriteExpression(Delegate, writer);
+            ExpressionSerializer.WriteExpression(DelegateToAdd, writer);
             return 0;
         }
     }

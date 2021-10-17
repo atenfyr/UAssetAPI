@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TextConst"/> instruction.
     /// </summary>
-    public class EX_TextConst : Expression
+    public class EX_TextConst : Expression<FBlueprintText>
     {
         /// <summary>
         /// The token of this expression.
@@ -21,7 +21,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Value = new FBlueprintText();
+            Value.Read(reader);
         }
 
         /// <summary>
@@ -31,6 +32,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            Value.Write(writer);
             return 0;
         }
     }

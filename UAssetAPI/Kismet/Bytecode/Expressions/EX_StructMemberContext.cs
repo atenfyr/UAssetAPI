@@ -10,6 +10,16 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_StructMemberContext; } }
 
+        /// <summary>
+        /// A pointer to the struct member expression (FProperty*).
+        /// </summary>
+        public ulong StructMemberExpression;
+
+        /// <summary>
+        /// Struct expression.
+        /// </summary>
+        public Expression StructExpression;
+
         public EX_StructMemberContext()
         {
 
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            StructMemberExpression = reader.XFERPTR();
+            StructExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(StructMemberExpression);
+            ExpressionSerializer.WriteExpression(StructExpression, writer);
             return 0;
         }
     }

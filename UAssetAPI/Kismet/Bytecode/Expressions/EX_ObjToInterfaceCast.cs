@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ObjToInterfaceCast"/> instruction.
+    /// A conversion from an object or interface variable to a native interface variable.
     /// </summary>
     public class EX_ObjToInterfaceCast : Expression
     {
@@ -9,6 +10,16 @@
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_ObjToInterfaceCast; } }
+
+        /// <summary>
+        /// A pointer to the interface class to convert to.
+        /// </summary>
+        public ulong ClassPtr;
+
+        /// <summary>
+        /// The target of this expression.
+        /// </summary>
+        public Expression Target;
 
         public EX_ObjToInterfaceCast()
         {
@@ -21,7 +32,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            ClassPtr = reader.XFER_OBJECT_POINTER();
+            Target = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +43,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFER_OBJECT_POINTER(ClassPtr);
+            ExpressionSerializer.WriteExpression(Target, writer);
             return 0;
         }
     }

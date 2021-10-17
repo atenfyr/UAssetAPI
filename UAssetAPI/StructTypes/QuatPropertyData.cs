@@ -9,24 +9,8 @@ namespace UAssetAPI.StructTypes
     /// Floating point quaternion that can represent a rotation about an axis in 3-D space.
     /// The X, Y, Z, W components also double as the Axis/Angle format.
     /// </summary>
-    public class QuatPropertyData : PropertyData
+    public class QuatPropertyData : PropertyData<FQuat>
     {
-        /// <summary>The quaternion's X-component.</summary>
-        [JsonProperty]
-        public float X;
-
-        /// <summary>The quaternion's Y-component.</summary>
-        [JsonProperty]
-        public float Y;
-
-        /// <summary>The quaternion's Z-component.</summary>
-        [JsonProperty]
-        public float Z;
-
-        /// <summary>The quaternion's W-component.</summary>
-        [JsonProperty]
-        public float W;
-
         public QuatPropertyData(FName name) : base(name)
         {
 
@@ -48,10 +32,7 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
-            Z = reader.ReadSingle();
-            W = reader.ReadSingle();
+            Value = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -61,24 +42,25 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(X);
-            writer.Write(Y);
-            writer.Write(Z);
-            writer.Write(W);
+            writer.Write(Value.X);
+            writer.Write(Value.Y);
+            writer.Write(Value.Z);
+            writer.Write(Value.W);
             return sizeof(float) * 4;
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (float.TryParse(d[0], out float res1)) X = res1;
-            if (float.TryParse(d[1], out float res2)) Y = res2;
-            if (float.TryParse(d[2], out float res3)) Z = res3;
-            if (float.TryParse(d[3], out float res4)) W = res4;
+            float.TryParse(d[0], out float X);
+            float.TryParse(d[1], out float Y);
+            float.TryParse(d[2], out float Z);
+            float.TryParse(d[3], out float W);
+            Value = new FQuat(X, Y, Z, W);
         }
 
         public override string ToString()
         {
-            return "(" + X + ", " + Y + ", " + Z + ", " + W + ")";
+            return "(" + Value.X + ", " + Value.Y + ", " + Value.Z + ", " + Value.W + ")";
         }
     }
 }

@@ -10,6 +10,11 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_Jump; } }
 
+        /// <summary>
+        /// The offset to jump to.
+        /// </summary>
+        public uint CodeOffset;
+
         public EX_Jump()
         {
 
@@ -21,7 +26,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            CodeOffset = reader.ReadUInt32();
         }
 
         /// <summary>
@@ -31,6 +36,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(CodeOffset);
             return 0;
         }
     }

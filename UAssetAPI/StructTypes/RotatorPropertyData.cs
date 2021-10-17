@@ -9,20 +9,8 @@ namespace UAssetAPI.StructTypes
     /// Implements a container for rotation information.
     /// All rotation values are stored in degrees.
     /// </summary>
-    public class RotatorPropertyData : PropertyData
-    {
-        /// <summary>Rotation around the right axis (around Y axis), Looking up and down (0=Straight Ahead, +Up, -Down)</summary>
-        [JsonProperty]
-        public float Pitch;
-
-        /// <summary>Rotation around the up axis (around Z axis), Running in circles 0=East, +North, -South.</summary>
-        [JsonProperty]
-        public float Yaw;
-
-        /// <summary>Rotation around the forward axis (around X axis), Tilting your head, 0=Straight, +Clockwise, -CCW.</summary>
-        [JsonProperty]
-        public float Roll;
-        
+    public class RotatorPropertyData : PropertyData<FRotator>
+    {        
         public RotatorPropertyData(FName name) : base(name)
         {
 
@@ -44,9 +32,7 @@ namespace UAssetAPI.StructTypes
                 reader.ReadByte();
             }
 
-            Pitch = reader.ReadSingle();
-            Yaw = reader.ReadSingle();
-            Roll = reader.ReadSingle();
+            Value = new FRotator(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -56,22 +42,23 @@ namespace UAssetAPI.StructTypes
                 writer.Write((byte)0);
             }
 
-            writer.Write(Pitch);
-            writer.Write(Yaw);
-            writer.Write(Roll);
+            writer.Write(Value.Pitch);
+            writer.Write(Value.Yaw);
+            writer.Write(Value.Roll);
             return sizeof(float) * 3;
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (float.TryParse(d[0], out float res1)) Pitch = res1;
-            if (float.TryParse(d[1], out float res2)) Yaw = res2;
-            if (float.TryParse(d[2], out float res3)) Roll = res3;
+            float.TryParse(d[0], out float Pitch);
+            float.TryParse(d[1], out float Yaw);
+            float.TryParse(d[2], out float Roll);
+            Value = new FRotator(Pitch, Yaw, Roll);
         }
 
         public override string ToString()
         {
-            return "(" + Pitch + ", " + Yaw + ", " + Roll + ")";
+            return "(" + Value.Pitch + ", " + Value.Yaw + ", " + Value.Roll + ")";
 
         }
     }

@@ -2,8 +2,9 @@
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SkipOffsetConst"/> instruction.
+    /// Represents a code offset constant.
     /// </summary>
-    public class EX_SkipOffsetConst : Expression
+    public class EX_SkipOffsetConst : Expression<uint>
     {
         /// <summary>
         /// The token of this expression.
@@ -21,7 +22,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Value = reader.ReadUInt32();
         }
 
         /// <summary>
@@ -31,6 +32,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(Value);
             return 0;
         }
     }

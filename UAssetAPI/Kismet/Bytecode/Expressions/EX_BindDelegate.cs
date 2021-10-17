@@ -10,6 +10,21 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_BindDelegate; } }
 
+        /// <summary>
+        /// The name of the function assigned to the delegate.
+        /// </summary>
+        public FName FunctionName;
+
+        /// <summary>
+        /// Delegate property to assign to.
+        /// </summary>
+        public Expression Delegate;
+
+        /// <summary>
+        /// Object to bind.
+        /// </summary>
+        public Expression ObjectTerm;
+
         public EX_BindDelegate()
         {
 
@@ -21,7 +36,9 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            FunctionName = reader.XFER_FUNC_NAME();
+            Delegate = ExpressionSerializer.ReadExpression(reader);
+            ObjectTerm = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +48,9 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFER_FUNC_NAME(FunctionName);
+            ExpressionSerializer.WriteExpression(Delegate, writer);
+            ExpressionSerializer.WriteExpression(ObjectTerm, writer);
             return 0;
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using System;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_InstrumentationEvent"/> instruction.
@@ -12,7 +14,7 @@
 
         public EX_InstrumentationEvent()
         {
-
+            throw new NotImplementedException("EX_InstrumentationEvent is currently unimplemented");
         }
 
         /// <summary>

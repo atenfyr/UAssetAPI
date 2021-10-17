@@ -10,6 +10,26 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_Context; } }
 
+        /// <summary>
+        /// Object expression.
+        /// </summary>
+        public Expression ObjectExpression;
+
+        /// <summary>
+        /// Code offset for NULL expressions.
+        /// </summary>
+        public uint Offset;
+
+        /// <summary>
+        /// Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*
+        /// </summary>
+        public ulong RValuePointer;
+
+        /// <summary>
+        /// Context expression.
+        /// </summary>
+        public Expression ContextExpression;
+
         public EX_Context()
         {
 
@@ -21,7 +41,10 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            ObjectExpression = ExpressionSerializer.ReadExpression(reader);
+            Offset = reader.ReadUInt32();
+            RValuePointer = reader.XFERPTR();
+            ContextExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +54,10 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            ExpressionSerializer.WriteExpression(ObjectExpression, writer);
+            writer.Write(Offset);
+            writer.Write(RValuePointer);
+            ExpressionSerializer.WriteExpression(ContextExpression, writer);
             return 0;
         }
     }

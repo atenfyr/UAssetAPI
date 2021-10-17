@@ -10,6 +10,21 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_Assert; } }
 
+        /// <summary>
+        /// Line number.
+        /// </summary>
+        public ushort LineNumber;
+
+        /// <summary>
+        /// Whether or not this assertion is in debug mode.
+        /// </summary>
+        public bool DebugMode;
+
+        /// <summary>
+        /// Expression to assert.
+        /// </summary>
+        public Expression AssertExpression;
+
         public EX_Assert()
         {
 
@@ -21,7 +36,9 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            LineNumber = reader.ReadUInt16();
+            DebugMode = reader.ReadBoolean();
+            AssertExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +48,9 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(LineNumber);
+            writer.Write(DebugMode);
+            ExpressionSerializer.WriteExpression(AssertExpression, writer);
             return 0;
         }
     }

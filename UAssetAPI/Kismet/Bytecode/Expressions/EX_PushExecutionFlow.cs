@@ -10,6 +10,11 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_PushExecutionFlow; } }
 
+        /// <summary>
+        /// The address to push onto the execution flow stack.
+        /// </summary>
+        public uint PushingAddress;
+
         public EX_PushExecutionFlow()
         {
 
@@ -21,7 +26,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            PushingAddress = reader.ReadUInt32();
         }
 
         /// <summary>
@@ -31,6 +36,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(PushingAddress);
             return 0;
         }
     }

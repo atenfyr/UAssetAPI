@@ -10,6 +10,11 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_LocalVariable; } }
 
+        /// <summary>
+        /// A pointer to the variable in question.
+        /// </summary>
+        public ulong Variable;
+
         public EX_LocalVariable()
         {
 
@@ -21,7 +26,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Variable = reader.XFER_PROP_POINTER();
         }
 
         /// <summary>
@@ -31,6 +36,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFER_PROP_POINTER(Variable);
             return 0;
         }
     }

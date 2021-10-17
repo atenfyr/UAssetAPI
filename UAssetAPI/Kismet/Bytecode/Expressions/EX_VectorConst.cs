@@ -1,9 +1,11 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_VectorConst"/> instruction.
     /// </summary>
-    public class EX_VectorConst : Expression
+    public class EX_VectorConst : Expression<FVector>
     {
         /// <summary>
         /// The token of this expression.
@@ -21,7 +23,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         /// <summary>
@@ -31,6 +33,9 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(Value.X);
+            writer.Write(Value.Y);
+            writer.Write(Value.Z);
             return 0;
         }
     }

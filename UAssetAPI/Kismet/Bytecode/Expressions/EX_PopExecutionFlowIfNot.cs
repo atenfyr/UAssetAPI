@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PopExecutionFlowIfNot"/> instruction.
+    /// Conditional equivalent of the <see cref="EExprToken.EX_PopExecutionFlow"/> expression.
     /// </summary>
     public class EX_PopExecutionFlowIfNot : Expression
     {
@@ -9,6 +10,11 @@
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_PopExecutionFlowIfNot; } }
+
+        /// <summary>
+        /// Expression to evaluate to determine whether or not a pop should be performed.
+        /// </summary>
+        public Expression BooleanExpression;
 
         public EX_PopExecutionFlowIfNot()
         {
@@ -21,7 +27,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            BooleanExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +37,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            ExpressionSerializer.WriteExpression(BooleanExpression, writer);
             return 0;
         }
     }

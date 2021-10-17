@@ -10,6 +10,16 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_Skip; } }
 
+        /// <summary>
+        /// The offset to skip to.
+        /// </summary>
+        public uint CodeOffset;
+
+        /// <summary>
+        /// An expression to possibly skip.
+        /// </summary>
+        public Expression SkipExpression;
+
         public EX_Skip()
         {
 
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            CodeOffset = reader.ReadUInt32();
+            SkipExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(CodeOffset);
+            ExpressionSerializer.WriteExpression(SkipExpression, writer);
             return 0;
         }
     }

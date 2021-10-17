@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_JumpIfNot"/> instruction.
+    /// Conditional equivalent of the <see cref="EExprToken.EX_Jump"/> expression.
     /// </summary>
     public class EX_JumpIfNot : Expression
     {
@@ -9,6 +10,16 @@
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_JumpIfNot; } }
+
+        /// <summary>
+        /// The offset to jump to if the provided expression evaluates to false.
+        /// </summary>
+        public uint CodeOffset;
+
+        /// <summary>
+        /// Expression to evaluate to determine whether or not a jump should be performed.
+        /// </summary>
+        public Expression BooleanExpression;
 
         public EX_JumpIfNot()
         {
@@ -21,7 +32,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            CodeOffset = reader.ReadUInt32();
+            BooleanExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +43,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(CodeOffset);
+            ExpressionSerializer.WriteExpression(BooleanExpression, writer);
             return 0;
         }
     }

@@ -10,6 +10,15 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_InterfaceToObjCast; } }
 
+        /// <summary>
+        /// The interface class to convert to.
+        /// </summary>
+        public ulong ClassPtr;
+
+        /// <summary>
+        /// The target of this expression.
+        /// </summary>
+        public Expression Target;
         public EX_InterfaceToObjCast()
         {
 
@@ -21,7 +30,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            ClassPtr = reader.XFER_OBJECT_POINTER();
+            Target = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +41,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.XFER_OBJECT_POINTER(ClassPtr);
+            ExpressionSerializer.WriteExpression(Target, writer);
             return 0;
         }
     }

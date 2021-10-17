@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UAssetAPI.Kismet.Bytecode;
 
 namespace UAssetAPI
 {
@@ -104,6 +106,79 @@ namespace UAssetAPI
             int nameMapPointer = this.ReadInt32();
             int number = this.ReadInt32();
             return new FName(Asset.GetNameReference(nameMapPointer), number);
+        }
+
+        public string XFERSTRING()
+        {
+            List<byte> readData = new List<byte>();
+            while (true)
+            {
+                byte newVal = this.ReadByte();
+                if (newVal == 0) break;
+                readData.Add(newVal);
+            }
+            return Encoding.ASCII.GetString(readData.ToArray());
+        }
+
+        public string XFERUNICODESTRING()
+        {
+            List<byte> readData = new List<byte>();
+            while (true)
+            {
+                byte newVal1 = this.ReadByte();
+                byte newVal2 = this.ReadByte();
+                if (newVal1 == 0 && newVal2 == 0) break;
+                readData.Add(newVal1);
+                readData.Add(newVal2);
+            }
+            return Encoding.Unicode.GetString(readData.ToArray());
+        }
+
+        public void XFERTEXT()
+        {
+
+        }
+
+        public FName XFERNAME()
+        {
+            return this.ReadFName();
+        }
+
+        public FName XFER_FUNC_NAME()
+        {
+            return this.XFERNAME();
+        }
+
+        public ulong XFERPTR()
+        {
+            return this.ReadUInt64();
+        }
+
+        public ulong XFER_FUNC_POINTER()
+        {
+            return this.XFERPTR();
+        }
+
+        public ulong XFER_PROP_POINTER()
+        {
+            return this.XFERPTR();
+        }
+
+        public ulong XFER_OBJECT_POINTER()
+        {
+            return this.XFERPTR();
+        }
+
+        public Expression[] ReadExpressionArray(EExprToken endToken)
+        {
+            List<Expression> newData = new List<Expression>();
+            Expression currExpression = null;
+            while (currExpression == null || currExpression.Token != endToken)
+            {
+                if (currExpression != null) newData.Add(currExpression);
+                currExpression = ExpressionSerializer.ReadExpression(this);
+            }
+            return newData.ToArray();
         }
     }
 }

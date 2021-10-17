@@ -10,6 +10,16 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_ArrayGetByRef; } }
 
+        /// <summary>
+        /// The array variable.
+        /// </summary>
+        public Expression ArrayVariable;
+
+        /// <summary>
+        /// The index to access in the array.
+        /// </summary>
+        public Expression ArrayIndex;
+
         public EX_ArrayGetByRef()
         {
 
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            Expression ArrayVariable = ExpressionSerializer.ReadExpression(reader);
+            Expression ArrayIndex = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            ExpressionSerializer.WriteExpression(ArrayVariable, writer);
+            ExpressionSerializer.WriteExpression(ArrayIndex, writer);
             return 0;
         }
     }

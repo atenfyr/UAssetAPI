@@ -10,6 +10,16 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_MetaCast; } }
 
+        /// <summary>
+        /// A pointer to the relevant class (UClass*).
+        /// </summary>
+        public ulong ClassPtr;
+
+        /// <summary>
+        /// The target expression.
+        /// </summary>
+        public Expression TargetExpression;
+
         public EX_MetaCast()
         {
 
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            ClassPtr = reader.XFER_OBJECT_POINTER();
+            TargetExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write(ClassPtr);
+            ExpressionSerializer.WriteExpression(TargetExpression, writer);
             return 0;
         }
     }

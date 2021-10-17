@@ -294,6 +294,8 @@ namespace UAssetAPI.Kismet.Bytecode
 				case EExprToken.EX_FieldPathConst:
 					res = new EX_FieldPathConst();
 					break;
+				default:
+					throw new NotImplementedException("Unimplemented token " + token);
 			}
 
 			if (res != null)
@@ -308,5 +310,5 @@ namespace UAssetAPI.Kismet.Bytecode
 			writer.Write((byte)expr.Token);
 			expr.Write(writer);
         }
-    }
+	}
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Context_FailSilent"/> instruction.
     /// </summary>
-    public class EX_Context_FailSilent : Expression
+    public class EX_Context_FailSilent : EX_Context
     {
         /// <summary>
         /// The token of this expression.
@@ -21,7 +21,7 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            base.Read(reader);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            return 0;
+            return base.Write(writer);
         }
     }
 }

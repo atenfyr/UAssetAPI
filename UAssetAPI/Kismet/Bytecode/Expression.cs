@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode
 {
     /// <summary>
     /// A Kismet bytecode instruction.
@@ -14,6 +16,18 @@
         /// An optional tag which can be set on any expression in memory. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public object Tag;
+
+        public object RawValue;
+
+        public void SetObject(object value)
+        {
+            RawValue = value;
+        }
+
+        public T GetObject<T>()
+        {
+            return (T)RawValue;
+        }
 
         public Expression()
         {
@@ -37,6 +51,24 @@
         public virtual int Write(AssetBinaryWriter writer)
         {
             return 0;
+        }
+    }
+
+    public abstract class Expression<T> : Expression
+    {
+        /// <summary>
+        /// The value of this expression if it is a constant.
+        /// </summary>
+        [JsonProperty]
+        public T Value
+        {
+            get => GetObject<T>();
+            set => SetObject(value);
+        }
+
+        public Expression() : base()
+        {
+
         }
     }
 }

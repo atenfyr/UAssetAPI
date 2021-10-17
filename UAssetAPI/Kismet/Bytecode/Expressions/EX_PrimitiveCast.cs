@@ -6,6 +6,16 @@
     public class EX_PrimitiveCast : Expression
     {
         /// <summary>
+        /// The type to cast to.
+        /// </summary>
+        public EExprToken ConversionType;
+
+        /// <summary>
+        /// The target of this expression.
+        /// </summary>
+        public Expression Target;
+
+        /// <summary>
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_PrimitiveCast; } }
@@ -21,7 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            ConversionType = (EExprToken)reader.ReadByte();
+            Target = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -31,6 +42,8 @@
         /// <returns>The length in bytes of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            writer.Write((byte)ConversionType);
+            ExpressionSerializer.WriteExpression(Target, writer);
             return 0;
         }
     }

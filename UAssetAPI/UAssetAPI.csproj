@@ -60,6 +60,10 @@
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />
+    <Compile Include="FQuat.cs" />
+    <Compile Include="FRotator.cs" />
+    <Compile Include="FTransform.cs" />
+    <Compile Include="FVector.cs" />
     <Compile Include="JSON\FSignedZeroJsonConverter.cs" />
     <Compile Include="JSON\FPackageIndexJsonConverter.cs" />
     <Compile Include="JSON\FNameJsonConverter.cs" />
@@ -67,6 +71,7 @@
     <Compile Include="FPackageIndex.cs" />
     <Compile Include="JSON\FStringJsonConverter.cs" />
     <Compile Include="FWorldTileInfo.cs" />
+    <Compile Include="Kismet\Bytecode\EBlueprintTextLiteralType.cs" />
     <Compile Include="Kismet\Bytecode\ExpressionSerializer.cs" />
     <Compile Include="Kismet\Bytecode\Expression.cs" />
     <Compile Include="Kismet\Bytecode\EExprToken.cs" />
@@ -163,6 +168,7 @@
     <Compile Include="Kismet\Bytecode\Expressions\EX_VectorConst.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_VirtualFunction.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_WireTracepoint.cs" />
+    <Compile Include="Kismet\Bytecode\FBlueprintText.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
     <Compile Include="StructTypes\SoftObjectPathPropertyData.cs" />
