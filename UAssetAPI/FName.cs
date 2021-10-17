@@ -77,11 +77,12 @@ namespace UAssetAPI
     public class FName : ICloneable
     {
         public FString Value;
-        /// <summary>Instance number</summary>
+        /// <summary>Instance number.</summary>
         public int Number;
 
         public override string ToString()
         {
+            if (Number == int.MinValue) return Value.ToString();
             return Value.ToString() + "(" + Number + ")";
         }
 

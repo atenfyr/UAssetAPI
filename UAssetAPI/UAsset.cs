@@ -94,7 +94,7 @@ namespace UAssetAPI
         /// <summary>
         /// Agent string to provide context in serialized JSON.
         /// </summary>
-        public readonly string Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version;
+        public string Info = "Serialized with UAssetAPI";
 
         /// <summary>
         /// The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
@@ -1597,6 +1597,7 @@ namespace UAssetAPI
         /// <returns>A serialized JSON string that represents the asset.</returns>
         public string SerializeJson(Formatting jsonFormatting = Formatting.None)
         {
+            Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? "" : (" (" + UAPUtils.CurrentCommit + ")"));
             return JsonConvert.SerializeObject(this, jsonFormatting, jsonSettings);
         }
 

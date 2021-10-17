@@ -41,6 +41,7 @@ namespace UAssetAPI.PropertyTypes
 
         public T GetObject<T>()
         {
+            if (RawValue is null) return default(T);
             return (T)RawValue;
         }
 

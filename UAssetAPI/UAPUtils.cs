@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace UAssetAPI
 {
     public static class UAPUtils
     {
+        public static string CurrentCommit = string.Empty;
+
         public static List<T> FindAllInstances<T>(object parent) where T : class
         {
             HashSet<object> yaExplorado = new HashSet<object>();
