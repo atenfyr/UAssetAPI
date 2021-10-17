@@ -4,7 +4,7 @@
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Nothing"/> instruction.
     /// Represents a no-op.
     /// </summary>
-    public class EX_Nothing : Expression
+    public class EX_Nothing : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

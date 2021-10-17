@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_CrossInterfaceCast"/> instruction.
     /// </summary>
-    public class EX_CrossInterfaceCast : Expression
+    public class EX_CrossInterfaceCast : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// The target of this expression.
         /// </summary>
-        public Expression Target;
+        public KismetExpression Target;
 
         public EX_CrossInterfaceCast()
         {

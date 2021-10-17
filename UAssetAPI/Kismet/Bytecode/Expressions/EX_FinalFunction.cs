@@ -5,7 +5,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_FinalFunction"/> instruction.
     /// </summary>
-    public class EX_FinalFunction : Expression
+    public class EX_FinalFunction : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -20,7 +20,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// List of parameters for this function.
         /// </summary>
-        public Expression[] Parameters;
+        public KismetExpression[] Parameters;
 
         public EX_FinalFunction()
         {

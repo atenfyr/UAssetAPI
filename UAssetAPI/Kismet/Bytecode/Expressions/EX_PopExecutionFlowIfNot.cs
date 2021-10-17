@@ -4,7 +4,7 @@
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PopExecutionFlowIfNot"/> instruction.
     /// Conditional equivalent of the <see cref="EExprToken.EX_PopExecutionFlow"/> expression.
     /// </summary>
-    public class EX_PopExecutionFlowIfNot : Expression
+    public class EX_PopExecutionFlowIfNot : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -14,7 +14,7 @@
         /// <summary>
         /// Expression to evaluate to determine whether or not a pop should be performed.
         /// </summary>
-        public Expression BooleanExpression;
+        public KismetExpression BooleanExpression;
 
         public EX_PopExecutionFlowIfNot()
         {

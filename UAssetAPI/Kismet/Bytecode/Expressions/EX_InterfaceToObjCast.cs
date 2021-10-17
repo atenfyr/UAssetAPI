@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_InterfaceToObjCast"/> instruction.
     /// </summary>
-    public class EX_InterfaceToObjCast : Expression
+    public class EX_InterfaceToObjCast : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// The target of this expression.
         /// </summary>
-        public Expression Target;
+        public KismetExpression Target;
         public EX_InterfaceToObjCast()
         {
 

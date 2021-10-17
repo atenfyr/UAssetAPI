@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_LocalOutVariable"/> instruction.
     /// </summary>
-    public class EX_LocalOutVariable : Expression
+    public class EX_LocalOutVariable : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

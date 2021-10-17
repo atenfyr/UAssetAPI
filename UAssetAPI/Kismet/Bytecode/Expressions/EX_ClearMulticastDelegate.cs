@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ClearMulticastDelegate"/> instruction.
     /// </summary>
-    public class EX_ClearMulticastDelegate : Expression
+    public class EX_ClearMulticastDelegate : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

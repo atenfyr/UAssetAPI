@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PopExecutionFlow"/> instruction.
     /// </summary>
-    public class EX_PopExecutionFlow : Expression
+    public class EX_PopExecutionFlow : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

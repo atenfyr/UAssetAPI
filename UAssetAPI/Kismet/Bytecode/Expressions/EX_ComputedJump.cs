@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ComputedJump"/> instruction.
     /// </summary>
-    public class EX_ComputedJump : Expression
+    public class EX_ComputedJump : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,7 +13,7 @@
         /// <summary>
         /// An integer expression corresponding to the offset to jump to.
         /// </summary>
-        public Expression CodeOffsetExpression;
+        public KismetExpression CodeOffsetExpression;
 
         public EX_ComputedJump()
         {

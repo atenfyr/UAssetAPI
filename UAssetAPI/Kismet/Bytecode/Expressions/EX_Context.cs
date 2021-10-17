@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Context"/> instruction.
     /// </summary>
-    public class EX_Context : Expression
+    public class EX_Context : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,7 +13,7 @@
         /// <summary>
         /// Object expression.
         /// </summary>
-        public Expression ObjectExpression;
+        public KismetExpression ObjectExpression;
 
         /// <summary>
         /// Code offset for NULL expressions.
@@ -28,7 +28,7 @@
         /// <summary>
         /// Context expression.
         /// </summary>
-        public Expression ContextExpression;
+        public KismetExpression ContextExpression;
 
         public EX_Context()
         {

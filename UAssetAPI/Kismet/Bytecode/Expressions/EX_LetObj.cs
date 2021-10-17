@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_LetObj"/> instruction.
     /// </summary>
-    public class EX_LetObj : Expression
+    public class EX_LetObj : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,12 +13,12 @@
         /// <summary>
         /// Variable expression.
         /// </summary>
-        public Expression VariableExpression;
+        public KismetExpression VariableExpression;
 
         /// <summary>
         /// Assignment expression.
         /// </summary>
-        public Expression AssignmentExpression;
+        public KismetExpression AssignmentExpression;
 
         public EX_LetObj()
         {

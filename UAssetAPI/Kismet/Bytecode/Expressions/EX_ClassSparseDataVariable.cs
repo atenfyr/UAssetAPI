@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ClassSparseDataVariable"/> instruction.
     /// </summary>
-    public class EX_ClassSparseDataVariable : Expression
+    public class EX_ClassSparseDataVariable : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

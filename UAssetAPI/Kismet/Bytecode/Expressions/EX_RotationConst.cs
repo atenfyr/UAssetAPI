@@ -5,7 +5,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_RotationConst"/> instruction.
     /// </summary>
-    public class EX_RotationConst : Expression
+    public class EX_RotationConst : KismetExpression
     {
         /// <summary>Rotation around the right axis (around Y axis), Looking up and down (0=Straight Ahead, +Up, -Down)</summary>
         [JsonProperty]

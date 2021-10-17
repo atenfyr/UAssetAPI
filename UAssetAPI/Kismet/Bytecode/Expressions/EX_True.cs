@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_True"/> instruction.
     /// </summary>
-    public class EX_True : Expression
+    public class EX_True : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

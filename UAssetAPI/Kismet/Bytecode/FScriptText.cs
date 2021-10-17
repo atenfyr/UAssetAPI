@@ -9,34 +9,34 @@ namespace UAssetAPI.Kismet.Bytecode
     /// <summary>
     /// Represents an FText as serialized in Kismet bytecode.
     /// </summary>
-    public class FBlueprintText
+    public class FScriptText
     {
         public EBlueprintTextLiteralType TextLiteralType;
 
         /// <summary>
         /// Source of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
-        public Expression LocalizedSource;
+        public KismetExpression LocalizedSource;
 
         /// <summary>
         /// Key of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
-        public Expression LocalizedKey;
+        public KismetExpression LocalizedKey;
 
         /// <summary>
         /// Namespace of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
-        public Expression LocalizedNamespace;
+        public KismetExpression LocalizedNamespace;
 
         /// <summary>
         /// Value of this text if it is an invariant string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
-        public Expression InvariantLiteralString;
+        public KismetExpression InvariantLiteralString;
 
         /// <summary>
         /// Value of this text if it is a string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.LiteralString"/>.
         /// </summary>
-        public Expression LiteralString;
+        public KismetExpression LiteralString;
 
         /// <summary>
         /// Pointer to this text's UStringTable. Not used at runtime, but exists for asset dependency gathering. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
@@ -46,12 +46,12 @@ namespace UAssetAPI.Kismet.Bytecode
         /// <summary>
         /// Table ID string literal (namespace). Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
-        public Expression StringTableId;
+        public KismetExpression StringTableId;
 
         /// <summary>
         /// String table key string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
-        public Expression StringTableKey;
+        public KismetExpression StringTableKey;
 
         /// <summary>
         /// Reads out an FBlueprintText from a BinaryReader.

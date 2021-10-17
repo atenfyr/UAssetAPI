@@ -8,7 +8,7 @@
         /// <summary>
         /// The index value term of this case.
         /// </summary>
-        public Expression CaseIndexValueTerm;
+        public KismetExpression CaseIndexValueTerm;
 
         /// <summary>
         /// Code offset to the next case.
@@ -18,9 +18,9 @@
         /// <summary>
         /// The main case term.
         /// </summary>
-        public Expression CaseTerm;
+        public KismetExpression CaseTerm;
 
-        public FKismetSwitchCase(Expression caseIndexValueTerm, uint nextOffset, Expression caseTerm)
+        public FKismetSwitchCase(KismetExpression caseIndexValueTerm, uint nextOffset, KismetExpression caseTerm)
         {
             CaseIndexValueTerm = caseIndexValueTerm;
             NextOffset = nextOffset;
@@ -31,7 +31,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SwitchValue"/> instruction.
     /// </summary>
-    public class EX_SwitchValue : Expression
+    public class EX_SwitchValue : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -46,12 +46,12 @@
         /// <summary>
         /// The index term of this switch statement.
         /// </summary>
-        public Expression IndexTerm;
+        public KismetExpression IndexTerm;
 
         /// <summary>
         /// The default term of this switch statement.
         /// </summary>
-        public Expression DefaultTerm;
+        public KismetExpression DefaultTerm;
 
         /// <summary>
         /// All the cases in this switch statement.
@@ -76,9 +76,9 @@
             Cases = new FKismetSwitchCase[numCases];
             for (int i = 0; i < numCases; i++)
             {
-                Expression termA = ExpressionSerializer.ReadExpression(reader);
+                KismetExpression termA = ExpressionSerializer.ReadExpression(reader);
                 uint termB = reader.ReadUInt32();
-                Expression termC = ExpressionSerializer.ReadExpression(reader);
+                KismetExpression termC = ExpressionSerializer.ReadExpression(reader);
                 Cases[i] = new FKismetSwitchCase(termA, termB, termC);
             }
 

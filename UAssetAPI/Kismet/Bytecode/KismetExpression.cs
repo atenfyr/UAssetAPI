@@ -5,7 +5,7 @@ namespace UAssetAPI.Kismet.Bytecode
     /// <summary>
     /// A Kismet bytecode instruction.
     /// </summary>
-    public class Expression
+    public class KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -29,7 +29,7 @@ namespace UAssetAPI.Kismet.Bytecode
             return (T)RawValue;
         }
 
-        public Expression()
+        public KismetExpression()
         {
 
         }
@@ -54,7 +54,7 @@ namespace UAssetAPI.Kismet.Bytecode
         }
     }
 
-    public abstract class Expression<T> : Expression
+    public abstract class Expression<T> : KismetExpression
     {
         /// <summary>
         /// The value of this expression if it is a constant.

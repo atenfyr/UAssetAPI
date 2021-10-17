@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UAssetAPI.Kismet.Bytecode.Expressions;
 
 namespace UAssetAPI.Kismet.Bytecode
 {
     public static class ExpressionSerializer
     {
-        public static Expression ReadExpression(AssetBinaryReader reader)
+        public static KismetExpression ReadExpression(AssetBinaryReader reader)
         {
-			Expression res = null;
+			KismetExpression res = null;
             EExprToken token = (EExprToken)reader.ReadByte();
             switch (token)
             {
@@ -305,10 +301,10 @@ namespace UAssetAPI.Kismet.Bytecode
             return res;
         }
 
-        public static void WriteExpression(Expression expr, AssetBinaryWriter writer)
+        public static int WriteExpression(KismetExpression expr, AssetBinaryWriter writer)
         {
 			writer.Write((byte)expr.Token);
-			expr.Write(writer);
+			return expr.Write(writer) + sizeof(byte);
         }
 	}
 }

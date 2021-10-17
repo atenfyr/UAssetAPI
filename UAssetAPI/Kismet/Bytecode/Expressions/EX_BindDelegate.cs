@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_BindDelegate"/> instruction.
     /// </summary>
-    public class EX_BindDelegate : Expression
+    public class EX_BindDelegate : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,12 +18,12 @@
         /// <summary>
         /// Delegate property to assign to.
         /// </summary>
-        public Expression Delegate;
+        public KismetExpression Delegate;
 
         /// <summary>
         /// Object to bind.
         /// </summary>
-        public Expression ObjectTerm;
+        public KismetExpression ObjectTerm;
 
         public EX_BindDelegate()
         {

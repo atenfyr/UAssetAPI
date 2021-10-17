@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Return"/> instruction.
     /// </summary>
-    public class EX_Return : Expression
+    public class EX_Return : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,7 +13,7 @@
         /// <summary>
         /// The return expression;
         /// </summary>
-        public Expression ReturnExpression;
+        public KismetExpression ReturnExpression;
 
         public EX_Return()
         {

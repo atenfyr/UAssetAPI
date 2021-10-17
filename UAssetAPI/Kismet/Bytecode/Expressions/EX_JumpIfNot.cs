@@ -4,7 +4,7 @@
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_JumpIfNot"/> instruction.
     /// Conditional equivalent of the <see cref="EExprToken.EX_Jump"/> expression.
     /// </summary>
-    public class EX_JumpIfNot : Expression
+    public class EX_JumpIfNot : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -19,7 +19,7 @@
         /// <summary>
         /// Expression to evaluate to determine whether or not a jump should be performed.
         /// </summary>
-        public Expression BooleanExpression;
+        public KismetExpression BooleanExpression;
 
         public EX_JumpIfNot()
         {

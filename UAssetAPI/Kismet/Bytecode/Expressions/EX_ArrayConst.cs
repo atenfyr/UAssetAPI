@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ArrayConst"/> instruction.
     /// </summary>
-    public class EX_ArrayConst : Expression<Expression[]>
+    public class EX_ArrayConst : Expression<KismetExpression[]>
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// Array constant entries.
         /// </summary>
-        public Expression[] Elements;
+        public KismetExpression[] Elements;
 
         public EX_ArrayConst()
         {

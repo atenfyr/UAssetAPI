@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_DeprecatedOp4A"/> instruction.
     /// </summary>
-    public class EX_DeprecatedOp4A : Expression
+    public class EX_DeprecatedOp4A : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

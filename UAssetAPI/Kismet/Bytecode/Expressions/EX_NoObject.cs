@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_NoObject"/> instruction.
     /// </summary>
-    public class EX_NoObject : Expression
+    public class EX_NoObject : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

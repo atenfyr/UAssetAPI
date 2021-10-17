@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_AddMulticastDelegate"/> instruction.
     /// </summary>
-    public class EX_AddMulticastDelegate : Expression
+    public class EX_AddMulticastDelegate : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,12 +13,12 @@
         /// <summary>
         /// Delegate property to assign to.
         /// </summary>
-        public Expression Delegate;
+        public KismetExpression Delegate;
 
         /// <summary>
         /// Delegate to add to the MC delegate for broadcast.
         /// </summary>
-        public Expression DelegateToAdd;
+        public KismetExpression DelegateToAdd;
 
         public EX_AddMulticastDelegate()
         {

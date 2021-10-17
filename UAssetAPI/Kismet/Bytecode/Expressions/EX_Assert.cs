@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Assert"/> instruction.
     /// </summary>
-    public class EX_Assert : Expression
+    public class EX_Assert : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -23,7 +23,7 @@
         /// <summary>
         /// Expression to assert.
         /// </summary>
-        public Expression AssertExpression;
+        public KismetExpression AssertExpression;
 
         public EX_Assert()
         {

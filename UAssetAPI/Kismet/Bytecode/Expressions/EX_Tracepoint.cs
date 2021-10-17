@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Tracepoint"/> instruction.
     /// </summary>
-    public class EX_Tracepoint : Expression
+    public class EX_Tracepoint : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

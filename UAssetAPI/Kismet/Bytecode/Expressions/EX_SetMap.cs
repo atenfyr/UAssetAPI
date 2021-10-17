@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetMap"/> instruction.
     /// </summary>
-    public class EX_SetMap : Expression
+    public class EX_SetMap : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,12 +13,12 @@
         /// <summary>
         /// Map property.
         /// </summary>
-        public Expression MapProperty;
+        public KismetExpression MapProperty;
 
         /// <summary>
         /// Set entries.
         /// </summary>
-        public Expression[] Elements;
+        public KismetExpression[] Elements;
 
         public EX_SetMap()
         {

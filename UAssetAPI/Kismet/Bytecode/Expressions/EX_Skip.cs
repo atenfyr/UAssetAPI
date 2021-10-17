@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Skip"/> instruction.
     /// </summary>
-    public class EX_Skip : Expression
+    public class EX_Skip : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// An expression to possibly skip.
         /// </summary>
-        public Expression SkipExpression;
+        public KismetExpression SkipExpression;
 
         public EX_Skip()
         {

@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq.Expressions;
 using UAssetAPI.FieldTypes;
+using UAssetAPI.Kismet.Bytecode;
 
 namespace UAssetAPI
 {
@@ -25,14 +29,24 @@ namespace UAssetAPI
         public FProperty[] LoadedProperties;
 
         /// <summary>
+        /// The bytecode instructions contained within this struct.
+        /// </summary>
+        public Kismet.Bytecode.KismetExpression[] ScriptBytecode;
+
+        /// <summary>
         /// Number of bytecode instructions
         /// </summary>
         public int ScriptBytecodeSize;
 
         /// <summary>
-        /// Raw bytecode instructions
+        /// Raw binary bytecode data. Filled out in lieu of <see cref="ScriptBytecode"/> if an error occurs during bytecode parsing.
         /// </summary>
-        public byte[] ScriptBytecode;
+        public byte[] ScriptBytecodeRaw;
+
+        /// <summary>
+        /// A static bool that determines whether or not the serializer will attempt to parse Kismet bytecode.
+        /// </summary>
+        private static readonly bool ParseBytecode = false;
 
         public StructExport(Export super) : base(super)
         {
@@ -48,6 +62,7 @@ namespace UAssetAPI
         {
 
         }
+
         public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
@@ -55,19 +70,11 @@ namespace UAssetAPI
 
             SuperStruct = new FPackageIndex(reader.ReadInt32());
 
-            if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
+            int numIndexEntries = reader.ReadInt32();
+            Children = new FPackageIndex[numIndexEntries];
+            for (int i = 0; i < numIndexEntries; i++)
             {
-                int numIndexEntries = reader.ReadInt32();
-                Children = new FPackageIndex[numIndexEntries];
-                for (int i = 0; i < numIndexEntries; i++)
-                {
-                    Children[i] = new FPackageIndex(reader.ReadInt32());
-                }
-            }
-            else
-            {
-                // https://github.com/EpicGames/UnrealEngine/blob/master/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp#L1832
-                throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
+                Children[i] = new FPackageIndex(reader.ReadInt32());
             }
 
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
@@ -85,8 +92,36 @@ namespace UAssetAPI
             }
 
             ScriptBytecodeSize = reader.ReadInt32(); // # of bytecode instructions
-            int ScriptStorageSize = reader.ReadInt32(); // # of bytes in total
-            ScriptBytecode = reader.ReadBytes(ScriptStorageSize);
+            int scriptStorageSize = reader.ReadInt32(); // # of bytes in total
+            long startedReading = reader.BaseStream.Position;
+
+            bool willParseRaw = true;
+            try
+            {
+                if (ParseBytecode)
+                {
+                    var tempCode = new List<Kismet.Bytecode.KismetExpression>();
+                    while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)
+                    {
+                        tempCode.Add(ExpressionSerializer.ReadExpression(reader));
+                    }
+                    ScriptBytecode = tempCode.ToArray();
+                    willParseRaw = false;
+                }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debug.WriteLine(ex.StackTrace);
+#endif
+            }
+
+            if (willParseRaw)
+            {
+                reader.BaseStream.Seek(startedReading, SeekOrigin.Begin);
+                ScriptBytecode = null;
+                ScriptBytecodeRaw = reader.ReadBytes(scriptStorageSize);
+            }
         }
 
         public override void Write(AssetBinaryWriter writer)
@@ -96,18 +131,10 @@ namespace UAssetAPI
 
             writer.Write(SuperStruct.Index);
 
-            if (true || Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
+            writer.Write(Children.Length);
+            for (int i = 0; i < Children.Length; i++)
             {
-                writer.Write(Children.Length);
-                for (int i = 0; i < Children.Length; i++)
-                {
-                    writer.Write(Children[i].Index);
-                }
-            }
-            else
-            {
-                // https://github.com/EpicGames/UnrealEngine/blob/master/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp#L1832
-                throw new NotImplementedException("StructExport children linked list is unimplemented; please let me know if you see this error message");
+                writer.Write(Children[i].Index);
             }
 
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
@@ -119,9 +146,32 @@ namespace UAssetAPI
                 }
             }
 
-            writer.Write(ScriptBytecodeSize);
-            writer.Write(ScriptBytecode.Length);
-            writer.Write(ScriptBytecode);
+            if (ScriptBytecode == null)
+            {
+                writer.Write(ScriptBytecodeSize);
+                writer.Write(ScriptBytecodeRaw.Length);
+                writer.Write(ScriptBytecodeRaw);
+            }
+            else
+            {
+                writer.Write(ScriptBytecode.Length);
+                long lengthOffset = writer.BaseStream.Position;
+                writer.Write((int)0); // size on disk; to be filled out after serialization
+
+                long startMetric = writer.BaseStream.Position;
+                for (int i = 0; i < ScriptBytecode.Length; i++)
+                {
+                    ExpressionSerializer.WriteExpression(ScriptBytecode[i], writer);
+                }
+                long endMetric = writer.BaseStream.Position;
+
+                // Write out total size in bytes
+                long totalLength = endMetric - startMetric;
+                long here = writer.BaseStream.Position;
+                writer.Seek((int)lengthOffset, SeekOrigin.Begin);
+                writer.Write((int)totalLength);
+                writer.Seek((int)here, SeekOrigin.Begin);
+            }
         }
     }
 }

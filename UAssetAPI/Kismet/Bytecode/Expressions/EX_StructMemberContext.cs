@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_StructMemberContext"/> instruction.
     /// </summary>
-    public class EX_StructMemberContext : Expression
+    public class EX_StructMemberContext : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// Struct expression.
         /// </summary>
-        public Expression StructExpression;
+        public KismetExpression StructExpression;
 
         public EX_StructMemberContext()
         {

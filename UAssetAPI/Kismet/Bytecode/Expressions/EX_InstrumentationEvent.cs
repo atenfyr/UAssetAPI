@@ -5,7 +5,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_InstrumentationEvent"/> instruction.
     /// </summary>
-    public class EX_InstrumentationEvent : Expression
+    public class EX_InstrumentationEvent : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

@@ -102,44 +102,50 @@ namespace UAssetAPI
             this.Write(name.Number);
         }
 
-        public void XFERSTRING(string val)
+        public int XFERSTRING(string val)
         {
+            long startMetric = this.BaseStream.Position;
             this.Write(Encoding.ASCII.GetBytes(val + "\0"));
+            return (int)(this.BaseStream.Position - startMetric);
         }
 
-        public void XFERUNICODESTRING(string val)
+        public int XFERUNICODESTRING(string val)
         {
+            long startMetric = this.BaseStream.Position;
             this.Write(Encoding.Unicode.GetBytes(val + "\0"));
+            return (int)(this.BaseStream.Position - startMetric);
         }
 
-        public void XFERNAME(FName val)
+        public int XFERNAME(FName val)
         {
             this.Write(val);
+            return sizeof(int) * 2;
         }
 
-        public void XFER_FUNC_NAME(FName val)
+        public int XFER_FUNC_NAME(FName val)
         {
-            this.XFERNAME(val);
+            return this.XFERNAME(val);
         }
 
-        public void XFERPTR(ulong val)
+        public int XFERPTR(ulong val)
         {
             this.Write(val);
+            return sizeof(ulong);
         }
 
-        public void XFER_FUNC_POINTER(ulong val)
+        public int XFER_FUNC_POINTER(ulong val)
         {
-            this.XFERPTR(val);
+            return this.XFERPTR(val);
         }
 
-        public void XFER_PROP_POINTER(ulong val)
+        public int XFER_PROP_POINTER(ulong val)
         {
-            this.XFERPTR(val);
+            return this.XFERPTR(val);
         }
 
-        public void XFER_OBJECT_POINTER(ulong val)
+        public int XFER_OBJECT_POINTER(ulong val)
         {
-            this.XFERPTR(val);
+            return this.XFERPTR(val);
         }
     }
 }

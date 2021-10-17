@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetConst"/> instruction.
     /// </summary>
-    public class EX_SetConst : Expression
+    public class EX_SetConst : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// Set constant entries.
         /// </summary>
-        public Expression[] Elements;
+        public KismetExpression[] Elements;
 
         public EX_SetConst()
         {

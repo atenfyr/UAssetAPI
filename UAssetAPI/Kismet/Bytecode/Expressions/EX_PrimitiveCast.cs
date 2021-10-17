@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PrimitiveCast"/> instruction.
     /// </summary>
-    public class EX_PrimitiveCast : Expression
+    public class EX_PrimitiveCast : KismetExpression
     {
         /// <summary>
         /// The type to cast to.
@@ -13,7 +13,7 @@
         /// <summary>
         /// The target of this expression.
         /// </summary>
-        public Expression Target;
+        public KismetExpression Target;
 
         /// <summary>
         /// The token of this expression.

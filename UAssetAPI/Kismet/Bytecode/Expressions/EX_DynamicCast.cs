@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_DynamicCast"/> instruction.
     /// </summary>
-    public class EX_DynamicCast : Expression
+    public class EX_DynamicCast : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// The target expression.
         /// </summary>
-        public Expression TargetExpression;
+        public KismetExpression TargetExpression;
 
         public EX_DynamicCast()
         {

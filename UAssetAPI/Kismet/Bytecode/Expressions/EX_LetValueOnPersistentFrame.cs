@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_LetValueOnPersistentFrame"/> instruction.
     /// </summary>
-    public class EX_LetValueOnPersistentFrame : Expression
+    public class EX_LetValueOnPersistentFrame : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -18,7 +18,7 @@
         /// <summary>
         /// Assignment expression.
         /// </summary>
-        public Expression AssignmentExpression;
+        public KismetExpression AssignmentExpression;
 
         public EX_LetValueOnPersistentFrame()
         {

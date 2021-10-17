@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetSet"/> instruction.
     /// </summary>
-    public class EX_SetSet : Expression
+    public class EX_SetSet : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,12 +13,12 @@
         /// <summary>
         /// Set property.
         /// </summary>
-        public Expression SetProperty;
+        public KismetExpression SetProperty;
 
         /// <summary>
         /// Set entries.
         /// </summary>
-        public Expression[] Elements;
+        public KismetExpression[] Elements;
 
         public EX_SetSet()
         {

@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ArrayGetByRef"/> instruction.
     /// </summary>
-    public class EX_ArrayGetByRef : Expression
+    public class EX_ArrayGetByRef : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,12 +13,12 @@
         /// <summary>
         /// The array variable.
         /// </summary>
-        public Expression ArrayVariable;
+        public KismetExpression ArrayVariable;
 
         /// <summary>
         /// The index to access in the array.
         /// </summary>
-        public Expression ArrayIndex;
+        public KismetExpression ArrayIndex;
 
         public EX_ArrayGetByRef()
         {
@@ -31,8 +31,8 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            Expression ArrayVariable = ExpressionSerializer.ReadExpression(reader);
-            Expression ArrayIndex = ExpressionSerializer.ReadExpression(reader);
+            ArrayVariable = ExpressionSerializer.ReadExpression(reader);
+            ArrayIndex = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>

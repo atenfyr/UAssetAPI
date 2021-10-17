@@ -6,7 +6,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_StructConst"/> instruction.
     /// </summary>
-    public class EX_StructConst : Expression<Expression[]>
+    public class EX_StructConst : Expression<KismetExpression[]>
     {
         /// <summary>
         /// The token of this expression.

@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetArray"/> instruction.
     /// </summary>
-    public class EX_SetArray : Expression
+    public class EX_SetArray : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
@@ -13,7 +13,7 @@
         /// <summary>
         /// Array property to assign to
         /// </summary>
-        public Expression AssigningProperty;
+        public KismetExpression AssigningProperty;
 
         /// <summary>
         /// Pointer to the array inner property (FProperty*).
@@ -24,7 +24,7 @@
         /// <summary>
         /// Array items.
         /// </summary>
-        public Expression[] Elements;
+        public KismetExpression[] Elements;
 
         public EX_SetArray()
         {

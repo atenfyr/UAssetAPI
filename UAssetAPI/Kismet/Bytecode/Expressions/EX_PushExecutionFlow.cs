@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PushExecutionFlow"/> instruction.
     /// </summary>
-    public class EX_PushExecutionFlow : Expression
+    public class EX_PushExecutionFlow : KismetExpression
     {
         /// <summary>
         /// The token of this expression.

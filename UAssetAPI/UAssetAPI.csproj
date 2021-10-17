@@ -73,7 +73,7 @@
     <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="Kismet\Bytecode\EBlueprintTextLiteralType.cs" />
     <Compile Include="Kismet\Bytecode\ExpressionSerializer.cs" />
-    <Compile Include="Kismet\Bytecode\Expression.cs" />
+    <Compile Include="Kismet\Bytecode\KismetExpression.cs" />
     <Compile Include="Kismet\Bytecode\EExprToken.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_AddMulticastDelegate.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_ArrayConst.cs" />
@@ -168,7 +168,7 @@
     <Compile Include="Kismet\Bytecode\Expressions\EX_VectorConst.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_VirtualFunction.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_WireTracepoint.cs" />
-    <Compile Include="Kismet\Bytecode\FBlueprintText.cs" />
+    <Compile Include="Kismet\Bytecode\FScriptText.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
     <Compile Include="StructTypes\SoftObjectPathPropertyData.cs" />

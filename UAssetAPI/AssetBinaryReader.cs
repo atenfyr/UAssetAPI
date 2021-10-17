@@ -169,10 +169,10 @@ namespace UAssetAPI
             return this.XFERPTR();
         }
 
-        public Expression[] ReadExpressionArray(EExprToken endToken)
+        public KismetExpression[] ReadExpressionArray(EExprToken endToken)
         {
-            List<Expression> newData = new List<Expression>();
-            Expression currExpression = null;
+            List<KismetExpression> newData = new List<KismetExpression>();
+            KismetExpression currExpression = null;
             while (currExpression == null || currExpression.Token != endToken)
             {
                 if (currExpression != null) newData.Add(currExpression);
