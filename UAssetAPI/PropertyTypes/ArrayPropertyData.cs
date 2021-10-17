@@ -89,7 +89,7 @@ namespace UAssetAPI.PropertyTypes
                     int averageSizeEstimate2 = (int)((leng1 - 4) / numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
-                        results[i] = MainSerializer.TypeToClass(ArrayType, Name, reader.Asset);
+                        results[i] = MainSerializer.TypeToClass(ArrayType, new FName(i.ToString()), reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
                         results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
