@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the interface class to convert to.
         /// </summary>
-        public ulong ClassPtr;
+        public FPackageIndex ClassPtr;
 
         /// <summary>
         /// The target of this expression.
@@ -39,12 +39,13 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFER_OBJECT_POINTER(ClassPtr);
-            ExpressionSerializer.WriteExpression(Target, writer);
-            return 0;
+            int offset = 0;
+            offset += writer.XFER_OBJECT_POINTER(ClassPtr);
+            offset += ExpressionSerializer.WriteExpression(Target, writer);
+            return offset;
         }
     }
 }

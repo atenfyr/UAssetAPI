@@ -45,13 +45,14 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write(LineNumber);
-            writer.Write(DebugMode);
-            ExpressionSerializer.WriteExpression(AssertExpression, writer);
-            return 0;
+            int offset = 0;
+            writer.Write(LineNumber); offset += sizeof(ushort);
+            writer.Write(DebugMode); offset += sizeof(bool);
+            offset += ExpressionSerializer.WriteExpression(AssertExpression, writer);
+            return offset;
         }
     }
 }

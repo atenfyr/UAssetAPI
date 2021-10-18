@@ -16,7 +16,12 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// Pointer to the UScriptStruct in question.
         /// </summary>
-        public ulong Struct;
+        public FPackageIndex Struct;
+
+        /// <summary>
+        /// The size of the struct that this constant represents in memory in bytes.
+        /// </summary>
+        public int StructSize;
 
         public EX_StructConst()
         {
@@ -30,7 +35,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override void Read(AssetBinaryReader reader)
         {
             Struct = reader.XFERPTR();
-            reader.ReadInt32(); // Struct size in bytes
+            StructSize = reader.ReadInt32();
             Value = reader.ReadExpressionArray(EExprToken.EX_EndStructConst);
         }
 
@@ -38,32 +43,21 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFERPTR(Struct);
-            long lengthPos = writer.BaseStream.Position;
-            writer.Write((int)0);
-
-            long startMetric = writer.BaseStream.Position;
+            int offset = 0;
+            offset += writer.XFERPTR(Struct);
+            writer.Write(StructSize); offset += sizeof(int);
 
             for (int i = 0; i < Value.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Value[i], writer);
+                offset += ExpressionSerializer.WriteExpression(Value[i], writer);
             }
 
-            long endMetric = writer.BaseStream.Position;
-
             // Write end expression
-            ExpressionSerializer.WriteExpression(new EX_EndStructConst(), writer);
-
-            // Write out struct size in bytes
-            long totalLength = endMetric - startMetric;
-            long finalLoc = writer.BaseStream.Position;
-            writer.Seek((int)lengthPos, SeekOrigin.Begin);
-            writer.Write((int)totalLength);
-            writer.Seek((int)finalLoc, SeekOrigin.Begin);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(new EX_EndStructConst(), writer);
+            return offset;
         }
     }
 }

@@ -19,7 +19,7 @@
         /// Pointer to the array inner property (FProperty*).
         /// Only used in engine versions prior to <see cref="UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE"/>.
         /// </summary>
-        public ulong ArrayInnerProp;
+        public FPackageIndex ArrayInnerProp;
 
         /// <summary>
         /// Array items.
@@ -53,24 +53,25 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
+            int offset = 0;
             if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE)
             {
-                ExpressionSerializer.WriteExpression(AssigningProperty, writer);
+                offset += ExpressionSerializer.WriteExpression(AssigningProperty, writer);
             }
             else
             {
-                writer.XFERPTR(ArrayInnerProp);
+                offset += writer.XFERPTR(ArrayInnerProp);
             }
 
             for (int i = 0; i < Elements.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Elements[i], writer);
+                offset += ExpressionSerializer.WriteExpression(Elements[i], writer);
             }
-            ExpressionSerializer.WriteExpression(new EX_EndArray(), writer);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(new EX_EndArray(), writer);
+            return offset;
         }
     }
 }

@@ -13,12 +13,12 @@
         /// <summary>
         /// Pointer to this constant's key property (FProperty*).
         /// </summary>
-        public ulong KeyProperty;
+        public FPackageIndex KeyProperty;
 
         /// <summary>
         /// Pointer to this constant's value property (FProperty*).
         /// </summary>
-        public ulong ValueProperty;
+        public FPackageIndex ValueProperty;
 
         /// <summary>
         /// Set constant entries.
@@ -45,18 +45,19 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFERPTR(KeyProperty);
-            writer.XFERPTR(ValueProperty);
-            writer.Write(Elements.Length);
+            int offset = 0;
+            offset += writer.XFERPTR(KeyProperty);
+            offset += writer.XFERPTR(ValueProperty);
+            writer.Write(Elements.Length); offset += sizeof(int);
             for (int i = 0; i < Elements.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Elements[i], writer);
+                offset += ExpressionSerializer.WriteExpression(Elements[i], writer);
             }
-            ExpressionSerializer.WriteExpression(new EX_EndMapConst(), writer);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(new EX_EndMapConst(), writer);
+            return offset;
         }
     }
 }

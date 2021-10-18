@@ -149,22 +149,22 @@ namespace UAssetAPI
             return this.XFERNAME();
         }
 
-        public ulong XFERPTR()
+        public FPackageIndex XFERPTR()
         {
-            return this.ReadUInt64();
+            return new FPackageIndex(this.ReadInt32());
         }
 
-        public ulong XFER_FUNC_POINTER()
-        {
-            return this.XFERPTR();
-        }
-
-        public ulong XFER_PROP_POINTER()
+        public FPackageIndex XFER_FUNC_POINTER()
         {
             return this.XFERPTR();
         }
 
-        public ulong XFER_OBJECT_POINTER()
+        public FPackageIndex XFER_PROP_POINTER()
+        {
+            return this.XFERPTR();
+        }
+
+        public FPackageIndex XFER_OBJECT_POINTER()
         {
             return this.XFERPTR();
         }

@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the variable.
         /// </summary>
-        public ulong Value;
+        public FPackageIndex Value;
 
         public EX_Let()
         {
@@ -33,11 +33,10 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFER_PROP_POINTER(Value);
-            return 0;
+            return writer.XFER_PROP_POINTER(Value);
         }
     }
 }

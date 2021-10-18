@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the struct member expression (FProperty*).
         /// </summary>
-        public ulong StructMemberExpression;
+        public FPackageIndex StructMemberExpression;
 
         /// <summary>
         /// Struct expression.
@@ -39,12 +39,13 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write(StructMemberExpression);
-            ExpressionSerializer.WriteExpression(StructExpression, writer);
-            return 0;
+            int offset = 0;
+            offset += writer.XFERPTR(StructMemberExpression);
+            offset += ExpressionSerializer.WriteExpression(StructExpression, writer);
+            return offset;
         }
     }
 }

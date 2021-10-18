@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the property in question.
         /// </summary>
-        public ulong Property;
+        public FPackageIndex Property;
 
         public EX_PropertyConst()
         {
@@ -33,11 +33,10 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFER_PROP_POINTER(Property);
-            return 0;
+            return writer.XFER_PROP_POINTER(Property);
         }
     }
 }

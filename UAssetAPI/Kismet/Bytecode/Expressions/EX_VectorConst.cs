@@ -30,13 +30,13 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
             writer.Write(Value.X);
             writer.Write(Value.Y);
             writer.Write(Value.Z);
-            return 0;
+            return sizeof(float) * 3;
         }
     }
 }

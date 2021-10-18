@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ObjectConst"/> instruction.
     /// </summary>
-    public class EX_ObjectConst : Expression<ulong>
+    public class EX_ObjectConst : Expression<FPackageIndex>
     {
         /// <summary>
         /// The token of this expression.
@@ -28,11 +28,10 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write(Value);
-            return 0;
+            return writer.XFER_OBJECT_POINTER(Value);
         }
     }
 }

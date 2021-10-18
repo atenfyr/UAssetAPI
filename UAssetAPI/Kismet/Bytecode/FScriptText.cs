@@ -41,7 +41,7 @@ namespace UAssetAPI.Kismet.Bytecode
         /// <summary>
         /// Pointer to this text's UStringTable. Not used at runtime, but exists for asset dependency gathering. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
-        public ulong StringTableAsset;
+        public FPackageIndex StringTableAsset;
 
         /// <summary>
         /// Table ID string literal (namespace). Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
@@ -90,34 +90,35 @@ namespace UAssetAPI.Kismet.Bytecode
         /// Writes an FBlueprintText to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public virtual int Write(AssetBinaryWriter writer)
         {
-            writer.Write((byte)TextLiteralType);
+            int offset = 0;
+            writer.Write((byte)TextLiteralType); offset += sizeof(byte);
             switch (TextLiteralType)
             {
                 case EBlueprintTextLiteralType.Empty:
                     break;
                 case EBlueprintTextLiteralType.LocalizedText:
-                    ExpressionSerializer.WriteExpression(LocalizedSource, writer);
-                    ExpressionSerializer.WriteExpression(LocalizedKey, writer);
-                    ExpressionSerializer.WriteExpression(LocalizedNamespace, writer);
+                    offset += ExpressionSerializer.WriteExpression(LocalizedSource, writer);
+                    offset += ExpressionSerializer.WriteExpression(LocalizedKey, writer);
+                    offset += ExpressionSerializer.WriteExpression(LocalizedNamespace, writer);
                     break;
                 case EBlueprintTextLiteralType.InvariantText: // IsCultureInvariant
-                    ExpressionSerializer.WriteExpression(InvariantLiteralString, writer);
+                    offset += ExpressionSerializer.WriteExpression(InvariantLiteralString, writer);
                     break;
                 case EBlueprintTextLiteralType.LiteralString:
-                    ExpressionSerializer.WriteExpression(LiteralString, writer);
+                    offset += ExpressionSerializer.WriteExpression(LiteralString, writer);
                     break;
                 case EBlueprintTextLiteralType.StringTableEntry:
-                    writer.XFER_OBJECT_POINTER(StringTableAsset);
-                    ExpressionSerializer.WriteExpression(StringTableId, writer);
-                    ExpressionSerializer.WriteExpression(StringTableKey, writer);
+                    offset += writer.XFER_OBJECT_POINTER(StringTableAsset);
+                    offset += ExpressionSerializer.WriteExpression(StringTableId, writer);
+                    offset += ExpressionSerializer.WriteExpression(StringTableKey, writer);
                     break;
                 default:
                     throw new NotImplementedException("Unimplemented blueprint text literal type " + TextLiteralType);
             }
-            return 0;
+            return offset;
         }
     }
 }

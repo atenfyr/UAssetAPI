@@ -10,6 +10,11 @@
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_ClearMulticastDelegate; } }
 
+        /// <summary>
+        /// Delegate property to clear.
+        /// </summary>
+        public KismetExpression DelegateToClear;
+
         public EX_ClearMulticastDelegate()
         {
 
@@ -21,17 +26,17 @@
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-
+            DelegateToClear = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            return 0;
+            return ExpressionSerializer.WriteExpression(DelegateToClear, writer);
         }
     }
 }

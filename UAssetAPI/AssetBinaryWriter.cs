@@ -119,7 +119,7 @@ namespace UAssetAPI
         public int XFERNAME(FName val)
         {
             this.Write(val);
-            return sizeof(int) * 2;
+            return 12; // FScriptName's iCode offset is 12 bytes, not 8
         }
 
         public int XFER_FUNC_NAME(FName val)
@@ -127,23 +127,23 @@ namespace UAssetAPI
             return this.XFERNAME(val);
         }
 
-        public int XFERPTR(ulong val)
+        public int XFERPTR(FPackageIndex val)
         {
-            this.Write(val);
-            return sizeof(ulong);
+            this.Write(val.Index);
+            return sizeof(ulong); // For the iCode offset, we return the size of a pointer in memory rather than the size of an FPackageIndex on disk
         }
 
-        public int XFER_FUNC_POINTER(ulong val)
-        {
-            return this.XFERPTR(val);
-        }
-
-        public int XFER_PROP_POINTER(ulong val)
+        public int XFER_FUNC_POINTER(FPackageIndex val)
         {
             return this.XFERPTR(val);
         }
 
-        public int XFER_OBJECT_POINTER(ulong val)
+        public int XFER_PROP_POINTER(FPackageIndex val)
+        {
+            return this.XFERPTR(val);
+        }
+
+        public int XFER_OBJECT_POINTER(FPackageIndex val)
         {
             return this.XFERPTR(val);
         }

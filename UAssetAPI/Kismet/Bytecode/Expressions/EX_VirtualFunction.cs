@@ -42,17 +42,18 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.XFER_FUNC_NAME(VirtualFunctionName);
+            int offset = 0;
+            offset += writer.XFER_FUNC_NAME(VirtualFunctionName);
 
             for (int i = 0; i < Parameters.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Parameters[i], writer);
+                offset += ExpressionSerializer.WriteExpression(Parameters[i], writer);
             }
-            ExpressionSerializer.WriteExpression(new EX_EndFunctionParms(), writer);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(new EX_EndFunctionParms(), writer);
+            return offset;
         }
     }
 }

@@ -89,20 +89,21 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write((ushort)Cases.Length);
-            writer.Write(EndGotoOffset);
-            ExpressionSerializer.WriteExpression(IndexTerm, writer);
+            int offset = 0;
+            writer.Write((ushort)Cases.Length); offset += sizeof(ushort);
+            writer.Write(EndGotoOffset); offset += sizeof(uint);
+            offset += ExpressionSerializer.WriteExpression(IndexTerm, writer);
             for (int i = 0; i < Cases.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Cases[i].CaseIndexValueTerm, writer);
-                writer.Write(Cases[i].NextOffset);
-                ExpressionSerializer.WriteExpression(Cases[i].CaseTerm, writer);
+                offset += ExpressionSerializer.WriteExpression(Cases[i].CaseIndexValueTerm, writer);
+                writer.Write(Cases[i].NextOffset); offset += sizeof(uint);
+                offset += ExpressionSerializer.WriteExpression(Cases[i].CaseTerm, writer);
             }
-            ExpressionSerializer.WriteExpression(DefaultTerm, writer);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(DefaultTerm, writer);
+            return offset;
         }
     }
 }

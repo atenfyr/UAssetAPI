@@ -39,12 +39,13 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write((byte)ConversionType);
-            ExpressionSerializer.WriteExpression(Target, writer);
-            return 0;
+            int offset = 0;
+            writer.Write((byte)ConversionType); offset += sizeof(byte);
+            offset += ExpressionSerializer.WriteExpression(Target, writer);
+            return offset;
         }
     }
 }

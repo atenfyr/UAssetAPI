@@ -34,7 +34,7 @@ namespace UAssetAPI
         public Kismet.Bytecode.KismetExpression[] ScriptBytecode;
 
         /// <summary>
-        /// Number of bytecode instructions
+        /// Bytecode size in total in deserialized memory. Filled out in lieu of <see cref="ScriptBytecode"/> if an error occurs during bytecode parsing.
         /// </summary>
         public int ScriptBytecodeSize;
 
@@ -46,7 +46,7 @@ namespace UAssetAPI
         /// <summary>
         /// A static bool that determines whether or not the serializer will attempt to parse Kismet bytecode.
         /// </summary>
-        private static readonly bool ParseBytecode = false;
+        private static readonly bool ParseBytecode = true;
 
         public StructExport(Export super) : base(super)
         {
@@ -91,7 +91,7 @@ namespace UAssetAPI
                 LoadedProperties = new FProperty[0];
             }
 
-            ScriptBytecodeSize = reader.ReadInt32(); // # of bytecode instructions
+            ScriptBytecodeSize = reader.ReadInt32(); // # of bytes in total in deserialized memory
             int scriptStorageSize = reader.ReadInt32(); // # of bytes in total
             long startedReading = reader.BaseStream.Position;
 
@@ -154,21 +154,25 @@ namespace UAssetAPI
             }
             else
             {
-                writer.Write(ScriptBytecode.Length);
-                long lengthOffset = writer.BaseStream.Position;
+                long lengthOffset1 = writer.BaseStream.Position;
+                writer.Write((int)0); // total iCode offset; to be filled out after serialization
+                long lengthOffset2 = writer.BaseStream.Position;
                 writer.Write((int)0); // size on disk; to be filled out after serialization
 
+                int totalICodeOffset = 0;
                 long startMetric = writer.BaseStream.Position;
                 for (int i = 0; i < ScriptBytecode.Length; i++)
                 {
-                    ExpressionSerializer.WriteExpression(ScriptBytecode[i], writer);
+                    totalICodeOffset += ExpressionSerializer.WriteExpression(ScriptBytecode[i], writer);
                 }
                 long endMetric = writer.BaseStream.Position;
 
                 // Write out total size in bytes
                 long totalLength = endMetric - startMetric;
                 long here = writer.BaseStream.Position;
-                writer.Seek((int)lengthOffset, SeekOrigin.Begin);
+                writer.Seek((int)lengthOffset1, SeekOrigin.Begin);
+                writer.Write(totalICodeOffset);
+                writer.Seek((int)lengthOffset2, SeekOrigin.Begin);
                 writer.Write((int)totalLength);
                 writer.Seek((int)here, SeekOrigin.Begin);
             }

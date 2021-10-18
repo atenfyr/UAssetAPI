@@ -40,17 +40,18 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            ExpressionSerializer.WriteExpression(MapProperty, writer);
-            writer.Write(Elements.Length);
+            int offset = 0;
+            offset += ExpressionSerializer.WriteExpression(MapProperty, writer);
+            writer.Write(Elements.Length); offset += sizeof(int);
             for (int i = 0; i < Elements.Length; i++)
             {
-                ExpressionSerializer.WriteExpression(Elements[i], writer);
+                offset += ExpressionSerializer.WriteExpression(Elements[i], writer);
             }
-            ExpressionSerializer.WriteExpression(new EX_EndMap(), writer);
-            return 0;
+            offset += ExpressionSerializer.WriteExpression(new EX_EndMap(), writer);
+            return offset;
         }
     }
 }

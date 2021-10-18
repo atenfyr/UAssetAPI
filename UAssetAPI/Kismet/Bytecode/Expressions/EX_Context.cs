@@ -23,7 +23,7 @@
         /// <summary>
         /// Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*
         /// </summary>
-        public ulong RValuePointer;
+        public FPackageIndex RValuePointer;
 
         /// <summary>
         /// Context expression.
@@ -43,7 +43,7 @@
         {
             ObjectExpression = ExpressionSerializer.ReadExpression(reader);
             Offset = reader.ReadUInt32();
-            RValuePointer = reader.XFERPTR();
+            RValuePointer = reader.XFER_PROP_POINTER();
             ContextExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
@@ -51,14 +51,15 @@
         /// Writes the expression to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
-        /// <returns>The length in bytes of the data that was written.</returns>
+        /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            ExpressionSerializer.WriteExpression(ObjectExpression, writer);
-            writer.Write(Offset);
-            writer.Write(RValuePointer);
-            ExpressionSerializer.WriteExpression(ContextExpression, writer);
-            return 0;
+            int offset = 0;
+            offset += ExpressionSerializer.WriteExpression(ObjectExpression, writer);
+            writer.Write(Offset); offset += sizeof(uint);
+            offset += writer.XFER_PROP_POINTER(RValuePointer);
+            offset += ExpressionSerializer.WriteExpression(ContextExpression, writer);
+            return offset;
         }
     }
 }
