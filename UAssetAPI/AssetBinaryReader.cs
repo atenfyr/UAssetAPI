@@ -159,9 +159,23 @@ namespace UAssetAPI
             return this.XFERPTR();
         }
 
-        public FPackageIndex XFER_PROP_POINTER()
+        public KismetPropertyPointer XFER_PROP_POINTER()
         {
-            return this.XFERPTR();
+            if (Asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            {
+                int numEntries = this.ReadInt32();
+                FName[] allNames = new FName[numEntries];
+                for (int i = 0; i < numEntries; i++)
+                {
+                    allNames[i] = this.ReadFName();
+                }
+                FPackageIndex owner = this.XFER_OBJECT_POINTER();
+                return new KismetPropertyPointer(new FFieldPath(allNames, owner));
+            }
+            else
+            {
+                return new KismetPropertyPointer(this.XFERPTR());
+            }
         }
 
         public FPackageIndex XFER_OBJECT_POINTER()

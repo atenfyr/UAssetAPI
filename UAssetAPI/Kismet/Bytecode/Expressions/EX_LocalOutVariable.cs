@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the variable in question.
         /// </summary>
-        public FPackageIndex Variable;
+        public KismetPropertyPointer Variable;
 
         public EX_LocalOutVariable()
         {

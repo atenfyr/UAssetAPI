@@ -13,7 +13,7 @@
         /// <summary>
         /// Destination property pointer.
         /// </summary>
-        public FPackageIndex DestinationProperty;
+        public KismetPropertyPointer DestinationProperty;
 
         /// <summary>
         /// Assignment expression.

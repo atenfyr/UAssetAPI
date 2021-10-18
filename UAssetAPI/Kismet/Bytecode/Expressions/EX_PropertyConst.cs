@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the property in question.
         /// </summary>
-        public FPackageIndex Property;
+        public KismetPropertyPointer Property;
 
         public EX_PropertyConst()
         {

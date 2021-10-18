@@ -13,7 +13,7 @@
         /// <summary>
         /// A pointer to the variable.
         /// </summary>
-        public FPackageIndex Value;
+        public KismetPropertyPointer Value;
 
         public EX_Let()
         {

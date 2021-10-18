@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UAssetAPI.Kismet.Bytecode;
 
 namespace UAssetAPI
 {
@@ -127,10 +127,12 @@ namespace UAssetAPI
             return this.XFERNAME(val);
         }
 
+        private static readonly int PointerSize = sizeof(ulong);
+
         public int XFERPTR(FPackageIndex val)
         {
             this.Write(val.Index);
-            return sizeof(ulong); // For the iCode offset, we return the size of a pointer in memory rather than the size of an FPackageIndex on disk
+            return PointerSize; // For the iCode offset, we return the size of a pointer in memory rather than the size of an FPackageIndex on disk
         }
 
         public int XFER_FUNC_POINTER(FPackageIndex val)
@@ -138,9 +140,22 @@ namespace UAssetAPI
             return this.XFERPTR(val);
         }
 
-        public int XFER_PROP_POINTER(FPackageIndex val)
+        public int XFER_PROP_POINTER(KismetPropertyPointer val)
         {
-            return this.XFERPTR(val);
+            if (Asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            {
+                this.Write(val.New.Path.Length);
+                for (int i = 0; i < val.New.Path.Length; i++)
+                {
+                    this.XFERNAME(val.New.Path[i]);
+                }
+                this.XFER_OBJECT_POINTER(val.New.ResolvedOwner);
+            }
+            else
+            {
+                this.XFERPTR(val.Old);
+            }
+            return PointerSize;
         }
 
         public int XFER_OBJECT_POINTER(FPackageIndex val)

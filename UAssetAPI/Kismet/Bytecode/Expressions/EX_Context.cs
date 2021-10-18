@@ -23,7 +23,7 @@
         /// <summary>
         /// Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*
         /// </summary>
-        public FPackageIndex RValuePointer;
+        public KismetPropertyPointer RValuePointer;
 
         /// <summary>
         /// Context expression.

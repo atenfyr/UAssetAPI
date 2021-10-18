@@ -57,6 +57,7 @@
     <Compile Include="ExportTypes\EnumExport.cs" />
     <Compile Include="ExportTypes\StringTableExport.cs" />
     <Compile Include="ExportTypes\StructExport.cs" />
+    <Compile Include="FFieldPath.cs" />
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="FPackageIndex.cs" />
     <Compile Include="JSON\FStringJsonConverter.cs" />
     <Compile Include="FWorldTileInfo.cs" />
+    <Compile Include="Kismet\Bytecode\KismetPropertyPointer.cs" />
     <Compile Include="Kismet\Bytecode\EBlueprintTextLiteralType.cs" />
     <Compile Include="Kismet\Bytecode\ExpressionSerializer.cs" />
     <Compile Include="Kismet\Bytecode\KismetExpression.cs" />
