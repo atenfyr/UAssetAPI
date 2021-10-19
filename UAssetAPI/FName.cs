@@ -12,10 +12,11 @@ namespace UAssetAPI
     {
         public string Value;
         public Encoding Encoding;
+        public static readonly string NullCase = "null";
 
         public override string ToString()
         {
-            if (this == null || Value == null) return "null";
+            if (this == null || Value == null) return NullCase;
             return Value;
         }
 
@@ -54,6 +55,12 @@ namespace UAssetAPI
         public object Clone()
         {
             return new FString(Value, Encoding);
+        }
+
+        public static FString FromString(string value, Encoding encoding = null)
+        {
+            if (value == NullCase) return null;
+            return new FString(value, encoding);
         }
 
         public FString(string value, Encoding encoding = null)
@@ -151,7 +158,7 @@ namespace UAssetAPI
 
         public FName()
         {
-            Value = new FString("");
+            Value = new FString(string.Empty);
             Number = 0;
         }
     }

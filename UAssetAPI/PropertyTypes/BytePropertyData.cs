@@ -93,13 +93,13 @@ namespace UAssetAPI.PropertyTypes
 
         public FString GetEnumBase(UAsset asset)
         {
-            if (EnumType <= 0) return new FString("null");
+            if (EnumType <= 0) return null;
             return asset.GetNameReference(EnumType);
         }
 
         public FString GetEnumFull(UAsset asset)
         {
-            if (Value <= 0) return new FString("null");
+            if (Value <= 0) return null;
             return asset.GetNameReference(Value);
         }
 
@@ -112,7 +112,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            EnumType = asset.AddNameReference(new FString(d[0]));
+            EnumType = asset.AddNameReference(FString.FromString(d[0]));
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -121,7 +121,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.Long;
-                Value = asset.AddNameReference(new FString(d[1]));
+                Value = asset.AddNameReference(FString.FromString(d[1]));
             }
         }
     }

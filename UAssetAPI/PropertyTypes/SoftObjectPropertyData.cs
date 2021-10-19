@@ -50,8 +50,8 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            asset.AddNameReference(new FString(d[0]));
-            Value = new FString(d[0]);
+            asset.AddNameReference(FString.FromString(d[0]));
+            Value = FString.FromString(d[0]);
         }
     }
 

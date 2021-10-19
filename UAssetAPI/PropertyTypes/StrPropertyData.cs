@@ -52,7 +52,7 @@ namespace UAssetAPI.PropertyTypes
         {
             var encoding = Encoding.ASCII;
             if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
-            Value = new FString(d[0], encoding);
+            Value = FString.FromString(d[0], encoding);
         }
     }
 }

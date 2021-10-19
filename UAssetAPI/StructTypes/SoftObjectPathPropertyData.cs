@@ -84,13 +84,20 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            FName output = FName.FromString(d[0]);
-            asset.AddNameReference(output.Value);
-            AssetPathName = output;
-
-            if (d.Length > 1)
+            if (asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
-                SubPathString = new FString(d[1]);
+                Path = FString.FromString(d[0]);
+            }
+            else
+            {
+                FName output = FName.FromString(d[0]);
+                asset.AddNameReference(output.Value);
+                AssetPathName = output;
+
+                if (d.Length > 1)
+                {
+                    SubPathString = FString.FromString(d[1]);
+                }
             }
         }
     }
