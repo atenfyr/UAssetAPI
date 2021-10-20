@@ -6,6 +6,7 @@
         /// Path to the FField object from the innermost FField to the outermost UObject (UPackage)
         /// </summary>
         public FName[] Path;
+
         /// <summary>
         /// The cached owner of this field.
         /// </summary>

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
 {
@@ -41,6 +42,7 @@ namespace UAssetAPI
                 foreach (PropertyInfo property in properties)
                 {
                     if (property.GetIndexParameters().Length > 0) continue;
+                    if (value is PropertyData && (property.Name == "PropertyType" || property.Name == "HasCustomStructSerialization")) continue;
                     FindAllInstances<T>(property.GetValue(value, null), yaExplorado, res);
                 }
 
