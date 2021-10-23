@@ -237,10 +237,18 @@ namespace UAssetAPI
         /// <param name="name">The value to add to the name map.</param>
         /// <param name="forceAddDuplicates">Whether or not to add a new entry if the value provided already exists in the name map.</param>
         /// <returns>The index of the new value in the name map. If the value already existed in the name map beforehand, that index will be returned instead.</returns>
+        /// <exception cref="ArgumentException">Thrown when the value provided is null or empty.</exception>
         public int AddNameReference(FString name, bool forceAddDuplicates = false)
         {
             FixNameMapLookupIfNeeded();
-            if (!forceAddDuplicates && NameReferenceContains(name)) return SearchNameReference(name);
+
+            if (!forceAddDuplicates)
+            {
+                if (name?.Value == null) throw new ArgumentException("Cannot add a null FString to the name map");
+                if (name.Value == string.Empty) throw new ArgumentException("Cannot add an empty FString to the name map");
+                if (NameReferenceContains(name)) return SearchNameReference(name);
+            }
+
             nameMapIndexList.Add(name);
             nameMapLookup[name.GetHashCode()] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
