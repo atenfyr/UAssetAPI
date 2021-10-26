@@ -9,7 +9,7 @@ namespace UAssetAPI.PropertyTypes
     public class DoublePropertyData : PropertyData
     {
         /// <summary>
-        /// The float that this property represents.
+        /// The double that this property represents.
         /// </summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
