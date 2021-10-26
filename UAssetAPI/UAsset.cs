@@ -237,7 +237,7 @@ namespace UAssetAPI
         /// <param name="name">The value to add to the name map.</param>
         /// <param name="forceAddDuplicates">Whether or not to add a new entry if the value provided already exists in the name map.</param>
         /// <returns>The index of the new value in the name map. If the value already existed in the name map beforehand, that index will be returned instead.</returns>
-        /// <exception cref="ArgumentException">Thrown when the value provided is null or empty.</exception>
+        /// <exception cref="ArgumentException">Thrown when forceAddDuplicates is false and the value provided is null or empty.</exception>
         public int AddNameReference(FString name, bool forceAddDuplicates = false)
         {
             FixNameMapLookupIfNeeded();
