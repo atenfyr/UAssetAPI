@@ -50,7 +50,7 @@ namespace UAssetAPI.StructTypes
             X = reader.ReadSingle();
             Y = reader.ReadSingle();
             Z = reader.ReadSingle();
-            Z = reader.ReadSingle();
+            W = reader.ReadSingle();
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
