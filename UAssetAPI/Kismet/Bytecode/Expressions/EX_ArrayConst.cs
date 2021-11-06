@@ -1,9 +1,11 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ArrayConst"/> instruction.
     /// </summary>
-    public class EX_ArrayConst : Expression<KismetExpression[]>
+    public class EX_ArrayConst : KismetExpression<KismetExpression[]>
     {
         /// <summary>
         /// The token of this expression.
@@ -13,11 +15,13 @@
         /// <summary>
         /// Pointer to this constant's inner property (FProperty*).
         /// </summary>
+        [JsonProperty]
         public FPackageIndex InnerProperty;
 
         /// <summary>
         /// Array constant entries.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Elements;
 
         public EX_ArrayConst()

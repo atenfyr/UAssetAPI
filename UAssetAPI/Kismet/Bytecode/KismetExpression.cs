@@ -5,6 +5,7 @@ namespace UAssetAPI.Kismet.Bytecode
     /// <summary>
     /// A Kismet bytecode instruction.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class KismetExpression
     {
         /// <summary>
@@ -54,7 +55,7 @@ namespace UAssetAPI.Kismet.Bytecode
         }
     }
 
-    public abstract class Expression<T> : KismetExpression
+    public abstract class KismetExpression<T> : KismetExpression
     {
         /// <summary>
         /// The value of this expression if it is a constant.
@@ -66,7 +67,7 @@ namespace UAssetAPI.Kismet.Bytecode
             set => SetObject(value);
         }
 
-        public Expression() : base()
+        public KismetExpression() : base()
         {
 
         }

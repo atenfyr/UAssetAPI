@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_JumpIfNot"/> instruction.
@@ -14,11 +16,13 @@
         /// <summary>
         /// The offset to jump to if the provided expression evaluates to false.
         /// </summary>
+        [JsonProperty]
         public uint CodeOffset;
 
         /// <summary>
         /// Expression to evaluate to determine whether or not a jump should be performed.
         /// </summary>
+        [JsonProperty]
         public KismetExpression BooleanExpression;
 
         public EX_JumpIfNot()

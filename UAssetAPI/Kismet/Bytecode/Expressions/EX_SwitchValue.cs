@@ -1,23 +1,29 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// Represents a case in a Kismet bytecode switch statement.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public struct FKismetSwitchCase
     {
         /// <summary>
         /// The index value term of this case.
         /// </summary>
+        [JsonProperty]
         public KismetExpression CaseIndexValueTerm;
 
         /// <summary>
         /// Code offset to the next case.
         /// </summary>
+        [JsonProperty]
         public uint NextOffset;
 
         /// <summary>
         /// The main case term.
         /// </summary>
+        [JsonProperty]
         public KismetExpression CaseTerm;
 
         public FKismetSwitchCase(KismetExpression caseIndexValueTerm, uint nextOffset, KismetExpression caseTerm)
@@ -41,21 +47,25 @@
         /// <summary>
         /// Code offset to jump to when finished.
         /// </summary>
+        [JsonProperty]
         public uint EndGotoOffset;
 
         /// <summary>
         /// The index term of this switch statement.
         /// </summary>
+        [JsonProperty]
         public KismetExpression IndexTerm;
 
         /// <summary>
         /// The default term of this switch statement.
         /// </summary>
+        [JsonProperty]
         public KismetExpression DefaultTerm;
 
         /// <summary>
         /// All the cases in this switch statement.
         /// </summary>
+        [JsonProperty]
         public FKismetSwitchCase[] Cases;
 
         public EX_SwitchValue()

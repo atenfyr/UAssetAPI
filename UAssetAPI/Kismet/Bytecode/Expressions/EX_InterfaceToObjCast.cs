@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_InterfaceToObjCast"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// The interface class to convert to.
         /// </summary>
+        [JsonProperty]
         public FPackageIndex ClassPtr;
 
         /// <summary>
         /// The target of this expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression Target;
 
         public EX_InterfaceToObjCast()

@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetMap"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// Map property.
         /// </summary>
+        [JsonProperty]
         public KismetExpression MapProperty;
 
         /// <summary>
         /// Set entries.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Elements;
 
         public EX_SetMap()

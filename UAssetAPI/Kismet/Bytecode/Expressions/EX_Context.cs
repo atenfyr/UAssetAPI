@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Context"/> instruction.
@@ -13,21 +15,25 @@
         /// <summary>
         /// Object expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression ObjectExpression;
 
         /// <summary>
         /// Code offset for NULL expressions.
         /// </summary>
+        [JsonProperty]
         public uint Offset;
 
         /// <summary>
         /// Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*
         /// </summary>
+        [JsonProperty]
         public KismetPropertyPointer RValuePointer;
 
         /// <summary>
         /// Context expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression ContextExpression;
 
         public EX_Context()

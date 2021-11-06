@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
@@ -15,11 +16,13 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// Virtual function name.
         /// </summary>
+        [JsonProperty]
         public FName VirtualFunctionName;
 
         /// <summary>
         /// List of parameters for this function.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Parameters;
 
         public EX_VirtualFunction()

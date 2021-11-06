@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +21,25 @@ namespace UAssetAPI
     /// Example: LocalToWorld = (DeltaRotation * LocalToWorld) will change rotation in local space by DeltaRotation.
     /// Example: LocalToWorld = (LocalToWorld * DeltaRotation) will change rotation in world space by DeltaRotation.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public struct FTransform
     {
         /// <summary>
         /// Rotation of this transformation, as a quaternion
         /// </summary>
+        [JsonProperty]
         public FQuat Rotation;
+
         /// <summary>
         /// Translation of this transformation, as a vector.
         /// </summary>
+        [JsonProperty]
         public FVector Translation;
+
         /// <summary>
         /// 3D scale (always applied in local space) as a vector.
         /// </summary>
+        [JsonProperty]
         public FVector Scale3D;
 
         public FTransform(FQuat rotation, FVector translation, FVector scale3D)

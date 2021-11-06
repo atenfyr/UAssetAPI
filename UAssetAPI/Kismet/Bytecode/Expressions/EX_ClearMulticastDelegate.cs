@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ClearMulticastDelegate"/> instruction.
@@ -13,6 +15,7 @@
         /// <summary>
         /// Delegate property to clear.
         /// </summary>
+        [JsonProperty]
         public KismetExpression DelegateToClear;
 
         public EX_ClearMulticastDelegate()

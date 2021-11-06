@@ -53,14 +53,16 @@ namespace UAssetAPI.Tests
             var tester = new UAsset(Path.Combine("TestCustomSerializationStructsInMap", "wtf.uasset"), UE4Version.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
 
-            // Get the first property in export 2, which should be a map
+            // Get the map property in export 2
             Export exportTwo = FPackageIndex.FromRawIndex(2).ToExport(tester);
             Assert.IsTrue(exportTwo is NormalExport);
 
             NormalExport exportTwoNormal = (NormalExport)exportTwo;
-            Assert.IsTrue(exportTwoNormal.Data[0] is MapPropertyData);
 
-            MapPropertyData testMap = (MapPropertyData)exportTwoNormal.Data[0];
+            var mapPropertyName = FName.FromString("KekWait");
+            MapPropertyData testMap = exportTwoNormal[mapPropertyName] as MapPropertyData;
+            Assert.IsNotNull(testMap);
+            Assert.IsTrue(testMap == exportTwoNormal[mapPropertyName.Value.Value]);
 
             // Get the first entry of the map
             StructPropertyData entryKey = testMap?.Value?.Keys?.ElementAt(0) as StructPropertyData;

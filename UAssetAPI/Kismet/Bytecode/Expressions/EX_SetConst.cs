@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetConst"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// Pointer to this constant's inner property (FProperty*).
         /// </summary>
+        [JsonProperty]
         public FPackageIndex InnerProperty;
 
         /// <summary>
         /// Set constant entries.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Elements;
 
         public EX_SetConst()

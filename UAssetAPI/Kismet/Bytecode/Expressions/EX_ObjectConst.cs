@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ObjectConst"/> instruction.
     /// </summary>
-    public class EX_ObjectConst : Expression<FPackageIndex>
+    public class EX_ObjectConst : KismetExpression<FPackageIndex>
     {
         /// <summary>
         /// The token of this expression.

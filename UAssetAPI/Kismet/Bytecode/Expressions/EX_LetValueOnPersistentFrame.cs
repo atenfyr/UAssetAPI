@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_LetValueOnPersistentFrame"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// Destination property pointer.
         /// </summary>
+        [JsonProperty]
         public KismetPropertyPointer DestinationProperty;
 
         /// <summary>
         /// Assignment expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression AssignmentExpression;
 
         public EX_LetValueOnPersistentFrame()

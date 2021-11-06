@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions
@@ -6,7 +7,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_StructConst"/> instruction.
     /// </summary>
-    public class EX_StructConst : Expression<KismetExpression[]>
+    public class EX_StructConst : KismetExpression<KismetExpression[]>
     {
         /// <summary>
         /// The token of this expression.
@@ -16,11 +17,13 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <summary>
         /// Pointer to the UScriptStruct in question.
         /// </summary>
+        [JsonProperty]
         public FPackageIndex Struct;
 
         /// <summary>
         /// The size of the struct that this constant represents in memory in bytes.
         /// </summary>
+        [JsonProperty]
         public int StructSize;
 
         public EX_StructConst()

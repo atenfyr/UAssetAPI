@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PrimitiveCast"/> instruction.
@@ -8,11 +10,13 @@
         /// <summary>
         /// The type to cast to.
         /// </summary>
+        [JsonProperty]
         public EExprToken ConversionType;
 
         /// <summary>
         /// The target of this expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression Target;
 
         /// <summary>

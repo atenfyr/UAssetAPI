@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_IntConstByte"/> instruction.
     /// </summary>
-    public class EX_IntConstByte : Expression<byte>
+    public class EX_IntConstByte : KismetExpression<byte>
     {
         /// <summary>
         /// The token of this expression.

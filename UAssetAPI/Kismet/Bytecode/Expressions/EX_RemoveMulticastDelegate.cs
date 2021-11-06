@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_RemoveMulticastDelegate"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// Delegate property to assign to.
         /// </summary>
+        [JsonProperty]
         public KismetExpression Delegate;
 
         /// <summary>
         /// Delegate to add to the MC delegate for broadcast.
         /// </summary>
+        [JsonProperty]
         public KismetExpression DelegateToAdd;
 
         public EX_RemoveMulticastDelegate()

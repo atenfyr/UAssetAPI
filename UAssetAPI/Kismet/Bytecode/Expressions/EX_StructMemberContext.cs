@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_StructMemberContext"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// A pointer to the struct member expression (FProperty*).
         /// </summary>
+        [JsonProperty]
         public FPackageIndex StructMemberExpression;
 
         /// <summary>
         /// Struct expression.
         /// </summary>
+        [JsonProperty]
         public KismetExpression StructExpression;
 
         public EX_StructMemberContext()

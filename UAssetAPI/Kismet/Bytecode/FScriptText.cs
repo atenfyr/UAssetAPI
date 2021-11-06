@@ -1,56 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace UAssetAPI.Kismet.Bytecode
 {
     /// <summary>
     /// Represents an FText as serialized in Kismet bytecode.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public class FScriptText
     {
+        [JsonProperty]
         public EBlueprintTextLiteralType TextLiteralType;
 
         /// <summary>
         /// Source of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression LocalizedSource;
 
         /// <summary>
         /// Key of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression LocalizedKey;
 
         /// <summary>
         /// Namespace of this text if it is localized text. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression LocalizedNamespace;
 
         /// <summary>
         /// Value of this text if it is an invariant string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.InvariantText"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression InvariantLiteralString;
 
         /// <summary>
         /// Value of this text if it is a string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.LiteralString"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression LiteralString;
 
         /// <summary>
         /// Pointer to this text's UStringTable. Not used at runtime, but exists for asset dependency gathering. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
+        [JsonProperty]
         public FPackageIndex StringTableAsset;
 
         /// <summary>
         /// Table ID string literal (namespace). Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression StringTableId;
 
         /// <summary>
         /// String table key string literal. Used when <see cref="TextLiteralType"/> is <see cref="EBlueprintTextLiteralType.StringTableEntry"/>.
         /// </summary>
+        [JsonProperty]
         public KismetExpression StringTableKey;
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Jump"/> instruction.
@@ -13,6 +15,7 @@
         /// <summary>
         /// The offset to jump to.
         /// </summary>
+        [JsonProperty]
         public uint CodeOffset;
 
         public EX_Jump()

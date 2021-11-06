@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_ArrayGetByRef"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// The array variable.
         /// </summary>
+        [JsonProperty]
         public KismetExpression ArrayVariable;
 
         /// <summary>
         /// The index to access in the array.
         /// </summary>
+        [JsonProperty]
         public KismetExpression ArrayIndex;
 
         public EX_ArrayGetByRef()

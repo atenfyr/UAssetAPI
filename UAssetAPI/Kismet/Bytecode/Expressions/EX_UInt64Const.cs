@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_UInt64Const"/> instruction.
     /// </summary>
-    public class EX_UInt64Const : Expression<ulong>
+    public class EX_UInt64Const : KismetExpression<ulong>
     {
         /// <summary>
         /// The token of this expression.

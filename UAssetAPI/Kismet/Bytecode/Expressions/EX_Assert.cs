@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Assert"/> instruction.
@@ -13,16 +15,19 @@
         /// <summary>
         /// Line number.
         /// </summary>
+        [JsonProperty]
         public ushort LineNumber;
 
         /// <summary>
         /// Whether or not this assertion is in debug mode.
         /// </summary>
+        [JsonProperty]
         public bool DebugMode;
 
         /// <summary>
         /// Expression to assert.
         /// </summary>
+        [JsonProperty]
         public KismetExpression AssertExpression;
 
         public EX_Assert()

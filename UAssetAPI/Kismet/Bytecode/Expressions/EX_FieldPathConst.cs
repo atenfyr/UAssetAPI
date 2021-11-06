@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_FieldPathConst"/> instruction.
     /// </summary>
-    public class EX_FieldPathConst : Expression<KismetExpression>
+    public class EX_FieldPathConst : KismetExpression<KismetExpression>
     {
         /// <summary>
         /// The token of this expression.

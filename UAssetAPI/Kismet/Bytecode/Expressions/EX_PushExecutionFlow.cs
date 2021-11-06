@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_PushExecutionFlow"/> instruction.
@@ -13,6 +15,7 @@
         /// <summary>
         /// The address to push onto the execution flow stack.
         /// </summary>
+        [JsonProperty]
         public uint PushingAddress;
 
         public EX_PushExecutionFlow()

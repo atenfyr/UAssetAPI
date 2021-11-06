@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Skip"/> instruction.
@@ -13,11 +15,13 @@
         /// <summary>
         /// The offset to skip to.
         /// </summary>
+        [JsonProperty]
         public uint CodeOffset;
 
         /// <summary>
         /// An expression to possibly skip.
         /// </summary>
+        [JsonProperty]
         public KismetExpression SkipExpression;
 
         public EX_Skip()

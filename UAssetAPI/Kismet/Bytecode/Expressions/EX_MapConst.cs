@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_MapConst"/> instruction.
@@ -13,17 +15,21 @@
         /// <summary>
         /// Pointer to this constant's key property (FProperty*).
         /// </summary>
+        [JsonProperty]
         public FPackageIndex KeyProperty;
 
         /// <summary>
         /// Pointer to this constant's value property (FProperty*).
         /// </summary>
+        [JsonProperty]
         public FPackageIndex ValueProperty;
 
         /// <summary>
         /// Set constant entries.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Elements;
+        
         public EX_MapConst()
         {
 

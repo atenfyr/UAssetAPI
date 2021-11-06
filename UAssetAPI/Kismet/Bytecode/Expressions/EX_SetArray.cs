@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SetArray"/> instruction.
@@ -13,17 +15,20 @@
         /// <summary>
         /// Array property to assign to
         /// </summary>
+        [JsonProperty]
         public KismetExpression AssigningProperty;
 
         /// <summary>
         /// Pointer to the array inner property (FProperty*).
         /// Only used in engine versions prior to <see cref="UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE"/>.
         /// </summary>
+        [JsonProperty]
         public FPackageIndex ArrayInnerProp;
 
         /// <summary>
         /// Array items.
         /// </summary>
+        [JsonProperty]
         public KismetExpression[] Elements;
 
         public EX_SetArray()

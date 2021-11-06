@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_BindDelegate"/> instruction.
@@ -13,16 +15,19 @@
         /// <summary>
         /// The name of the function assigned to the delegate.
         /// </summary>
+        [JsonProperty]
         public FName FunctionName;
 
         /// <summary>
         /// Delegate property to assign to.
         /// </summary>
+        [JsonProperty]
         public KismetExpression Delegate;
 
         /// <summary>
         /// Object to bind.
         /// </summary>
+        [JsonProperty]
         public KismetExpression ObjectTerm;
 
         public EX_BindDelegate()

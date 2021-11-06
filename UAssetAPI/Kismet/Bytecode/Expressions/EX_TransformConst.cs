@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TransformConst"/> instruction.
     /// </summary>
-    public class EX_TransformConst : Expression<FTransform>
+    public class EX_TransformConst : KismetExpression<FTransform>
     {
         /// <summary>
         /// The token of this expression.

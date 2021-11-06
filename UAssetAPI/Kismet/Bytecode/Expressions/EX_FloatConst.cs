@@ -1,14 +1,23 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_FloatConst"/> instruction.
     /// </summary>
-    public class EX_FloatConst : Expression<float>
+    public class EX_FloatConst : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_FloatConst; } }
+
+        /// <summary>
+        /// The value of this float constant expression.
+        /// </summary>
+        [JsonProperty]
+        [JsonConverter(typeof(FSignedZeroJsonConverter))]
+        public float Value;
 
         public EX_FloatConst()
         {

@@ -4,7 +4,7 @@
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SkipOffsetConst"/> instruction.
     /// Represents a code offset constant.
     /// </summary>
-    public class EX_SkipOffsetConst : Expression<uint>
+    public class EX_SkipOffsetConst : KismetExpression<uint>
     {
         /// <summary>
         /// The token of this expression.

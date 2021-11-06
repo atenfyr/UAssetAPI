@@ -3,7 +3,7 @@
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TextConst"/> instruction.
     /// </summary>
-    public class EX_TextConst : Expression<FScriptText>
+    public class EX_TextConst : KismetExpression<FScriptText>
     {
         /// <summary>
         /// The token of this expression.

@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using Newtonsoft.Json;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_Let"/> instruction.
@@ -13,6 +15,7 @@
         /// <summary>
         /// A pointer to the variable.
         /// </summary>
+        [JsonProperty]
         public KismetPropertyPointer Value;
 
         public EX_Let()
