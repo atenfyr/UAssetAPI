@@ -13,7 +13,7 @@ namespace UAssetAPI
         public List<PropertyData> Data;
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
         public PropertyData this[FName key]
@@ -34,13 +34,14 @@ namespace UAssetAPI
                     {
                         Data[i] = value;
                         Data[i].Name = key;
+                        break;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
         public PropertyData this[string key]
