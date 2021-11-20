@@ -1,6 +1,24 @@
 # UAssetAPI
 This is a work-in-progress .NET API to facilitate reading and modifying Unreal Engine 4 game assets.
 
+## Getting Started
+If you'd like to compile UAssetAPI for yourself, read on:
+
+### Prerequisites
+* Visual Studio 2017 or later
+* Git
+
+### Compilation
+1. Clone the UAssetAPI repository:
+
+```sh
+git clone https://github.com/atenfyr/UAssetAPI.git
+```
+
+4. Open the `UAssetAPI.sln` solution file within the newly-created UAssetAPI directory in Visual Studio, right-click on the solution name in the Solution Explorer, and press "Restore Nuget Packages."
+
+6. Press F6 and right-click the solution name in the Solution Explorer and press "Build Solution" to compile UAssetAPI.
+
 ## Contributing
 Contributions are always welcome to this repository, and they're what make the open source community so great. Any contributions, whether through pull requests or issues, that you make are greatly appreciated.
 

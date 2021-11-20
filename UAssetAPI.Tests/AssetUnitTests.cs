@@ -204,6 +204,7 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_ItemMaster.uasset", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestManyAssets/Bloodstained")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", UE4Version.VER_UE4_23);
@@ -284,6 +285,7 @@ namespace UAssetAPI.Tests
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
