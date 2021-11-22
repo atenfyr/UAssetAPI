@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetUnitTests.cs" />
+    <Compile Include="CoolPropertyData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -69,6 +70,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TestAssets\TestCustomProperty\AlternateStartActor.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="TestAssets\TestJson\ABP_SMG_A.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

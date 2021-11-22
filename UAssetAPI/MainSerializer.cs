@@ -49,6 +49,16 @@ namespace UAssetAPI
             set => _propertyTypeRegistry = value; // I hope you know what you're doing!
         }
 
+        private static IEnumerable<Assembly> GetDependentAssemblies(Assembly analyzedAssembly)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName));
+        }
+
+        public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
+        {
+            return assembly.GetReferencedAssemblies().Select(assemblyName => assemblyName.FullName);
+        }
+
         private static Type registryParentDataType = typeof(PropertyData);
 
         /// <summary>
@@ -59,8 +69,10 @@ namespace UAssetAPI
             if (_propertyTypeRegistry != null) return;
             _propertyTypeRegistry = new Dictionary<string, RegistryEntry>();
 
-            Assembly[] allAssemblies = new Assembly[1];
+            Assembly[] allDependentAssemblies = GetDependentAssemblies(registryParentDataType.Assembly).ToArray();
+            Assembly[] allAssemblies = new Assembly[allDependentAssemblies.Length + 1];
             allAssemblies[0] = registryParentDataType.Assembly;
+            Array.Copy(allDependentAssemblies, 0, allAssemblies, 1, allDependentAssemblies.Length);
 
             for (int i = 0; i < allAssemblies.Length; i++)
             {
@@ -76,11 +88,16 @@ namespace UAssetAPI
                     if (returnedPropType == null) continue;
                     bool? returnedHasCustomStructSerialization = currentPropertyDataType.GetProperty("HasCustomStructSerialization")?.GetValue(testInstance, null) as bool?;
                     if (returnedHasCustomStructSerialization == null) continue;
+                    bool? returnedShouldBeRegistered = currentPropertyDataType.GetProperty("ShouldBeRegistered")?.GetValue(testInstance, null) as bool?;
+                    if (returnedShouldBeRegistered == null) continue;
 
-                    RegistryEntry res = new RegistryEntry();
-                    res.PropertyType = currentPropertyDataType;
-                    res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
-                    _propertyTypeRegistry[returnedPropType.Value.Value] = res;
+                    if ((bool)returnedShouldBeRegistered)
+                    {
+                        RegistryEntry res = new RegistryEntry();
+                        res.PropertyType = currentPropertyDataType;
+                        res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
+                        _propertyTypeRegistry[returnedPropType.Value.Value] = res;
+                    }
                 }
             }
 

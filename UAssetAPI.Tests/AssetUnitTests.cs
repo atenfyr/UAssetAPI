@@ -296,5 +296,37 @@ namespace UAssetAPI.Tests
             TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
             TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
         }
+
+        /// <summary>
+        /// In this test, we add a new property called "CoolProperty" in the tests assembly to test whether or not PropertyData-inheriting classes in dependent classes are registered by UAssetAPI.
+        /// </summary>
+        /// <see cref="CoolPropertyData"/>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestCustomProperty/AlternateStartActor.uasset", "TestCustomProperty")]
+        public void TestCustomProperty()
+        {
+            var tester = new UAsset(Path.Combine("TestCustomProperty", "AlternateStartActor.uasset"), UE4Version.VER_UE4_23);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+
+            // Make sure that there are no unknown properties, and that there is at least one CoolProperty with a value of 72
+            bool hasCoolProperty = false;
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is NormalExport normalTestExport)
+                {
+                    foreach (PropertyData prop in normalTestExport.Data)
+                    {
+                        Assert.IsFalse(prop is UnknownPropertyData);
+                        if (prop is CoolPropertyData coolProp)
+                        {
+                            hasCoolProperty = true;
+                            Assert.IsTrue(coolProp.Value == 72);
+                        }
+                    }
+                }
+            }
+            Assert.IsTrue(hasCoolProperty);
+        }
     }
 }

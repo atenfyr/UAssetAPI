@@ -57,6 +57,10 @@ namespace UAssetAPI.PropertyTypes
 
         private static FName FallbackPropertyType = new FName(string.Empty);
         /// <summary>
+        /// Determines whether or not this particular property should be registered in the property registry and automatically used when parsing assets.
+        /// </summary>
+        public virtual bool ShouldBeRegistered { get { return true; } }
+        /// <summary>
         /// Determines whether or not this particular property has custom serialization within a StructProperty.
         /// </summary>
         public virtual bool HasCustomStructSerialization { get { return false; } }
