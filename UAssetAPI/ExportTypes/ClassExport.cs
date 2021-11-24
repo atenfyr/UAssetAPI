@@ -5,7 +5,7 @@ using System.Linq;
 namespace UAssetAPI
 {
     /// <summary>
-    /// An interface that a UClass (<see cref="ClassExport"/>) implements.
+    /// Represents an interface that a UClass (<see cref="ClassExport"/>) implements.
     /// </summary>
     public struct SerializedInterfaceReference
     {

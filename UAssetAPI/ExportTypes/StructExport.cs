@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq.Expressions;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
 

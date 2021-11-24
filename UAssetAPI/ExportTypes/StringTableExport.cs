@@ -16,11 +16,11 @@ namespace UAssetAPI
     }
 
     /// <summary>
-    /// An export that stores a string table. Holds Key->SourceString pairs of text.
+    /// Export data for a string table. See <see cref="FStringTable"/>.
     /// </summary>
     public class StringTableExport : NormalExport
     {
-        public FStringTable Data2;
+        public FStringTable Table;
 
         public StringTableExport(Export super) : base(super)
         {

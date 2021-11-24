@@ -112,7 +112,7 @@ namespace UAssetAPI
     }
 
     /// <summary>
-    /// Export data for an enumeration.
+    /// Export data for an enumeration. See <see cref="UEnum"/>.
     /// </summary>
     public class EnumExport : NormalExport
     {
