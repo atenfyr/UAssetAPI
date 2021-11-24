@@ -298,7 +298,7 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// In this test, we add a new property called "CoolProperty" in the tests assembly to test whether or not PropertyData-inheriting classes in dependent classes are registered by UAssetAPI.
+        /// In this test, we add a new property called "CoolProperty" in the tests assembly to test whether or not PropertyData-inheriting classes in dependent assemblies are registered by UAssetAPI.
         /// </summary>
         /// <see cref="CoolPropertyData"/>
         [TestMethod]

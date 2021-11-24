@@ -1582,7 +1582,7 @@ namespace UAssetAPI
             }
         }
 
-        private static JsonSerializerSettings jsonSettings = new JsonSerializerSettings
+        internal static JsonSerializerSettings jsonSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Objects,
             NullValueHandling = NullValueHandling.Include,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,6 +10,11 @@ namespace UAssetAPI
     public static class UAPUtils
     {
         public static string CurrentCommit = string.Empty;
+        
+        public static string SerializeJson(object obj, Formatting jsonFormatting = Formatting.None)
+        {
+            return JsonConvert.SerializeObject(obj, jsonFormatting, UAsset.jsonSettings);
+        }
 
         public static List<T> FindAllInstances<T>(object parent) where T : class
         {
