@@ -29,7 +29,7 @@ namespace UAssetAPI
 
         public StringTableExport(FStringTable data, UAsset asset, byte[] extras) : base(asset, extras)
         {
-            Data2 = data;
+            Table = data;
         }
 
         public StringTableExport()
@@ -42,12 +42,12 @@ namespace UAssetAPI
             base.Read(reader, nextStarting);
             reader.ReadInt32();
 
-            Data2 = new FStringTable(reader.ReadFString());
+            Table = new FStringTable(reader.ReadFString());
 
             int numEntries = reader.ReadInt32();
             for (int i = 0; i < numEntries; i++)
             {
-                Data2.Add(reader.ReadFString(), reader.ReadFString());
+                Table.Add(reader.ReadFString(), reader.ReadFString());
             }
         }
 
@@ -56,12 +56,12 @@ namespace UAssetAPI
             base.Write(writer);
             writer.Write((int)0);
 
-            writer.Write(Data2.TableNamespace);
-            writer.Write(Data2.Count);
-            for (int i = 0; i < Data2.Count; i++)
+            writer.Write(Table.TableNamespace);
+            writer.Write(Table.Count);
+            for (int i = 0; i < Table.Count; i++)
             {
-                writer.Write(Data2.Keys.ElementAt(i));
-                writer.Write(Data2[i]);
+                writer.Write(Table.Keys.ElementAt(i));
+                writer.Write(Table[i]);
             }
         }
     }
