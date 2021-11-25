@@ -42,8 +42,8 @@
             writer.Write(Value.Translation.Y);
             writer.Write(Value.Translation.Z);
             writer.Write(Value.Scale3D.X);
-            writer.Write(Value.Scale3D.X);
-            writer.Write(Value.Scale3D.X);
+            writer.Write(Value.Scale3D.Y);
+            writer.Write(Value.Scale3D.Z);
             return sizeof(float) * 10;
         }
     }

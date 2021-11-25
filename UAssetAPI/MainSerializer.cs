@@ -146,6 +146,7 @@ namespace UAssetAPI
                 Debug.WriteLine("Length: " + leng);
                 if (reader != null) Debug.WriteLine("Pos: " + reader.BaseStream.Position);
                 Debug.WriteLine("Last type: " + lastType.PropertyType?.ToString());
+                if (lastType is ArrayPropertyData) Debug.WriteLine("Last array's type was " + ((ArrayPropertyData)lastType).ArrayType?.ToString());
                 if (lastType is StructPropertyData) Debug.WriteLine("Last struct's type was " + ((StructPropertyData)lastType).StructType?.ToString());
                 if (lastType is MapPropertyData lastTypeMap)
                 {

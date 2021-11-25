@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace UAssetAPI.Kismet.Bytecode
 {
@@ -14,13 +15,25 @@ namespace UAssetAPI.Kismet.Bytecode
         /// The pointer serialized as an FPackageIndex. Used in versions older than <see cref="XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION"/>.
         /// </summary>
         [JsonProperty]
+        [DefaultValue(null)]
         public FPackageIndex Old;
 
         /// <summary>
         /// The pointer serialized as an FFieldPath. Used in versions newer than <see cref="XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION"/>.
         /// </summary>
         [JsonProperty]
+        [DefaultValue(null)]
         public FFieldPath New;
+
+        public bool ShouldSerializeOld()
+        {
+            return Old != null;
+        }
+
+        public bool ShouldSerializeNew()
+        {
+            return New != null;
+        }
 
         public KismetPropertyPointer(FPackageIndex older)
         {

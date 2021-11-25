@@ -49,7 +49,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             int offset = 0;
             offset += ExpressionSerializer.WriteExpression(VariableExpression, writer);
             offset += ExpressionSerializer.WriteExpression(AssignmentExpression, writer);
-            return 0;
+            return offset;
         }
     }
 }

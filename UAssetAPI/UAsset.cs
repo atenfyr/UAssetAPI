@@ -1033,7 +1033,8 @@ namespace UAssetAPI
                         long nextStarting = reader.BaseStream.Length - 4;
                         if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].SerialOffset;
 
-                        switch (Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString())
+                        string exportClassType = Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString();
+                        switch (exportClassType)
                         {
                             case "BlueprintGeneratedClass":
                             case "WidgetBlueprintGeneratedClass":
