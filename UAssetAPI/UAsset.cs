@@ -1068,10 +1068,6 @@ namespace UAssetAPI
                                 Exports[i] = Exports[i].ConvertToChildExport<StringTableExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
-                            case "DataTable":
-                                Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
-                                Exports[i].Read(reader, (int)nextStarting);
-                                break;
                             case "Enum":
                             case "UserDefinedEnum":
                                 Exports[i] = Exports[i].ConvertToChildExport<EnumExport>();
@@ -1082,8 +1078,16 @@ namespace UAssetAPI
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
                             default:
-                                Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
-                                Exports[i].Read(reader, (int)nextStarting);
+                                if (exportClassType.EndsWith("DataTable"))
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
+                                else
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
                                 break;
                         }
 
