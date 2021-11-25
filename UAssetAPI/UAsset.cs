@@ -1036,30 +1036,6 @@ namespace UAssetAPI
                         string exportClassType = Exports[i].ClassIndex.IsImport() ? Exports[i].ClassIndex.ToImport(this).ObjectName.Value.Value : Exports[i].ClassIndex.Index.ToString();
                         switch (exportClassType)
                         {
-                            case "BlueprintGeneratedClass":
-                            case "WidgetBlueprintGeneratedClass":
-                            case "AnimBlueprintGeneratedClass":
-                                var bgc = Exports[i].ConvertToChildExport<ClassExport>();
-                                Exports[i] = bgc;
-                                Exports[i].Read(reader, (int)nextStarting);
-
-                                // Check to see if we can add some new map type overrides
-                                if (bgc.LoadedProperties != null)
-                                {
-                                    foreach (FProperty entry in bgc.LoadedProperties)
-                                    {
-                                        if (entry is FMapProperty fMapEntry)
-                                        {
-                                            FName keyOverride = null;
-                                            FName valueOverride = null;
-                                            if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
-                                            if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
-
-                                            this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
-                                        }
-                                    }
-                                }
-                                break;
                             case "Level":
                                 Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
@@ -1082,6 +1058,29 @@ namespace UAssetAPI
                                 {
                                     Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
                                     Exports[i].Read(reader, (int)nextStarting);
+                                }
+                                else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
+                                {
+                                    var bgc = Exports[i].ConvertToChildExport<ClassExport>();
+                                    Exports[i] = bgc;
+                                    Exports[i].Read(reader, (int)nextStarting);
+
+                                    // Check to see if we can add some new map type overrides
+                                    if (bgc.LoadedProperties != null)
+                                    {
+                                        foreach (FProperty entry in bgc.LoadedProperties)
+                                        {
+                                            if (entry is FMapProperty fMapEntry)
+                                            {
+                                                FName keyOverride = null;
+                                                FName valueOverride = null;
+                                                if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
+                                                if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
+
+                                                this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
+                                            }
+                                        }
+                                    }
                                 }
                                 else
                                 {
