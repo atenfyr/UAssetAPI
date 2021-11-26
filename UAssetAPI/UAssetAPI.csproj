@@ -55,9 +55,13 @@
     <Compile Include="ExportTypes\FunctionExport.cs" />
     <Compile Include="ExportTypes\RawExport.cs" />
     <Compile Include="ExportTypes\EnumExport.cs" />
+    <Compile Include="ExportTypes\PropertyExport.cs" />
     <Compile Include="ExportTypes\StringTableExport.cs" />
     <Compile Include="ExportTypes\StructExport.cs" />
     <Compile Include="FFieldPath.cs" />
+    <Compile Include="FieldTypes\EArrayDim.cs" />
+    <Compile Include="FieldTypes\ELifetimeCondition.cs" />
+    <Compile Include="FieldTypes\UField.cs" />
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="FName.cs" />
     <Compile Include="Flags.cs" />

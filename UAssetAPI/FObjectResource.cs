@@ -8,11 +8,11 @@
     public class FObjectResource
     {
         ///<summary>The name of the UObject represented by this resource.</summary>
-        [FObjectExportField(0)]
+        [DisplayIndexOrder(0)]
         public FName ObjectName;
 
         ///<summary>Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage</summary>
-        [FObjectExportField(1)]
+        [DisplayIndexOrder(1)]
         public FPackageIndex OuterIndex;
 
         public FObjectResource(FName objectName, FPackageIndex outerIndex)

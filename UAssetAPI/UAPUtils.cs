@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UAssetAPI.PropertyTypes;
 
@@ -65,6 +66,16 @@ namespace UAssetAPI
             if (val.CompareTo(min) < 0) return min;
             else if (val.CompareTo(max) > 0) return max;
             else return val;
+        }
+
+        public static FieldInfo[] GetOrderedFields<T>()
+        {
+            return typeof(T).GetFields().Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true)).OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex).ToArray();
+        }
+
+        public static FieldInfo[] GetOrderedFields(Type t)
+        {
+            return t.GetFields().Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true)).OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex).ToArray();
         }
 
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)

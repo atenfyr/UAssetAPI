@@ -461,11 +461,11 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
         LocalVariablesBlueprintVisible,
 
-        /// <summary>Stopped serializing UField_Next so that UFunctions could be serialized in dependently of a UClass in order to allow us to do all UFunction loading in a single pass (after classes and CDOs are created):</summary>
+        /// <summary>Stopped serializing UField_Next so that UFunctions could be serialized in dependently of a UClass in order to allow us to do all UFunction loading in a single pass (after classes and CDOs are created)</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         RemoveUField_Next,
 
-        /// <summary>Fix User Defined structs so that all members are correct flagged blueprint visible </summary>
+        /// <summary>Fix User Defined structs so that all members are correct flagged blueprint visible</summary>
         [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
         UserDefinedStructsBlueprintVisible,
 
@@ -788,4 +788,194 @@ namespace UAssetAPI
         LatestVersion = VersionPlusOne - 1
     }
 
+    /// <summary>
+    /// Custom serialization version for changes made in Release streams.
+    /// </summary>
+    public enum FReleaseObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary>Static Mesh extended bounds radius fix</summary>
+        [Introduced(UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)]
+        StaticMeshExtendedBoundsFix,
+
+        /// <summary>Physics asset bodies are either in the sync scene or the async scene, but not both</summary>
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
+        NoSyncAsyncPhysAsset,
+
+        /// <summary>ULevel was using TTransArray incorrectly (serializing the entire array in addition to individual mutations). converted to a TArray</summary>
+        [Introduced(UE4Version.VER_UE4_INSTANCED_STEREO_UNIFORM_REFACTOR)]
+        LevelTransArrayConvertedToTArray,
+
+        /// <summary>Add Component node templates now use their own unique naming scheme to ensure more reliable archetype lookups.</summary>
+        [Introduced(UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)]
+        AddComponentNodeTemplateUniqueNames,
+
+        /// <summary>Fix a serialization issue with static mesh FMeshSectionInfoMap FProperty</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
+        UPropertryForMeshSectionSerialize,
+
+        /// <summary>Existing HLOD settings screen size to screen area conversion</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
+        ConvertHLODScreenSize,
+
+        /// <summary>Adding mesh section info data for existing billboard LOD models</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
+        SpeedTreeBillboardSectionInfoFixup,
+
+        /// <summary>Change FMovieSceneEventParameters::StructType to be a string asset reference from a TWeakObjectPtr UScriptStruct</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
+        EventSectionParameterStringAssetRef,
+
+        /// <summary>Remove serialized irradiance map data from skylight.</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
+        SkyLightRemoveMobileIrradianceMap,
+
+        /// <summary>rename bNoTwist to bAllowTwist</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)]
+        RenameNoTwistToAllowTwistInTwoBoneIK,
+
+        /// <summary>Material layers serialization refactor</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        MaterialLayersParameterSerializationRefactor,
+
+        /// <summary>Added disable flag to skeletal mesh data</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        AddSkeletalMeshSectionDisable,
+
+        /// <summary>Removed objects that were serialized as part of this material feature</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        RemovedMaterialSharedInputCollection,
+
+        /// <summary>HISMC Cluster Tree migration to add new data</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        HISMCClusterTreeMigration,
+
+        /// <summary>Default values on pins in blueprints could be saved incoherently</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        PinDefaultValuesVerified,
+
+        /// <summary>During copy and paste transition getters could end up with broken state machine references</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        FixBrokenStateMachineReferencesInTransitionGetters,
+
+        /// <summary>Change to MeshDescription serialization</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        MeshDescriptionNewSerialization,
+
+        /// <summary>Change to not clamp RGB values > 1 on linear color curves</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        UnclampRGBColorCurves,
+
+        /// <summary>Bugfix for FAnimObjectVersion::LinkTimeAnimBlueprintRootDiscovery.</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        LinkTimeAnimBlueprintRootDiscoveryBugFix,
+
+        /// <summary>Change trail anim node variable deprecation</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        TrailNodeBlendVariableNameChange,
+
+        /// <summary>Make sure the Blueprint Replicated Property Conditions are actually serialized properly.</summary>
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        PropertiesSerializeRepCondition,
+
+        /// <summary>DepthOfFieldFocalDistance at 0 now disables DOF instead of DepthOfFieldFstop at 0.</summary>
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        FocalDistanceDisablesDOF,
+
+        /// <summary>Removed versioning, but version entry must still exist to keep assets saved with this version loadable</summary>
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        Unused_SoundClass2DReverbSend,
+
+        /// <summary>Groom asset version</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        GroomAssetVersion1,
+
+        /// <summary>Groom asset version</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        GroomAssetVersion2,
+
+        /// <summary>Store applied version of Animation Modifier to use when reverting</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        SerializeAnimModifierState,
+
+        /// <summary>Groom asset version</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        GroomAssetVersion3,
+
+        /// <summary>Upgrade filmback</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        DeprecateFilmbackSettings,
+
+        /// <summary>custom collision type</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        CustomImplicitCollisionType,
+
+        /// <summary>FFieldPath will serialize the owner struct reference and only a short path to its property</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        FFieldPathOwnerSerialization,
+
+        /// <summary>Dummy version to allow us to fix up the fact that ReleaseObjectVersion was changed elsewhere</summary>
+        [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
+        ReleaseObjectVersionFixup,
+
+        /// <summary>Pin types include a flag that propagates the 'CPF_UObjectWrapper' flag to generated properties</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        PinTypeIncludesUObjectWrapperFlag,
+
+        /// <summary>Added Weight member to FMeshToMeshVertData</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        WeightFMeshToMeshVertData,
+
+        /// <summary>Animation graph node bindings displayed as pins</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        AnimationGraphNodeBindingsDisplayedAsPins,
+
+        /// <summary>Serialized rigvm offset segment paths</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        SerializeRigVMOffsetSegmentPaths,
+
+        /// <summary>Upgrade AbcGeomCacheImportSettings for velocities</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        AbcVelocitiesSupport,
+
+        /// <summary>Add margin support to Chaos Convex</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        MarginAddedToConvexAndBox,
+
+        /// <summary>Add structure data to Chaos Convex</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        StructureDataAddedToConvex,
+
+        /// <summary>Changed axis UI for LiveLink AxisSwitch Pre Processor</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        AddedFrontRightUpAxesToLiveLinkPreProcessor,
+
+        /// <summary>Some sequencer event sections that were copy-pasted left broken links to the director BP</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        FixupCopiedEventSections,
+
+        /// <summary>Serialize the number of bytes written when serializing function arguments</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        RemoteControlSerializeFunctionArgumentsSize,
+
+        /// <summary>Add loop counters to sequencer's compiled sub-sequence data</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        AddedSubSequenceEntryWarpCounter,
+
+        /// <summary>Remove default resolution limit of 512 pixels for cubemaps generated from long-lat sources</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        LonglatTextureCubeDefaultMaxResolution,
+
+        /// <summary>bake center of mass into chaos cache</summary>
+        [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
+        GeometryCollectionCacheRemovesMassToLocal,
+
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
 }

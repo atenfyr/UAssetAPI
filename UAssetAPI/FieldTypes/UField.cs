@@ -1,29 +1,33 @@
-﻿using System.IO;
-
-namespace UAssetAPI.FieldTypes
+﻿namespace UAssetAPI.FieldTypes
 {
     /// <summary>
     /// Base class of reflection data objects.
     /// </summary>
-    public class FField
+    public class UField
     {
-        public FName SerializedType;
-        public FName Name;
-        public EObjectFlags Flags;
+        /// <summary>
+        /// Next Field in the linked list
+        /// </summary>
+        [DisplayIndexOrder(0)]
+        public FPackageIndex Next;
 
         public virtual void Read(AssetBinaryReader reader)
         {
-            Name = reader.ReadFName();
-            Flags = (EObjectFlags)reader.ReadUInt32();
+            if (reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
+            {
+                Next = new FPackageIndex(reader.ReadInt32());
+            }
         }
 
         public virtual void Write(AssetBinaryWriter writer)
         {
-            writer.Write(Name);
-            writer.Write((uint)Flags);
+            if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
+            {
+                writer.Write(Next.Index);
+            }
         }
 
-        public FField()
+        public UField()
         {
 
         }
@@ -32,13 +36,17 @@ namespace UAssetAPI.FieldTypes
     /// <summary>
     /// An UnrealScript variable.
     /// </summary>
-    public abstract class FProperty : FField
+    public abstract class UProperty : UField
     {
+        [DisplayIndexOrder(1)]
         public EArrayDim ArrayDim;
+        [DisplayIndexOrder(2)]
         public int ElementSize;
+        [DisplayIndexOrder(3)]
         public EPropertyFlags PropertyFlags;
-        public ushort RepIndex;
+        [DisplayIndexOrder(4)]
         public FName RepNotifyFunc;
+        [DisplayIndexOrder(5)]
         public ELifetimeCondition BlueprintReplicationCondition;
 
         public object RawValue;
@@ -57,43 +65,49 @@ namespace UAssetAPI.FieldTypes
         {
             base.Read(reader);
             ArrayDim = (EArrayDim)reader.ReadInt32();
-            ElementSize = reader.ReadInt32();
             PropertyFlags = (EPropertyFlags)reader.ReadUInt64();
-            RepIndex = reader.ReadUInt16();
             RepNotifyFunc = reader.ReadFName();
-            BlueprintReplicationCondition = (ELifetimeCondition)reader.ReadByte();
+
+            if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
+            {
+                BlueprintReplicationCondition = (ELifetimeCondition)reader.ReadByte();
+            }
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
             writer.Write((int)ArrayDim);
-            writer.Write(ElementSize);
             writer.Write((ulong)PropertyFlags);
-            writer.Write(RepIndex);
             writer.Write(RepNotifyFunc);
-            writer.Write((byte)BlueprintReplicationCondition);
+
+            if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
+            {
+                writer.Write((byte)BlueprintReplicationCondition);
+            }
         }
 
-        public FProperty()
+        public UProperty()
         {
 
         }
     }
 
-    public class FEnumProperty : FProperty
+    public class UEnumProperty : UProperty
     {
         ///<summary>A pointer to the UEnum represented by this property</summary>
+        [DisplayIndexOrder(6)]
         public FPackageIndex Enum;
         ///<summary>The FNumericProperty which represents the underlying type of the enum</summary>
-        public FProperty UnderlyingProp;
+        [DisplayIndexOrder(7)]
+        public FPackageIndex UnderlyingProp;
 
         public override void Read(AssetBinaryReader reader)
         {
             base.Read(reader);
 
             Enum = new FPackageIndex(reader.ReadInt32());
-            UnderlyingProp = MainSerializer.ReadFProperty(reader);
+            UnderlyingProp = new FPackageIndex(reader.ReadInt32());
         }
 
         public override void Write(AssetBinaryWriter writer)
@@ -101,47 +115,50 @@ namespace UAssetAPI.FieldTypes
             base.Write(writer);
 
             writer.Write(Enum.Index);
-            MainSerializer.WriteFProperty(UnderlyingProp, writer);
+            writer.Write(UnderlyingProp.Index);
         }
     }
 
-    public class FArrayProperty : FProperty
+    public class UArrayProperty : UProperty
     {
-        public FProperty Inner;
+        [DisplayIndexOrder(6)]
+        public FPackageIndex Inner;
 
         public override void Read(AssetBinaryReader reader)
         {
             base.Read(reader);
-            Inner = MainSerializer.ReadFProperty(reader);
+            Inner = new FPackageIndex(reader.ReadInt32());
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            MainSerializer.WriteFProperty(Inner, writer);
+            writer.Write(Inner.Index);
         }
     }
 
-    public class FSetProperty : FProperty
+    public class USetProperty : UProperty
     {
-        public FProperty ElementProp;
+        [DisplayIndexOrder(6)]
+        public FPackageIndex ElementProp;
 
         public override void Read(AssetBinaryReader reader)
         {
             base.Read(reader);
-            ElementProp = MainSerializer.ReadFProperty(reader);
+            ElementProp = new FPackageIndex(reader.ReadInt32());
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            MainSerializer.WriteFProperty(ElementProp, writer);
+            writer.Write(ElementProp.Index);
         }
     }
 
-    public class FObjectProperty : FProperty
+    public class UObjectProperty : UProperty
     {
         // UClass*
+        [DisplayIndexOrder(6)]
         public FPackageIndex PropertyClass;
 
         public override void Read(AssetBinaryReader reader)
@@ -157,14 +174,20 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FSoftObjectProperty : FObjectProperty
+    public class USoftObjectProperty : UObjectProperty
     {
 
     }
 
-    public class FClassProperty : FObjectProperty
+    public class ULazyObjectProperty : UObjectProperty
+    {
+
+    }
+
+    public class UClassProperty : UObjectProperty
     {
         // UClass*
+        [DisplayIndexOrder(7)]
         public FPackageIndex MetaClass;
 
         public override void Read(AssetBinaryReader reader)
@@ -180,9 +203,10 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FSoftClassProperty : FObjectProperty
+    public class USoftClassProperty : UObjectProperty
     {
         // UClass*
+        [DisplayIndexOrder(7)]
         public FPackageIndex MetaClass;
 
         public override void Read(AssetBinaryReader reader)
@@ -198,9 +222,10 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FDelegateProperty : FProperty
+    public class UDelegateProperty : UProperty
     {
         // UFunction*
+        [DisplayIndexOrder(6)]
         public FPackageIndex SignatureFunction;
 
         public override void Read(AssetBinaryReader reader)
@@ -216,19 +241,20 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FMulticastDelegateProperty : FDelegateProperty
+    public class UMulticastDelegateProperty : UDelegateProperty
     {
 
     }
 
-    public class FMulticastInlineDelegateProperty : FMulticastDelegateProperty
+    public class UMulticastInlineDelegateProperty : UMulticastDelegateProperty
     {
 
     }
 
-    public class FInterfaceProperty : FProperty
+    public class UInterfaceProperty : UProperty
     {
         // UFunction*
+        [DisplayIndexOrder(6)]
         public FPackageIndex InterfaceClass;
 
         public override void Read(AssetBinaryReader reader)
@@ -244,68 +270,53 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FMapProperty : FProperty
+    public class UMapProperty : UProperty
     {
-        public FProperty KeyProp;
-        public FProperty ValueProp;
+        [DisplayIndexOrder(6)]
+        public FPackageIndex KeyProp;
+        [DisplayIndexOrder(7)]
+        public FPackageIndex ValueProp;
 
         public override void Read(AssetBinaryReader reader)
         {
             base.Read(reader);
-            KeyProp = MainSerializer.ReadFProperty(reader);
-            ValueProp = MainSerializer.ReadFProperty(reader);
+            KeyProp = new FPackageIndex(reader.ReadInt32());
+            ValueProp = new FPackageIndex(reader.ReadInt32());
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            MainSerializer.WriteFProperty(KeyProp, writer);
-            MainSerializer.WriteFProperty(ValueProp, writer);
+            writer.Write(KeyProp.Index);
+            writer.Write(ValueProp.Index);
         }
     }
 
-    public class FBoolProperty : FProperty
+    public class UBoolProperty : UProperty
     {
-        /// <summary>Size of the bitfield/bool property. Equal to ElementSize but used to check if the property has been properly initialized (0-8, where 0 means uninitialized).</summary>
-        public byte FieldSize;
-        /// <summary>Offset from the memeber variable to the byte of the property (0-7).</summary>
-        public byte ByteOffset;
-        /// <summary>Mask of the byte with the property value.</summary>
-        public byte ByteMask;
-        /// <summary>Mask of the field with the property value. Either equal to ByteMask or 255 in case of 'bool' type.</summary>
-        public byte FieldMask;
-
+        [DisplayIndexOrder(6)]
         public bool NativeBool;
-        public bool Value;
 
         public override void Read(AssetBinaryReader reader)
         {
             base.Read(reader);
 
-            byte BoolSize = (byte)ElementSize;
-            FieldSize = reader.ReadByte();
-            ByteOffset = reader.ReadByte();
-            ByteMask = reader.ReadByte();
-            FieldMask = reader.ReadByte();
+            ElementSize = reader.ReadByte();
             NativeBool = reader.ReadBoolean();
-            Value = reader.ReadBoolean();
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(FieldSize);
-            writer.Write(ByteOffset);
-            writer.Write(ByteMask);
-            writer.Write(FieldMask);
+            writer.Write((byte)ElementSize);
             writer.Write(NativeBool);
-            writer.Write(Value);
         }
     }
 
-    public class FByteProperty : FProperty
+    public class UByteProperty : UProperty
     {
         /// <summary>A pointer to the UEnum represented by this property</summary>
+        [DisplayIndexOrder(6)]
         public FPackageIndex Enum;
 
         public override void Read(AssetBinaryReader reader)
@@ -321,9 +332,10 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FStructProperty : FProperty
+    public class UStructProperty : UProperty
     {
         // UScriptStruct*
+        [DisplayIndexOrder(6)]
         public FPackageIndex Struct;
 
         public override void Read(AssetBinaryReader reader)
@@ -339,32 +351,71 @@ namespace UAssetAPI.FieldTypes
         }
     }
 
-    public class FNumericProperty : FProperty
+    public class UNumericProperty : UProperty
     {
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-        }
+        
+    }
 
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-        }
+    public class UDoubleProperty : UNumericProperty
+    {
+
+    }
+
+    public class UFloatProperty : UNumericProperty
+    {
+
+    }
+
+    public class UIntProperty : UNumericProperty
+    {
+
+    }
+
+    public class UInt8Property : UNumericProperty
+    {
+
+    }
+
+    public class UInt16Property : UNumericProperty
+    {
+
+    }
+
+    public class UInt64Property : UNumericProperty
+    {
+
+    }
+
+    public class UUInt8Property : UNumericProperty
+    {
+
+    }
+
+    public class UUInt16Property : UNumericProperty
+    {
+
+    }
+
+    public class UUInt64Property : UNumericProperty
+    {
+
+    }
+
+    public class UNameProperty : UProperty
+    {
+
+    }
+
+    public class UStrProperty : UProperty
+    {
+
     }
 
     /// <summary>
     /// This is a UAssetAPI-specific property that represents anything that we don't have special serialization for
     /// </summary>
-    public class FGenericProperty : FProperty
+    public class UGenericProperty : UProperty
     {
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-        }
+        
     }
 }

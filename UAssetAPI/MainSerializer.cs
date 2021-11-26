@@ -240,6 +240,53 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <param name="serializedType">The type of UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static UProperty ReadUProperty(AssetBinaryReader reader, FName serializedType)
+        {
+            return ReadUProperty(reader, Type.GetType("UAssetAPI.FieldTypes.U" + allNonLetters.Replace(serializedType.Value.Value, string.Empty)));
+        }
+
+        /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <param name="requestedType">The type of UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static UProperty ReadUProperty(AssetBinaryReader reader, Type requestedType)
+        {
+            if (requestedType == null) requestedType = typeof(UGenericProperty);
+            var res = (UProperty)Activator.CreateInstance(requestedType);
+            res.Read(reader);
+            return res;
+        }
+
+        /// <summary>
+        /// Reads a UProperty into memory. Primarily used as a part of <see cref="PropertyExport"/> serialization.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the UProperty to be read.</param>
+        /// <returns>The FProperty read from disk.</returns>
+        public static T ReadUProperty<T>(AssetBinaryReader reader) where T : UProperty
+        {
+            var res = (UProperty)Activator.CreateInstance(typeof(T));
+            res.Read(reader);
+            return (T)res;
+        }
+
+        /// <summary>
+        /// Serializes a UProperty from memory.
+        /// </summary>
+        /// <param name="prop">The UProperty to serialize.</param>
+        /// <param name="writer">The BinaryWriter to serialize the UProperty to.</param>
+        public static void WriteUProperty(UProperty prop, AssetBinaryWriter writer)
+        {
+            prop.Write(writer);
+        }
+
+        /// <summary>
         /// Serializes a property from memory.
         /// </summary>
         /// <param name="property">The property to serialize.</param>
