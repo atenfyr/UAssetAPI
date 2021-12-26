@@ -15,6 +15,8 @@ namespace UAssetAPI.PropertyTypes
         [JsonProperty]
         public StructPropertyData DummyStruct;
 
+        internal bool ShouldSerializeStructsDifferently = true;
+
         public bool ShouldSerializeDummyStruct()
         {
             return Value.Length == 0;
@@ -42,7 +44,7 @@ namespace UAssetAPI.PropertyTypes
             }
 
             int numEntries = reader.ReadInt32();
-            if (ArrayType.Value.Value == "StructProperty")
+            if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently)
             {
                 var results = new PropertyData[numEntries];
 
@@ -107,6 +109,7 @@ namespace UAssetAPI.PropertyTypes
                     {
                         results[i] = MainSerializer.TypeToClass(ArrayType, new FName(i.ToString(), int.MinValue), reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
+                        if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = new FName("Generic");
                         results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
                 }
@@ -126,7 +129,7 @@ namespace UAssetAPI.PropertyTypes
 
             int here = (int)writer.BaseStream.Position;
             writer.Write(Value.Length);
-            if (ArrayType.Value.Value == "StructProperty")
+            if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently)
             {
                 if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
                 if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
