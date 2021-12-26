@@ -6,7 +6,7 @@
     public class UField
     {
         /// <summary>
-        /// Next Field in the linked list
+        /// Next Field in the linked list. Removed entirely in the custom version FFrameworkObjectVersion::RemoveUField_Next in favor of a regular array
         /// </summary>
         [DisplayIndexOrder(0)]
         public FPackageIndex Next;

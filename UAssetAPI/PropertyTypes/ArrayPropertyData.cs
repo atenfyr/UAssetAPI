@@ -38,26 +38,42 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 ArrayType = reader.ReadFName();
-                reader.ReadByte(); // null byte
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             int numEntries = reader.ReadInt32();
             if (ArrayType.Value.Value == "StructProperty")
             {
                 var results = new PropertyData[numEntries];
-                FName name = reader.ReadFName();
-                if (name.Value.Value.Equals("None"))
+
+                FName name = this.Name;
+                long structLength = 1;
+                FName fullType = new FName("Generic");
+                Guid structGUID = new Guid();
+
+                if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
                 {
-                    Value = results;
-                    return;
+                    name = reader.ReadFName();
+                    if (name.Value.Value.Equals("None"))
+                    {
+                        Value = results;
+                        return;
+                    }
+
+                    FName thisArrayType = reader.ReadFName();
+                    if (thisArrayType.Value.Value.Equals("None"))
+                    {
+                        Value = results;
+                        return;
+                    }
+
+                    if (thisArrayType.Value.Value != ArrayType.Value.Value) throw new FormatException("Invalid array type: " + thisArrayType.ToString() + " vs " + ArrayType.ToString());
+
+                    structLength = reader.ReadInt64(); // length value
+                    fullType = reader.ReadFName();
+                    structGUID = new Guid(reader.ReadBytes(16));
+                    reader.ReadPropertyGuid();
                 }
-
-                if (reader.ReadFName().Value.Value != ArrayType.Value.Value) throw new FormatException("Invalid array type");
-                long structLength = reader.ReadInt64(); // length value
-
-                FName fullType = reader.ReadFName();
-                Guid structGUID = new Guid(reader.ReadBytes(16));
-                reader.ReadByte();
 
                 if (numEntries == 0)
                 {
@@ -105,7 +121,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 writer.Write(ArrayType);
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int here = (int)writer.BaseStream.Position;
@@ -117,13 +133,17 @@ namespace UAssetAPI.PropertyTypes
 
                 FName fullType = DummyStruct.StructType;
 
-                writer.Write(DummyStruct.Name);
-                writer.Write(new FName("StructProperty"));
-                int lengthLoc = (int)writer.BaseStream.Position;
-                writer.Write((long)0);
-                writer.Write(fullType);
-                writer.Write(DummyStruct.StructGUID.ToByteArray());
-                writer.Write((byte)0);
+                int lengthLoc = -1;
+                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
+                {
+                    writer.Write(DummyStruct.Name);
+                    writer.Write(new FName("StructProperty"));
+                    lengthLoc = (int)writer.BaseStream.Position;
+                    writer.Write((long)0);
+                    writer.Write(fullType);
+                    if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(DummyStruct.StructGUID.ToByteArray());
+                    if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG) writer.Write((byte)0);
+                }
 
                 for (int i = 0; i < Value.Length; i++)
                 {
@@ -132,11 +152,14 @@ namespace UAssetAPI.PropertyTypes
                     Value[i].Write(writer, false);
                 }
 
-                int fullLen = (int)writer.BaseStream.Position - lengthLoc;
-                int newLoc = (int)writer.BaseStream.Position;
-                writer.Seek(lengthLoc, SeekOrigin.Begin);
-                writer.Write(fullLen - 32 - (includeHeader ? 1 : 0));
-                writer.Seek(newLoc, SeekOrigin.Begin);
+                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
+                {
+                    int fullLen = (int)writer.BaseStream.Position - lengthLoc;
+                    int newLoc = (int)writer.BaseStream.Position;
+                    writer.Seek(lengthLoc, SeekOrigin.Begin);
+                    writer.Write(fullLen - 32 - (includeHeader ? 1 : 0));
+                    writer.Seek(newLoc, SeekOrigin.Begin);
+                }
             }
             else
             {

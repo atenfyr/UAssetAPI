@@ -27,7 +27,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             Value = reader.ReadFString();
@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             return writer.Write(Value);
@@ -80,7 +80,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             Value = reader.ReadFName();
@@ -91,7 +91,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             writer.Write(Value);

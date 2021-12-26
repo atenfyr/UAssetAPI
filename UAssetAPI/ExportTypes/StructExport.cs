@@ -10,7 +10,7 @@ namespace UAssetAPI
     /// <summary>
     /// Base export for all UObject types that contain fields.
     /// </summary>
-    public class StructExport : NormalExport
+    public class StructExport : FieldExport
     {
         /// <summary>
         /// Struct this inherits from, may be null
@@ -30,7 +30,7 @@ namespace UAssetAPI
         /// <summary>
         /// The bytecode instructions contained within this struct.
         /// </summary>
-        public Kismet.Bytecode.KismetExpression[] ScriptBytecode;
+        public KismetExpression[] ScriptBytecode;
 
         /// <summary>
         /// Bytecode size in total in deserialized memory. Filled out in lieu of <see cref="ScriptBytecode"/> if an error occurs during bytecode parsing.
@@ -65,7 +65,6 @@ namespace UAssetAPI
         public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
-            reader.ReadInt32();
 
             SuperStruct = new FPackageIndex(reader.ReadInt32());
 
@@ -97,7 +96,7 @@ namespace UAssetAPI
             bool willParseRaw = true;
             try
             {
-                if (ParseBytecode)
+                if (ParseBytecode && Asset.EngineVersion >= UE4Version.VER_UE4_16)
                 {
                     var tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)
@@ -126,7 +125,6 @@ namespace UAssetAPI
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write((int)0);
 
             writer.Write(SuperStruct.Index);
 

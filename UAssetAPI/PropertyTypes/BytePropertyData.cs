@@ -41,12 +41,12 @@ namespace UAssetAPI.PropertyTypes
             ReadCustom(reader, includeHeader, leng1, leng2, true);
         }
 
-        private void ReadCustom(BinaryReader reader, bool includeHeader, long leng1, long leng2, bool canRepeat)
+        private void ReadCustom(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, bool canRepeat)
         {
             if (includeHeader)
             {
                 EnumType = (int)reader.ReadInt64();
-                reader.ReadByte(); // null byte
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             switch (leng1)
@@ -75,7 +75,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 writer.Write((long)EnumType);
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             switch (ByteType)

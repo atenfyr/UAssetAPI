@@ -41,7 +41,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             DisplayName = reader.ReadFName();
@@ -59,7 +59,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             long here = writer.BaseStream.Position;

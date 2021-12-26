@@ -71,7 +71,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -81,7 +81,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             return WriteExpressionInput(writer, false);
@@ -108,7 +108,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -118,7 +118,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             return WriteExpressionInput(writer, false);
@@ -145,7 +145,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -158,7 +158,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int expLength = WriteExpressionInput(writer, false);
@@ -187,7 +187,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -199,7 +199,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int expLength = WriteExpressionInput(writer, false);
@@ -229,7 +229,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -241,7 +241,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int expLength = WriteExpressionInput(writer, false);
@@ -271,7 +271,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -284,7 +284,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int expLength = WriteExpressionInput(writer, false);
@@ -313,7 +313,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             ReadExpressionInput(reader, false, 0);
@@ -326,7 +326,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int expLength = WriteExpressionInput(writer, false);

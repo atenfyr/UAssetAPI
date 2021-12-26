@@ -27,7 +27,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             Value = new VectorPropertyData[2];
@@ -45,7 +45,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int totalSize = 0;

@@ -114,7 +114,7 @@ namespace UAssetAPI.PropertyTypes
             {
                 type1 = reader.ReadFName();
                 type2 = reader.ReadFName();
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             int numKeysToRemove = reader.ReadInt32();
@@ -158,7 +158,7 @@ namespace UAssetAPI.PropertyTypes
                     writer.Write(KeyType);
                     writer.Write(ValueType);
                 }
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int here = (int)writer.BaseStream.Position;

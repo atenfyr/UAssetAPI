@@ -60,8 +60,8 @@ namespace UAssetAPI.StructTypes
             if (includeHeader) // originally !isForced
             {
                 StructType = reader.ReadFName();
-                StructGUID = new Guid(reader.ReadBytes(16));
-                reader.ReadByte();
+                if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
@@ -112,8 +112,8 @@ namespace UAssetAPI.StructTypes
             if (includeHeader)
             {
                 writer.Write(StructType);
-                writer.Write(StructGUID.ToByteArray());
-                writer.Write((byte)0);
+                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);

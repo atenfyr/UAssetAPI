@@ -1272,13 +1272,17 @@ namespace UAssetAPI
             for (int i = 0; i < this.nameMapIndexList.Count; i++)
             {
                 writer.Write(nameMapIndexList[i]);
-                if (OverrideNameMapHashes != null && OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
+
+                if (EngineVersion >= UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)
                 {
-                    writer.Write(OverrideNameMapHashes[nameMapIndexList[i]]);
-                }
-                else
-                {
-                    writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i]));
+                    if (OverrideNameMapHashes != null && OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
+                    {
+                        writer.Write(OverrideNameMapHashes[nameMapIndexList[i]]);
+                    }
+                    else
+                    {
+                        writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i]));
+                    }
                 }
             }
 

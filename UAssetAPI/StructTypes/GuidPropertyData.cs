@@ -27,7 +27,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             Value = new Guid(reader.ReadBytes(16));
@@ -37,7 +37,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             writer.Write(Value.ToByteArray());

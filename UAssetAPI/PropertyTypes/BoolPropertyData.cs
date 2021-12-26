@@ -26,7 +26,7 @@ namespace UAssetAPI.PropertyTypes
             Value = reader.ReadBoolean();
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
         }
 
@@ -35,7 +35,7 @@ namespace UAssetAPI.PropertyTypes
             writer.Write(Value);
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
             return 0;
         }

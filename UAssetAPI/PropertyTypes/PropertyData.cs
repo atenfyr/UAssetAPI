@@ -23,6 +23,11 @@ namespace UAssetAPI.PropertyTypes
         public int DuplicationIndex = 0;
 
         /// <summary>
+        /// An optional property GUID. Nearly always null.
+        /// </summary>
+        public Guid? PropertyGuid = null;
+
+        /// <summary>
         /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public long Offset = -1;

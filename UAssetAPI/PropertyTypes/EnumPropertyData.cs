@@ -29,7 +29,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 EnumType = reader.ReadFName();
-                reader.ReadByte(); // null byte
+                PropertyGuid = reader.ReadPropertyGuid();
             }
             Value = reader.ReadFName();
         }
@@ -39,7 +39,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 writer.Write(EnumType);
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
             writer.Write(Value);
             return sizeof(int) * 2;

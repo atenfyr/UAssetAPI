@@ -66,6 +66,16 @@ namespace UAssetAPI
             return ReadFString()?.Value;
         }
 
+        public virtual Guid? ReadPropertyGuid()
+        {
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
+            {
+                bool hasPropertyGuid = ReadBoolean();
+                if (hasPropertyGuid) return new Guid(ReadBytes(16));
+            }
+            return null;
+        }
+
         public virtual FString ReadFString()
         {
             int length = this.ReadInt32();
@@ -90,13 +100,11 @@ namespace UAssetAPI
         public virtual FString ReadNameMapString(out uint hashes)
         {
             FString str = this.ReadFString();
-            if (!string.IsNullOrEmpty(str.Value))
+            hashes = 0;
+
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value))
             {
                 hashes = this.ReadUInt32();
-            }
-            else
-            {
-                hashes = 0;
             }
             return str;
         }

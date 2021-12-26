@@ -59,7 +59,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             if (reader.Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
@@ -115,7 +115,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int here = (int)writer.BaseStream.Position;

@@ -31,7 +31,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 ArrayType = reader.ReadFName();
-                reader.ReadByte(); // null byte
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));
@@ -49,7 +49,7 @@ namespace UAssetAPI.PropertyTypes
             if (includeHeader)
             {
                 writer.Write(ArrayType);
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             var removedItemsDummy = new ArrayPropertyData(new FName("RemovedItems"));

@@ -41,7 +41,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             if (reader.Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
@@ -59,7 +59,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             int here = (int)writer.BaseStream.Position;

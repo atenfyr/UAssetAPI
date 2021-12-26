@@ -102,6 +102,15 @@ namespace UAssetAPI
             this.Write(name.Number);
         }
 
+        public virtual void WritePropertyGuid(Guid? guid)
+        {
+            if (Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
+            {
+                Write(guid != null);
+                if (guid != null) Write(((Guid)guid).ToByteArray());
+            }
+        }
+
         public int XFERSTRING(string val)
         {
             long startMetric = this.BaseStream.Position;

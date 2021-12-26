@@ -19,7 +19,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                reader.ReadByte();
+                PropertyGuid = reader.ReadPropertyGuid();
             }
 
             Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(new FName("AreaWeightedTriangleSampler"));
@@ -30,7 +30,7 @@ namespace UAssetAPI.StructTypes
         {
             if (includeHeader)
             {
-                writer.Write((byte)0);
+                writer.WritePropertyGuid(PropertyGuid);
             }
 
             return Value.Write(writer, false);
