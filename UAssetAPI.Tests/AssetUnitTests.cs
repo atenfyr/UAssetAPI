@@ -40,6 +40,75 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// Tests <see cref="FName.ToString"/> and <see cref="FName.FromString"/>.
+        /// </summary>
+        [TestMethod]
+        public void TestNameConstruction()
+        {
+            FName test = FName.FromString("HelloWorld_0");
+            Assert.IsTrue(test.Value.Value == "HelloWorld" && test.Number == 1);
+            Assert.IsTrue(test.ToString() == "HelloWorld_0");
+
+            test = FName.FromString("5_72");
+            Assert.IsTrue(test.Value.Value == "5" && test.Number == 73);
+            Assert.IsTrue(test.ToString() == "5_72");
+
+            test = FName.FromString("_3");
+            Assert.IsTrue(test.Value.Value == "_3" && test.Number == 0);
+            Assert.IsTrue(test.ToString() == "_3");
+
+            test = FName.FromString("hi_");
+            Assert.IsTrue(test.Value.Value == "hi_" && test.Number == 0);
+            Assert.IsTrue(test.ToString() == "hi_");
+
+            test = FName.FromString("hi_01");
+            Assert.IsTrue(test.Value.Value == "hi_01" && test.Number == 0);
+            Assert.IsTrue(test.ToString() == "hi_01");
+
+            test = FName.FromString("hi_10");
+            Assert.IsTrue(test.Value.Value == "hi" && test.Number == 11);
+            Assert.IsTrue(test.ToString() == "hi_10");
+
+            test = FName.FromString("blah");
+            Assert.IsTrue(test.Value.Value == "blah" && test.Number == 0);
+            Assert.IsTrue(test.ToString() == "blah");
+
+            test = new FName("HelloWorld", 2);
+            Assert.IsTrue(test.ToString() == "HelloWorld_1");
+
+            test = new FName("HelloWorld", 0);
+            Assert.IsTrue(test.ToString() == "HelloWorld");
+        }
+
+        /// <summary>
+        /// Tests modifying values within the class default object of an asset.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
+        public void TestCDOModification()
+        {
+            var tester = new UAsset(Path.Combine("TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), UE4Version.VER_UE4_23);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+
+            NormalExport cdoExport = null;
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport.ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+                {
+                    cdoExport = (NormalExport)testExport;
+                    break;
+                }
+            }
+            Assert.IsNotNull(cdoExport);
+
+            cdoExport["PickupActor"] = new ObjectPropertyData() { Value = FPackageIndex.FromRawIndex(0) };
+
+            Assert.IsTrue(cdoExport["PickupActor"] is ObjectPropertyData);
+            Assert.IsTrue(((ObjectPropertyData)cdoExport["PickupActor"]).Value.Index == 0);
+        }
+
+        /// <summary>
         /// MapProperties contain no easy way to determine the type of structs within them.
         /// For C++ classes, it is impossible without access to the headers, but for blueprint classes, the correct serialization is contained within the UClass.
         /// In this test, we take an asset with custom struct serialization in a map and extract data from the ClassExport in order to determine the correct serialization for the structs.

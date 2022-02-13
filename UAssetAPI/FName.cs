@@ -91,13 +91,10 @@ namespace UAssetAPI
         /// Converts this FName instance into a human-readable string. This is the inverse of <see cref="FromString(string)"/>.
         /// </summary>
         /// <returns>The human-readable string that represents this FName.</returns>
-        /// <remarks>
-        /// The human-readable string is formatted as the string representation of the <see cref="Value"/> followed by the instance number <see cref="Number"/> in parentheses. In some special cases, the number in parentheses will be omitted, in which case it is safe to assume that it is zero.
-        /// </remarks>
         public override string ToString()
         {
-            if (Number == int.MinValue) return Value.ToString();
-            return Value.ToString() + "(" + Number + ")";
+            if (Number > 0) return Value.ToString() + "_" + (Number - 1);
+            return Value.ToString();
         }
 
         /// <summary>
@@ -105,23 +102,31 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="val">The human-readable string to convert into an FName instance.</param>
         /// <returns>An FName instance that this string represents.</returns>
-        /// <remarks>
-        /// If the string ends in a decimal number surrounded by parentheses, such as in alphabet(2), the number inside parentheses (2) will be used as the instance number and the rest of the string will be used as the value (alphabet).
-        /// Otherwise, the string itself will become the value of the new instance, and the instance number will default to zero.
-        /// </remarks>
         public static FName FromString(string val)
         {
-            if (val == null || val == "null") return null;
-            if (val.Length == 0 || val[val.Length - 1] != ')') return new FName(val);
+            if (val == null || val == FString.NullCase) return null;
+            if (val.Length == 0) return new FName(val, 0);
 
-            int locLastLeftBracket = val.LastIndexOf('(');
-            if (locLastLeftBracket < 0) return new FName(val);
+            if (val[val.Length - 1] >= '0' && val[val.Length - 1] <= '9')
+            {
+                int i = val.Length - 1;
+                while (i > 1 && (val[i] >= '0' && val[i] <= '9'))
+                {
+                    i--;
+                }
 
-            string discriminatorRaw = val.Substring(locLastLeftBracket + 1, val.Length - locLastLeftBracket - 2);
-            if (!int.TryParse(discriminatorRaw, out int discriminator)) return new FName(val);
-
-            string realStr = val.Substring(0, locLastLeftBracket);
-            return new FName(realStr, discriminator);
+                if (val[i] == '_')
+                {
+                    string startSegment = val.Substring(0, i);
+                    string endSegment = val.Substring(i + 1, val.Length - i - 1);
+                    if (endSegment.Length == 1 || endSegment[0] != '0')
+                    {
+                        if (int.TryParse(endSegment, out int endSegmentVal)) return new FName(startSegment, endSegmentVal + 1);
+                    }
+                }
+            }
+            
+            return new FName(val, 0);
         }
 
         public override bool Equals(object obj)
