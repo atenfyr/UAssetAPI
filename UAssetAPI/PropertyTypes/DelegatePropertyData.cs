@@ -61,7 +61,7 @@ namespace UAssetAPI.PropertyTypes {
         }
 
         public override string ToString() {
-           return Convert.ToString(Value.Object) + "." + Value.Delegate.Value.Value;
+           return null;
         }
 
         public override void FromString(string[] d, UAsset asset) {
