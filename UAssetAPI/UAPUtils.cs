@@ -81,7 +81,7 @@ namespace UAssetAPI
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)
         {
             FString refer = new FPackageIndex(j).ToImport(asset).ObjectName.Value;
-            if (!asset.NameReferenceContains(refer)) return refer;
+            if (!asset.ContainsNameReference(refer)) return refer;
             return asset.GetNameReferenceWithoutZero(asset.SearchNameReference(refer));
         }
 

@@ -145,7 +145,7 @@ namespace UAssetAPI
             {
                 for (int i = 0; i < nameMapIndexList.Count; i++)
                 {
-                    nameMapLookup[nameMapIndexList[i].GetHashCode()] = i;
+                    nameMapLookup[nameMapIndexList[i].Value] = i;
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace UAssetAPI
         public void ClearNameIndexList()
         {
             nameMapIndexList = new List<FString>();
-            nameMapLookup = new Dictionary<int, int>();
+            nameMapLookup = new Dictionary<string, int>();
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace UAssetAPI
         {
             FixNameMapLookupIfNeeded();
             nameMapIndexList[index] = value;
-            nameMapLookup[value.GetHashCode()] = index;
+            nameMapLookup[value.Value] = index;
         }
 
         /// <summary>
@@ -212,10 +212,10 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="search">The value to search the name map for.</param>
         /// <returns>true if the value appears in the name map, otherwise false.</returns>
-        public bool NameReferenceContains(FString search)
+        public bool ContainsNameReference(FString search)
         {
             FixNameMapLookupIfNeeded();
-            return nameMapLookup.ContainsKey(search.GetHashCode());
+            return nameMapLookup.ContainsKey(search.Value);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace UAssetAPI
         public int SearchNameReference(FString search)
         {
             FixNameMapLookupIfNeeded();
-            if (NameReferenceContains(search)) return nameMapLookup[search.GetHashCode()];
+            if (ContainsNameReference(search)) return nameMapLookup[search.Value];
             throw new NameMapOutOfRangeException(search);
         }
 
@@ -246,11 +246,11 @@ namespace UAssetAPI
             {
                 if (name?.Value == null) throw new ArgumentException("Cannot add a null FString to the name map");
                 if (name.Value == string.Empty) throw new ArgumentException("Cannot add an empty FString to the name map");
-                if (NameReferenceContains(name)) return SearchNameReference(name);
+                if (ContainsNameReference(name)) return SearchNameReference(name);
             }
 
             nameMapIndexList.Add(name);
-            nameMapLookup[name.GetHashCode()] = nameMapIndexList.Count - 1;
+            nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
         }
 
@@ -669,7 +669,7 @@ namespace UAssetAPI
         /// <summary>
         /// Internal lookup for name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
         /// </summary>
-        private Dictionary<int, int> nameMapLookup = new Dictionary<int, int>();
+        private Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
