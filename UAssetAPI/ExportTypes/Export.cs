@@ -74,13 +74,13 @@ namespace UAssetAPI
         internal int CreateBeforeCreateDependenciesSize;
 
         [DisplayIndexOrder(15)]
-        public List<FPackageIndex> SerializationBeforeSerializationDependencies;
+        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(16)]
-        public List<FPackageIndex> CreateBeforeSerializationDependencies;
+        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(17)]
-        public List<FPackageIndex> SerializationBeforeCreateDependencies;
+        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(18)]
-        public List<FPackageIndex> CreateBeforeCreateDependencies;
+        public List<FPackageIndex> CreateBeforeCreateDependencies = new List<FPackageIndex>();
 
         /// <summary>
         /// Miscellaneous, unparsed export data, stored as a byte array.
