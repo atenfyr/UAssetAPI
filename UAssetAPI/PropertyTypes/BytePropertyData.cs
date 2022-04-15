@@ -9,19 +9,34 @@ namespace UAssetAPI.PropertyTypes
     public enum BytePropertyType
     {
         Byte,
-        Long,
+        FName,
     }
 
     /// <summary>
     /// Describes a byte or an enumeration value.
     /// </summary>
-    public class BytePropertyData : PropertyData<int>
+    public class BytePropertyData : PropertyData
     {
         [JsonProperty]
         [JsonConverter(typeof(StringEnumConverter))]
         public BytePropertyType ByteType;
+
         [JsonProperty]
-        public int EnumType = 0;
+        public FName EnumType;
+        [JsonProperty]
+        public byte Value;
+        [JsonProperty]
+        public FName EnumValue;
+
+        public bool ShouldSerializeValue()
+        {
+            return ByteType == BytePropertyType.Byte;
+        }
+
+        public bool ShouldSerializeEnumValue()
+        {
+            return ByteType == BytePropertyType.FName;
+        }
 
         public BytePropertyData(FName name) : base(name)
         {
@@ -45,7 +60,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                EnumType = (int)reader.ReadInt64();
+                EnumType = reader.ReadFName();
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
@@ -53,12 +68,12 @@ namespace UAssetAPI.PropertyTypes
             {
                 case 1:
                     ByteType = BytePropertyType.Byte;
-                    Value = (int)reader.ReadByte();
+                    Value = reader.ReadByte();
                     break;
                 case 0: // Should be only seen in maps
                 case 8:
-                    ByteType = BytePropertyType.Long;
-                    Value = (int)reader.ReadInt64();
+                    ByteType = BytePropertyType.FName;
+                    EnumValue = reader.ReadFName();
                     break;
                 default:
                     if (canRepeat)
@@ -74,7 +89,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (includeHeader)
             {
-                writer.Write((long)EnumType);
+                writer.Write(EnumType);
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
@@ -83,24 +98,22 @@ namespace UAssetAPI.PropertyTypes
                 case BytePropertyType.Byte:
                     writer.Write((byte)Value);
                     return 1;
-                case BytePropertyType.Long:
-                    writer.Write((long)Value);
+                case BytePropertyType.FName:
+                    writer.Write(EnumValue);
                     return 8;
                 default:
                     throw new FormatException("Invalid BytePropertyType " + ByteType);
             }
         }
 
-        public FString GetEnumBase(UAsset asset)
+        public FName GetEnumBase()
         {
-            if (EnumType <= 0) return null;
-            return asset.GetNameReference(EnumType);
+            return EnumType;
         }
 
-        public FString GetEnumFull(UAsset asset)
+        public FName GetEnumFull()
         {
-            if (Value <= 0) return null;
-            return asset.GetNameReference(Value);
+            return EnumValue;
         }
 
         public override string ToString()
@@ -113,7 +126,8 @@ namespace UAssetAPI.PropertyTypes
         public override void FromString(string[] d, UAsset asset)
         {
             var tempStr = FString.FromString(d[0]);
-            EnumType = tempStr == null ? 0 : asset.AddNameReference(tempStr);
+            asset.AddNameReference(tempStr);
+            EnumType = tempStr == null ? null : new FName(tempStr);
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -121,10 +135,11 @@ namespace UAssetAPI.PropertyTypes
             }
             else
             {
-                ByteType = BytePropertyType.Long;
+                ByteType = BytePropertyType.FName;
 
                 tempStr = FString.FromString(d[1]);
-                Value = tempStr == null ? 0 : asset.AddNameReference(tempStr);
+                asset.AddNameReference(tempStr);
+                EnumValue = tempStr == null ? null : new FName(tempStr);
             }
         }
     }

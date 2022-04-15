@@ -177,6 +177,7 @@
     <Compile Include="Kismet\Bytecode\Expressions\EX_VirtualFunction.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_WireTracepoint.cs" />
     <Compile Include="Kismet\Bytecode\FScriptText.cs" />
+    <Compile Include="PropertyTypes\DelegatePropertyData.cs" />
     <Compile Include="PropertyTypes\DoublePropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshAreaWeightedTriangleSamplerPropertyData.cs" />
