@@ -524,11 +524,6 @@ namespace UAssetAPI
         public FWorldTileInfo WorldTileInfo;
 
         /// <summary>
-        /// List of imports and exports that must be serialized before other exports...all packed together, see <see cref="Export.FirstExportDependency"/>.
-        /// </summary>
-        public List<FPackageIndex> PreloadDependencies;
-
-        /// <summary>
         /// Data about previous versions of this package.
         /// </summary>
         public List<FGenerationInfo> Generations;
@@ -923,11 +918,11 @@ namespace UAssetAPI
                     }
                     if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
-                        newExport.FirstExportDependency = reader.ReadInt32();
-                        newExport.SerializationBeforeSerializationDependencies = reader.ReadInt32();
-                        newExport.CreateBeforeSerializationDependencies = reader.ReadInt32();
-                        newExport.SerializationBeforeCreateDependencies = reader.ReadInt32();
-                        newExport.CreateBeforeCreateDependencies = reader.ReadInt32();
+                        newExport.FirstExportDependencyOffset = reader.ReadInt32();
+                        newExport.SerializationBeforeSerializationDependenciesSize = reader.ReadInt32();
+                        newExport.CreateBeforeSerializationDependenciesSize = reader.ReadInt32();
+                        newExport.SerializationBeforeCreateDependenciesSize = reader.ReadInt32();
+                        newExport.CreateBeforeCreateDependenciesSize = reader.ReadInt32();
                     }
 
                     Exports.Add(newExport);
@@ -1004,11 +999,22 @@ namespace UAssetAPI
             // PreloadDependencies
             if (this.UseSeparateBulkDataFiles)
             {
-                reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
-                PreloadDependencies = new List<FPackageIndex>();
-                for (int i = 0; i < PreloadDependencyCount; i++)
+                for (int i = 0; i < Exports.Count; i++)
                 {
-                    PreloadDependencies.Add(new FPackageIndex(reader.ReadInt32()));
+                    reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
+                    reader.BaseStream.Seek(Exports[i].FirstExportDependencyOffset * sizeof(int), SeekOrigin.Current);
+
+                    Exports[i].SerializationBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeSerializationDependenciesSize);
+                    for (int j = 0; j < Exports[i].SerializationBeforeSerializationDependenciesSize; j++) Exports[i].SerializationBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+
+                    Exports[i].CreateBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeSerializationDependenciesSize);
+                    for (int j = 0; j < Exports[i].CreateBeforeSerializationDependenciesSize; j++) Exports[i].CreateBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+
+                    Exports[i].SerializationBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeCreateDependenciesSize);
+                    for (int j = 0; j < Exports[i].SerializationBeforeCreateDependenciesSize; j++) Exports[i].SerializationBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+
+                    Exports[i].CreateBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeCreateDependenciesSize);
+                    for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) Exports[i].CreateBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
                 }
             }
 
@@ -1346,11 +1352,11 @@ namespace UAssetAPI
                     }
                     if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
-                        writer.Write(us.FirstExportDependency);
-                        writer.Write(us.SerializationBeforeSerializationDependencies);
-                        writer.Write(us.CreateBeforeSerializationDependencies);
-                        writer.Write(us.SerializationBeforeCreateDependencies);
-                        writer.Write(us.CreateBeforeCreateDependencies);
+                        writer.Write(us.FirstExportDependencyOffset);
+                        writer.Write(us.SerializationBeforeSerializationDependenciesSize);
+                        writer.Write(us.CreateBeforeSerializationDependenciesSize);
+                        writer.Write(us.SerializationBeforeCreateDependenciesSize);
+                        writer.Write(us.CreateBeforeCreateDependenciesSize);
                     }
                 }
             }
@@ -1427,10 +1433,28 @@ namespace UAssetAPI
             this.PreloadDependencyOffset = (int)writer.BaseStream.Position;
             if (this.UseSeparateBulkDataFiles)
             {
-                this.PreloadDependencyCount = this.PreloadDependencies.Count;
-                for (int i = 0; i < this.PreloadDependencies.Count; i++)
+                this.PreloadDependencyCount = 0;
+                for (int i = 0; i < this.Exports.Count; i++)
                 {
-                    writer.Write(this.PreloadDependencies[i].Index);
+                    Exports[i].FirstExportDependencyOffset = this.PreloadDependencyCount;
+
+                    Exports[i].SerializationBeforeSerializationDependenciesSize = Exports[i].SerializationBeforeSerializationDependencies.Count;
+                    for (int j = 0; j < Exports[i].SerializationBeforeSerializationDependenciesSize; j++) writer.Write(Exports[i].SerializationBeforeSerializationDependencies[j].Index);
+
+                    Exports[i].CreateBeforeSerializationDependenciesSize = Exports[i].CreateBeforeSerializationDependencies.Count;
+                    for (int j = 0; j < Exports[i].CreateBeforeSerializationDependenciesSize; j++) writer.Write(Exports[i].CreateBeforeSerializationDependencies[j].Index);
+
+                    Exports[i].SerializationBeforeCreateDependenciesSize = Exports[i].SerializationBeforeCreateDependencies.Count;
+                    for (int j = 0; j < Exports[i].SerializationBeforeCreateDependenciesSize; j++) writer.Write(Exports[i].SerializationBeforeCreateDependencies[j].Index);
+
+                    Exports[i].CreateBeforeCreateDependenciesSize = Exports[i].CreateBeforeCreateDependencies.Count;
+                    for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) writer.Write(Exports[i].CreateBeforeCreateDependencies[j].Index);
+
+                    this.PreloadDependencyCount +=
+                        Exports[i].SerializationBeforeSerializationDependencies.Count +
+                        Exports[i].CreateBeforeSerializationDependencies.Count +
+                        Exports[i].SerializationBeforeCreateDependencies.Count +
+                        Exports[i].CreateBeforeCreateDependencies.Count;
                 }
             }
             else
@@ -1503,11 +1527,11 @@ namespace UAssetAPI
                     }
                     if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
-                        writer.Write(us.FirstExportDependency);
-                        writer.Write(us.SerializationBeforeSerializationDependencies);
-                        writer.Write(us.CreateBeforeSerializationDependencies);
-                        writer.Write(us.SerializationBeforeCreateDependencies);
-                        writer.Write(us.CreateBeforeCreateDependencies);
+                        writer.Write(us.FirstExportDependencyOffset);
+                        writer.Write(us.SerializationBeforeSerializationDependenciesSize);
+                        writer.Write(us.CreateBeforeSerializationDependenciesSize);
+                        writer.Write(us.SerializationBeforeCreateDependenciesSize);
+                        writer.Write(us.CreateBeforeCreateDependenciesSize);
                     }
                 }
             }

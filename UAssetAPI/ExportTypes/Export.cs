@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -66,29 +67,21 @@ namespace UAssetAPI
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
         /// </summary>
+        internal int FirstExportDependencyOffset;
+        internal int SerializationBeforeSerializationDependenciesSize;
+        internal int CreateBeforeSerializationDependenciesSize;
+        internal int SerializationBeforeCreateDependenciesSize;
+        internal int CreateBeforeCreateDependenciesSize;
+
         [DisplayIndexOrder(15)]
-        public int FirstExportDependency;
-        /// <summary>
-        /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
-        /// </summary>
+        public List<FPackageIndex> SerializationBeforeSerializationDependencies;
         [DisplayIndexOrder(16)]
-        public int SerializationBeforeSerializationDependencies;
-        /// <summary>
-        /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
-        /// </summary>
+        public List<FPackageIndex> CreateBeforeSerializationDependencies;
         [DisplayIndexOrder(17)]
-        public int CreateBeforeSerializationDependencies;
-        /// <summary>
-        /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
-        /// </summary>
+        public List<FPackageIndex> SerializationBeforeCreateDependencies;
         [DisplayIndexOrder(18)]
-        public int SerializationBeforeCreateDependencies;
-        /// <summary>
-        /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
-        /// </summary>
-        [DisplayIndexOrder(19)]
-        public int CreateBeforeCreateDependencies;
-        
+        public List<FPackageIndex> CreateBeforeCreateDependencies;
+
         /// <summary>
         /// Miscellaneous, unparsed export data, stored as a byte array.
         /// </summary>
@@ -168,6 +161,10 @@ namespace UAssetAPI
         public object Clone()
         {
             var res = (Export)MemberwiseClone();
+            res.SerializationBeforeSerializationDependencies = this.SerializationBeforeSerializationDependencies.ToList();
+            res.CreateBeforeSerializationDependencies = this.CreateBeforeSerializationDependencies.ToList();
+            res.SerializationBeforeCreateDependencies = this.SerializationBeforeCreateDependencies.ToList();
+            res.CreateBeforeCreateDependencies = this.CreateBeforeCreateDependencies.ToList();
             res.Extras = (byte[])this.Extras.Clone();
             res.PackageGuid = new Guid(this.PackageGuid.ToByteArray());
             return res;
@@ -183,6 +180,10 @@ namespace UAssetAPI
             InitAllFields();
 
             Export res = new T();
+            res.SerializationBeforeSerializationDependencies = this.SerializationBeforeSerializationDependencies.ToList();
+            res.CreateBeforeSerializationDependencies = this.CreateBeforeSerializationDependencies.ToList();
+            res.SerializationBeforeCreateDependencies = this.SerializationBeforeCreateDependencies.ToList();
+            res.CreateBeforeCreateDependencies = this.CreateBeforeCreateDependencies.ToList();
             res.Asset = this.Asset;
             res.Extras = this.Extras;
             res.ObjectName = this.ObjectName;
