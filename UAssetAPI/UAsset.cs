@@ -1460,6 +1460,7 @@ namespace UAssetAPI
             else
             {
                 this.PreloadDependencyCount = -1;
+                for (int i = 0; i < this.Exports.Count; i++) Exports[i].FirstExportDependencyOffset = -1;
             }
 
             // Export data
@@ -1493,6 +1494,7 @@ namespace UAssetAPI
                     us.SerialOffset = categoryStarts[i];
                     us.SerialSize = nextLoc - categoryStarts[i];
 
+                    Debug.WriteLine(writer.BaseStream.Position);
                     writer.Write(us.ClassIndex.Index);
                     writer.Write(us.SuperIndex.Index);
                     if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)

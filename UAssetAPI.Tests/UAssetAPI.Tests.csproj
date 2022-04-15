@@ -85,6 +85,12 @@
     <EmbeddedResource Include="TestAssets\TestJson\WPN_LockOnRifle.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="TestAssets\TestJson\Items.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestAssets\TestJson\Items.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestAssets\TestManyAssets\Astroneer\Augment_BroadBrush.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

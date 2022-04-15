@@ -356,6 +356,8 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestJson/Items.uasset", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestJson/Items.exp", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uasset", "TestJson")]
@@ -365,6 +367,7 @@ namespace UAssetAPI.Tests
             TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", UE4Version.VER_UE4_18);
             TestJsonOnFile("m02VIL_004_Gimmick.umap", UE4Version.VER_UE4_18);
             TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
+            TestJsonOnFile("Items.uasset", UE4Version.VER_UE4_23); // string table
             TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
             TestJsonOnFile("WPN_LockOnRifle.uasset", UE4Version.VER_UE4_25);
         }
