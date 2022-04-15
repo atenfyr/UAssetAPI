@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Linq;
 
 namespace UAssetAPI
@@ -7,11 +8,17 @@ namespace UAssetAPI
     /// </summary>
     public class FStringTable : TMap<FString, FString>
     {
+        [JsonProperty]
         public FString TableNamespace;
 
         public FStringTable(FString tableNamespace) : base()
         {
             TableNamespace = tableNamespace;
+        }
+
+        public FStringTable() : base()
+        {
+
         }
     }
 
@@ -20,6 +27,7 @@ namespace UAssetAPI
     /// </summary>
     public class StringTableExport : NormalExport
     {
+        [JsonProperty]
         public FStringTable Table;
 
         public StringTableExport(Export super) : base(super)

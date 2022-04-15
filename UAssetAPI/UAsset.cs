@@ -1632,6 +1632,7 @@ namespace UAssetAPI
             {
                 new FSignedZeroJsonConverter(),
                 new FNameJsonConverter(),
+                new FStringTableJsonConverter(),
                 new FStringJsonConverter(),
                 new FPackageIndexJsonConverter(),
                 new StringEnumConverter()

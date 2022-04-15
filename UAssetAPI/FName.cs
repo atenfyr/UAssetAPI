@@ -35,6 +35,8 @@ namespace UAssetAPI
             return false;
         }
 
+        public static explicit operator FString(string b) => new FString(b, null);
+
         public static bool operator ==(FString one, FString two)
         {
             if (one is null || two is null) return one is null && two is null;

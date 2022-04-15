@@ -73,24 +73,24 @@
     <EmbeddedResource Include="TestAssets\TestCustomProperty\AlternateStartActor.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="TestAssets\TestJson\ABP_SMG_A.uasset">
+    <EmbeddedResource Include="TestAssets\TestJson\ABP_SMG_A.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestAssets\TestJson\ABP_SMG_A.uexp">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestJson\ABP_SMG_A.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestAssets\TestJson\WPN_LockOnRifle.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="TestAssets\TestJson\WPN_LockOnRifle.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="TestAssets\TestJson\Items.uasset">
+    <EmbeddedResource Include="TestAssets\TestJson\Items.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestAssets\TestJson\Items.uexp">
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestJson\Items.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
     <None Include="TestAssets\TestManyAssets\Astroneer\Augment_BroadBrush.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

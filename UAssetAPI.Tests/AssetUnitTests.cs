@@ -344,7 +344,7 @@ namespace UAssetAPI.Tests
             var tester2 = UAsset.DeserializeJson(File.ReadAllText(Path.Combine("TestJson", "raw.json")));
             tester2.Write(Path.Combine("TestJson", "MODIFIED.uasset"));
 
-            // For the assets we're testing binary equality is maintained and can be used as a metric of success, but binary equality is not guaranteed for most assets
+            // For the assets we're testing binary equality is maintained and can be used as a metric of success, but binary equality is not guaranteed for all assets
             Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestJson", file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestJson", "MODIFIED.uasset"))));
         }
 
@@ -357,7 +357,7 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/Items.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Items.exp", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestJson/Items.uexp", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uasset", "TestJson")]
