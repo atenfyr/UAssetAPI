@@ -125,9 +125,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            var tempStr = FString.FromString(d[0]);
-            asset.AddNameReference(tempStr);
-            EnumType = tempStr == null ? null : new FName(tempStr);
+            EnumType = FName.FromString(d[0]);
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -136,10 +134,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.FName;
-
-                tempStr = FString.FromString(d[1]);
-                asset.AddNameReference(tempStr);
-                EnumValue = tempStr == null ? null : new FName(tempStr);
+                EnumValue = FName.FromString(d[1]);
             }
         }
     }
