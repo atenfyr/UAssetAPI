@@ -16,7 +16,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// Pointer to this constant's inner property (FProperty*).
         /// </summary>
         [JsonProperty]
-        public FPackageIndex InnerProperty;
+        public KismetPropertyPointer InnerProperty;
 
         /// <summary>
         /// Array constant entries.
@@ -35,7 +35,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            InnerProperty = reader.XFERPTR();
+            InnerProperty = reader.XFER_PROP_POINTER();
             int numEntries = reader.ReadInt32(); // Number of elements
             Elements = reader.ReadExpressionArray(EExprToken.EX_EndArrayConst);
         }
@@ -48,7 +48,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override int Write(AssetBinaryWriter writer)
         {
             int offset = 0;
-            offset += writer.XFERPTR(InnerProperty);
+            offset += writer.XFER_PROP_POINTER(InnerProperty);
             writer.Write(Elements.Length); offset += sizeof(int);
             for (int i = 0; i < Elements.Length; i++)
             {

@@ -16,7 +16,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// A pointer to the struct member expression (FProperty*).
         /// </summary>
         [JsonProperty]
-        public FPackageIndex StructMemberExpression;
+        public KismetPropertyPointer StructMemberExpression;
 
         /// <summary>
         /// Struct expression.
@@ -35,7 +35,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            StructMemberExpression = reader.XFERPTR();
+            StructMemberExpression = reader.XFER_PROP_POINTER();
             StructExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
@@ -47,7 +47,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override int Write(AssetBinaryWriter writer)
         {
             int offset = 0;
-            offset += writer.XFERPTR(StructMemberExpression);
+            offset += writer.XFER_PROP_POINTER(StructMemberExpression);
             offset += ExpressionSerializer.WriteExpression(StructExpression, writer);
             return offset;
         }
