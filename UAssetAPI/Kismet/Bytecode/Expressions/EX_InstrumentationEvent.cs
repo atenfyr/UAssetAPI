@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
+
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_InstrumentationEvent"/> instruction.
     /// </summary>
@@ -12,9 +14,14 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_InstrumentationEvent; } }
 
+        [JsonProperty]
+        public EScriptInstrumentationType EventType;
+        [JsonProperty]
+        public FName EventName;
+
         public EX_InstrumentationEvent()
         {
-            throw new NotImplementedException("EX_InstrumentationEvent is currently unimplemented");
+            
         }
 
         /// <summary>
@@ -23,7 +30,12 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
+            EventType = (EScriptInstrumentationType)reader.ReadByte();
 
+            if (EventType.Equals(EScriptInstrumentationType.InlineEvent))
+            {
+                EventName = reader.XFER_FUNC_NAME();
+            }
         }
 
         /// <summary>
@@ -33,7 +45,13 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            return 0;
+            writer.Write((byte)EventType);
+            if (EventType.Equals(EScriptInstrumentationType.InlineEvent)) {
+                writer.XFER_FUNC_NAME(EventName);
+                return 1 + 2 * sizeof(int);
+            } else {
+                return 1;
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace UAssetAPI.Kismet.Bytecode
         /// An optional tag which can be set on any expression in memory. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public object Tag;
-
+        public string Inst { get { return Token.ToString(); } }
         public object RawValue;
 
         public void SetObject(object value)

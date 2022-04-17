@@ -78,6 +78,7 @@
     <Compile Include="JSON\FStringJsonConverter.cs" />
     <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="JSON\FStringTableJsonConverter.cs" />
+    <Compile Include="Kismet\Bytecode\EScriptInstrumentationType.cs" />
     <Compile Include="Kismet\Bytecode\KismetPropertyPointer.cs" />
     <Compile Include="Kismet\Bytecode\EBlueprintTextLiteralType.cs" />
     <Compile Include="Kismet\Bytecode\ExpressionSerializer.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Kismet\Bytecode\Expressions\EX_VirtualFunction.cs" />
     <Compile Include="Kismet\Bytecode\Expressions\EX_WireTracepoint.cs" />
     <Compile Include="Kismet\Bytecode\FScriptText.cs" />
+    <Compile Include="Kismet\KismetSerailizer.cs" />
     <Compile Include="PropertyTypes\DelegatePropertyData.cs" />
     <Compile Include="PropertyTypes\DoublePropertyData.cs" />
     <Compile Include="StructTypes\SkeletalMeshSamplingLODBuiltDataPropertyData.cs" />

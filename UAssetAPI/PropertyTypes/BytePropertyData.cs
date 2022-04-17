@@ -68,7 +68,22 @@ namespace UAssetAPI.PropertyTypes
                     ByteType = BytePropertyType.Byte;
                     Value = reader.ReadByte();
                     break;
-                case 0: // Should be only seen in maps
+                case 0:// Should be only seen in maps
+                    int nameMapPointer = reader.ReadInt32();
+                    reader.BaseStream.Position -= sizeof(int);
+                    //maybe also check if there is Enum name in the NameMap
+                    if (reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("::"))
+                    {
+                        ByteType = BytePropertyType.FName;
+                        EnumValue = reader.ReadFName();
+                        break;
+                    } 
+                    else
+                    {
+                        ByteType = BytePropertyType.Byte;
+                        Value = reader.ReadByte();
+                        break;
+                    }
                 case 8:
                     ByteType = BytePropertyType.FName;
                     EnumValue = reader.ReadFName();

@@ -17,6 +17,10 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// </summary>
         [JsonProperty]
         public KismetPropertyPointer Value;
+        [JsonProperty]
+        public KismetExpression Variable;
+        [JsonProperty]
+        public KismetExpression Expression;
 
         public EX_Let()
         {
@@ -30,6 +34,8 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override void Read(AssetBinaryReader reader)
         {
             Value = reader.XFER_PROP_POINTER();
+            Variable = ExpressionSerializer.ReadExpression(reader);
+            Expression = ExpressionSerializer.ReadExpression(reader);
         }
 
         /// <summary>
@@ -39,7 +45,11 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            return writer.XFER_PROP_POINTER(Value);
+            int offset = 0;
+            offset += writer.XFER_PROP_POINTER(Value);
+            offset += ExpressionSerializer.WriteExpression(Variable, writer);
+            offset += ExpressionSerializer.WriteExpression(Expression, writer);
+            return offset;
         }
     }
 }

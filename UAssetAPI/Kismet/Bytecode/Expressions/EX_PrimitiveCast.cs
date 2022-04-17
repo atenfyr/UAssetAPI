@@ -11,7 +11,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// The type to cast to.
         /// </summary>
         [JsonProperty]
-        public EExprToken ConversionType;
+        public ECastToken ConversionType;
 
         /// <summary>
         /// The target of this expression.
@@ -35,7 +35,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            ConversionType = (EExprToken)reader.ReadByte();
+            ConversionType = (ECastToken)reader.ReadByte();
             Target = ExpressionSerializer.ReadExpression(reader);
         }
 
