@@ -177,4 +177,10 @@
 		EX_Max = 0x100,
 	};
 
+	public enum ECastToken {
+		ObjectToInterface = 0x46,
+		ObjectToBool = 0x47,
+		InterfaceToBool = 0x49,
+		Max = 0xFF,
+	};
 }
