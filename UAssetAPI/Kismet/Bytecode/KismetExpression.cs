@@ -14,10 +14,15 @@ namespace UAssetAPI.Kismet.Bytecode
         public virtual EExprToken Token { get { return EExprToken.EX_Nothing; } }
 
         /// <summary>
+        /// The token of this instruction expressed as a string.
+        /// </summary>
+        public string Inst { get { return Token.ToString().Substring(3, Token.ToString().Length - 3); } }
+
+        /// <summary>
         /// An optional tag which can be set on any expression in memory. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public object Tag;
-        public string Inst { get { return Token.ToString(); } }
+
         public object RawValue;
 
         public void SetObject(object value)
