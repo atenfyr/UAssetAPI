@@ -370,6 +370,38 @@ namespace UAssetAPI
             return (T)(object)-1;
         }
 
+        private static int GuessCustomVersionFromTypeAndEngineVersion(UE4Version chosenVersion, Type typ)
+        {
+            string[] allVals = Enum.GetNames(typ);
+            for (int i = allVals.Length - 1; i >= 0; i--)
+            {
+                string val = allVals[i];
+                var attributes = typ.GetMember(val)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
+                if (attributes == null || attributes.Length <= 0) continue;
+                if (chosenVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return i;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Fetches a list of all default custom versions for a specific Unreal version.
+        /// </summary>
+        /// <param name="chosenVersion">The version of the engine to check against.</param>
+        /// <returns>A list of all the default custom version values for the given engine version.</returns>
+        public static List<CustomVersion> GetDefaultCustomVersionContainer(UE4Version chosenVersion)
+        {
+            List<CustomVersion> res = new List<CustomVersion>();
+            foreach (KeyValuePair<Guid, string> entry in CustomVersion.GuidToCustomVersionStringMap)
+            {
+                Type customVersionType = Type.GetType("UAssetAPI." + entry.Value);
+                if (customVersionType == null) continue;
+                int guessedCustomVersion = GuessCustomVersionFromTypeAndEngineVersion(chosenVersion, customVersionType);
+                if (guessedCustomVersion < 0) continue;
+                res.Add(new CustomVersion(entry.Key, guessedCustomVersion));
+            }
+            return res;
+        }
+
         /// <summary>
         /// Searches for an import in the import map based off of certain parameters.
         /// </summary>
