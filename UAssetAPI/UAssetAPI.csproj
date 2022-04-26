@@ -241,6 +241,8 @@
     <Compile Include="StructTypes\ViewTargetBlendParamsPropertyData.cs" />
     <Compile Include="UE4Version.cs" />
     <Compile Include="UAPUtils.cs" />
+    <Compile Include="Unversioned\FFragment.cs" />
+    <Compile Include="Unversioned\FUnversionedHeader.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

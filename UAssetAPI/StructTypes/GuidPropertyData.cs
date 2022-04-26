@@ -46,12 +46,12 @@ namespace UAssetAPI.StructTypes
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            return Value.ConvertToString();
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (Guid.TryParse(d[0], out Guid res)) Value = res;
+            Value = d[0].ConvertToGUID();
         }
 
         protected override void HandleCloned(PropertyData res)

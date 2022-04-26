@@ -81,7 +81,7 @@ namespace UAssetAPI.StructTypes
         {
             DisplayName = FName.FromString(d[0]);
             if (ushort.TryParse(d[1], out ushort rawSmartNameID)) SmartNameID = rawSmartNameID;
-            if (Guid.TryParse(d[2], out Guid rawTempGUID)) TempGUID = rawTempGUID;
+            TempGUID = d[2].ConvertToGUID();
         }
 
         public override string ToString()

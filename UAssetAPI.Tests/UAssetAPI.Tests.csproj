@@ -148,6 +148,12 @@
     <None Include="TestAssets\TestManyAssets\Astroneer\Staging_T2.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="TestAssets\TestUnversionedProperties\PC0000_00_Cloud_Standard.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestUnversionedProperties\PC0000_00_Cloud_Standard.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

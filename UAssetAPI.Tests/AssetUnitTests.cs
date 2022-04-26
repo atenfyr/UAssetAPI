@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.StructTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.Tests
 {
@@ -256,6 +258,38 @@ namespace UAssetAPI.Tests
                 var tester = new UAsset(assetPath, version);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            }
+        }
+
+        /// <summary>
+        /// Tests the GUID/string conversion operations to ensure that they match the Unreal implementation.
+        /// </summary>
+        [TestMethod]
+        public void TestGUIDs()
+        {
+            string input = "{CF873D05-4977-597A-F120-7F9F90B1ED09}";
+            Guid test = input.ConvertToGUID();
+            Assert.IsTrue(test.ConvertToString() == input);
+            Assert.IsTrue(test.ToByteArray().SequenceEqual(UAPUtils.ConvertHexStringToByteArray("05 3D 87 CF 7A 59 77 49 9F 7F 20 F1 09 ED B1 90")));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestUnversionedProperties/PC0000_00_Cloud_Standard.uasset", "TestUnversionedProperties")]
+        [DeploymentItem(@"TestAssets/TestUnversionedProperties/PC0000_00_Cloud_Standard.uexp", "TestUnversionedProperties")]
+        public void TestUnversionedProperties()
+        {
+            var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
+            AssetBinaryReader test = new AssetBinaryReader(new MemoryStream((tester.Exports[3] as RawExport).Data), tester);
+
+            FUnversionedHeader test2 = new FUnversionedHeader();
+            test2.Read(test);
+
+            foreach (FFragment entry in test2.Fragments)
+            {
+                Debug.WriteLine(entry.SkipNum + ", " + entry.bHasAnyZeroes + ", " + entry.ValueNum + ", " + entry.bIsLast);
             }
         }
 

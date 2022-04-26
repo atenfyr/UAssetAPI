@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using UAssetAPI.PropertyTypes;
@@ -87,7 +88,7 @@ namespace UAssetAPI
 
         public static uint[] InterpretAsGuidAndConvertToUnsignedInts(this string value)
         {
-            Guid.TryParse(value.Trim(), out Guid res);
+            Guid res = value.Trim().ConvertToGUID();
             return res.ToUnsignedInts();
         }
 
@@ -110,6 +111,47 @@ namespace UAssetAPI
             BitConverter.GetBytes(value3).CopyTo(bytes, sizeof(uint) * 2);
             BitConverter.GetBytes(value4).CopyTo(bytes, sizeof(uint) * 3);
             return new Guid(bytes);
+        }
+
+        public static Guid ConvertToGUID(this string GuidString)
+        {
+            if ((GuidString[0] != '{') ||
+            (GuidString[9] != '-') ||
+            (GuidString[14] != '-') ||
+            (GuidString[19] != '-') ||
+            (GuidString[24] != '-') ||
+            (GuidString[37] != '}'))
+            {
+                if (Guid.TryParse(GuidString, out Guid res1)) return res1;
+                return Guid.Empty;
+            }
+
+            string byteText = GuidString.Substring(29, 8) + GuidString.Substring(20, 4) + GuidString.Substring(25, 4) + GuidString.Substring(10, 4) + GuidString.Substring(15, 4) + GuidString.Substring(1, 8);
+            byte[] byteArr = ConvertHexStringToByteArray(byteText);
+            Array.Reverse(byteArr);
+            return new Guid(byteArr);
+        }
+
+        public static string ConvertToString(this Guid val)
+        {
+            byte[] byteArr = val.ToByteArray();
+            Array.Reverse(byteArr);
+            string bytes = BitConverter.ToString(byteArr).Replace("-", "");
+            return ("{" + bytes.Substring(24, 8) + "-" + bytes.Substring(16, 4) + "-" + bytes.Substring(20, 4) + "-" + bytes.Substring(8, 4) + "-" + bytes.Substring(12, 4) + bytes.Substring(0, 8) + "}").ToUpperInvariant();
+        }
+
+        public static byte[] ConvertHexStringToByteArray(string hexString)
+        {
+            hexString = hexString.Replace(" ", string.Empty).Replace("-", string.Empty);
+
+            byte[] data = new byte[hexString.Length / 2];
+            for (int index = 0; index < data.Length; index++)
+            {
+                string byteValue = hexString.Substring(index * 2, 2);
+                data[index] = byte.Parse(byteValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            }
+
+            return data;
         }
     }
 }
