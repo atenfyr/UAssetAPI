@@ -6,11 +6,9 @@ namespace UAssetAPI.StructTypes
     public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
         [JsonProperty]
-        public byte[] Extras;
-        [JsonProperty]
         public int OutputIndex;
         [JsonProperty]
-        public FName InputName;
+        public FString InputName;
         [JsonProperty]
         public FName ExpressionName;
 
@@ -26,28 +24,47 @@ namespace UAssetAPI.StructTypes
 
         protected void ReadExpressionInput(AssetBinaryReader reader, bool includeHeader, long leng)
         {
-            OutputIndex = reader.ReadInt32();
-            InputName = reader.ReadFName();
-            Extras = reader.ReadBytes(20); // always 0s
-            ExpressionName = reader.ReadFName();
-            return;
+            if (reader.Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.MaterialInputNativeSerialize)
+            {
+                OutputIndex = reader.ReadInt32();
+                if (reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName)
+                {
+                    InputName = reader.ReadFName().Value;
+                }
+                else
+                {
+                    InputName = reader.ReadFString();
+                }
+                reader.ReadBytes(20); // editor only data placeholder
+                ExpressionName = reader.ReadFName();
+            }
         }
 
         protected int WriteExpressionInput(AssetBinaryWriter writer, bool includeHeader)
         {
-            writer.Write(OutputIndex);
-            writer.Write(InputName);
-            writer.Write(Extras); // always 0s
-            writer.Write(ExpressionName);
-            return (sizeof(int) * 2) * 2 + sizeof(int) + 20;
+            int totalSize = 0;
+            if (writer.Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.MaterialInputNativeSerialize)
+            {
+                writer.Write(OutputIndex); totalSize += sizeof(int);
+                if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName)
+                {
+                    writer.Write(new FName(InputName)); totalSize += sizeof(int) * 2;
+                }
+                else
+                {
+                    totalSize += writer.Write(InputName);
+                }
+                writer.Write(new byte[20]); totalSize += 20;
+                writer.Write(ExpressionName); totalSize += sizeof(int) * 2;
+            }
+            return totalSize;
         }
 
         protected override void HandleCloned(PropertyData res)
         {
             MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
-            cloningProperty.InputName = (FName)this.InputName.Clone();
-            cloningProperty.InputName = (FName)this.ExpressionName.Clone();
-            cloningProperty.Extras = (byte[])this.Extras.Clone();
+            cloningProperty.InputName = (FString)this.InputName.Clone();
+            cloningProperty.ExpressionName = (FName)this.ExpressionName.Clone();
         }
     }
 
@@ -149,7 +166,7 @@ namespace UAssetAPI.StructTypes
             }
 
             ReadExpressionInput(reader, false, 0);
-            reader.ReadInt32(); // always 0
+            reader.ReadInt32(); // bUseConstantValue; always false
             Value = new ColorPropertyData(Name);
             Value.Read(reader, false, 0);
         }
@@ -191,7 +208,7 @@ namespace UAssetAPI.StructTypes
             }
 
             ReadExpressionInput(reader, false, 0);
-            reader.ReadInt32(); // always 0
+            reader.ReadInt32(); // bUseConstantValue; always false
             Value = reader.ReadSingle();
         }
 
@@ -233,7 +250,7 @@ namespace UAssetAPI.StructTypes
             }
 
             ReadExpressionInput(reader, false, 0);
-            reader.ReadInt32(); // always 0
+            reader.ReadInt32(); // bUseConstantValue; always false
             Value = reader.ReadUInt32();
         }
 
@@ -275,7 +292,7 @@ namespace UAssetAPI.StructTypes
             }
 
             ReadExpressionInput(reader, false, 0);
-            reader.ReadInt32(); // always 0
+            reader.ReadInt32(); // bUseConstantValue; always false
             Value = new VectorPropertyData(Name);
             Value.Read(reader, false, 0);
         }
@@ -317,7 +334,7 @@ namespace UAssetAPI.StructTypes
             }
 
             ReadExpressionInput(reader, false, 0);
-            reader.ReadInt32(); // always 0
+            reader.ReadInt32(); // bUseConstantValue; always false
             Value = new Vector2DPropertyData(Name);
             Value.Read(reader, false, 0);
         }

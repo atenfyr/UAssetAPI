@@ -470,7 +470,7 @@ namespace UAssetAPI
         UserDefinedStructsBlueprintVisible,
 
         /// <summary>FMaterialInput and FEdGraphPin store their name as FName instead of FString</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
+        [Introduced(UE4Version.VER_UE4_POINTLIGHT_SOURCE_ORIENTATION)]
         PinsStoreFName,
 
         /// <summary>User defined structs store their default instance, which is used for initializing instances</summary>
