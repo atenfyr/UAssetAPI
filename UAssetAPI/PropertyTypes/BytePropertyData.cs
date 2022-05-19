@@ -68,11 +68,13 @@ namespace UAssetAPI.PropertyTypes
                     ByteType = BytePropertyType.Byte;
                     Value = reader.ReadByte();
                     break;
-                case 0:// Should be only seen in maps
+                case 0: // Should be only seen in maps; fallback "make our best guess and pray we're right" behavior
                     int nameMapPointer = reader.ReadInt32();
-                    reader.BaseStream.Position -= sizeof(int);
-                    //maybe also check if there is Enum name in the NameMap
-                    if (reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("::"))
+                    int nameMapIndex = reader.ReadInt32();
+                    reader.BaseStream.Position -= sizeof(int) * 2;
+
+                    // In the case of it being serialized as just a byte, it will probably try to parse part of the next property and produce something too big for the name map
+                    if (nameMapPointer < reader.Asset.GetNameMapIndexList().Count && nameMapIndex == 0 && !reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("/"))
                     {
                         ByteType = BytePropertyType.FName;
                         EnumValue = reader.ReadFName();

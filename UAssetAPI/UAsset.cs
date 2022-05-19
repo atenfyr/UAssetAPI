@@ -190,7 +190,7 @@ namespace UAssetAPI
         {
             FixNameMapLookupIfNeeded();
             if (index < 0) return new FString(Convert.ToString(-index));
-            if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
+            if (index >= nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
         }
 
@@ -203,7 +203,7 @@ namespace UAssetAPI
         {
             FixNameMapLookupIfNeeded();
             if (index <= 0) return new FString(Convert.ToString(-index));
-            if (index > nameMapIndexList.Count) return new FString(Convert.ToString(index));
+            if (index >= nameMapIndexList.Count) return new FString(Convert.ToString(index));
             return nameMapIndexList[index];
         }
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -270,7 +268,7 @@ namespace UAssetAPI.Tests
             string input = "{CF873D05-4977-597A-F120-7F9F90B1ED09}";
             Guid test = input.ConvertToGUID();
             Assert.IsTrue(test.ConvertToString() == input);
-            Assert.IsTrue(test.ToByteArray().SequenceEqual(UAPUtils.ConvertHexStringToByteArray("05 3D 87 CF 7A 59 77 49 9F 7F 20 F1 09 ED B1 90")));
+            Assert.IsTrue(test.ToByteArray().SequenceEqual(UAPUtils.ConvertHexStringToByteArray("05 3D 87 CF 7A 59 77 49 9F 7F 20 F1 09 ED B1 90")));      
         }
 
         /// <summary>
