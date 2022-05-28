@@ -978,4 +978,67 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     }
+
+    /// <summary>
+    /// Version used for serializing asset registry caches, both runtime and editor
+    /// </summary>
+    public enum FAssetRegistryVersion
+    {
+        /// <summary>From before file versioning was implemented</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        PreVersioning = 0,
+
+        /// <summary>The first version of the runtime asset registry to include file versioning.</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        HardSoftDependencies,
+
+        /// <summary>Added FAssetRegistryState and support for piecemeal serialization</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        AddAssetRegistryState,
+
+        /// <summary>AssetData serialization format changed, versions before this are not readable</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        ChangedAssetData,
+
+        /// <summary>Removed MD5 hash from package data</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        RemovedMD5Hash,
+
+        /// <summary>Added hard/soft manage references</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        AddedHardManage,
+
+        /// <summary>Added MD5 hash of cooked package to package data</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        AddedCookedMD5Hash,
+
+        /// <summary>Added UE::AssetRegistry::EDependencyProperty to each dependency</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        AddedDependencyFlags,
+
+        /// <summary>Major tag format change that replaces USE_COMPACT_ASSET_REGISTRY:</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        FixedTags,
+
+        /// <summary>Added Version information to AssetPackageData</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        WorkspaceDomain,
+
+        /// <summary>Added ImportedClasses to AssetPackageData</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        PackageImportedClasses,
+
+        /// <summary>A new version number of UE5 was added to FPackageFileSummary</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        PackageFileSummaryVersionChange,
+
+        /// <summary>Change to linker export/import resource serializationn</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        ObjectResourceOptionalVersionChange,
+
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
 }
