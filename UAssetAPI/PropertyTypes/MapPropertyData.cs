@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
+using UAssetAPI.JSON;
 using UAssetAPI.StructTypes;
 
 namespace UAssetAPI.PropertyTypes
@@ -54,8 +53,8 @@ namespace UAssetAPI.PropertyTypes
             Value = new TMap<PropertyData, PropertyData>();
         }
 
-        private static readonly FName CurrentPropertyType = new FName("MapProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("MapProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         private PropertyData MapTypeToClass(FName type, FName name, AssetBinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
@@ -68,15 +67,15 @@ namespace UAssetAPI.PropertyTypes
                     {
                         if (isKey)
                         {
-                            strucType = reader.Asset.MapStructTypeOverride[name.Value.Value].Item1;
+                            strucType = new FName(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item1);
                         }
                         else
                         {
-                            strucType = reader.Asset.MapStructTypeOverride[name.Value.Value].Item2;
+                            strucType = new FName(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item2);
                         }
                     }
 
-                    if (strucType == null) strucType = new FName("Generic");
+                    if (strucType == null) strucType = FName.DefineDummy(reader.Asset, "Generic");
 
                     StructPropertyData data = new StructPropertyData(name, strucType);
                     data.Offset = reader.BaseStream.Position;
@@ -150,8 +149,8 @@ namespace UAssetAPI.PropertyTypes
             {
                 if (Value.Count > 0)
                 {
-                    writer.Write(Value.Keys.ElementAt(0).PropertyType);
-                    writer.Write(Value[0].PropertyType);
+                    writer.Write(new FName(writer.Asset, Value.Keys.ElementAt(0).PropertyType));
+                    writer.Write(new FName(writer.Asset, Value[0].PropertyType));
                 }
                 else
                 {

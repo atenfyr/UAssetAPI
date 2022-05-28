@@ -78,6 +78,7 @@
     <Compile Include="JSON\FStringJsonConverter.cs" />
     <Compile Include="FWorldTileInfo.cs" />
     <Compile Include="JSON\FStringTableJsonConverter.cs" />
+    <Compile Include="JSON\UAssetContractResolver.cs" />
     <Compile Include="Kismet\Bytecode\EScriptInstrumentationType.cs" />
     <Compile Include="Kismet\Bytecode\KismetPropertyPointer.cs" />
     <Compile Include="Kismet\Bytecode\EBlueprintTextLiteralType.cs" />

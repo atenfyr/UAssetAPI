@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UAssetAPI.FieldTypes;
+using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes;
 
 namespace UAssetAPI
@@ -94,6 +95,7 @@ namespace UAssetAPI
         /// <summary>
         /// Agent string to provide context in serialized JSON.
         /// </summary>
+        [JsonProperty(Order = -99)]
         public string Info = "Serialized with UAssetAPI";
 
         /// <summary>
@@ -601,10 +603,10 @@ namespace UAssetAPI
         /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
         /// </summary>
         [JsonIgnore]
-        public Dictionary<string, Tuple<FName, FName>> MapStructTypeOverride = new Dictionary<string, Tuple<FName, FName>>()
+        public Dictionary<string, Tuple<FString, FString>> MapStructTypeOverride = new Dictionary<string, Tuple<FString, FString>>()
         {
-            { "ColorDatabase", new Tuple<FName, FName>(null, new FName("LinearColor")) },
-            { "PlayerCharacterIDs", new Tuple<FName, FName>(new FName("Guid"), null) }
+            { "ColorDatabase", new Tuple<FString, FString>(null, new FString("LinearColor")) },
+            { "PlayerCharacterIDs", new Tuple<FString, FString>(new FString("Guid"), null) }
         };
 
         /// <summary>
@@ -690,7 +692,7 @@ namespace UAssetAPI
         /// <summary>
         /// Internal list of name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
         /// </summary>
-        [JsonProperty("NameMap")]
+        [JsonProperty("NameMap", Order = -2)]
         private List<FString> nameMapIndexList;
 
         /// <summary>
@@ -1116,7 +1118,7 @@ namespace UAssetAPI
                                                 if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
                                                 if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
 
-                                                this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FName, FName>(keyOverride, valueOverride));
+                                                this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FString, FString>(keyOverride.Value, valueOverride.Value));
                                             }
                                         }
                                     }
@@ -1659,10 +1661,11 @@ namespace UAssetAPI
             NullValueHandling = NullValueHandling.Include,
             FloatParseHandling = FloatParseHandling.Double,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            ContractResolver = new UAssetContractResolver(null),
             Converters = new List<JsonConverter>()
             {
                 new FSignedZeroJsonConverter(),
-                new FNameJsonConverter(),
+                new FNameJsonConverter(null),
                 new FStringTableJsonConverter(),
                 new FStringJsonConverter(),
                 new FPackageIndexJsonConverter(),
@@ -1687,7 +1690,41 @@ namespace UAssetAPI
         /// <param name="json">A serialized JSON string to parse.</param>
         public static UAsset DeserializeJson(string json)
         {
-            UAsset res = JsonConvert.DeserializeObject<UAsset>(json, jsonSettings);
+            Dictionary<FName, string> toBeFilled = new Dictionary<FName, string>();
+            UAsset res = JsonConvert.DeserializeObject<UAsset>(json, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                NullValueHandling = NullValueHandling.Include,
+                FloatParseHandling = FloatParseHandling.Double,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new UAssetContractResolver(toBeFilled),
+                Converters = new List<JsonConverter>()
+                {
+                    new FSignedZeroJsonConverter(),
+                    new FNameJsonConverter(null),
+                    new FStringTableJsonConverter(),
+                    new FStringJsonConverter(),
+                    new FPackageIndexJsonConverter(),
+                    new StringEnumConverter()
+                }
+            });
+
+            foreach (KeyValuePair<FName, string> entry in toBeFilled)
+            {
+                entry.Key.Asset = res;
+                if (entry.Value == string.Empty)
+                {
+                    entry.Key.DummyValue = new FString(entry.Value);
+                }
+                else
+                {
+                    var dummy = FName.FromString(res, entry.Value);
+                    entry.Key.Value = dummy.Value;
+                    entry.Key.Number = dummy.Number;
+                }
+            }
+            toBeFilled.Clear();
+
             foreach (Export ex in res.Exports) ex.Asset = res;
             return res;
         }
@@ -1698,7 +1735,25 @@ namespace UAssetAPI
         /// <param name="stream">A stream containing serialized JSON string to parse.</param>
         public static UAsset DeserializeJson(Stream stream)
         {
-            var serializer = JsonSerializer.Create(jsonSettings);
+            Dictionary<FName, string> toBeFilled = new Dictionary<FName, string>();
+            var serializer = JsonSerializer.Create(new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                NullValueHandling = NullValueHandling.Include,
+                FloatParseHandling = FloatParseHandling.Double,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new UAssetContractResolver(toBeFilled),
+                Converters = new List<JsonConverter>()
+                {
+                    new FSignedZeroJsonConverter(),
+                    new FNameJsonConverter(null),
+                    new FStringTableJsonConverter(),
+                    new FStringJsonConverter(),
+                    new FPackageIndexJsonConverter(),
+                    new StringEnumConverter()
+                }
+            });
+
             UAsset res;
 
             using (var sr = new StreamReader(stream))
@@ -1708,6 +1763,22 @@ namespace UAssetAPI
                     res = serializer.Deserialize<UAsset>(jsonTextReader);
                 }
             }
+
+            foreach (KeyValuePair<FName, string> entry in toBeFilled)
+            {
+                entry.Key.Asset = res;
+                if (entry.Value == string.Empty)
+                {
+                    entry.Key.DummyValue = new FString(entry.Value);
+                }
+                else
+                {
+                    var dummy = FName.FromString(res, entry.Value);
+                    entry.Key.Value = dummy.Value;
+                    entry.Key.Number = dummy.Number;
+                }
+            }
+            toBeFilled.Clear();
 
             foreach (Export ex in res.Exports) ex.Asset = res;
             return res;

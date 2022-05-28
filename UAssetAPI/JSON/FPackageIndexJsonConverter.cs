@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class FPackageIndexJsonConverter : JsonConverter
     {

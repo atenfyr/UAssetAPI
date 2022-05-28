@@ -12,8 +12,8 @@
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SoftAssetPath");
+        private static readonly FString CurrentPropertyType = new FString("SoftAssetPath");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
     }
 }

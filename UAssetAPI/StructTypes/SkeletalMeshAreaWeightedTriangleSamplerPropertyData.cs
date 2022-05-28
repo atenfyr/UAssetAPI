@@ -12,8 +12,8 @@
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SkeletalMeshAreaWeightedTriangleSampler");
+        private static readonly FString CurrentPropertyType = new FString("SkeletalMeshAreaWeightedTriangleSampler");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
     }
 }

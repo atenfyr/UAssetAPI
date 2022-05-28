@@ -98,7 +98,7 @@ namespace UAssetAPI
 
         public virtual void Write(FName name)
         {
-            this.Write(Asset.SearchNameReference(name.Value));
+            this.Write(name.Index);
             this.Write(name.Number);
         }
 

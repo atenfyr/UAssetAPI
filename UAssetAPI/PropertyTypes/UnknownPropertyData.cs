@@ -10,7 +10,7 @@ namespace UAssetAPI.PropertyTypes
     public class UnknownPropertyData : PropertyData<byte[]>
     {
         [JsonProperty]
-        public FName SerializingPropertyType = CurrentPropertyType;
+        public FString SerializingPropertyType = CurrentPropertyType;
 
         public UnknownPropertyData(FName name) : base(name)
         {
@@ -22,10 +22,10 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("UnknownProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("UnknownProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public void SetSerializingPropertyType(FName newType)
+        public void SetSerializingPropertyType(FString newType)
         {
             SerializingPropertyType = newType;
         }
@@ -60,7 +60,7 @@ namespace UAssetAPI.PropertyTypes
         {
             UnknownPropertyData cloningProperty = (UnknownPropertyData)res;
 
-            cloningProperty.SerializingPropertyType = (FName)SerializingPropertyType.Clone();
+            cloningProperty.SerializingPropertyType = (FString)SerializingPropertyType.Clone();
         }
     }
 }

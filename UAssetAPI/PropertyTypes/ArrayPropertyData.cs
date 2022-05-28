@@ -32,8 +32,8 @@ namespace UAssetAPI.PropertyTypes
             Value = new PropertyData[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ArrayProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("ArrayProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -50,7 +50,7 @@ namespace UAssetAPI.PropertyTypes
 
                 FName name = this.Name;
                 long structLength = 1;
-                FName fullType = new FName("Generic");
+                FName fullType = FName.DefineDummy(reader.Asset, "Generic");
                 Guid structGUID = new Guid();
 
                 if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
@@ -107,9 +107,9 @@ namespace UAssetAPI.PropertyTypes
                     int averageSizeEstimate2 = (int)((leng1 - 4) / numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
-                        results[i] = MainSerializer.TypeToClass(ArrayType, new FName(i.ToString(), int.MinValue), reader.Asset);
+                        results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
-                        if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = new FName("Generic");
+                        if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = FName.DefineDummy(reader.Asset, "Generic");
                         results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
                 }
@@ -119,7 +119,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (Value.Length > 0) ArrayType = Value[0].PropertyType;
+            if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
 
             if (includeHeader)
             {
@@ -140,7 +140,7 @@ namespace UAssetAPI.PropertyTypes
                 if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
                 {
                     writer.Write(DummyStruct.Name);
-                    writer.Write(new FName("StructProperty"));
+                    writer.Write(new FName(writer.Asset, "StructProperty"));
                     lengthLoc = (int)writer.BaseStream.Position;
                     writer.Write((long)0);
                     writer.Write(fullType);
@@ -178,7 +178,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (d[4] != null) ArrayType = FName.FromString(d[4]);
+            if (d[4] != null) ArrayType = FName.FromString(asset, d[4]);
         }
 
         protected override void HandleCloned(PropertyData res)

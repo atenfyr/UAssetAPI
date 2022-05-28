@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class FStringTableJsonConverter : JsonConverter
     {

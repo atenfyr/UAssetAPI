@@ -113,7 +113,7 @@ namespace UAssetAPI
         {
             int nameMapPointer = this.ReadInt32();
             int number = this.ReadInt32();
-            return new FName(Asset.GetNameReference(nameMapPointer), number);
+            return new FName(Asset, nameMapPointer, number);
         }
 
         public string XFERSTRING()

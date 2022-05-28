@@ -21,8 +21,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("EnumProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("EnumProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -54,9 +54,7 @@ namespace UAssetAPI.PropertyTypes
         {
             if (d[0] != "null" && d[0] != null)
             {
-                FName output = FName.FromString(d[0]);
-                asset.AddNameReference(output.Value);
-                EnumType = output;
+                EnumType = FName.FromString(asset, d[0]);
             }
             else
             {
@@ -65,9 +63,7 @@ namespace UAssetAPI.PropertyTypes
 
             if (d[1] != "null" && d[1] != null)
             {
-                FName output = FName.FromString(d[1]);
-                asset.AddNameReference(output.Value);
-                Value = output;
+                Value = FName.FromString(asset, d[0]);
             }
             else
             {

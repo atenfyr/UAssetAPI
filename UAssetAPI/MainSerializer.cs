@@ -84,7 +84,7 @@ namespace UAssetAPI
 
                     var testInstance = Activator.CreateInstance(currentPropertyDataType);
 
-                    FName returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(testInstance, null) as FName;
+                    FString returnedPropType = currentPropertyDataType.GetProperty("PropertyType")?.GetValue(testInstance, null) as FString;
                     if (returnedPropType == null) continue;
                     bool? returnedHasCustomStructSerialization = currentPropertyDataType.GetProperty("HasCustomStructSerialization")?.GetValue(testInstance, null) as bool?;
                     if (returnedHasCustomStructSerialization == null) continue;
@@ -96,7 +96,7 @@ namespace UAssetAPI
                         RegistryEntry res = new RegistryEntry();
                         res.PropertyType = currentPropertyDataType;
                         res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
-                        _propertyTypeRegistry[returnedPropType.Value.Value] = res;
+                        _propertyTypeRegistry[returnedPropType.Value] = res;
                     }
                 }
             }
@@ -166,7 +166,7 @@ namespace UAssetAPI
                 if (leng > 0)
                 {
                     data = new UnknownPropertyData(name);
-                    ((UnknownPropertyData)data).SetSerializingPropertyType(type);
+                    ((UnknownPropertyData)data).SetSerializingPropertyType(type.Value);
                 }
                 else
                 {
@@ -301,11 +301,11 @@ namespace UAssetAPI
             writer.Write(property.Name);
             if (property is UnknownPropertyData unknownProp)
             {
-                writer.Write(unknownProp.SerializingPropertyType);
+                writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
             }
             else
             {
-                writer.Write(property.PropertyType);
+                writer.Write(new FName(writer.Asset, property.PropertyType));
             }
             int oldLoc = (int)writer.BaseStream.Position;
             writer.Write((int)0); // initial length

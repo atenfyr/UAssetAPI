@@ -48,11 +48,11 @@ namespace UAssetAPI
         {
             get
             {
-                return this[FName.FromString(key)];
+                return this[FName.FromString(Asset, key)];
             }
             set
             {
-                this[FName.FromString(key)] = value;
+                this[FName.FromString(Asset, key)] = value;
             }
         }
 
@@ -111,7 +111,7 @@ namespace UAssetAPI
                 PropertyData current = Data[j];
                 MainSerializer.Write(current, writer, true);
             }
-            writer.Write(new FName("None"));
+            writer.Write(new FName(writer.Asset, "None"));
         }
     }
 }

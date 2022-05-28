@@ -8,10 +8,10 @@
         public FName ClassPackage;
         public FName ClassName;
 
-        public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName) : base(new FName(objectName), outerIndex)
+        public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, UAsset asset) : base(new FName(asset, objectName), outerIndex)
         {
-            ClassPackage = new FName(classPackage);
-            ClassName = new FName(className);
+            ClassPackage = new FName(asset, classPackage);
+            ClassName = new FName(asset, className);
         }
 
         public Import(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName) : base(objectName, outerIndex)

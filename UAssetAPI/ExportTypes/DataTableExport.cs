@@ -49,7 +49,7 @@ namespace UAssetAPI
             base.Read(reader, nextStarting);
 
             // Find an ObjectProperty named RowStruct
-            FName decidedStructType = new FName("Generic");
+            FName decidedStructType = FName.DefineDummy(reader.Asset, "Generic");
             foreach (PropertyData thisData in Data)
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData && thisObjData.Value.IsImport())
@@ -81,7 +81,7 @@ namespace UAssetAPI
             base.Write(writer);
 
             // Find an ObjectProperty named RowStruct
-            FName decidedStructType = new FName("Generic");
+            FName decidedStructType = FName.DefineDummy(writer.Asset, "Generic");
             foreach (PropertyData thisData in Data)
             {
                 if (thisData.Name.Value.Value == "RowStruct" && thisData is ObjectPropertyData thisObjData)

@@ -24,7 +24,7 @@ namespace UAssetAPI
         {
             Name = reader.ReadFString();
             Reserved0 = reader.ReadInt32();
-            Reserved1 = new IntPointPropertyData(new FName(string.Empty));
+            Reserved1 = new IntPointPropertyData(FName.DefineDummy(asset, "Reserved1"));
             Reserved1.Read(reader, false, 0, 0);
 
             if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
@@ -160,7 +160,7 @@ namespace UAssetAPI
                 Position[1] = reader.ReadInt32();
                 Position[2] = reader.ReadInt32();
             }
-            Bounds = new BoxPropertyData(new FName());
+            Bounds = new BoxPropertyData(FName.DefineDummy(asset, "Bounds"));
             Bounds.Read(reader, false, 0, 0);
             Layer = new FWorldTileLayer();
             Layer.Read(reader, asset);

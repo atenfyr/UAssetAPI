@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
+using UAssetAPI.JSON;
 
 namespace UAssetAPI
 {
@@ -191,7 +192,7 @@ namespace UAssetAPI
 
             writer.Write(bDeprecatedForceScriptOrder ? 1 : 0);
 
-            writer.Write(new FName("None"));
+            writer.Write(new FName(writer.Asset, "None"));
 
             if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
             {

@@ -43,40 +43,43 @@ namespace UAssetAPI.Tests
         /// Tests <see cref="FName.ToString"/> and <see cref="FName.FromString"/>.
         /// </summary>
         [TestMethod]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
         public void TestNameConstruction()
         {
-            FName test = FName.FromString("HelloWorld_0");
+            var dummyAsset = new UAsset(Path.Combine("TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), UE4Version.VER_UE4_23);
+
+            FName test = FName.FromString(dummyAsset, "HelloWorld_0");
             Assert.IsTrue(test.Value.Value == "HelloWorld" && test.Number == 1);
             Assert.IsTrue(test.ToString() == "HelloWorld_0");
 
-            test = FName.FromString("5_72");
+            test = FName.FromString(dummyAsset, "5_72");
             Assert.IsTrue(test.Value.Value == "5" && test.Number == 73);
             Assert.IsTrue(test.ToString() == "5_72");
 
-            test = FName.FromString("_3");
+            test = FName.FromString(dummyAsset, "_3");
             Assert.IsTrue(test.Value.Value == "_3" && test.Number == 0);
             Assert.IsTrue(test.ToString() == "_3");
 
-            test = FName.FromString("hi_");
+            test = FName.FromString(dummyAsset, "hi_");
             Assert.IsTrue(test.Value.Value == "hi_" && test.Number == 0);
             Assert.IsTrue(test.ToString() == "hi_");
 
-            test = FName.FromString("hi_01");
+            test = FName.FromString(dummyAsset, "hi_01");
             Assert.IsTrue(test.Value.Value == "hi_01" && test.Number == 0);
             Assert.IsTrue(test.ToString() == "hi_01");
 
-            test = FName.FromString("hi_10");
+            test = FName.FromString(dummyAsset, "hi_10");
             Assert.IsTrue(test.Value.Value == "hi" && test.Number == 11);
             Assert.IsTrue(test.ToString() == "hi_10");
 
-            test = FName.FromString("blah");
+            test = FName.FromString(dummyAsset, "blah");
             Assert.IsTrue(test.Value.Value == "blah" && test.Number == 0);
             Assert.IsTrue(test.ToString() == "blah");
 
-            test = new FName("HelloWorld", 2);
+            test = new FName(dummyAsset, "HelloWorld", 2);
             Assert.IsTrue(test.ToString() == "HelloWorld_1");
 
-            test = new FName("HelloWorld", 0);
+            test = new FName(dummyAsset, "HelloWorld", 0);
             Assert.IsTrue(test.ToString() == "HelloWorld");
         }
 
@@ -128,7 +131,7 @@ namespace UAssetAPI.Tests
 
             NormalExport exportTwoNormal = (NormalExport)exportTwo;
 
-            var mapPropertyName = FName.FromString("KekWait");
+            var mapPropertyName = FName.FromString(tester, "KekWait");
             MapPropertyData testMap = exportTwoNormal[mapPropertyName] as MapPropertyData;
             Assert.IsNotNull(testMap);
             Assert.IsTrue(testMap == exportTwoNormal[mapPropertyName.Value.Value]);
@@ -232,7 +235,7 @@ namespace UAssetAPI.Tests
                     {
                         if (prop is UnknownPropertyData unknownProp)
                         {
-                            string serializingType = unknownProp?.SerializingPropertyType?.Value?.Value;
+                            string serializingType = unknownProp?.SerializingPropertyType?.Value;
                             Assert.AreNotEqual(serializingType, null);
                             Assert.IsTrue(newUnknownProperties.ContainsKey(serializingType));
                             newUnknownProperties[serializingType] = true;
@@ -336,7 +339,7 @@ namespace UAssetAPI.Tests
             {
                 var propData = firstEntry.Value[i];
                 Debug.WriteLine(i + ": " + propData.Name + ", " + propData.PropertyType);
-                if (propData.Name == new FName("AcceleratorANDDoubleJump")) didFindTestName = true;
+                if (propData.Name == new FName(tester, "AcceleratorANDDoubleJump")) didFindTestName = true;
                 if (propData is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
             }
             Assert.IsTrue(didFindTestName);

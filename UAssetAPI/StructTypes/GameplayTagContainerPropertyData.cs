@@ -16,9 +16,9 @@ namespace UAssetAPI.StructTypes
             Value = new FName[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("GameplayTagContainer");
+        private static readonly FString CurrentPropertyType = new FString("GameplayTagContainer");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

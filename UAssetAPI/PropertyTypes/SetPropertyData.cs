@@ -22,8 +22,8 @@ namespace UAssetAPI.PropertyTypes
             ElementsToRemove = new PropertyData[0];
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SetProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("SetProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -35,7 +35,7 @@ namespace UAssetAPI.PropertyTypes
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("ElementsToRemove"));
+            var removedItemsDummy = new ArrayPropertyData(new FName(reader.Asset, "ElementsToRemove"));
             removedItemsDummy.ShouldSerializeStructsDifferently = false;
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
@@ -48,7 +48,7 @@ namespace UAssetAPI.PropertyTypes
         {
             this.ShouldSerializeStructsDifferently = false;
 
-            if (Value.Length > 0) ArrayType = Value[0].PropertyType;
+            if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
 
             if (includeHeader)
             {
@@ -56,7 +56,7 @@ namespace UAssetAPI.PropertyTypes
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName("ElementsToRemove"));
+            var removedItemsDummy = new ArrayPropertyData(new FName(writer.Asset, "ElementsToRemove"));
             removedItemsDummy.ShouldSerializeStructsDifferently = false;
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Value = ElementsToRemove;

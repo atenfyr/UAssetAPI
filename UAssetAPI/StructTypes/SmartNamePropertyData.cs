@@ -33,9 +33,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SmartName");
+        private static readonly FString CurrentPropertyType = new FString("SmartName");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -79,7 +79,7 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            DisplayName = FName.FromString(d[0]);
+            DisplayName = FName.FromString(asset, d[0]);
             if (ushort.TryParse(d[1], out ushort rawSmartNameID)) SmartNameID = rawSmartNameID;
             TempGUID = d[2].ConvertToGUID();
         }

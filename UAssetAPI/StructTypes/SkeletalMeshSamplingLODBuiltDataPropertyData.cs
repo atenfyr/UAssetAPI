@@ -22,7 +22,7 @@ namespace UAssetAPI.StructTypes
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(new FName("AreaWeightedTriangleSampler"));
+            Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(new FName(reader.Asset, "AreaWeightedTriangleSampler"));
             Value.Read(reader, false, 0);
         }
 
@@ -36,9 +36,9 @@ namespace UAssetAPI.StructTypes
             return Value.Write(writer, false);
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SkeletalMeshSamplingLODBuiltData");
+        private static readonly FString CurrentPropertyType = new FString("SkeletalMeshSamplingLODBuiltData");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override string ToString()
         {

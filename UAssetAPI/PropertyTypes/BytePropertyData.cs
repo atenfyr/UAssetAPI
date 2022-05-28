@@ -46,8 +46,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("ByteProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("ByteProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -140,7 +140,7 @@ namespace UAssetAPI.PropertyTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            EnumType = FName.FromString(d[0]);
+            EnumType = FName.FromString(asset, d[0]);
             if (byte.TryParse(d[1], out byte res))
             {
                 ByteType = BytePropertyType.Byte;
@@ -149,7 +149,7 @@ namespace UAssetAPI.PropertyTypes
             else
             {
                 ByteType = BytePropertyType.FName;
-                EnumValue = FName.FromString(d[1]);
+                EnumValue = FName.FromString(asset, d[1]);
             }
         }
     }

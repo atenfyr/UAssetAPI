@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using UAssetAPI.JSON;
 
 namespace UAssetAPI.PropertyTypes
 {
@@ -25,8 +26,8 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("DoubleProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("DoubleProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

@@ -14,7 +14,7 @@ namespace UAssetAPI.PropertyTypes
         /// The name of this property.
         /// </summary>
         [JsonProperty]
-        public FName Name = new FName("");
+        public FName Name = null;
 
         /// <summary>
         /// The duplication index of this property. Used to distinguish properties with the same name in the same struct.
@@ -60,7 +60,7 @@ namespace UAssetAPI.PropertyTypes
 
         }
 
-        private static FName FallbackPropertyType = new FName(string.Empty);
+        private static FString FallbackPropertyType = new FString(string.Empty);
         /// <summary>
         /// Determines whether or not this particular property should be registered in the property registry and automatically used when parsing assets.
         /// </summary>
@@ -70,9 +70,9 @@ namespace UAssetAPI.PropertyTypes
         /// </summary>
         public virtual bool HasCustomStructSerialization { get { return false; } }
         /// <summary>
-        /// The type of this property as an FName.
+        /// The type of this property as an FString.
         /// </summary>
-        public virtual FName PropertyType { get { return FallbackPropertyType; } }
+        public virtual FString PropertyType { get { return FallbackPropertyType; } }
 
         /// <summary>
         /// Reads out a property from a BinaryReader.

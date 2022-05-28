@@ -142,7 +142,7 @@ namespace UAssetAPI
 
         public FName GetExportClassType()
         {
-            return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(Asset).ObjectName : new FName(this.ClassIndex.Index.ToString());
+            return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(Asset).ObjectName : FName.DefineDummy(Asset, this.ClassIndex.Index.ToString());
         }
 
         public override string ToString()

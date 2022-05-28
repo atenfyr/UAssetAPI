@@ -30,7 +30,7 @@ using System.Collections.Specialized;
     SOFTWARE.
 */
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class TMapJsonConverter<TKey, TValue> : JsonConverter
     {

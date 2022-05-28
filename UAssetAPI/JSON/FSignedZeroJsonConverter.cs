@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class FSignedZeroJsonConverter : JsonConverter
     {

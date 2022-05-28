@@ -31,8 +31,8 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("StructProperty");
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        private static readonly FString CurrentPropertyType = new FString("StructProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
         {
@@ -103,7 +103,7 @@ namespace UAssetAPI.StructTypes
                     MainSerializer.Write(t, writer, true);
                 }
             }
-            writer.Write(new FName("None"));
+            writer.Write(new FName(writer.Asset, "None"));
             return (int)writer.BaseStream.Position - here;
         }
 
@@ -128,8 +128,8 @@ namespace UAssetAPI.StructTypes
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (d[4] != null) StructType = FName.FromString(d[4]);
-            if (StructType == null) StructType = new FName("Generic");
+            if (d[4] != null) StructType = FName.FromString(asset, d[4]);
+            if (StructType == null) StructType = FName.DefineDummy(asset, "Generic");
         }
 
         protected override void HandleCloned(PropertyData res)

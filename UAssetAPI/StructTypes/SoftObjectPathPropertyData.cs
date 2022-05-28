@@ -33,9 +33,9 @@ namespace UAssetAPI.StructTypes
 
         }
 
-        private static readonly FName CurrentPropertyType = new FName("SoftObjectPath");
+        private static readonly FString CurrentPropertyType = new FString("SoftObjectPath");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override FName PropertyType { get { return CurrentPropertyType; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
@@ -90,7 +90,7 @@ namespace UAssetAPI.StructTypes
             }
             else
             {
-                FName output = FName.FromString(d[0]);
+                FName output = FName.FromString(asset, d[0]);
                 asset.AddNameReference(output.Value);
                 AssetPathName = output;
 

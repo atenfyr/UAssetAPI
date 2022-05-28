@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using UAssetAPI.JSON;
 
 namespace UAssetAPI
 {
