@@ -251,7 +251,7 @@ namespace UAssetAPI
                 if (ContainsNameReference(name)) return SearchNameReference(name);
             }
 
-            if (isSerializationTime) throw new InvalidOperationException("Attempt to add to name map during serialization time");
+            if (isSerializationTime) throw new InvalidOperationException("Attempt to add name \"" + name + "\" to name map during serialization time");
             nameMapIndexList.Add(name);
             nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
