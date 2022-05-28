@@ -103,6 +103,14 @@ namespace UAssetAPI
             }
         }
 
+        public bool IsDummy
+        {
+            get
+            {
+                return DummyValue != null;
+            }
+        }
+
         /// <summary>Instance number.</summary>
         public int Number;
 
