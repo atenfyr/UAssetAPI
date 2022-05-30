@@ -136,6 +136,12 @@
     <None Include="TestAssets\TestImproperNameMapHashes\OC_Gatling_DamageB_B.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\CodeVein\SK_Inner_Female1.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\CodeVein\SK_Inner_Female1.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

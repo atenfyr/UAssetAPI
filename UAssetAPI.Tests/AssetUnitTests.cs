@@ -309,10 +309,13 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_ItemMaster.uasset", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestManyAssets/Bloodstained")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uasset", "TestManyAssets/CodeVein")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uexp", "TestManyAssets/CodeVein")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", UE4Version.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", UE4Version.VER_UE4_18);
+            TestManyAssetsSubsection("CodeVein", UE4Version.VER_UE4_18);
         }
 
         /// <summary>
