@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

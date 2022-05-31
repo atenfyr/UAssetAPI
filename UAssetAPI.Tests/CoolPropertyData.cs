@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.PropertyTypes
+namespace UAssetAPI.PropertyTypes.Objects
 {
     /// <summary>
     /// Describes something very cool!

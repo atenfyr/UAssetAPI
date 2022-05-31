@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

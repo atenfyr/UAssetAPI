@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.JSON
 {

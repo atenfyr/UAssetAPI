@@ -1,4 +1,5 @@
 ﻿using System;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

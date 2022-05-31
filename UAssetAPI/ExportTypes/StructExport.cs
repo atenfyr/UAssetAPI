@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using UAssetAPI.JSON;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

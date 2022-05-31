@@ -1,5 +1,6 @@
 using System.Linq;
 using UAssetAPI.FieldTypes;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

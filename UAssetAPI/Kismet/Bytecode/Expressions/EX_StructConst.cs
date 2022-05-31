@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {

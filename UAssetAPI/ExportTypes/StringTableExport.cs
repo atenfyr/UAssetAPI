@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System.Linq;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

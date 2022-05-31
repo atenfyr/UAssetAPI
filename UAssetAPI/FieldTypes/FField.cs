@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.FieldTypes
 {

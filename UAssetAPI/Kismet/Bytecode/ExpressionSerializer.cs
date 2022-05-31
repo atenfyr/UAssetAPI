@@ -1,5 +1,6 @@
 ﻿using System;
 using UAssetAPI.Kismet.Bytecode.Expressions;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Kismet.Bytecode
 {

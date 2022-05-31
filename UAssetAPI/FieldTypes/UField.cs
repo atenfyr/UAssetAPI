@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.FieldTypes
+﻿using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.FieldTypes
 {
     /// <summary>
     /// Base class of reflection data objects.

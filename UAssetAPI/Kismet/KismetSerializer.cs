@@ -3,6 +3,7 @@ using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode.Expressions;
 using UAssetAPI.Kismet.Bytecode;
 using System;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Kismet
 {

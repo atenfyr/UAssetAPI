@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.JSON
 {

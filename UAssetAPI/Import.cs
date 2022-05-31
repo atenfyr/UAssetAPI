@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI
+﻿using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI
 {
     /// <summary>
     /// UObject resource type for objects that are referenced by this package, but contained within another package.
