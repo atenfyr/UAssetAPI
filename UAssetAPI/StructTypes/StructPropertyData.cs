@@ -68,6 +68,7 @@ namespace UAssetAPI.StructTypes
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
             if (StructType.Value.Value == "RichCurveKey" && reader.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (StructType.Value.Value == "MovieSceneTrackIdentifier" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
 
             if (leng1 == 0)
             {
@@ -120,6 +121,7 @@ namespace UAssetAPI.StructTypes
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
             if (StructType.Value.Value == "RichCurveKey" && writer.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (StructType.Value.Value == "MovieSceneTrackIdentifier" && writer.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
 
             if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
             if (Value.Count == 0 && !SerializeNone) return 0;

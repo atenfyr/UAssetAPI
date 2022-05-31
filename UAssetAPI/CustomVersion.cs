@@ -1041,4 +1041,68 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     }
+
+    public enum FSequencerObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary>Per-platform overrides player overrides for media sources changed name and type.</summary>
+        [Introduced(UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        RenameMediaSourcePlatformPlayers,
+
+        /// <summary>Enable root motion isn't the right flag to use, but force root lock</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
+        ConvertEnableRootMotionToForceRootLock,
+
+        /// <summary>Convert multiple rows to tracks</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)]
+        ConvertMultipleRowsToTracks,
+
+        /// <summary>When finished now defaults to restore state</summary>
+        [Introduced(UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)]
+        WhenFinishedDefaultsToRestoreState,
+
+        /// <summary>EvaluationTree added</summary>
+        [Introduced(UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)]
+        EvaluationTree,
+
+        /// <summary>When finished now defaults to project default</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)]
+        WhenFinishedDefaultsToProjectDefault,
+
+        /// <summary>Use int range rather than float range in FMovieSceneSegment</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        FloatToIntConversion,
+
+        /// <summary>Purged old spawnable blueprint classes from level sequence assets</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        PurgeSpawnableBlueprints,
+
+        /// <summary>Finish UMG evaluation on end</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)]
+        FinishUMGEvaluation,
+
+        /// <summary>Manual serialization of float channel</summary>
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        SerializeFloatChannel,
+
+        /// <summary>Change the linear keys so they act the old way and interpolate always.</summary>
+        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        ModifyLinearKeysForOldInterp,
+
+        /// <summary>Full Manual serialization of float channel</summary>
+        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        SerializeFloatChannelCompletely,
+
+        /// <summary>Set ContinuouslyRespawn to false by default, added FMovieSceneSpawnable::bNetAddressableName</summary>
+        [Introduced(UE4Version.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS)]
+        SpawnableImprovements,
+
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
 }
