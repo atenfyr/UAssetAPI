@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI
+﻿namespace UAssetAPI.UnrealTypes
 {
     public enum UE4Version
     {

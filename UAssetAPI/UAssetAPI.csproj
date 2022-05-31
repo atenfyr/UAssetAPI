@@ -65,7 +65,7 @@
     <Compile Include="FieldTypes\UField.cs" />
     <Compile Include="FieldTypes\FField.cs" />
     <Compile Include="UnrealTypes\FName.cs" />
-    <Compile Include="Flags.cs" />
+    <Compile Include="UnrealTypes\Flags.cs" />
     <Compile Include="UnrealTypes\FQuat.cs" />
     <Compile Include="UnrealTypes\FRotator.cs" />
     <Compile Include="UnrealTypes\FString.cs" />
@@ -247,7 +247,7 @@
     <Compile Include="PropertyTypes\Structs\Vector4PropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\VectorPropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\ViewTargetBlendParamsPropertyData.cs" />
-    <Compile Include="UE4Version.cs" />
+    <Compile Include="UnrealTypes\UE4Version.cs" />
     <Compile Include="UAPUtils.cs" />
     <Compile Include="Unversioned\FFragment.cs" />
     <Compile Include="Unversioned\FUnversionedHeader.cs" />

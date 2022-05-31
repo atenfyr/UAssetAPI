@@ -1,7 +1,6 @@
 ﻿using System;
-using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.UnrealTypes
 {
     /// <summary>
     /// Flags describing an object instance
