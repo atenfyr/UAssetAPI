@@ -7,7 +7,8 @@ using System.IO;
 using System.Linq;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
-using UAssetAPI.PropertyTypes.Objects;using UAssetAPI.UnrealTypes;
+using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI
 {

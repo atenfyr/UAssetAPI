@@ -693,7 +693,7 @@
         /// <summary>4.22</summary>
         VER_UE4_22 = 517,
         /// <summary>4.23</summary>
-        VER_UE4_23 = 517,
+        VER_UE4_23 = 518, // actually 517; set to 518 to ensure 4.22 doesn't have FEditorObjectVersion::CultureInvariantTextSerializationKeyStability
         /// <summary>4.24</summary>
         VER_UE4_24 = 518,
         /// <summary>4.25</summary>
