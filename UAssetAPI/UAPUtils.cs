@@ -116,7 +116,8 @@ namespace UAssetAPI
 
         public static Guid ConvertToGUID(this string GuidString)
         {
-            if ((GuidString[0] != '{') ||
+            if (GuidString == null ||
+            (GuidString[0] != '{') ||
             (GuidString[9] != '-') ||
             (GuidString[14] != '-') ||
             (GuidString[19] != '-') ||
