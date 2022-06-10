@@ -129,6 +129,7 @@ namespace UAssetAPI.UnrealTypes
         public override bool Equals(object obj)
         {
             if (!(obj is FName name)) return false;
+            if (this is null || obj is null) return this is null && obj is null;
             return (this.Value == name.Value || this.Value.Value == name.Value.Value) && this.Number == name.Number;
         }
 
@@ -146,7 +147,7 @@ namespace UAssetAPI.UnrealTypes
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode() ^ Number.GetHashCode();
+            return Value == null ? 0 : (Value.GetHashCode() ^ Number.GetHashCode());
         }
 
         public object Clone()

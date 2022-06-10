@@ -661,23 +661,23 @@ namespace UAssetAPI
         MeshDescriptionRemovedHoles,
 
         /// <summary>Change to the WidgetCompoent WindowVisibilty default value</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_22_FILLER)]
         ChangedWidgetComponentWindowVisibilityDefault,
 
         /// <summary>Avoid keying culture invariant display strings during serialization to avoid non-deterministic cooking issues</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_22_FILLER)]
         CultureInvariantTextSerializationKeyStability,
 
         /// <summary>Change to UScrollBar and UScrollBox thickness property (removed implicit padding of 2, so thickness value must be incremented by 4).</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_22_FILLER)]
         ScrollBarThicknessChange,
 
         /// <summary>Deprecated LandscapeHoleMaterial</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_22_FILLER)]
         RemoveLandscapeHoleMaterial,
 
         /// <summary>MeshDescription defined by triangles instead of arbitrary polygons</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_22_FILLER)]
         MeshDescriptionTriangles,
 
         /// <summary>Add weighted area and angle when computing the normals</summary>

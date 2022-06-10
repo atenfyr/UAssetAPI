@@ -631,6 +631,8 @@
         VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID,
         /// <summary>Fixed case insensitive hashes of wide strings containing character values from 128-255</summary>
         VER_UE4_FIX_WIDE_STRING_CRC,
+        /// <summary>4.22 filler</summary>
+        VER_UE4_22_FILLER,
         /// <summary>Added package owner to allow private references</summary>
         VER_UE4_ADDED_PACKAGE_OWNER,
         /// <summary>Changed the data layout for skin weight profile data</summary>
@@ -693,14 +695,14 @@
         /// <summary>4.22</summary>
         VER_UE4_22 = 517,
         /// <summary>4.23</summary>
-        VER_UE4_23 = 518, // actually 517; set to 518 to ensure 4.22 doesn't have FEditorObjectVersion::CultureInvariantTextSerializationKeyStability
+        VER_UE4_23 = 517 + 1, // actually 517; set to 518 to ensure 4.22 doesn't have FEditorObjectVersion::CultureInvariantTextSerializationKeyStability
         /// <summary>4.24</summary>
-        VER_UE4_24 = 518,
+        VER_UE4_24 = 518 + 1,
         /// <summary>4.25</summary>
-        VER_UE4_25 = 518,
+        VER_UE4_25 = 518 + 1,
         /// <summary>4.26</summary>
-        VER_UE4_26 = 519,
+        VER_UE4_26 = 519 + 1,
         /// <summary>4.27</summary>
-        VER_UE4_27 = 522,
+        VER_UE4_27 = 522 + 1,
     };
 }
