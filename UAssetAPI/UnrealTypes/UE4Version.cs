@@ -632,7 +632,7 @@
         /// <summary>Fixed case insensitive hashes of wide strings containing character values from 128-255</summary>
         VER_UE4_FIX_WIDE_STRING_CRC,
         /// <summary>4.22 filler</summary>
-        VER_UE4_22_FILLER,
+        VER_UE4_FILLER_22,
         /// <summary>Added package owner to allow private references</summary>
         VER_UE4_ADDED_PACKAGE_OWNER,
         /// <summary>Changed the data layout for skin weight profile data</summary>
