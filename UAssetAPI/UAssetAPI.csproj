@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AC7Decrypt.cs" />
     <Compile Include="AssetBinaryWriter.cs" />
     <Compile Include="AssetBinaryReader.cs" />
     <Compile Include="CustomVersion.cs" />
@@ -59,6 +61,11 @@
     <Compile Include="ExportTypes\PropertyExport.cs" />
     <Compile Include="ExportTypes\StringTableExport.cs" />
     <Compile Include="ExportTypes\StructExport.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UnrealTypes\FFieldPath.cs" />
     <Compile Include="FieldTypes\EArrayDim.cs" />
     <Compile Include="FieldTypes\ELifetimeCondition.cs" />
@@ -261,6 +268,13 @@
     <EmbeddedResource Include="git_commit.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AC7Key.bin" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">

@@ -15,6 +15,41 @@ namespace UAssetAPI.Tests
     public class AssetUnitTests
     {
         /// <summary>
+        /// Checks if two files have the same binary data.
+        /// </summary>
+        public void VerifyBinaryEquality(string file1, string file2)
+        {
+            int file1byte;
+            int file2byte;
+            FileStream fs1;
+            FileStream fs2;
+
+            if (file1 == file2) return;
+
+            fs1 = new FileStream(file1, FileMode.Open);
+            fs2 = new FileStream(file2, FileMode.Open);
+
+            if (fs1.Length != fs2.Length)
+            {
+                fs1.Close();
+                fs2.Close();
+                Assert.IsTrue(false);
+            }
+
+            do
+            {
+                file1byte = fs1.ReadByte();
+                file2byte = fs2.ReadByte();
+            }
+            while ((file1byte == file2byte) && (file1byte != -1));
+
+            fs1.Close();
+            fs2.Close();
+
+            Assert.IsTrue((file1byte - file2byte) == 0);
+        }
+
+        /// <summary>
         /// Determines whether or not all exports in an asset have parsed correctly.
         /// </summary>
         /// <param name="tester">The asset to test.</param>
@@ -397,8 +432,8 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/Items.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/Items.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
+        //[DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
+        //[DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uexp", "TestJson")]
         public void TestJson()
@@ -407,7 +442,7 @@ namespace UAssetAPI.Tests
             TestJsonOnFile("m02VIL_004_Gimmick.umap", UE4Version.VER_UE4_18);
             TestJsonOnFile("Staging_T2.umap", UE4Version.VER_UE4_23);
             TestJsonOnFile("Items.uasset", UE4Version.VER_UE4_23); // string table
-            TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
+            //TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
             TestJsonOnFile("WPN_LockOnRifle.uasset", UE4Version.VER_UE4_25);
         }
 
@@ -441,6 +476,36 @@ namespace UAssetAPI.Tests
                 }
             }
             Assert.IsTrue(hasCoolProperty);
+        }
+
+        /// <summary>
+        /// In this test, we verify that Ace Combat 7 decryption works.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestACE7/plwp_6aam_a0.uasset", "TestACE7")]
+        [DeploymentItem(@"TestAssets/TestACE7/plwp_6aam_a0.uexp", "TestACE7")]
+        [DeploymentItem(@"TestAssets/TestACE7/ex02_IGC_03_Subtitle.uasset", "TestACE7")]
+        [DeploymentItem(@"TestAssets/TestACE7/ex02_IGC_03_Subtitle.uexp", "TestACE7")]
+        public void TestACE7()
+        {
+            // Decrypt them
+            var decrypter = new AC7Decrypt();
+            decrypter.Decrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"));
+            decrypter.Decrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"));
+
+            // Verify the files can be parsed
+            var tester = new UAsset(Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"), UE4Version.VER_UE4_18);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+
+            tester = new UAsset(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"), UE4Version.VER_UE4_18);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+
+            // Make sure encryption throws no errors
+            decrypter.Encrypt(Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0_ENCRYPT.uasset"));
+            decrypter.Encrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_ENCRYPT.uasset"));
         }
     }
 }

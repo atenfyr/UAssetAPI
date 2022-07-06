@@ -91,6 +91,18 @@
     <EmbeddedResource Include="TestAssets\TestJson\Items.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestACE7\ex02_IGC_03_Subtitle.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestACE7\ex02_IGC_03_Subtitle.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestACE7\plwp_6aam_a0.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestACE7\plwp_6aam_a0.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="TestAssets\TestManyAssets\Astroneer\Augment_BroadBrush.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

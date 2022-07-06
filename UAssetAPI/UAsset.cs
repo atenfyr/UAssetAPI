@@ -728,7 +728,12 @@ namespace UAssetAPI
         /// <summary>
         /// Magic number for the .uasset format
         /// </summary>
-        private static readonly uint UASSET_MAGIC = 2653586369;
+        public static readonly uint UASSET_MAGIC = 0x9E2A83C1;
+
+        /// <summary>
+        /// Magic number for Ace Combat 7 encrypted .uasset format
+        /// </summary>
+        public static readonly uint ACE7_MAGIC = 0x37454341;
 
         /// <summary>
         /// Reads the initial portion of the asset (everything before the name map).
@@ -739,7 +744,8 @@ namespace UAssetAPI
         private void ReadHeader(AssetBinaryReader reader)
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            if (reader.ReadUInt32() != UASSET_MAGIC) throw new FormatException("File signature mismatch");
+            uint fileSignature = reader.ReadUInt32();
+            if (fileSignature != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
             LegacyFileVersion = reader.ReadInt32();
             if (LegacyFileVersion != -4)
