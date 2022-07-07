@@ -81,11 +81,6 @@ namespace UAssetAPI
 
         public byte[] DecryptUAssetBytes(byte[] uasset, AC7XorKey xorkey)
         {
-            uint num = BitConverter.ToUInt32(uasset, 0);
-            if (num != UAsset.ACE7_MAGIC)
-            {
-                return uasset;
-            }
             byte[] array = new byte[uasset.Length];
             BitConverter.GetBytes(UAsset.UASSET_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
@@ -97,11 +92,6 @@ namespace UAssetAPI
 
         public byte[] EncryptUAssetBytes(byte[] uasset, AC7XorKey xorkey)
         {
-            uint num = BitConverter.ToUInt32(uasset, 0);
-            if (num != UAsset.UASSET_MAGIC)
-            {
-                return uasset;
-            }
             byte[] array = new byte[uasset.Length];
             BitConverter.GetBytes(UAsset.ACE7_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
