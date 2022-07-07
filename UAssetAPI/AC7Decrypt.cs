@@ -68,7 +68,7 @@ namespace UAssetAPI
         /// <param name="output">The path that the encrypted asset should be saved to.</param>
         public void Encrypt(string input, string output)
         {
-            AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(input));
+            AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(output));
             byte[] doneData = EncryptUAssetBytes(File.ReadAllBytes(input), xorKey);
             File.WriteAllBytes(output, doneData);
             try
