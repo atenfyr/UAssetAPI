@@ -489,23 +489,35 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestACE7/ex02_IGC_03_Subtitle.uexp", "TestACE7")]
         public void TestACE7()
         {
+            // Create copies of original files
+            foreach (var path in Directory.GetFiles("TestACE7", "*.*"))
+            {
+                File.Copy(path, path + ".bak");
+            }
+
             // Decrypt them
             var decrypter = new AC7Decrypt();
-            decrypter.Decrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"));
-            decrypter.Decrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"));
+            decrypter.Decrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0.uasset"));
+            decrypter.Decrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"));
 
             // Verify the files can be parsed
-            var tester = new UAsset(Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"), UE4Version.VER_UE4_18);
+            var tester = new UAsset(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), UE4Version.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
-            tester = new UAsset(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"), UE4Version.VER_UE4_18);
+            tester = new UAsset(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), UE4Version.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
-            // Make sure encryption throws no errors
-            decrypter.Encrypt(Path.Combine("TestACE7", "plwp_6aam_a0_DECRYPT.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0_ENCRYPT.uasset"));
-            decrypter.Encrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_DECRYPT.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle_ENCRYPT.uasset"));
+            // Encrypt them
+            decrypter.Encrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0.uasset"));
+            decrypter.Encrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"));
+
+            // Verify binary equality
+            foreach (var path in Directory.GetFiles("TestACE7", "*.bak"))
+            {
+                VerifyBinaryEquality(path, path.Substring(0, path.Length - 4));
+            }
         }
     }
 }

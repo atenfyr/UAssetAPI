@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace UAssetAPI
@@ -62,7 +63,6 @@ namespace UAssetAPI
 
         /// <summary>
         /// Encrypts an Ace Combat 7 encrypted asset on disk.
-        /// TODO: make sure if this works or not
         /// </summary>
         /// <param name="input">The path to a decrypted asset on disk.</param>
         /// <param name="output">The path that the encrypted asset should be saved to.</param>
@@ -81,6 +81,7 @@ namespace UAssetAPI
 
         public byte[] DecryptUAssetBytes(byte[] uasset, AC7XorKey xorkey)
         {
+            if (xorkey == null) throw new NullReferenceException("Null key provided");
             byte[] array = new byte[uasset.Length];
             BitConverter.GetBytes(UAsset.UASSET_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
@@ -92,6 +93,7 @@ namespace UAssetAPI
 
         public byte[] EncryptUAssetBytes(byte[] uasset, AC7XorKey xorkey)
         {
+            if (xorkey == null) throw new NullReferenceException("Null key provided");
             byte[] array = new byte[uasset.Length];
             BitConverter.GetBytes(UAsset.ACE7_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
@@ -103,10 +105,7 @@ namespace UAssetAPI
 
         public byte[] DecryptUexpBytes(byte[] uexp, AC7XorKey xorkey)
         {
-            if (xorkey == null)
-            {
-                return uexp;
-            }
+            if (xorkey == null) throw new NullReferenceException("Null key provided");
             byte[] array = new byte[uexp.Length];
             for (int i = 0; i < array.Length; i++)
             {
@@ -118,14 +117,11 @@ namespace UAssetAPI
 
         public byte[] EncryptUexpBytes(byte[] uexp, AC7XorKey xorkey)
         {
-            byte[] array = new byte[uexp.Length + 4];
+            if (xorkey == null) throw new NullReferenceException("Null key provided");
+            byte[] array = new byte[uexp.Length];
             for (int i = 0; i < uexp.Length; i++)
             {
                 array[i] = GetXorByte(uexp[i], ref xorkey);
-            }
-            for (int j = uexp.Length; j < array.Length; j++)
-            {
-                array[j] = GetXorByte(0, ref xorkey);
             }
             return array;
         }
