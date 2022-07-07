@@ -42,6 +42,11 @@ namespace UAssetAPI
             if (AC7FullKey.Length == 0) AC7FullKey = Properties.Resources.AC7Key;
         }
 
+        /// <summary>
+        /// Decrypts an Ace Combat 7 encrypted asset on disk.
+        /// </summary>
+        /// <param name="input">The path to an encrypted asset on disk.</param>
+        /// <param name="output">The path that the decrypted asset should be saved to.</param>
         public void Decrypt(string input, string output)
         {
             AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(input));
@@ -55,6 +60,12 @@ namespace UAssetAPI
             catch { }
         }
 
+        /// <summary>
+        /// Encrypts an Ace Combat 7 encrypted asset on disk.
+        /// TODO: make sure if this works or not
+        /// </summary>
+        /// <param name="input">The path to a decrypted asset on disk.</param>
+        /// <param name="output">The path that the encrypted asset should be saved to.</param>
         public void Encrypt(string input, string output)
         {
             AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(input));
@@ -76,10 +87,7 @@ namespace UAssetAPI
                 return uasset;
             }
             byte[] array = new byte[uasset.Length];
-            array[0] = 193;
-            array[1] = 131;
-            array[2] = 42;
-            array[3] = 158;
+            BitConverter.GetBytes(UAsset.UASSET_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
             {
                 array[i] = GetXorByte(uasset[i], ref xorkey);
@@ -87,7 +95,6 @@ namespace UAssetAPI
             return array;
         }
 
-        // Unsure if this works or not, feel free to modify & PR
         public byte[] EncryptUAssetBytes(byte[] uasset, AC7XorKey xorkey)
         {
             uint num = BitConverter.ToUInt32(uasset, 0);
@@ -96,10 +103,7 @@ namespace UAssetAPI
                 return uasset;
             }
             byte[] array = new byte[uasset.Length];
-            array[0] = 65;
-            array[1] = 67;
-            array[2] = 69;
-            array[3] = 55;
+            BitConverter.GetBytes(UAsset.ACE7_MAGIC).CopyTo(array, 0);
             for (int i = 4; i < array.Length; i++)
             {
                 array[i] = GetXorByte(uasset[i], ref xorkey);
@@ -118,14 +122,10 @@ namespace UAssetAPI
             {
                 array[i] = GetXorByte(uexp[i], ref xorkey);
             }
-            array[array.Length - 4] = 193;
-            array[array.Length - 3] = 131;
-            array[array.Length - 2] = 42;
-            array[array.Length - 1] = 158;
+            BitConverter.GetBytes(UAsset.UASSET_MAGIC).CopyTo(array, array.Length - 4);
             return array;
         }
 
-        // Unsure if this works or not, feel free to modify & PR
         public byte[] EncryptUexpBytes(byte[] uexp, AC7XorKey xorkey)
         {
             byte[] array = new byte[uexp.Length + 4];
@@ -140,6 +140,11 @@ namespace UAssetAPI
             return array;
         }
 
+        /// <summary>
+        /// Generates an encryption key for a particular asset on disk.
+        /// </summary>
+        /// <param name="fname">The name of the asset being encrypted on disk without the extension.</param>
+        /// <returns>An encryption key for the asset.</returns>
         public static AC7XorKey GetXorKey(string fname)
         {
             AC7XorKey key = new AC7XorKey(CalcNameKey(fname), 4);
