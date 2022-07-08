@@ -64,7 +64,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (d[1] != "null" && d[1] != null)
             {
-                Value = FName.FromString(asset, d[0]);
+                Value = FName.FromString(asset, d[1]);
             }
             else
             {
