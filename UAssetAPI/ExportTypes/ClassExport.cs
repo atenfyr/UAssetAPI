@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using UAssetAPI.JSON;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Represents an interface that a UClass (<see cref="ClassExport"/>) implements.

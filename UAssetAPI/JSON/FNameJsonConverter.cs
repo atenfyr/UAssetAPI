@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.JSON
 {
     public class FNameJsonConverter : JsonConverter
     {

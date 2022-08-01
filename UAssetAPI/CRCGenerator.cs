@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {

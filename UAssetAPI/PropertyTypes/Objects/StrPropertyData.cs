@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {

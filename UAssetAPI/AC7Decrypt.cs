@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// XOR key for decrypting a particular Ace Combat 7 asset. 
+    /// </summary>
     public class AC7XorKey
     {
         public int NameKey;
@@ -27,13 +31,61 @@ namespace UAssetAPI
             }
         }
 
-        public AC7XorKey(int nameKey, int offset)
+        private static int CalcNameKey(string fname)
         {
-            NameKey = nameKey;
-            Offset = offset;
+            fname = fname.ToUpper();
+            int num = 0;
+            for (int i = 0; i < fname.Length; i++)
+            {
+                int num2 = (byte)fname[i];
+                num ^= num2;
+                num2 = num * 8;
+                num2 ^= num;
+                int num3 = num + num;
+                num2 = ~num2;
+                num2 = (num2 >> 7) & 1;
+                num = num2 | num3;
+            }
+            return num;
+        }
+
+        private static void CalcPKeyFromNKey(int nkey, int dataoffset, out int pk1, out int pk2)
+        {
+            long num = (uint)((long)nkey * 7L);
+            System.Numerics.BigInteger bigInteger = new System.Numerics.BigInteger(5440514381186227205L);
+            num += dataoffset;
+            System.Numerics.BigInteger bigInteger2 = bigInteger * num;
+            long num2 = (long)(bigInteger2 >> 70);
+            long num3 = num2 >> 63;
+            num2 += num3;
+            num3 = num2 * 217;
+            num -= num3;
+            pk1 = (int)(num & 0xFFFFFFFFu);
+            long num4 = (uint)((long)nkey * 11L);
+            num4 += dataoffset;
+            num2 = 0L;
+            num2 &= 0x3FF;
+            num4 += num2;
+            num4 &= 0x3FF;
+            long num5 = num4 - num2;
+            pk2 = (int)(num5 & 0xFFFFFFFFu);
+        }
+
+        /// <summary>
+        /// Generates an encryption key for a particular asset on disk.
+        /// </summary>
+        /// <param name="fname">The name of the asset being encrypted on disk without the extension.</param>
+        /// <returns>An encryption key for the asset.</returns>
+        public AC7XorKey(string fname)
+        {
+            NameKey = CalcNameKey(fname); Offset = 4;
+            CalcPKeyFromNKey(this.NameKey, this.Offset, out this.pk1, out this.pk2);
         }
     }
 
+    /// <summary>
+    /// Decryptor for Ace Combat 7 assets.
+    /// </summary>
     public class AC7Decrypt
     {
         private static byte[] AC7FullKey = new byte[0];
@@ -50,7 +102,7 @@ namespace UAssetAPI
         /// <param name="output">The path that the decrypted asset should be saved to.</param>
         public void Decrypt(string input, string output)
         {
-            AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(input));
+            AC7XorKey xorKey = new AC7XorKey(Path.GetFileNameWithoutExtension(input));
             byte[] doneData = DecryptUAssetBytes(File.ReadAllBytes(input), xorKey);
             File.WriteAllBytes(output, doneData);
             try
@@ -68,7 +120,7 @@ namespace UAssetAPI
         /// <param name="output">The path that the encrypted asset should be saved to.</param>
         public void Encrypt(string input, string output)
         {
-            AC7XorKey xorKey = GetXorKey(Path.GetFileNameWithoutExtension(output));
+            AC7XorKey xorKey = new AC7XorKey(Path.GetFileNameWithoutExtension(output));
             byte[] doneData = EncryptUAssetBytes(File.ReadAllBytes(input), xorKey);
             File.WriteAllBytes(output, doneData);
             try
@@ -124,58 +176,6 @@ namespace UAssetAPI
                 array[i] = GetXorByte(uexp[i], ref xorkey);
             }
             return array;
-        }
-
-        /// <summary>
-        /// Generates an encryption key for a particular asset on disk.
-        /// </summary>
-        /// <param name="fname">The name of the asset being encrypted on disk without the extension.</param>
-        /// <returns>An encryption key for the asset.</returns>
-        public static AC7XorKey GetXorKey(string fname)
-        {
-            AC7XorKey key = new AC7XorKey(CalcNameKey(fname), 4);
-            CalcPKeyFromNKey(key.NameKey, key.Offset, out key.pk1, out key.pk2);
-            return key;
-        }
-
-        private static int CalcNameKey(string fname)
-        {
-            fname = fname.ToUpper();
-            int num = 0;
-            for (int i = 0; i < fname.Length; i++)
-            {
-                int num2 = (byte)fname[i];
-                num ^= num2;
-                num2 = num * 8;
-                num2 ^= num;
-                int num3 = num + num;
-                num2 = ~num2;
-                num2 = (num2 >> 7) & 1;
-                num = num2 | num3;
-            }
-            return num;
-        }
-
-        private static void CalcPKeyFromNKey(int nkey, int dataoffset, out int pk1, out int pk2)
-        {
-            long num = (uint)((long)nkey * 7L);
-            System.Numerics.BigInteger bigInteger = new System.Numerics.BigInteger(5440514381186227205L);
-            num += dataoffset;
-            System.Numerics.BigInteger bigInteger2 = bigInteger * num;
-            long num2 = (long)(bigInteger2 >> 70);
-            long num3 = num2 >> 63;
-            num2 += num3;
-            num3 = num2 * 217;
-            num -= num3;
-            pk1 = (int)(num & 0xFFFFFFFFu);
-            long num4 = (uint)((long)nkey * 11L);
-            num4 += dataoffset;
-            num2 = 0L;
-            num2 &= 0x3FF;
-            num4 += num2;
-            num4 &= 0x3FF;
-            long num5 = num4 - num2;
-            pk2 = (int)(num5 & 0xFFFFFFFFu);
         }
 
         private static byte GetXorByte(byte tagb, ref AC7XorKey xorkey)

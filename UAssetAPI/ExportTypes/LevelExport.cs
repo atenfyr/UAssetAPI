@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     public class NamespacedString
     {

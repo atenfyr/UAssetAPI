@@ -7,6 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.Properties {
     using System;
