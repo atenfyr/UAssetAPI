@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode.Expressions;
 using UAssetAPI.Kismet.Bytecode;
 using System;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.Kismet
 {
@@ -499,13 +498,43 @@ namespace UAssetAPI.Kismet
 
                 }
             }
-            jproparray[0] = new JProperty(names[0], "##NOT SERIALIZED##");
-            if (names.Length > 1)
+            if (pointer != null && pointer.Old.Index != 0)
             {
-                jproparray[1] = new JProperty(names[1], "##NOT SERIALIZED##");
+                if (names.Length > 1)
+                {
+                    string[] split = GetFullName(pointer.Old.Index).Split('.');
+                    jproparray[0] = new JProperty(names[0], split[0]);
+                    string path = "";
+                    for (int i = 1; i < split.Length; i++)
+                    {
+                        path += split[i] + ".";
+                    }
+                    if (path.EndsWith("."))
+                    {
+                        path = path.Substring(0, path.Length - 1);
+                    }
+                    jproparray[1] = new JProperty(names[1], path);
+                }
+                else
+                {
+                    jproparray[0] = new JProperty(names[0], GetFullName(pointer.Old.Index));
+                }
+            }
+            else
+            {
+                jproparray[0] = new JProperty(names[0], "#Pointer Error#");
+                if (names.Length > 1)
+                {
+                    jproparray[1] = new JProperty(names[1], "^^^^^");
+                }
             }
             return jproparray;
 
+        }
+
+        private static bool FindProperty(int index, FPackageIndex old, out FProperty property)
+        {
+            throw new NotImplementedException();
         }
 
         public static JObject SerializeExpression(KismetExpression expression, ref int index, bool addindex = false)
@@ -671,7 +700,7 @@ namespace UAssetAPI.Kismet
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.DestinationProperty, new[] { "PropertyType", "PropertyName" }));
+                        jexp.Add(SerializePropertyPointer(exp.DestinationProperty, new[] { "Property Outer", "Property Name" }));
                         jexp.Add("Expression", SerializeExpression(exp.AssignmentExpression, ref index));
                         break;
                     }
@@ -679,7 +708,7 @@ namespace UAssetAPI.Kismet
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.StructMemberExpression, new[] { "PropertyType", "PropertyName" }));
+                        jexp.Add(SerializePropertyPointer(exp.StructMemberExpression, new[] { "Property Outer", "Property Name" }));
                         jexp.Add("StructExpression", SerializeExpression(exp.StructExpression, ref index));
                         break;
                     }
@@ -742,28 +771,28 @@ namespace UAssetAPI.Kismet
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "VariableType", "VariableName" }));
+                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "Variable Outer", "Variable Name" }));
                         break;
                     }
                 case EX_DefaultVariable exp:
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "VariableType", "VariableName" }));
+                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "Variable Outer", "Variable Name" }));
                         break;
                     }
                 case EX_InstanceVariable exp:
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "VariableType", "VariableName" }));
+                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "Variable Outer", "Variable Name" }));
                         break;
                     }
                 case EX_LocalOutVariable exp:
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "VariableType", "VariableName" }));
+                        jexp.Add(SerializePropertyPointer(exp.Variable, new[] { "Variable Outer", "Variable Name" }));
                         break;
                     }
                 case EX_InterfaceContext exp:
@@ -878,7 +907,7 @@ namespace UAssetAPI.Kismet
                         index += 4;
                         jexp.Add("SkipOffsetForNull", exp.Offset);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.RValuePointer, new[] { "RValuePropertyType", "RValuePropertyName" }));
+                        jexp.Add(SerializePropertyPointer(exp.RValuePointer, new[] { "RValuePropertyOuter", "RValuePropertyName" }));
                         jexp.Add("Expression", SerializeExpression(exp.ContextExpression, ref index));
                         break;
                     }
@@ -1063,7 +1092,7 @@ namespace UAssetAPI.Kismet
                     {
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
-                        jexp.Add(SerializePropertyPointer(exp.InnerProperty, new[] { "VariableType" }));
+                        jexp.Add(SerializePropertyPointer(exp.InnerProperty, new[] { "Variable Outer" }));
 
                         index += 4;
                         JArray jparams = new JArray();
