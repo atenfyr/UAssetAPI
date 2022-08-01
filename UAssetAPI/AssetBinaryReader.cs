@@ -4,9 +4,13 @@ using System.IO;
 using System.Text;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// Reads primitive data types from Unreal Engine assets.
+    /// </summary>
     public class AssetBinaryReader : BinaryReader
     {
         public UAsset Asset;

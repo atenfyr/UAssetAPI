@@ -31,6 +31,7 @@ using System.Linq;
     SOFTWARE.
 */
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.UnrealTypes
 {

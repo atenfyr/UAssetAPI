@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.UnrealTypes
 {

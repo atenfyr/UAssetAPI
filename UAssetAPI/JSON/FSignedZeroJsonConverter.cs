@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {

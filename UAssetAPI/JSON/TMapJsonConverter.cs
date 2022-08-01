@@ -30,6 +30,7 @@ using System.Collections.Specialized;
     SOFTWARE.
 */
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {

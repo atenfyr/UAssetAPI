@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {

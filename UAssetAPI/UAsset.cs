@@ -9,6 +9,7 @@ using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
@@ -91,6 +92,9 @@ namespace UAssetAPI
         }
     }
 
+    /// <summary>
+    /// Represents an Unreal Engine asset.
+    /// </summary>
     public class UAsset
     {
         /// <summary>

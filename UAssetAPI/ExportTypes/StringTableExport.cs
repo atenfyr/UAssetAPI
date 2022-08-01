@@ -1,8 +1,9 @@
 using Newtonsoft.Json;
 using System.Linq;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// A string table. Holds Key->SourceString pairs of text.

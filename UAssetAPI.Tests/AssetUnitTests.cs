@@ -8,6 +8,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.Tests
 {

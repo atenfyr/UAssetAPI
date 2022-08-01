@@ -1,6 +1,7 @@
 ﻿using System;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {

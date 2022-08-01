@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>How this enum is declared in C++. Affects the internal naming of enum values.</summary>
     public enum ECppForm

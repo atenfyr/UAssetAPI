@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.FieldTypes
 {

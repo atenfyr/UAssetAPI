@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {

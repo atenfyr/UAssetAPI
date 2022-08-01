@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.UnrealTypes
+﻿using UAssetAPI.ExportTypes;
+
+namespace UAssetAPI.UnrealTypes
 {
     /// <summary>
     /// Base class for UObject resource types. FObjectResources are used to store UObjects on disk

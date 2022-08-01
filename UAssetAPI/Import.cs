@@ -1,4 +1,5 @@
 ﻿using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {

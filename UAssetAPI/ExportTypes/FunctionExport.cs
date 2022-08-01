@@ -1,7 +1,8 @@
 using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Export data for a blueprint function.

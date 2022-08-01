@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {

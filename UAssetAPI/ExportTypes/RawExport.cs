@@ -1,7 +1,8 @@
 using System.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// An export that could not be properly parsed by UAssetAPI, and is instead represented as an array of bytes as a fallback.

@@ -1,8 +1,9 @@
 using System.Linq;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.ExportTypes
 {
     /// <summary>
     /// Export data for a <see cref="UField"/>.
