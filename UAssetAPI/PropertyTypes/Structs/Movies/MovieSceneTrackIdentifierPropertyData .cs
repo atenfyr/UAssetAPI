@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.StructTypes
+namespace UAssetAPI.PropertyTypes.Structs
 {
     public class MovieSceneTrackIdentifierPropertyData : PropertyData<FMovieSceneTrackIdentifier> {
        

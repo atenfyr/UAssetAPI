@@ -1,12 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.IO;
-using UAssetAPI.PropertyTypes;
-using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.StructTypes
+namespace UAssetAPI.PropertyTypes.Structs
 {
     public struct FMovieSceneEventParameters
     {

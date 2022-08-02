@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UAssetAPI.PropertyTypes;
+﻿using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
-using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.StructTypes
+namespace UAssetAPI.PropertyTypes.Structs
 {
     public class MovieSceneEvalTemplatePtrPropertyData : StructPropertyData 
     {

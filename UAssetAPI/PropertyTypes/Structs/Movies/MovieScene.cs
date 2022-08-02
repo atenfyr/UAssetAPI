@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.StructTypes
+namespace UAssetAPI.PropertyTypes.Structs
 {
     #region Enums
     // Enum MovieScene.EMovieSceneKeyInterpolation
