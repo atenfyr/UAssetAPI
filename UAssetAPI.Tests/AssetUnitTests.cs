@@ -348,11 +348,16 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestManyAssets/Bloodstained")]
         [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uasset", "TestManyAssets/CodeVein")]
         [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uexp", "TestManyAssets/CodeVein")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uasset", "TestManyAssets/StarlitSeason")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uexp", "TestManyAssets/StarlitSeason")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/VERSIONED/Assault_M1A1Thompson_WW2_DrumSuppressor.uasset", "TestManyAssets/VERSIONED")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", UE4Version.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", UE4Version.VER_UE4_18);
             TestManyAssetsSubsection("CodeVein", UE4Version.VER_UE4_18);
+            TestManyAssetsSubsection("StarlitSeason", UE4Version.VER_UE4_24);
+            TestManyAssetsSubsection("VERSIONED", UE4Version.UNKNOWN);
         }
 
         /// <summary>

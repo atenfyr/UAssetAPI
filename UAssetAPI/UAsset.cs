@@ -612,7 +612,17 @@ namespace UAssetAPI
         public Dictionary<string, Tuple<FString, FString>> MapStructTypeOverride = new Dictionary<string, Tuple<FString, FString>>()
         {
             { "ColorDatabase", new Tuple<FString, FString>(null, new FString("LinearColor")) },
-            { "PlayerCharacterIDs", new Tuple<FString, FString>(new FString("Guid"), null) }
+            { "PlayerCharacterIDs", new Tuple<FString, FString>(new FString("Guid"), null) },
+            { "m_PerConditionValueToNodeMap", new Tuple<FString, FString>(new FString("Guid"), null) },
+            { "BindingIdToReferences", new Tuple<FString, FString>(new FString("Guid"), null) },
+            { "UserParameterRedirects", new Tuple<FString, FString>(new FString("NiagaraVariable"), new FString("NiagaraVariable"))},
+            { "Tracks", new Tuple<FString, FString>(new FString("MovieSceneTrackIdentifier"), null)},
+            { "SubSequences", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
+            { "Hierarchy", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
+            { "TrackSignatureToTrackIdentifier", new Tuple<FString, FString>(new FString("Guid"), new FString("MovieSceneTrackIdentifier"))},
+            { "ItemsToRefund", new Tuple<FString, FString>(new FString("Guid"), null) },
+            { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) }
+
         };
 
         /// <summary>

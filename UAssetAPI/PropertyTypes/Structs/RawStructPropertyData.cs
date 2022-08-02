@@ -1,24 +1,21 @@
-﻿using System;
-using System.IO;
-using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI.PropertyTypes.Structs.Movies
+namespace UAssetAPI.PropertyTypes.Structs
 {
-    public class MovieSceneTrackIdentifierPropertyData : PropertyData<uint>
+    public class RawStructPropertyData : PropertyData<byte[]>
     {
-        public MovieSceneTrackIdentifierPropertyData(FName name) : base(name)
+        public RawStructPropertyData(FName name) : base(name)
         {
 
         }
 
-        public MovieSceneTrackIdentifierPropertyData()
+        public RawStructPropertyData()
         {
 
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneTrackIdentifier");
+        private static readonly FString CurrentPropertyType = new FString("RawStructProperty");
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
@@ -29,7 +26,7 @@ namespace UAssetAPI.PropertyTypes.Structs.Movies
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = reader.ReadUInt32();
+            Value = reader.ReadBytes((int)leng1);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -40,17 +37,7 @@ namespace UAssetAPI.PropertyTypes.Structs.Movies
             }
 
             writer.Write(Value);
-            return sizeof(uint);
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-            Value = uint.Parse(d[0]);
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
+            return Value.Length;
         }
     }
 }

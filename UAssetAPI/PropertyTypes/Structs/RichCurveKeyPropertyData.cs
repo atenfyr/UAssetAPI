@@ -7,38 +7,14 @@ using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
-    public enum RichCurveInterpMode
-    {
-        Linear,
-        Constant,
-        Cubic,
-        None
-    }
-
-    public enum RichCurveTangentMode
-    {
-        Auto,
-        User,
-        Break,
-        None
-    }
-
-    public enum RichCurveTangentWeightMode
-    {
-        WeightedNone,
-        WeightedArrive,
-        WeightedLeave,
-        WeightedBoth
-    }
-
     public class RichCurveKeyPropertyData : PropertyData
     {
         [JsonProperty]
-        public RichCurveInterpMode InterpMode;
+        public ERichCurveInterpMode InterpMode;
         [JsonProperty]
-        public RichCurveTangentMode TangentMode;
+        public ERichCurveTangentMode TangentMode;
         [JsonProperty]
-        public RichCurveTangentWeightMode TangentWeightMode;
+        public ERichCurveTangentWeightMode TangentWeightMode;
         [JsonProperty]
         public float Time;
         [JsonProperty]
@@ -73,9 +49,9 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            InterpMode = (RichCurveInterpMode)reader.ReadSByte();
-            TangentMode = (RichCurveTangentMode)reader.ReadSByte();
-            TangentWeightMode = (RichCurveTangentWeightMode)reader.ReadSByte();
+            InterpMode = (ERichCurveInterpMode)reader.ReadSByte();
+            TangentMode = (ERichCurveTangentMode)reader.ReadSByte();
+            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadSByte();
             Time = reader.ReadSingle();
             Value = reader.ReadSingle();
             ArriveTangent = reader.ReadSingle();

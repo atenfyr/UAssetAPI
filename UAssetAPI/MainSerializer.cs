@@ -184,7 +184,23 @@ namespace UAssetAPI
             data.DuplicationIndex = duplicationIndex;
             if (reader != null)
             {
-                data.Read(reader, includeHeader, leng);
+                try
+                {
+                    data.Read(reader, includeHeader, leng);
+                }
+                catch (Exception ex)
+                {
+                    if (data is StructPropertyData)
+                    {
+                        data = new RawStructPropertyData(name);
+                        data.DuplicationIndex = duplicationIndex;
+                        data.Read(reader, includeHeader, leng);
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
                 if (data.Offset == 0) data.Offset = startingOffset; // fallback
             }
 
@@ -304,6 +320,10 @@ namespace UAssetAPI
             if (property is UnknownPropertyData unknownProp)
             {
                 writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
+            }
+            else if (property is RawStructPropertyData unknownProp2)
+            {
+                writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
             }
             else
             {

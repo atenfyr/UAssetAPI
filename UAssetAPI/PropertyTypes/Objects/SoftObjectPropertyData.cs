@@ -5,7 +5,7 @@ using UAssetAPI.ExportTypes;
 namespace UAssetAPI.PropertyTypes.Objects
 {
     /// <summary>
-    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Synonym for <see cref="SoftObjectPropertyData"/>.
+    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Near synonym for <see cref="SoftObjectPropertyData"/>.
     /// </summary>
     public class AssetObjectPropertyData : PropertyData<FString>
     {
@@ -52,15 +52,32 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void FromString(string[] d, UAsset asset)
         {
-            asset.AddNameReference(FString.FromString(d[0]));
+            //asset.AddNameReference(FString.FromString(d[0]));
             Value = FString.FromString(d[0]);
         }
     }
 
     /// <summary>
-    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Synonym for <see cref="AssetObjectPropertyData"/>.
+    /// A reference variable to another object which may be null, and may become valid or invalid at any point.
     /// </summary>
-    public class SoftObjectPropertyData : PropertyData<FName>
+    public struct FSoftObjectPath
+    {
+        /** Asset path, patch to a top level object in a package. This is /package/path.assetname */
+        public FName AssetPathName;
+        /** Optional FString for subobject within an asset. This is the sub path after the : */
+        public FString SubPathString;
+
+        public FSoftObjectPath(FName assetPathName, FString subPathString)
+        {
+            AssetPathName = assetPathName;
+            SubPathString = subPathString;
+        }
+    }
+
+    /// <summary>
+    /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Near synonym for <see cref="AssetObjectPropertyData"/>.
+    /// </summary>
+    public class SoftObjectPropertyData : PropertyData<FSoftObjectPath>
     {
         [JsonProperty]
         public uint ID = 0;
@@ -85,8 +102,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = reader.ReadFName();
-            ID = reader.ReadUInt32();
+            Value = new FSoftObjectPath(reader.ReadFName(), reader.ReadFString());
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -96,9 +112,10 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(Value);
-            writer.Write(ID);
-            return sizeof(int) * 3;
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(Value.AssetPathName);
+            writer.Write(Value.SubPathString);
+            return (int)writer.BaseStream.Position - here;
         }
 
         public override string ToString()
@@ -108,17 +125,10 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void FromString(string[] d, UAsset asset)
         {
-            FName output = FName.FromString(asset, d[0]);
-            Value = output;
+            FName one = FName.FromString(asset, d[0]);
+            FString two = string.IsNullOrEmpty(d[1]) ? null : FString.FromString(d[1]);
 
-            if (uint.TryParse(d[1], out uint res2))
-            {
-                ID = res2;
-            }
-            else
-            {
-                ID = 0;
-            }
+            Value = new FSoftObjectPath(one, two);
         }
     }
 }

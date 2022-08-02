@@ -154,6 +154,15 @@
     <EmbeddedResource Include="TestAssets\TestManyAssets\CodeVein\SK_Inner_Female1.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="TestAssets\TestManyAssets\StarlitSeason\CharacterCostume_chr0001_DataTable.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestAssets\TestManyAssets\StarlitSeason\CharacterCostume_chr0001_DataTable.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestAssets\TestManyAssets\VERSIONED\Assault_M1A1Thompson_WW2_DrumSuppressor.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

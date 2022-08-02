@@ -1,33 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI.PropertyTypes.Structs.Movies
+namespace UAssetAPI.StructTypes
 {
-    /// <summary>
-    /// Information about a single segment of an evaluation track
-    /// </summary>
-    public class MovieSceneSegmentPropertyData : PropertyData
+
+    public class MovieSceneSegmentPropertyData : PropertyData<FMovieSceneSegment>
     {
-        /// <summary>
-        /// The segment's range
-        /// </summary>
-        public Range<float> Range;
-
-        public MovieSceneSegmentIdentifierPropertyData ID;
-
-        /// <summary>
-        /// Whether this segment has been generated yet or not
-        /// </summary>
-        public bool bAllowEmpty;
-
-        /// <summary>
-        /// Array of implementations that reside at the segment's range
-        /// </summary>
-        public StructPropertyData[] Impls;
-
         public MovieSceneSegmentPropertyData(FName name) : base(name)
         {
 
@@ -42,42 +22,37 @@ namespace UAssetAPI.PropertyTypes.Structs.Movies
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        // Note: FFrameNumber is serialized as a single int32
-        // TODO: doesn't seem to really match how these are actually serialized, double-check serialization
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
                 PropertyGuid = reader.ReadPropertyGuid();
             }
+            Value = new FMovieSceneSegment();
 
-            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
-            {
-                Range = new Range<float>(reader.ReadSingle(), reader.ReadSingle());
-            }
-            else
-            {
-                Range = new Range<float>(reader.ReadInt32(), reader.ReadInt32());
-            }
+            Value.Range = new FFrameNumberRange(reader);
+            Value.ID = new FMovieSceneSegmentIdentifier(reader.ReadInt32());
+            Value.bAllowEmpty = reader.ReadInt32() != 0;
+            int length = reader.ReadInt32();
 
-            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() >= FSequencerObjectVersion.EvaluationTree)
-            {
-                ID = new MovieSceneSegmentIdentifierPropertyData();
-                ID.Offset = reader.BaseStream.Position;
-                ID.Read(reader, false, 0);
 
-                bAllowEmpty = reader.ReadBoolean();
+            List<PropertyData>[] items = new List<PropertyData>[length];
+            for (int i = 0; i < length; i++) {
+                List<PropertyData> resultingList = new List<PropertyData>();
+                PropertyData data = null;
+                while ((data = MainSerializer.Read(reader, true)) != null) {
+                    resultingList.Add(data);
+                }
+                items[i] = resultingList;
             }
+            Value.Impls = items;
 
-            int numStructs = reader.ReadInt32();
-            Impls = new StructPropertyData[numStructs];
-            for (int i = 0; i < numStructs; i++)
-            {
-                Impls[i] = new StructPropertyData(FName.DefineDummy(reader.Asset, "Impls"));
-                Impls[i].Offset = reader.BaseStream.Position;
-                Impls[i].StructType = FName.DefineDummy(reader.Asset, "SectionEvaluationData");
-                Impls[i].Read(reader, false, 1);
-            }
+
+            //Value.Impls = new StructPropertyData[length];
+            //for (int i = 0; i< length;i++) {
+            //    Value.Impls[i] = new StructPropertyData(new FName("Impls"), new FName("SectionEvaluationData"));
+            //    Value.Impls[i].Read(reader, false, 1);
+            //}
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -87,44 +62,61 @@ namespace UAssetAPI.PropertyTypes.Structs.Movies
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            int res = 0;
-            if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
-            {
-                writer.Write((float)Range.LowerBound);
-                writer.Write((float)Range.UpperBound);
-                res += sizeof(float) * 2;
-            }
-            else
-            {
-                writer.Write((int)Range.LowerBound);
-                writer.Write((int)Range.UpperBound);
-                res += sizeof(int) * 2;
-            }
+            int here = (int)writer.BaseStream.Position;
+            Value.Range.Write(writer);
+            writer.Write(Value.ID.IdentifierIndex);
+            writer.Write(Value.bAllowEmpty ? 1 : 0);
+            for (int i = 0; i < Value.Impls.Length; i++) {
 
-            if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() >= FSequencerObjectVersion.EvaluationTree)
-            {
-                ID.Write(writer, false);
 
-                writer.Write(bAllowEmpty);
+                if (Value.Impls[i] != null) {
+                    foreach (var t in Value.Impls[i]) {
+                        MainSerializer.Write(t, writer, true);
+                    }
+                }
+                writer.Write(FName.FromString(writer.Asset, "None"));
+                //Value.Impls[i].Write(writer, false);
             }
 
-            writer.Write(Impls.Length);
-            for (int i = 0; i < Impls.Length; i++)
-            {
-                Impls[i].Write(writer, false);
-            }
+            return (int)writer.BaseStream.Position - here;
+        }
+    }
 
-            return res;
+    public class MovieSceneSegmentIdentifierPropertyData : PropertyData<FMovieSceneSegmentIdentifier>
+    {
+        public MovieSceneSegmentIdentifierPropertyData(FName name) : base(name) {
+
         }
 
-        public override void FromString(string[] d, UAsset asset)
+        public MovieSceneSegmentIdentifierPropertyData() {
+
+        }
+
+        private static readonly FString CurrentPropertyType = new FString("MovieSceneSegmentIdentifier");
+        public override bool HasCustomStructSerialization { get { return true; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
-            Range = new Range<float>(float.Parse(d[0]), float.Parse(d[1]));
-            ID = new MovieSceneSegmentIdentifierPropertyData()
+            if (includeHeader)
             {
-                Value = int.Parse(d[2])
-            };
-            bAllowEmpty = d[3].ToLowerInvariant() == "true" || d[3] == "1";
+                PropertyGuid = reader.ReadPropertyGuid();
+            }
+
+            Value = new FMovieSceneSegmentIdentifier(reader.ReadInt32());
+        }
+
+        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        {
+            if (includeHeader)
+            {
+                writer.WritePropertyGuid(PropertyGuid);
+            }
+
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(Value.IdentifierIndex);
+
+            return (int)writer.BaseStream.Position - here;
         }
     }
 }
