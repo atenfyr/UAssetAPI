@@ -336,6 +336,59 @@ namespace UAssetAPI
         [Introduced(UE4Version.VER_UE4_CORRECT_LICENSEE_FLAG)]
         RemoveLandscapeWaterInfo,
 
+        // CHANGES BEYOND HERE ARE UE5 ONLY //
+
+        /// <summary>Added the weighted value property type to store the cloths weight maps' low/high ranges</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        ChaosClothAddWeightedValue,
+
+        /// <summary>Added the Long Range Attachment stiffness weight map</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        ChaosClothAddTetherStiffnessWeightMap,
+
+        /// <summary>Fix corrupted LOD transition maps</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        ChaosClothFixLODTransitionMaps,
+
+        /// <summary>Enable a few more weight maps to better art direct the cloth simulation</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        ChaosClothAddTetherScaleAndDragLiftWeightMaps,
+
+        /// <summary>Enable material (edge, bending, and area stiffness) weight maps</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        ChaosClothAddMaterialWeightMaps,
+
+        /// <summary>Added bShowCurve for movie scene float channel serialization</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        SerializeFloatChannelShowCurve,
+
+        /// <summary>Minimize slack waste by using a single array for grass data</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        LandscapeGrassSingleArray,
+
+        /// <summary>Add loop counters to sequencer's compiled sub-sequence data</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        AddedSubSequenceEntryWarpCounter,
+
+        /// <summary>Water plugin is now component-based rather than actor based</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        WaterBodyComponentRefactor,
+
+        /// <summary>Cooked BPGC storing editor-only asset tags</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        BPGCCookedEditorTags,
+
+        /// <summary>Terrain layer weights are no longer considered material parameters</summary>
+        [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        TerrainLayerWeightsAreNotParameters,
+
+        /// <summary>
+        /// Anim Dynamics Node Gravity Override vector is now defined in world space, not simulation space. 
+        /// Legacy behavior can be maintained with a flag, which is set false by default for new nodes, 
+        /// true for nodes predating this change.
+        /// </summary>
+        GravityOverrideDefinedInWorldSpace,
+
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(UE4Version.VER_UE4_AUTOMATIC_VERSION)]
@@ -1095,7 +1148,7 @@ namespace UAssetAPI
         ModifyLinearKeysForOldInterp,
 
         /// <summary>Full Manual serialization of float channel</summary>
-        [Introduced(UE4Version.VER_UE4_ADDED_PACKAGE_OWNER)]
+        [Introduced(UE4Version.VER_UE4_SKINWEIGHT_PROFILE_DATA_LAYOUT_CHANGES)]
         SerializeFloatChannelCompletely,
 
         /// <summary>Set ContinuouslyRespawn to false by default, added FMovieSceneSpawnable::bNetAddressableName</summary>

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Specialized;
 using System.Linq;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Structs;
@@ -8,7 +7,7 @@ using UAssetAPI.UnrealTypes;
 namespace UAssetAPI.PropertyTypes.Objects
 {
     /// <summary>
-    /// Describes a map (<see cref="OrderedDictionary"/>).
+    /// Describes a map.
     /// </summary>
     public class MapPropertyData : PropertyData
     {
@@ -76,7 +75,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                         }
                     }
 
-                    if (strucType == null) strucType = FName.DefineDummy(reader.Asset, "Generic");
+                    if (strucType?.Value == null) strucType = FName.DefineDummy(reader.Asset, "Generic");
 
                     StructPropertyData data = new StructPropertyData(name, strucType);
                     data.Offset = reader.BaseStream.Position;

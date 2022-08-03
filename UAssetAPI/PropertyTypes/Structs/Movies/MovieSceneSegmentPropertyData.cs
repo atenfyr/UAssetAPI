@@ -34,12 +34,13 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.bAllowEmpty = reader.ReadInt32() != 0;
             int length = reader.ReadInt32();
 
-
             List<PropertyData>[] items = new List<PropertyData>[length];
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++)
+            {
                 List<PropertyData> resultingList = new List<PropertyData>();
                 PropertyData data = null;
-                while ((data = MainSerializer.Read(reader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, true)) != null)
+                {
                     resultingList.Add(data);
                 }
                 items[i] = resultingList;
@@ -65,11 +66,14 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Range.Write(writer);
             writer.Write(Value.ID.IdentifierIndex);
             writer.Write(Value.bAllowEmpty ? 1 : 0);
-            for (int i = 0; i < Value.Impls.Length; i++) {
 
-
-                if (Value.Impls[i] != null) {
-                    foreach (var t in Value.Impls[i]) {
+            writer.Write(Value.Impls.Length);
+            for (int i = 0; i < Value.Impls.Length; i++)
+            {
+                if (Value.Impls[i] != null)
+                {
+                    foreach (var t in Value.Impls[i])
+                    {
                         MainSerializer.Write(t, writer, true);
                     }
                 }

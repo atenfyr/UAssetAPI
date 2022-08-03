@@ -136,20 +136,21 @@ namespace UAssetAPI.PropertyTypes.Structs
 		public FMovieSceneTangentData Tangent; // 0x04(0x14)
 		public ERichCurveInterpMode InterpMode; // 0x18(0x01)
 		public ERichCurveTangentMode TangentMode; // 0x19(0x01)
-		public short PaddingByte; // 0x1a(0x01)
+
+		private static bool isClangWin64 = false;
 
 		public void Read(AssetBinaryReader reader)
 		{
 			Value = reader.ReadSingle();
+			Tangent = new FMovieSceneTangentData();
 			Tangent.ArriveTangent = reader.ReadSingle();
 			Tangent.LeaveTangent = reader.ReadSingle();
 			Tangent.ArriveTangentWeight = reader.ReadSingle();
 			Tangent.LeaveTangentWeight = reader.ReadSingle();
 			Tangent.TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-			Tangent.padding = reader.ReadBytes(3);
+			Tangent.padding = reader.ReadBytes(isClangWin64 ? 3 : 0);
 			InterpMode = (ERichCurveInterpMode)reader.ReadSByte();
 			TangentMode = (ERichCurveTangentMode)reader.ReadSByte();
-			PaddingByte = reader.ReadInt16();
 		}
 
 		public void Write(AssetBinaryWriter writer)
@@ -158,7 +159,6 @@ namespace UAssetAPI.PropertyTypes.Structs
 			Tangent.Write(writer);
 			writer.Write((sbyte)InterpMode);
 			writer.Write((sbyte)TangentMode);
-			writer.Write(PaddingByte);
 		}
 	}
 
@@ -174,6 +174,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
 		public void Write(AssetBinaryWriter writer)
 		{
+			if (padding == null) padding = new byte[0];
 			writer.Write(ArriveTangent);
 			writer.Write(LeaveTangent);
 			writer.Write(ArriveTangentWeight);

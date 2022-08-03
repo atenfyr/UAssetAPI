@@ -321,7 +321,7 @@ namespace UAssetAPI
             {
                 writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
             }
-            else if (property is RawStructPropertyData unknownProp2)
+            else if (property is RawStructPropertyData)
             {
                 writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
             }

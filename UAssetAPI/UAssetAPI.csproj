@@ -72,10 +72,11 @@
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneEvalTemplatePtrPropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneEvaluationFieldEntityTreePropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneEventParametersPropertyData.cs" />
+    <Compile Include="PropertyTypes\Structs\Movies\MovieSceneFloatValuePropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneFloatChannelPropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneFrameRangePropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneSegmentPropertyData.cs" />
-    <Compile Include="PropertyTypes\Structs\Movies\MovieSceneTrackIdentifierPropertyData .cs" />
+    <Compile Include="PropertyTypes\Structs\Movies\MovieSceneTrackIdentifierPropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\RawStructPropertyData.cs" />
     <Compile Include="UnrealTypes\FFieldPath.cs" />
     <Compile Include="FieldTypes\EArrayDim.cs" />

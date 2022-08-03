@@ -20,13 +20,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public MovieSceneFloatChannelPropertyData()
         {
-            Value = new FMovieSceneFloatChannel();
-        }
-
-        public MovieSceneFloatChannelPropertyData(FName name, int duplindex) : base(name)
-        {
-            Value = new FMovieSceneFloatChannel();
-            DuplicationIndex = duplindex;
+            
         }
 
         private static readonly FString CurrentPropertyType = new FString("MovieSceneFloatChannel");
@@ -39,6 +33,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             {
                 PropertyGuid = reader.ReadPropertyGuid();
             }
+
             Value = new FMovieSceneFloatChannel();
 
             Value.PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadSByte();
@@ -48,7 +43,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             TimesLength = reader.ReadInt32();
 
             Value.Times = new FFrameNumber[TimesLength];
-            for ( int j=0; j<TimesLength; j++) {
+            for (int j = 0; j < TimesLength; j++)
+            {
                 Value.Times[j] = new FFrameNumber(reader.ReadInt32());
             }
 
@@ -76,6 +72,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
 
             int here = (int)writer.BaseStream.Position;
+
             writer.Write((sbyte)Value.PreInfinityExtrap);
             writer.Write((sbyte)Value.PostInfinityExtrap);
 

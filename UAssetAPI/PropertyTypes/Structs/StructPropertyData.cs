@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -66,11 +64,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
+            RegistryEntry targetEntry = null;
+            string structTypeVal = StructType?.Value?.Value;
+            if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
-            if (StructType.Value.Value == "RichCurveKey" && reader.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
-            if (StructType.Value.Value == "MovieSceneTrackIdentifier" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
+            if (structTypeVal == "RichCurveKey" && reader.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneTrackIdentifier" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneFloatChannel" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
 
             if (leng1 == 0)
             {
@@ -119,11 +120,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            MainSerializer.PropertyTypeRegistry.TryGetValue(StructType.Value.Value, out RegistryEntry targetEntry);
+            RegistryEntry targetEntry = null;
+            string structTypeVal = StructType?.Value?.Value;
+            if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
 
-            if (StructType.Value.Value == "RichCurveKey" && writer.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
-            if (StructType.Value.Value == "MovieSceneTrackIdentifier" && writer.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
+            if (structTypeVal == "RichCurveKey" && writer.Asset.EngineVersion < UE4Version.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneTrackIdentifier" && writer.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneFloatChannel" && writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
 
             if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
             if (Value.Count == 0 && !SerializeNone) return 0;
