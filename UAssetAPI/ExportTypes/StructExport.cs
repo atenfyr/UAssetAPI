@@ -6,7 +6,6 @@ using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
-using System.Runtime.Remoting.Messaging;
 
 namespace UAssetAPI.ExportTypes
 {
