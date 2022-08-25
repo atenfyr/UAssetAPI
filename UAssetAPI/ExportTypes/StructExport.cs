@@ -70,11 +70,19 @@ namespace UAssetAPI.ExportTypes
 
             SuperStruct = new FPackageIndex(reader.ReadInt32());
 
-            int numIndexEntries = reader.ReadInt32();
-            Children = new FPackageIndex[numIndexEntries];
-            for (int i = 0; i < numIndexEntries; i++)
+            if (Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
-                Children[i] = new FPackageIndex(reader.ReadInt32());
+                var firstChild = new FPackageIndex(reader.ReadInt32());
+                Children = firstChild.IsNull() ? Array.Empty<FPackageIndex>() : new[] { firstChild };
+            }
+            else
+            {
+                int numIndexEntries = reader.ReadInt32();
+                Children = new FPackageIndex[numIndexEntries];
+                for (int i = 0; i < numIndexEntries; i++)
+                {
+                    Children[i] = new FPackageIndex(reader.ReadInt32());
+                }
             }
 
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
@@ -130,10 +138,24 @@ namespace UAssetAPI.ExportTypes
 
             writer.Write(SuperStruct.Index);
 
-            writer.Write(Children.Length);
-            for (int i = 0; i < Children.Length; i++)
+            if (Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
-                writer.Write(Children[i].Index);
+                if (Children.Length == 0) 
+                {
+                    writer.Write(0);
+                }
+                else
+                {
+                    writer.Write(Children[0].Index);
+                }
+            }
+            else
+            {
+                writer.Write(Children.Length);
+                for (int i = 0; i < Children.Length; i++)
+                {
+                    writer.Write(Children[i].Index);
+                }
             }
 
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
