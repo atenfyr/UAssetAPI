@@ -1717,6 +1717,61 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Serializes an object as JSON.
+        /// </summary>
+        /// <param name="value">The object to serialize as JSON.</param>
+        /// <param name="jsonFormatting">The formatting to use for the returned JSON string.</param>
+        /// <returns>A serialized JSON string that represents the object.</returns>
+        public string SerializeJsonObject(object value, Formatting jsonFormatting = Formatting.None)
+        {
+            return JsonConvert.SerializeObject(value, jsonFormatting, jsonSettings);
+        }
+
+        /// <summary>
+        /// Deserializes an object from JSON.
+        /// </summary>
+        /// <param name="json">A serialized JSON string to parse.</param>
+        public object DeserializeJsonObject(string json)
+        {
+            Dictionary<FName, string> toBeFilled = new Dictionary<FName, string>();
+            object res = JsonConvert.DeserializeObject(json, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                NullValueHandling = NullValueHandling.Include,
+                FloatParseHandling = FloatParseHandling.Double,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new UAssetContractResolver(toBeFilled),
+                Converters = new List<JsonConverter>()
+                {
+                    new FSignedZeroJsonConverter(),
+                    new FNameJsonConverter(null),
+                    new FStringTableJsonConverter(),
+                    new FStringJsonConverter(),
+                    new FPackageIndexJsonConverter(),
+                    new StringEnumConverter()
+                }
+            });
+
+            foreach (KeyValuePair<FName, string> entry in toBeFilled)
+            {
+                entry.Key.Asset = this;
+                if (entry.Value == string.Empty)
+                {
+                    entry.Key.DummyValue = new FString(entry.Value);
+                }
+                else
+                {
+                    var dummy = FName.FromString(this, entry.Value);
+                    entry.Key.Value = dummy.Value;
+                    entry.Key.Number = dummy.Number;
+                }
+            }
+            toBeFilled.Clear();
+
+            return res;
+        }
+
+        /// <summary>
         /// Reads an asset from serialized JSON and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
         /// <param name="json">A serialized JSON string to parse.</param>

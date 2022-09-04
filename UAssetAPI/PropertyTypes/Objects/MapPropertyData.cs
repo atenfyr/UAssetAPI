@@ -67,11 +67,11 @@ namespace UAssetAPI.PropertyTypes.Objects
                     {
                         if (isKey)
                         {
-                            strucType = new FName(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item1);
+                            strucType = FName.DefineDummy(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item1);
                         }
                         else
                         {
-                            strucType = new FName(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item2);
+                            strucType = FName.DefineDummy(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item2);
                         }
                     }
 
