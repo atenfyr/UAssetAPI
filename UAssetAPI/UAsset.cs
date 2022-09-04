@@ -606,7 +606,9 @@ namespace UAssetAPI
         public FString FolderName;
 
         /// <summary>
-        /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
+        /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct.
+        /// <para />
+        /// To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
         /// </summary>
         [JsonIgnore]
         public Dictionary<string, Tuple<FString, FString>> MapStructTypeOverride = new Dictionary<string, Tuple<FString, FString>>()
@@ -622,7 +624,17 @@ namespace UAssetAPI
             { "TrackSignatureToTrackIdentifier", new Tuple<FString, FString>(new FString("Guid"), new FString("MovieSceneTrackIdentifier"))},
             { "ItemsToRefund", new Tuple<FString, FString>(new FString("Guid"), null) },
             { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) }
+        };
 
+        /// <summary>
+        /// IN ENGINE VERSIONS BEFORE <see cref="UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO"/>:
+        /// <para />
+        /// In ArrayProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps ArrayProperty names to the type of the structs within them.
+        /// </summary>
+        [JsonIgnore]
+        public Dictionary<string, FString> ArrayStructTypeOverride = new Dictionary<string, FString>()
+        {
+            { "Keys", new FString("RichCurveKey") }
         };
 
         /// <summary>

@@ -78,6 +78,11 @@ namespace UAssetAPI.PropertyTypes.Objects
                     structGUID = new Guid(reader.ReadBytes(16));
                     reader.ReadPropertyGuid();
                 }
+                else
+                {
+                    // override using ArrayStructTypeOverride if applicable
+                    if (reader.Asset.ArrayStructTypeOverride.ContainsKey(this.Name.Value.Value)) fullType = FName.DefineDummy(reader.Asset, reader.Asset.ArrayStructTypeOverride[this.Name.Value.Value]);
+                }
 
                 if (numEntries == 0)
                 {
