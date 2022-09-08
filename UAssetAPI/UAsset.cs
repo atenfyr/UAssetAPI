@@ -623,7 +623,8 @@ namespace UAssetAPI
             { "Hierarchy", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
             { "TrackSignatureToTrackIdentifier", new Tuple<FString, FString>(new FString("Guid"), new FString("MovieSceneTrackIdentifier"))},
             { "ItemsToRefund", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) }
+            { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) },
+            { "RainChanceMinMaxPerWeatherState", new Tuple<FString, FString>(null, new FString("FloatRange")) }
         };
 
         /// <summary>
