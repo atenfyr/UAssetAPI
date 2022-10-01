@@ -52,16 +52,15 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override void FromString(string[] d, UAsset asset)
         {
-            float.TryParse(d[0], out float Pitch);
-            float.TryParse(d[1], out float Yaw);
-            float.TryParse(d[2], out float Roll);
+            float.TryParse(d[0], out float Roll);
+            float.TryParse(d[1], out float Pitch);
+            float.TryParse(d[2], out float Yaw);
             Value = new FRotator(Pitch, Yaw, Roll);
         }
 
         public override string ToString()
         {
-            return "(" + Value.Pitch + ", " + Value.Yaw + ", " + Value.Roll + ")";
-
+            return "(" + Value.Roll + ", " + Value.Pitch + ", " + Value.Yaw + ")";
         }
     }
 }
