@@ -1160,7 +1160,7 @@ namespace UAssetAPI
                                         }
                                     }
                                 }
-                                else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType))
+                                else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || exportClassType == "ClassProperty")
                                 {
                                     Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
                                     Exports[i].Read(reader, (int)nextStarting);
