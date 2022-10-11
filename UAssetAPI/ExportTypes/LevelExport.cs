@@ -24,7 +24,7 @@ namespace UAssetAPI.ExportTypes
 
     public class LevelExport : NormalExport
     {
-        public List<int> IndexData;
+        public List<FPackageIndex> Actors;
         public NamespacedString LevelType;
         public ulong FlagsProbably;
         public List<int> MiscCategoryData;
@@ -48,12 +48,12 @@ namespace UAssetAPI.ExportTypes
             base.Read(reader, nextStarting);
 
             reader.ReadInt32();
+
             int numIndexEntries = reader.ReadInt32();
 
-            IndexData = new List<int>();
-            for (int i = 0; i < numIndexEntries; i++)
-            {
-                IndexData.Add(reader.ReadInt32());
+            Actors = new List<FPackageIndex>();
+            for (int i = 0; i < numIndexEntries; i++) {
+                Actors.Add(reader.XFERPTR());
             }
 
             var nms = reader.ReadFString();
@@ -78,10 +78,10 @@ namespace UAssetAPI.ExportTypes
             base.Write(writer);
 
             writer.Write((int)0);
-            writer.Write(IndexData.Count);
-            for (int i = 0; i < IndexData.Count; i++)
+            writer.Write(Actors.Count);
+            for (int i = 0; i < Actors.Count; i++)
             {
-                writer.Write(IndexData[i]);
+                writer.XFER_OBJECT_POINTER(Actors[i]);
             }
 
             writer.Write(LevelType.Namespace);
