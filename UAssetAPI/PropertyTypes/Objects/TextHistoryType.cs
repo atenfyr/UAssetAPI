@@ -15,6 +15,8 @@
         AsDateTime,
         Transform,
         StringTableEntry,
-        TextGenerator
+        TextGenerator,
+
+        RawText // Uncertain, Back 4 Blood specific serialization
     }
 }

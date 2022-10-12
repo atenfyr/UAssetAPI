@@ -107,8 +107,11 @@ namespace UAssetAPI.PropertyTypes.Objects
                         TableId = reader.ReadFName();
                         Value = reader.ReadFString();
                         break;
+                    case TextHistoryType.RawText:
+                        Value = reader.ReadFString();
+                        break;
                     default:
-                        throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString());
+                        throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString() + " @ " + reader.BaseStream.Position);
                 }
             }
         }
@@ -165,6 +168,9 @@ namespace UAssetAPI.PropertyTypes.Objects
                         break;
                     case TextHistoryType.StringTableEntry:
                         writer.Write(TableId);
+                        writer.Write(Value);
+                        break;
+                    case TextHistoryType.RawText:
                         writer.Write(Value);
                         break;
                     default:
