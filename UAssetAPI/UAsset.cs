@@ -694,6 +694,10 @@ namespace UAssetAPI
         [JsonProperty]
         internal uint CompressionFlags;
 
+        /// <summary>List of additional packages that are needed to be cooked for this package. No longer used</summary>
+        [JsonProperty]
+        internal List<FString> AdditionalPackagesToCook;
+
         /// <summary>Location into the file on disk for the asset registry tag data</summary>
         internal int AssetRegistryDataOffset;
 
@@ -872,8 +876,12 @@ namespace UAssetAPI
 
             PackageSource = reader.ReadUInt32();
 
-            int numAdditionalPackagesToCook = reader.ReadInt32(); // unused
-            if (numAdditionalPackagesToCook > 0) throw new FormatException("Asset has AdditionalPackagesToCook and is likely too old to be parsed");
+            AdditionalPackagesToCook = new List<FString>();
+            int numAdditionalPackagesToCook = reader.ReadInt32();
+            for (int i = 0; i < numAdditionalPackagesToCook; i++)
+            {
+                AdditionalPackagesToCook.Add(reader.ReadFString());
+            }
 
             if (LegacyFileVersion > -7)
             {
@@ -1293,7 +1301,11 @@ namespace UAssetAPI
             writer.Write(CompressionFlags);
             writer.Write((int)0); // numCompressedChunks
             writer.Write(PackageSource);
-            writer.Write((int)0); // numAdditionalPackagesToCook
+            writer.Write(AdditionalPackagesToCook.Count);
+            for (int i = 0; i < AdditionalPackagesToCook.Count; i++)
+            {
+                writer.Write(AdditionalPackagesToCook[i]);
+            }
 
             if (LegacyFileVersion > -7)
             {
