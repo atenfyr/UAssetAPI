@@ -555,7 +555,7 @@ namespace UAssetAPI
         /// <summary>
         /// Uncertain
         /// </summary>
-        public List<int> AssetRegistryData;
+        public byte[] AssetRegistryData;
 
         /// <summary>
         /// Tile information used by WorldComposition.
@@ -1045,17 +1045,24 @@ namespace UAssetAPI
             }
 
             // AssetRegistryData
-            AssetRegistryData = new List<int>();
+            AssetRegistryData = new byte[0];
             if (AssetRegistryDataOffset > 0)
             {
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
+                /*
                 int numAssets = reader.ReadInt32();
-#pragma warning disable CS0162 // Unreachable code detected
                 for (int i = 0; i < numAssets; i++)
                 {
                     throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
                 }
-#pragma warning restore CS0162 // Unreachable code detected
+                */
+
+                // For now: read binary data until next offset
+                int nextOffset = this.WorldTileInfoDataOffset;
+                if (this.UseSeparateBulkDataFiles && nextOffset <= 0) nextOffset = this.PreloadDependencyOffset;
+                if (SectionSixOffset > 0 && Exports.Count > 0 && nextOffset <= 0) nextOffset = (int)Exports[0].SerialOffset;
+                if (nextOffset <= 0) nextOffset = (int)this.BulkDataStartOffset;
+                AssetRegistryData = reader.ReadBytes(nextOffset - AssetRegistryDataOffset);
             }
             else
             {
@@ -1491,13 +1498,14 @@ namespace UAssetAPI
                 if (this.doWeHaveAssetRegistryData)
                 {
                     this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
-                    writer.Write(this.AssetRegistryData.Count);
-#pragma warning disable CS0162 // Unreachable code detected
+
+                    /*writer.Write(this.AssetRegistryData.Count);
                     for (int i = 0; i < this.AssetRegistryData.Count; i++)
                     {
                         throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
-                    }
-#pragma warning restore CS0162 // Unreachable code detected
+                    }*/
+
+                    writer.Write(AssetRegistryData);
                 }
                 else
                 {
