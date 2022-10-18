@@ -933,15 +933,15 @@ namespace UAssetAPI
         TrailNodeBlendVariableNameChange,
 
         /// <summary>Make sure the Blueprint Replicated Property Conditions are actually serialized properly.</summary>
-        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        [Introduced(UE4Version.VER_UE4_FILLER_22)]
         PropertiesSerializeRepCondition,
 
         /// <summary>DepthOfFieldFocalDistance at 0 now disables DOF instead of DepthOfFieldFstop at 0.</summary>
-        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        [Introduced(UE4Version.VER_UE4_FILLER_22)]
         FocalDistanceDisablesDOF,
 
         /// <summary>Removed versioning, but version entry must still exist to keep assets saved with this version loadable</summary>
-        [Introduced(UE4Version.VER_UE4_FIX_WIDE_STRING_CRC)]
+        [Introduced(UE4Version.VER_UE4_FILLER_22)]
         Unused_SoundClass2DReverbSend,
 
         /// <summary>Groom asset version</summary>

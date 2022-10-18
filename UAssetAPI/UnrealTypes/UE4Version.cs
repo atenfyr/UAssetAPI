@@ -695,7 +695,7 @@
         /// <summary>4.22</summary>
         VER_UE4_22 = 517,
         /// <summary>4.23</summary>
-        VER_UE4_23 = 517 + 1, // actually 517; set to 518 to ensure 4.22 doesn't have FEditorObjectVersion::CultureInvariantTextSerializationKeyStability
+        VER_UE4_23 = 517 + 1, // actually 517; set to 518 to ensure 4.22 doesn't have FEditorObjectVersion::CultureInvariantTextSerializationKeyStability, FReleaseObjectVersion::PropertiesSerializeRepCondition
         /// <summary>4.24</summary>
         VER_UE4_24 = 518 + 1,
         /// <summary>4.25</summary>
