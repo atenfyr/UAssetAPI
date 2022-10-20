@@ -855,19 +855,29 @@ namespace UAssetAPI
             FileVersionLicenseeUE4 = reader.ReadInt32();
 
             // Custom versions container
-            int numCustomVersions = 0;
             if (LegacyFileVersion <= -2)
             {
                 // TODO: support for enum-based custom versions
-                if (CustomVersionContainer == null) CustomVersionContainer = new List<CustomVersion>();
-
-                numCustomVersions = reader.ReadInt32();
+                var newCustomVersionContainer = new List<CustomVersion>();
+                var existingCustomVersions = new HashSet<Guid>();
+                int numCustomVersions = reader.ReadInt32();
                 for (int i = 0; i < numCustomVersions; i++)
                 {
                     var customVersionID = new Guid(reader.ReadBytes(16));
                     var customVersionNumber = reader.ReadInt32();
-                    CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                    newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                    existingCustomVersions.Add(customVersionID);
                 }
+
+                if (CustomVersionContainer != null)
+                {
+                    foreach (CustomVersion entry in CustomVersionContainer)
+                    {
+                        if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                    }
+                }
+
+                CustomVersionContainer = newCustomVersionContainer;
             }
 
             SectionSixOffset = reader.ReadInt32(); // 24
