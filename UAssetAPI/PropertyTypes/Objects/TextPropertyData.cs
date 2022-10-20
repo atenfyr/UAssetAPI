@@ -64,10 +64,10 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            if (reader.Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_FTEXT_HISTORY)
             {
                 CultureInvariantString = reader.ReadFString();
-                if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
+                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
                 {
                     Namespace = reader.ReadFString();
                     Value = reader.ReadFString();
@@ -81,7 +81,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             Flags = (ETextFlag)reader.ReadUInt32();
 
-            if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_FTEXT_HISTORY)
             {
                 HistoryType = (TextHistoryType)reader.ReadSByte();
 
@@ -125,10 +125,10 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             int here = (int)writer.BaseStream.Position;
 
-            if (writer.Asset.EngineVersion < UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (writer.Asset.ObjectVersion < ObjectVersion.VER_UE4_FTEXT_HISTORY)
             {
                 writer.Write(CultureInvariantString);
-                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_NAMESPACE_AND_KEY_DATA_TO_FTEXT)
                 {
                     writer.Write(Namespace);
                     writer.Write(Value);
@@ -141,7 +141,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             writer.Write((uint)Flags);
 
-            if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_FTEXT_HISTORY)
+            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_FTEXT_HISTORY)
             {
                 writer.Write((sbyte)HistoryType);
 

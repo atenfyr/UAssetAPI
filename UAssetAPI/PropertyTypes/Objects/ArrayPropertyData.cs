@@ -55,7 +55,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 FName fullType = FName.DefineDummy(reader.Asset, "Generic");
                 Guid structGUID = new Guid();
 
-                if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
+                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
                 {
                     name = reader.ReadFName();
                     if (name.Value.Value.Equals("None"))
@@ -144,15 +144,15 @@ namespace UAssetAPI.PropertyTypes.Objects
                 FName fullType = DummyStruct.StructType;
 
                 int lengthLoc = -1;
-                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
                 {
                     writer.Write(DummyStruct.Name);
                     writer.Write(new FName(writer.Asset, "StructProperty"));
                     lengthLoc = (int)writer.BaseStream.Position;
                     writer.Write((long)0);
                     writer.Write(fullType);
-                    if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(DummyStruct.StructGUID.ToByteArray());
-                    if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG) writer.Write((byte)0);
+                    if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(DummyStruct.StructGUID.ToByteArray());
+                    if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG) writer.Write((byte)0);
                 }
 
                 for (int i = 0; i < Value.Length; i++)
@@ -162,7 +162,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     Value[i].Write(writer, false);
                 }
 
-                if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO)
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
                 {
                     int fullLen = (int)writer.BaseStream.Position - lengthLoc;
                     int newLoc = (int)writer.BaseStream.Position;

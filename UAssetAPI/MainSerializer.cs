@@ -228,7 +228,7 @@ namespace UAssetAPI
             return result;
         }
 
-        private static readonly Regex allNonLetters = new Regex("[^a-zA-Z]", RegexOptions.Compiled);
+        internal static readonly Regex allNonLetters = new Regex("[^a-zA-Z]", RegexOptions.Compiled);
 
         /// <summary>
         /// Reads an FProperty into memory. Primarily used as a part of <see cref="StructExport"/> serialization.

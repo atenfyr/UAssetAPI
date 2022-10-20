@@ -73,7 +73,7 @@ namespace UAssetAPI
 
         public virtual Guid? ReadPropertyGuid()
         {
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 bool hasPropertyGuid = ReadBoolean();
                 if (hasPropertyGuid) return new Guid(ReadBytes(16));
@@ -107,7 +107,7 @@ namespace UAssetAPI
             FString str = this.ReadFString();
             hashes = 0;
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value))
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value))
             {
                 hashes = this.ReadUInt32();
             }
@@ -174,7 +174,7 @@ namespace UAssetAPI
 
         public KismetPropertyPointer XFER_PROP_POINTER()
         {
-            if (Asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            if (Asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
             {
                 int numEntries = this.ReadInt32();
                 FName[] allNames = new FName[numEntries];

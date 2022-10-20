@@ -5,7 +5,6 @@ using System.IO;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -106,7 +105,7 @@ namespace UAssetAPI.ExportTypes
             bool willParseRaw = true;
             try
             {
-                if (ParseBytecode && Asset.EngineVersion >= UE4Version.VER_UE4_16)
+                if (ParseBytecode && Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)
                 {
                     var tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)

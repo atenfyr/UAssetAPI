@@ -22,7 +22,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
 
         /// <summary>
         /// Pointer to the array inner property (FProperty*).
-        /// Only used in engine versions prior to <see cref="UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE"/>.
+        /// Only used in engine versions prior to <see cref="ObjectVersion.VER_UE4_CHANGE_SETARRAY_BYTECODE"/>.
         /// </summary>
         [JsonProperty]
         public FPackageIndex ArrayInnerProp;
@@ -44,7 +44,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            if (reader.Asset.EngineVersion >= UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE)
+            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_CHANGE_SETARRAY_BYTECODE)
             {
                 AssigningProperty = ExpressionSerializer.ReadExpression(reader);
             }
@@ -64,7 +64,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override int Write(AssetBinaryWriter writer)
         {
             int offset = 0;
-            if (writer.Asset.EngineVersion >= UE4Version.VER_UE4_CHANGE_SETARRAY_BYTECODE)
+            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_CHANGE_SETARRAY_BYTECODE)
             {
                 offset += ExpressionSerializer.WriteExpression(AssigningProperty, writer);
             }

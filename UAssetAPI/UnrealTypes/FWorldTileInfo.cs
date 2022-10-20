@@ -29,12 +29,12 @@ namespace UAssetAPI.UnrealTypes
             Reserved1 = new IntPointPropertyData(FName.DefineDummy(asset, "Reserved1"));
             Reserved1.Read(reader, false, 0, 0);
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 StreamingDistance = reader.ReadInt32();
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LAYER_ENABLE_DISTANCE_STREAMING)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LAYER_ENABLE_DISTANCE_STREAMING)
             {
                 DistanceStreamingEnabled = reader.ReadInt32() == 1;
             }
@@ -46,12 +46,12 @@ namespace UAssetAPI.UnrealTypes
             writer.Write(Reserved0);
             Reserved1.Write(writer, false);
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 writer.Write(StreamingDistance);
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LAYER_ENABLE_DISTANCE_STREAMING)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LAYER_ENABLE_DISTANCE_STREAMING)
             {
                 writer.Write(DistanceStreamingEnabled ? 1 : 0);
             }
@@ -167,13 +167,13 @@ namespace UAssetAPI.UnrealTypes
             Layer = new FWorldTileLayer();
             Layer.Read(reader, asset);
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 bHideInTileView = reader.ReadInt32() == 1;
                 ParentTilePackageName = reader.ReadFString();
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)
             {
                 int numEntries = reader.ReadInt32();
                 LODList = new FWorldTileLODInfo[numEntries];
@@ -184,7 +184,7 @@ namespace UAssetAPI.UnrealTypes
                 }
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_ZORDER)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_ZORDER)
             {
                 ZOrder = reader.ReadInt32();
             }
@@ -215,13 +215,13 @@ namespace UAssetAPI.UnrealTypes
             Bounds.Write(writer, false);
             Layer.Write(writer, asset);
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
                 writer.Write(bHideInTileView ? 1 : 0);
                 writer.Write(ParentTilePackageName);
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_LOD_LIST)
             {
                 writer.Write(LODList.Length);
                 for (int i = 0; i < LODList.Length; i++)
@@ -230,7 +230,7 @@ namespace UAssetAPI.UnrealTypes
                 }
             }
 
-            if (asset.EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO_ZORDER)
+            if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_ZORDER)
             {
                 writer.Write(ZOrder);
             }

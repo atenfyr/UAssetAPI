@@ -11,7 +11,7 @@ namespace UAssetAPI.Kismet.Bytecode
     [JsonObject(MemberSerialization.OptIn)]
     public class KismetPropertyPointer
     {
-        public static readonly UE4Version XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION = UE4Version.VER_UE4_ADDED_PACKAGE_OWNER;
+        public static readonly ObjectVersion XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION = ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER;
 
         /// <summary>
         /// The pointer serialized as an FPackageIndex. Used in versions older than <see cref="XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION"/>.

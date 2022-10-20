@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -27,7 +25,7 @@ namespace UAssetAPI.ExportTypes
 
         public void Read(AssetBinaryReader reader, UAsset asset)
         {
-            if (asset.EngineVersion < UE4Version.VER_UE4_TIGHTLY_PACKED_ENUMS)
+            if (asset.ObjectVersion < ObjectVersion.VER_UE4_TIGHTLY_PACKED_ENUMS)
             {
                 int numEntries = reader.ReadInt32();
                 for (int i = 0; i < numEntries; i++)
@@ -57,7 +55,7 @@ namespace UAssetAPI.ExportTypes
                 }
             }
 
-            if (asset.EngineVersion < UE4Version.VER_UE4_ENUM_CLASS_SUPPORT)
+            if (asset.ObjectVersion < ObjectVersion.VER_UE4_ENUM_CLASS_SUPPORT)
             {
                 bool bIsNamespace = reader.ReadInt32() == 1;
                 CppForm = bIsNamespace ? ECppForm.Namespaced : ECppForm.Regular;
@@ -71,7 +69,7 @@ namespace UAssetAPI.ExportTypes
         public void Write(AssetBinaryWriter writer, UAsset asset)
         {
             writer.Write(Names.Count);
-            if (asset.EngineVersion < UE4Version.VER_UE4_TIGHTLY_PACKED_ENUMS)
+            if (asset.ObjectVersion < ObjectVersion.VER_UE4_TIGHTLY_PACKED_ENUMS)
             {
                 var namesForSerialization = new Dictionary<long, FName>();
                 for (int i = 0; i < Names.Count; i++) namesForSerialization.Add(Names[i].Item2, Names[i].Item1);
@@ -97,7 +95,7 @@ namespace UAssetAPI.ExportTypes
                 }
             }
 
-            if (asset.EngineVersion < UE4Version.VER_UE4_ENUM_CLASS_SUPPORT)
+            if (asset.ObjectVersion < ObjectVersion.VER_UE4_ENUM_CLASS_SUPPORT)
             {
                 writer.Write(CppForm == ECppForm.Namespaced ? 1 : 0);
             }

@@ -1,7 +1,4 @@
-using System.Linq;
 using UAssetAPI.FieldTypes;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.ExportTypes
 {

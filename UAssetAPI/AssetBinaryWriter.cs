@@ -109,7 +109,7 @@ namespace UAssetAPI
 
         public virtual void WritePropertyGuid(Guid? guid)
         {
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 Write(guid != null);
                 if (guid != null) Write(((Guid)guid).ToByteArray());
@@ -156,7 +156,7 @@ namespace UAssetAPI
 
         public int XFER_PROP_POINTER(KismetPropertyPointer val)
         {
-            if (Asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            if (Asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
             {
                 this.Write(val.New.Path.Length);
                 for (int i = 0; i < val.New.Path.Length; i++)

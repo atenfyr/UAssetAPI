@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using UAssetAPI.JSON;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -107,7 +106,7 @@ namespace UAssetAPI.ExportTypes
 
             ClassFlags = (EClassFlags)reader.ReadUInt32();
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
             {
                 ClassFlags ^= EClassFlags.CLASS_NotPlaceable;
             }
@@ -118,7 +117,7 @@ namespace UAssetAPI.ExportTypes
 
             int numInterfaces = 0;
             long interfacesStart = 0;
-            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
                 interfacesStart = reader.BaseStream.Position;
                 numInterfaces = reader.ReadInt32();
@@ -129,7 +128,7 @@ namespace UAssetAPI.ExportTypes
             ClassGeneratedBy = new FPackageIndex(reader.ReadInt32());
 
             long currentOffset = reader.BaseStream.Position;
-            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
                 reader.BaseStream.Seek(interfacesStart, SeekOrigin.Begin);
             }
@@ -139,7 +138,7 @@ namespace UAssetAPI.ExportTypes
             {
                 Interfaces[i] = new SerializedInterfaceReference(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32() == 1);
             }
-            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
                 reader.BaseStream.Seek(currentOffset, SeekOrigin.Begin);
             }
@@ -148,7 +147,7 @@ namespace UAssetAPI.ExportTypes
 
             reader.ReadInt64(); // None
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADD_COOKED_TO_UCLASS)
             {
                 bCooked = reader.ReadInt32() == 1;
             }
@@ -170,7 +169,7 @@ namespace UAssetAPI.ExportTypes
             }
 
             EClassFlags serializingClassFlags = ClassFlags;
-            if (Asset.EngineVersion < UE4Version.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_CLASS_NOTPLACEABLE_ADDED)
             {
                 serializingClassFlags ^= EClassFlags.CLASS_NotPlaceable;
             }
@@ -179,7 +178,7 @@ namespace UAssetAPI.ExportTypes
             writer.Write(ClassWithin.Index);
             writer.Write(ClassConfigName);
 
-            if (Asset.EngineVersion < UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            if (Asset.ObjectVersion < ObjectVersion.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
                 SerializeInterfaces(writer);
             }
@@ -187,7 +186,7 @@ namespace UAssetAPI.ExportTypes
             // Linking procedure here; I don't think anything is really serialized during this
             writer.Write(ClassGeneratedBy.Index);
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING)
             {
                 SerializeInterfaces(writer);
             }
@@ -196,7 +195,7 @@ namespace UAssetAPI.ExportTypes
 
             writer.Write(new FName(writer.Asset, "None"));
 
-            if (Asset.EngineVersion >= UE4Version.VER_UE4_ADD_COOKED_TO_UCLASS)
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADD_COOKED_TO_UCLASS)
             {
                 writer.Write(bCooked ? 1 : 0);
             }

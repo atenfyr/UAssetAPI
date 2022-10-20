@@ -115,9 +115,80 @@ namespace UAssetAPI
         public bool UseSeparateBulkDataFiles = false;
 
         /// <summary>
-        /// The version of the Unreal Engine that will be used to parse this asset.
+        /// The object version of the Unreal Engine that will be used to parse this asset.
         /// </summary>
-        public UE4Version EngineVersion = UE4Version.UNKNOWN;
+        public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
+
+        /// <summary>
+        /// All the custom versions stored in the archive.
+        /// </summary>
+        public List<CustomVersion> CustomVersionContainer = null;
+
+        /// <summary>
+        /// Sets the version of the Unreal Engine to use in serialization.
+        /// </summary>
+        /// <param name="newVersion">The new version of the Unreal Engine to use in serialization.</param>
+        /// <exception cref="InvalidOperationException">Thrown when an invalid UE4Version is specified.</exception>
+        public void SetEngineVersion(UE4Version newVersion)
+        {
+            if (newVersion == UE4Version.UNKNOWN) return;
+            if (!Enum.TryParse(Enum.GetName(typeof(UE4Version), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
+            ObjectVersion = (ObjectVersion)(int)bridgeVer;
+            CustomVersionContainer = GetDefaultCustomVersionContainer(newVersion);
+        }
+
+        /// <summary>
+        /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
+        /// </summary>
+        /// <returns>The estimated retail version of the Unreal Engine.</returns>
+        public UE4Version GetEngineVersion()
+        {
+            // analyze all possible versions based off of the object version alone
+            List<UE4Version> allPossibleVersions = new List<UE4Version>();
+            int targetVer = (int)ObjectVersion;
+            while (allPossibleVersions.Count == 0 && targetVer > (int)ObjectVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)
+            {
+                allPossibleVersions = Enum.GetNames(typeof(UE4VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE4VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (UE4Version)Enum.Parse(typeof(UE4Version), str)).ToList();
+                targetVer -= 1;
+            }
+
+            if (allPossibleVersions.Count == 0) return UE4Version.UNKNOWN;
+            if (allPossibleVersions.Count == 1) return allPossibleVersions[0];
+
+            // multiple possible versions; use custom versions to eliminate some
+            UE4Version minIntroduced = UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE;
+            UE4Version maxIntroduced = UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
+            foreach (CustomVersion entry in CustomVersionContainer)
+            {
+                Type customVersionType = Type.GetType("UAssetAPI." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
+                if (customVersionType == null) continue;
+                UE4Version minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
+                UE4Version maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
+
+                if (minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
+                if (maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
+            }
+
+            List<UE4Version> finalPossibleVersions = new List<UE4Version>();
+            foreach (UE4Version entry in allPossibleVersions)
+            {
+                if (entry >= minIntroduced && entry < maxIntroduced) finalPossibleVersions.Add(entry);
+            }
+            finalPossibleVersions.Sort();
+
+            if (finalPossibleVersions.Count == 0) return allPossibleVersions[0]; // there must be a special set of custom versions; we'll just ignore our intuitions and go with the object version alone
+            if (finalPossibleVersions.Count >= 1) return finalPossibleVersions[0];
+            return UE4Version.UNKNOWN;
+        }
+
+        private UE4Version GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
+        {
+            var nm = Enum.GetName(customVersionType, val);
+            if (nm == null) return UE4Version.UNKNOWN;
+            var attributes = customVersionType.GetMember(nm)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
+            if (attributes == null || attributes.Length <= 0) return UE4Version.UNKNOWN;
+            return ((IntroducedAttribute)attributes[0]).IntroducedVersion;
+        }
 
         /// <summary>
         /// Checks whether or not this asset maintains binary equality when serialized.
@@ -365,16 +436,6 @@ namespace UAssetAPI
                 }
             }
 
-            // Try and guess the custom version based off the engine version
-            T[] allVals = (T[])Enum.GetValues(customVersionEnumType);
-            for (int i = allVals.Length - 1; i >= 0; i--)
-            {
-                T val = allVals[i];
-                var attributes = customVersionEnumType.GetMember(val.ToString())?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
-                if (attributes == null || attributes.Length <= 0) continue;
-                if (EngineVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return val;
-            }
-
             return (T)(object)-1;
         }
 
@@ -528,11 +589,6 @@ namespace UAssetAPI
         public int FileVersionLicenseeUE4;
 
         /// <summary>
-        /// All the custom versions stored in the archive.
-        /// </summary>
-        public List<CustomVersion> CustomVersionContainer = null;
-
-        /// <summary>
         /// Map of object imports. UAssetAPI used to call these "links."
         /// </summary>
         public List<Import> Imports;
@@ -628,7 +684,7 @@ namespace UAssetAPI
         };
 
         /// <summary>
-        /// IN ENGINE VERSIONS BEFORE <see cref="UE4Version.VER_UE4_INNER_ARRAY_TAG_INFO"/>:
+        /// IN ENGINE VERSIONS BEFORE <see cref="ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO"/>:
         /// <para />
         /// In ArrayProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps ArrayProperty names to the type of the structs within them.
         /// </summary>
@@ -770,7 +826,7 @@ namespace UAssetAPI
         /// Reads the initial portion of the asset (everything before the name map).
         /// </summary>
         /// <param name="reader"></param>
-        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         private void ReadHeader(AssetBinaryReader reader)
         {
@@ -784,16 +840,16 @@ namespace UAssetAPI
                 reader.ReadInt32(); // LegacyUE3Version for backwards-compatibility with UE3 games: always 864 in versioned assets, always 0 in unversioned assets
             }
 
-            UE4Version fileVersionUE4 = (UE4Version)reader.ReadInt32();
-            if (fileVersionUE4 > UE4Version.UNKNOWN)
+            ObjectVersion fileVersionUE4 = (ObjectVersion)reader.ReadInt32();
+            if (fileVersionUE4 > ObjectVersion.UNKNOWN)
             {
                 IsUnversioned = false;
-                EngineVersion = fileVersionUE4;
+                ObjectVersion = fileVersionUE4;
             }
             else
             {
                 IsUnversioned = true;
-                if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an engine version is manually specified");
+                if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an object version is manually specified");
             }
 
             FileVersionLicenseeUE4 = reader.ReadInt32();
@@ -819,7 +875,7 @@ namespace UAssetAPI
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
-            if (EngineVersion >= UE4Version.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {
                 GatherableTextDataCount = reader.ReadInt32();
                 GatherableTextDataOffset = reader.ReadInt32();
@@ -830,12 +886,12 @@ namespace UAssetAPI
             ImportCount = reader.ReadInt32(); // 65
             ImportOffset = reader.ReadInt32(); // 69 (haha funny)
             DependsOffset = reader.ReadInt32(); // 73
-            if (EngineVersion >= UE4Version.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
                 SoftPackageReferencesCount = reader.ReadInt32(); // 77
                 SoftPackageReferencesOffset = reader.ReadInt32(); // 81
             }
-            if (EngineVersion >= UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SEARCHABLE_NAMES)
             {
                 SearchableNamesOffset = reader.ReadInt32();
             }
@@ -852,7 +908,7 @@ namespace UAssetAPI
                 Generations.Add(new FGenerationInfo(genNumExports, genNumNames));
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_ENGINE_VERSION_OBJECT)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ENGINE_VERSION_OBJECT)
             {
                 RecordedEngineVersion = new FEngineVersion(reader);
             }
@@ -861,7 +917,7 @@ namespace UAssetAPI
                 RecordedEngineVersion = new FEngineVersion(4, 0, 0, reader.ReadUInt32(), FString.FromString(""));
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_PACKAGE_SUMMARY_HAS_COMPATIBLE_ENGINE_VERSION)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_PACKAGE_SUMMARY_HAS_COMPATIBLE_ENGINE_VERSION)
             {
                 RecordedCompatibleWithEngineVersion = new FEngineVersion(reader);
             }
@@ -892,12 +948,12 @@ namespace UAssetAPI
             AssetRegistryDataOffset = reader.ReadInt32();
             BulkDataStartOffset = reader.ReadInt64();
 
-            if (EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
             {
                 WorldTileInfoDataOffset = reader.ReadInt32();
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_CHANGED_CHUNKID_TO_BE_AN_ARRAY_OF_CHUNKIDS)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_CHANGED_CHUNKID_TO_BE_AN_ARRAY_OF_CHUNKIDS)
             {
                 int numChunkIDs = reader.ReadInt32();
                 ChunkIDs = new int[numChunkIDs];
@@ -906,13 +962,13 @@ namespace UAssetAPI
                     ChunkIDs[i] = reader.ReadInt32();
                 }
             }
-            else if (EngineVersion >= UE4Version.VER_UE4_ADDED_CHUNKID_TO_ASSETDATA_AND_UPACKAGE)
+            else if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_CHUNKID_TO_ASSETDATA_AND_UPACKAGE)
             {
                 ChunkIDs = new int[1];
                 ChunkIDs[0] = reader.ReadInt32();
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
             {
                 PreloadDependencyCount = reader.ReadInt32();
                 PreloadDependencyOffset = reader.ReadInt32();
@@ -925,7 +981,7 @@ namespace UAssetAPI
         /// <param name="reader">The input reader.</param>
         /// <param name="manualSkips">An array of export indexes to skip parsing. For most applications, this should be left blank.</param>
         /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
-        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
@@ -965,14 +1021,14 @@ namespace UAssetAPI
                     var newExport = new Export(this, new byte[0]);
                     newExport.ClassIndex = new FPackageIndex(reader.ReadInt32());
                     newExport.SuperIndex = new FPackageIndex(reader.ReadInt32());
-                    if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
+                    if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
                     {
                         newExport.TemplateIndex = new FPackageIndex(reader.ReadInt32());
                     }
                     newExport.OuterIndex = new FPackageIndex(reader.ReadInt32());
                     newExport.ObjectName = reader.ReadFName();
                     newExport.ObjectFlags = (EObjectFlags)reader.ReadUInt32();
-                    if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
+                    if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                     {
                         newExport.SerialSize = reader.ReadInt32();
                         newExport.SerialOffset = reader.ReadInt32();
@@ -987,15 +1043,15 @@ namespace UAssetAPI
                     newExport.bNotForServer = reader.ReadInt32() == 1;
                     newExport.PackageGuid = new Guid(reader.ReadBytes(16));
                     newExport.PackageFlags = (EPackageFlags)reader.ReadUInt32();
-                    if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
+                    if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
                         newExport.bNotAlwaysLoadedForEditorGame = reader.ReadInt32() == 1;
                     }
-                    if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+                    if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                     {
                         newExport.bIsAsset = reader.ReadInt32() == 1;
                     }
-                    if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+                    if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
                         newExport.FirstExportDependencyOffset = reader.ReadInt32();
                         newExport.SerializationBeforeSerializationDependenciesSize = reader.ReadInt32();
@@ -1233,7 +1289,7 @@ namespace UAssetAPI
             }
             else
             {
-                writer.Write((int)EngineVersion);
+                writer.Write((int)ObjectVersion);
             }
 
             writer.Write(FileVersionLicenseeUE4);
@@ -1260,7 +1316,7 @@ namespace UAssetAPI
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
-            if (EngineVersion >= UE4Version.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {
                 writer.Write(GatherableTextDataCount);
                 writer.Write(GatherableTextDataOffset);
@@ -1270,12 +1326,12 @@ namespace UAssetAPI
             writer.Write(ImportCount); // 65
             writer.Write(ImportOffset); // 69 (haha funny)
             writer.Write(DependsOffset); // 73
-            if (EngineVersion >= UE4Version.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
                 writer.Write(SoftPackageReferencesCount); // 77
                 writer.Write(SoftPackageReferencesOffset); // 81
             }
-            if (EngineVersion >= UE4Version.VER_UE4_ADDED_SEARCHABLE_NAMES)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SEARCHABLE_NAMES)
             {
                 writer.Write(SearchableNamesOffset);
             }
@@ -1291,7 +1347,7 @@ namespace UAssetAPI
                 writer.Write(Generations[i].NameCount);
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_ENGINE_VERSION_OBJECT)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_ENGINE_VERSION_OBJECT)
             {
                 RecordedEngineVersion.Write(writer);
             }
@@ -1300,7 +1356,7 @@ namespace UAssetAPI
                 writer.Write(RecordedEngineVersion.Changelist);
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_PACKAGE_SUMMARY_HAS_COMPATIBLE_ENGINE_VERSION)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_PACKAGE_SUMMARY_HAS_COMPATIBLE_ENGINE_VERSION)
             {
                 RecordedCompatibleWithEngineVersion.Write(writer);
             }
@@ -1322,12 +1378,12 @@ namespace UAssetAPI
             writer.Write(AssetRegistryDataOffset);
             writer.Write(BulkDataStartOffset);
 
-            if (EngineVersion >= UE4Version.VER_UE4_WORLD_LEVEL_INFO)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
             {
                 writer.Write(WorldTileInfoDataOffset);
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_CHANGED_CHUNKID_TO_BE_AN_ARRAY_OF_CHUNKIDS)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_CHANGED_CHUNKID_TO_BE_AN_ARRAY_OF_CHUNKIDS)
             {
                 writer.Write(ChunkIDs.Length);
                 for (int i = 0; i < ChunkIDs.Length; i++)
@@ -1335,12 +1391,12 @@ namespace UAssetAPI
                     writer.Write(ChunkIDs[i]);
                 }
             }
-            else if (EngineVersion >= UE4Version.VER_UE4_ADDED_CHUNKID_TO_ASSETDATA_AND_UPACKAGE)
+            else if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_CHUNKID_TO_ASSETDATA_AND_UPACKAGE)
             {
                 writer.Write(ChunkIDs[0]);
             }
 
-            if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+            if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
             {
                 writer.Write(PreloadDependencyCount);
                 writer.Write(PreloadDependencyOffset);
@@ -1372,7 +1428,7 @@ namespace UAssetAPI
                 {
                     writer.Write(nameMapIndexList[i]);
 
-                    if (EngineVersion >= UE4Version.VER_UE4_NAME_HASHES_SERIALIZED)
+                    if (ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED)
                     {
                         if (OverrideNameMapHashes != null && OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
                         {
@@ -1413,14 +1469,14 @@ namespace UAssetAPI
                         Export us = this.Exports[i];
                         writer.Write(us.ClassIndex.Index);
                         writer.Write(us.SuperIndex.Index);
-                        if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
                         {
                             writer.Write(us.TemplateIndex.Index);
                         }
                         writer.Write(us.OuterIndex.Index);
                         writer.Write(us.ObjectName);
                         writer.Write((uint)us.ObjectFlags);
-                        if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
+                        if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                         {
                             writer.Write((int)us.SerialSize);
                             writer.Write((int)us.SerialOffset);
@@ -1435,15 +1491,15 @@ namespace UAssetAPI
                         writer.Write(us.bNotForServer ? 1 : 0);
                         writer.Write(us.PackageGuid.ToByteArray());
                         writer.Write((uint)us.PackageFlags);
-                        if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                         {
                             writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
                         }
-                        if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                         {
                             writer.Write(us.bIsAsset ? 1 : 0);
                         }
-                        if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                         {
                             writer.Write(us.FirstExportDependencyOffset);
                             writer.Write(us.SerializationBeforeSerializationDependenciesSize);
@@ -1590,14 +1646,14 @@ namespace UAssetAPI
 
                         writer.Write(us.ClassIndex.Index);
                         writer.Write(us.SuperIndex.Index);
-                        if (EngineVersion >= UE4Version.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
                         {
                             writer.Write(us.TemplateIndex.Index);
                         }
                         writer.Write(us.OuterIndex.Index);
                         writer.Write(us.ObjectName);
                         writer.Write((uint)us.ObjectFlags);
-                        if (EngineVersion < UE4Version.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
+                        if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
                         {
                             writer.Write((int)us.SerialSize);
                             writer.Write((int)us.SerialOffset);
@@ -1612,15 +1668,15 @@ namespace UAssetAPI
                         writer.Write(us.bNotForServer ? 1 : 0);
                         writer.Write(us.PackageGuid.ToByteArray());
                         writer.Write((uint)us.PackageFlags);
-                        if (EngineVersion >= UE4Version.VER_UE4_LOAD_FOR_EDITOR_GAME)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                         {
                             writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
                         }
-                        if (EngineVersion >= UE4Version.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                         {
                             writer.Write(us.bIsAsset ? 1 : 0);
                         }
-                        if (EngineVersion >= UE4Version.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                         {
                             writer.Write(us.FirstExportDependencyOffset);
                             writer.Write(us.SerializationBeforeSerializationDependenciesSize);
@@ -1691,10 +1747,10 @@ namespace UAssetAPI
         /// Serializes and writes an asset to disk from memory.
         /// </summary>
         /// <param name="outputPath">The path on disk to write the asset to.</param>
-        /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
         public void Write(string outputPath)
         {
-            if (EngineVersion == UE4Version.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an engine version is specified");
+            if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
 
             MemoryStream newData = WriteData();
 
@@ -1909,14 +1965,12 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
-        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
+        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN)
         {
             this.FilePath = path;
-            EngineVersion = engineVersion;
-            CustomVersionContainer = defaultCustomVersionContainer;
+            SetEngineVersion(engineVersion);
 
             Read(PathToReader(path));
         }
@@ -1926,13 +1980,11 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
-        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="EngineVersion"/> is unspecified.</exception>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
+        public UAsset(AssetBinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN)
         {
-            EngineVersion = engineVersion;
-            CustomVersionContainer = defaultCustomVersionContainer;
+            SetEngineVersion(engineVersion);
             Read(reader);
         }
 
@@ -1940,11 +1992,52 @@ namespace UAssetAPI
         /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
         /// </summary>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
-        /// <param name="defaultCustomVersionContainer">A list of custom versions to parse this asset with. A list of custom versions will automatically be derived from the engine version while parsing if necessary, but you may manually specify them anyways if you wish. If the asset is versioned, this can be left unspecified.</param>
-        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN, List<CustomVersion> defaultCustomVersionContainer = null)
+        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN)
         {
-            EngineVersion = engineVersion;
-            CustomVersionContainer = defaultCustomVersionContainer;
+            SetEngineVersion(engineVersion);
+        }
+
+        /// <summary>
+        /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
+        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
+        public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        {
+            this.FilePath = path;
+            ObjectVersion = objectVersion;
+            CustomVersionContainer = customVersionContainer;
+
+            Read(PathToReader(path));
+        }
+
+        /// <summary>
+        /// Reads an asset from a BinaryReader and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
+        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        {
+            ObjectVersion = objectVersion;
+            CustomVersionContainer = customVersionContainer;
+            Read(reader);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
+        /// </summary>
+        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        public UAsset(ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        {
+            ObjectVersion = objectVersion;
+            CustomVersionContainer = customVersionContainer;
         }
 
         /// <summary>

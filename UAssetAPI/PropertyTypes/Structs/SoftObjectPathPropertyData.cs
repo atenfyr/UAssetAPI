@@ -45,7 +45,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            if (reader.Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            if (reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
                 Path = reader.ReadFString();
             }
@@ -65,7 +65,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             int here = (int)writer.BaseStream.Position;
 
-            if (writer.Asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            if (writer.Asset.ObjectVersion < ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
                 writer.Write(Path);
             }
@@ -85,7 +85,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (asset.EngineVersion < UE4Version.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            if (asset.ObjectVersion < ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             {
                 Path = FString.FromString(d[0]);
             }

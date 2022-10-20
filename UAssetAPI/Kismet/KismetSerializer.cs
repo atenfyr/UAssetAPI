@@ -476,7 +476,7 @@ namespace UAssetAPI.Kismet
             JProperty[] jproparray = new JProperty[names.Length];
 
             FProperty property;
-            if (asset.EngineVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            if (asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
             {
                 if (pointer != null && pointer.New.ResolvedOwner.Index != 0)
                 {
