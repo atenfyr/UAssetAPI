@@ -499,7 +499,7 @@ namespace UAssetAPI.Kismet
 
                 }
             }
-            if (pointer != null && pointer.Old.Index != 0)
+            if (pointer != null && pointer.Old != null && pointer.Old.Index != 0)
             {
                 if (names.Length > 1)
                 {
