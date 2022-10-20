@@ -165,8 +165,8 @@ namespace UAssetAPI
                 UE4Version minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
                 UE4Version maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
 
-                if (minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
-                if (maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
+                if (minIntroducedThis != UE4Version.UNKNOWN && minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
+                if (maxIntroducedThis != UE4Version.UNKNOWN && maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
             }
 
             List<UE4Version> finalPossibleVersions = new List<UE4Version>();
