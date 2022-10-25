@@ -1231,12 +1231,12 @@ namespace UAssetAPI
                                         {
                                             if (entry is FMapProperty fMapEntry)
                                             {
-                                                FName keyOverride = null;
-                                                FName valueOverride = null;
-                                                if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName;
-                                                if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName;
+                                                FString keyOverride = null;
+                                                FString valueOverride = null;
+                                                if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName.Value;
+                                                if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName.Value;
 
-                                                this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FString, FString>(keyOverride.Value, valueOverride.Value));
+                                                this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FString, FString>(keyOverride, valueOverride));
                                             }
                                         }
                                     }
