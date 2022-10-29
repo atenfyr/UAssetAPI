@@ -76,7 +76,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     reader.BaseStream.Position -= sizeof(int) * 2;
 
                     // In the case of it being serialized as just a byte, it will probably try to parse part of the next property and produce something too big for the name map
-                    if (nameMapPointer > 0 && nameMapPointer < reader.Asset.GetNameMapIndexList().Count && nameMapIndex == 0 && !reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("/"))
+                    if (nameMapPointer >= 0 && nameMapPointer < reader.Asset.GetNameMapIndexList().Count && nameMapIndex == 0 && !reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("/"))
                     {
                         ByteType = BytePropertyType.FName;
                         EnumValue = reader.ReadFName();
