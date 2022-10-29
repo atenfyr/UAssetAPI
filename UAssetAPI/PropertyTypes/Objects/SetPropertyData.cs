@@ -1,6 +1,4 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
+﻿using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -36,7 +34,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName(reader.Asset, "ElementsToRemove"));
+            var removedItemsDummy = new ArrayPropertyData(FName.DefineDummy(reader.Asset, "ElementsToRemove"));
             removedItemsDummy.ShouldSerializeStructsDifferently = false;
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Read(reader, false, leng1, leng2);
@@ -57,7 +55,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            var removedItemsDummy = new ArrayPropertyData(new FName(writer.Asset, "ElementsToRemove"));
+            var removedItemsDummy = new ArrayPropertyData(FName.DefineDummy(writer.Asset, "ElementsToRemove"));
             removedItemsDummy.ShouldSerializeStructsDifferently = false;
             removedItemsDummy.ArrayType = ArrayType;
             removedItemsDummy.Value = ElementsToRemove;
