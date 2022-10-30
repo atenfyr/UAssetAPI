@@ -154,6 +154,18 @@
     <EmbeddedResource Include="TestAssets\TestManyAssets\CodeVein\SK_Inner_Female1.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\MISC_426\MainChar_BellySlice_BR.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\MISC_426\MainChar_BellySlice_BR.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\MISC_426\RaceSimDataAsset.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestAssets\TestManyAssets\MISC_426\RaceSimDataAsset.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="TestAssets\TestManyAssets\StarlitSeason\CharacterCostume_chr0001_DataTable.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
