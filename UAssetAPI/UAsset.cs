@@ -1199,10 +1199,6 @@ namespace UAssetAPI
                                 Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
                                 Exports[i].Read(reader, (int)nextStarting);
                                 break;
-                            case "StringTable":
-                                Exports[i] = Exports[i].ConvertToChildExport<StringTableExport>();
-                                Exports[i].Read(reader, (int)nextStarting);
-                                break;
                             case "Enum":
                             case "UserDefinedEnum":
                                 Exports[i] = Exports[i].ConvertToChildExport<EnumExport>();
@@ -1216,6 +1212,11 @@ namespace UAssetAPI
                                 if (exportClassType.EndsWith("DataTable"))
                                 {
                                     Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
+                                    Exports[i].Read(reader, (int)nextStarting);
+                                }
+                                else if (exportClassType.EndsWith("StringTable"))
+                                {
+                                    Exports[i] = Exports[i].ConvertToChildExport<StringTableExport>();
                                     Exports[i].Read(reader, (int)nextStarting);
                                 }
                                 else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
