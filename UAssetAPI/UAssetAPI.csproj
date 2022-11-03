@@ -79,6 +79,7 @@
     <Compile Include="PropertyTypes\Structs\Movies\MovieSceneTrackIdentifierPropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\Ranges\FloatRangePropertyData.cs" />
     <Compile Include="PropertyTypes\Structs\RawStructPropertyData.cs" />
+    <Compile Include="PropertyTypes\Structs\StringAssetReferencePropertyData.cs" />
     <Compile Include="UnrealTypes\FFieldPath.cs" />
     <Compile Include="FieldTypes\EArrayDim.cs" />
     <Compile Include="FieldTypes\ELifetimeCondition.cs" />
