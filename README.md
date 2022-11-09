@@ -19,7 +19,7 @@ git clone https://github.com/atenfyr/UAssetAPI.git
 
 2. Open the `UAssetAPI.sln` solution file within the newly-created UAssetAPI directory in Visual Studio, right-click on the solution name in the Solution Explorer, and press "Restore Nuget Packages."
 
-3. Press F6 and right-click the solution name in the Solution Explorer and press "Build Solution" to compile UAssetAPI.
+3. Press F6 or right-click the solution name in the Solution Explorer and press "Build Solution" to compile UAssetAPI. Note that this solution does not include UAssetGUI.
 
 ## Contributing
 Any contributions, whether through pull requests or issues, that you make are greatly appreciated.
