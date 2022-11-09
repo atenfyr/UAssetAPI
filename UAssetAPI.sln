@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI", "UAssetAPI\UAssetAPI.csproj", "{178417EC-1177-413E-BE85-C83AECD64279}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetGUI", "UAssetGUI\UAssetGUI.csproj", "{88A998F1-C512-416F-ADED-120E50AFE6F3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI.Tests", "UAssetAPI.Tests\UAssetAPI.Tests.csproj", "{CB796120-5EF8-4E9D-BCDB-D2F60A4EFC69}"
 EndProject
 Global
