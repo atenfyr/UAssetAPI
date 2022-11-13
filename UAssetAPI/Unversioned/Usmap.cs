@@ -352,7 +352,7 @@ namespace UAssetAPI.Unversioned
                 Schemas.Add(new UsmapSchema(schemaName, schemaSuperName, numProps, props));
             }
 
-            Console.WriteLine(reader.BaseStream.Position);
+            //Console.WriteLine(reader.BaseStream.Position);
         }
 
         /// <summary>

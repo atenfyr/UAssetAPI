@@ -30,5 +30,11 @@
         VER_UE4_25 = 518,
         VER_UE4_26 = 519,
         VER_UE4_27 = 522,
+        VER_UE5_0 = 522,
+    }
+
+    public enum UE5VersionToObjectVersion
+    {
+        VER_UE5_0 = 1004,
     }
 }

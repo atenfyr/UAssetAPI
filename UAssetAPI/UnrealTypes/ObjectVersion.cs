@@ -1,7 +1,7 @@
 ﻿namespace UAssetAPI.UnrealTypes
 {
     /// <summary>
-    /// An enum used to represent the global object version of the Unreal Engine.
+    /// An enum used to represent the global object version of UE4.
     /// </summary>
     public enum ObjectVersion
     {
@@ -649,4 +649,32 @@
         /// <summary>The newest specified version of the Unreal Engine.</summary>
         VER_UE4_AUTOMATIC_VERSION = VER_UE4_AUTOMATIC_VERSION_PLUS_ONE - 1,
     };
+
+    /// <summary>
+    /// An enum used to represent the global object version of UE5.
+    /// </summary>
+    public enum ObjectVersionUE5
+    {
+        UNKNOWN = 0,
+
+        // The original UE5 version, at the time this was added the UE4 version was 522, so UE5 will start from 1000 to show a clear difference
+        INITIAL_VERSION = 1000,
+
+        // Support stripping names that are not referenced from export data
+        NAMES_REFERENCED_FROM_EXPORT_DATA,
+
+        // Added a payload table of contents to the package summary 
+        PAYLOAD_TOC,
+
+        // Added data to identify references from and to optional package
+        OPTIONAL_RESOURCES,
+
+        // Large world coordinates converts a number of core types to double components by default.
+        LARGE_WORLD_COORDINATES,
+
+        // -----<new versions can be added before this line>-------------------------------------------------
+        // - this needs to be the last line (see note below)
+        AUTOMATIC_VERSION_PLUS_ONE,
+        AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
+    }
 }

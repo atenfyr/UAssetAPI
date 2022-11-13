@@ -115,9 +115,14 @@ namespace UAssetAPI
         public bool UseSeparateBulkDataFiles = false;
 
         /// <summary>
-        /// The object version of the Unreal Engine that will be used to parse this asset.
+        /// The object version of UE4 that will be used to parse this asset.
         /// </summary>
         public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
+
+        /// <summary>
+        /// The object version of UE5 that will be used to parse this asset.
+        /// </summary>
+        public ObjectVersionUE5 ObjectVersionUE5 = ObjectVersionUE5.UNKNOWN;
 
         /// <summary>
         /// All the custom versions stored in the archive.
@@ -129,11 +134,14 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="newVersion">The new version of the Unreal Engine to use in serialization.</param>
         /// <exception cref="InvalidOperationException">Thrown when an invalid UE4Version is specified.</exception>
-        public void SetEngineVersion(UE4Version newVersion)
+        public void SetEngineVersion(EngineVersion newVersion)
         {
-            if (newVersion == UE4Version.UNKNOWN) return;
-            if (!Enum.TryParse(Enum.GetName(typeof(UE4Version), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
+            if (newVersion == EngineVersion.UNKNOWN) return;
+            if (!Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
             ObjectVersion = (ObjectVersion)(int)bridgeVer;
+
+            if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE5VersionToObjectVersion bridgeVer2)) ObjectVersionUE5 = (ObjectVersionUE5)(int)bridgeVer2;
+
             CustomVersionContainer = GetDefaultCustomVersionContainer(newVersion);
         }
 
@@ -141,36 +149,36 @@ namespace UAssetAPI
         /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
         /// </summary>
         /// <returns>The estimated retail version of the Unreal Engine.</returns>
-        public UE4Version GetEngineVersion()
+        public EngineVersion GetEngineVersion()
         {
             // analyze all possible versions based off of the object version alone
-            List<UE4Version> allPossibleVersions = new List<UE4Version>();
+            List<EngineVersion> allPossibleVersions = new List<EngineVersion>();
             int targetVer = (int)ObjectVersion;
             while (allPossibleVersions.Count == 0 && targetVer > (int)ObjectVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)
             {
-                allPossibleVersions = Enum.GetNames(typeof(UE4VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE4VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (UE4Version)Enum.Parse(typeof(UE4Version), str)).ToList();
+                allPossibleVersions = Enum.GetNames(typeof(UE4VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE4VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (EngineVersion)Enum.Parse(typeof(EngineVersion), str)).ToList();
                 targetVer -= 1;
             }
 
-            if (allPossibleVersions.Count == 0) return UE4Version.UNKNOWN;
+            if (allPossibleVersions.Count == 0) return EngineVersion.UNKNOWN;
             if (allPossibleVersions.Count == 1) return allPossibleVersions[0];
 
             // multiple possible versions; use custom versions to eliminate some
-            UE4Version minIntroduced = UE4Version.VER_UE4_OLDEST_LOADABLE_PACKAGE;
-            UE4Version maxIntroduced = UE4Version.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
+            EngineVersion minIntroduced = EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE;
+            EngineVersion maxIntroduced = EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
             foreach (CustomVersion entry in CustomVersionContainer)
             {
                 Type customVersionType = Type.GetType("UAssetAPI." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
                 if (customVersionType == null) continue;
-                UE4Version minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
-                UE4Version maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
+                EngineVersion minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
+                EngineVersion maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
 
-                if (minIntroducedThis != UE4Version.UNKNOWN && minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
-                if (maxIntroducedThis != UE4Version.UNKNOWN && maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
+                if (minIntroducedThis != EngineVersion.UNKNOWN && minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
+                if (maxIntroducedThis != EngineVersion.UNKNOWN && maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
             }
 
-            List<UE4Version> finalPossibleVersions = new List<UE4Version>();
-            foreach (UE4Version entry in allPossibleVersions)
+            List<EngineVersion> finalPossibleVersions = new List<EngineVersion>();
+            foreach (EngineVersion entry in allPossibleVersions)
             {
                 if (entry >= minIntroduced && entry < maxIntroduced) finalPossibleVersions.Add(entry);
             }
@@ -178,15 +186,15 @@ namespace UAssetAPI
 
             if (finalPossibleVersions.Count == 0) return allPossibleVersions[0]; // there must be a special set of custom versions; we'll just ignore our intuitions and go with the object version alone
             if (finalPossibleVersions.Count >= 1) return finalPossibleVersions[0];
-            return UE4Version.UNKNOWN;
+            return EngineVersion.UNKNOWN;
         }
 
-        private UE4Version GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
+        private EngineVersion GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
         {
             var nm = Enum.GetName(customVersionType, val);
-            if (nm == null) return UE4Version.UNKNOWN;
+            if (nm == null) return EngineVersion.UNKNOWN;
             var attributes = customVersionType.GetMember(nm)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
-            if (attributes == null || attributes.Length <= 0) return UE4Version.UNKNOWN;
+            if (attributes == null || attributes.Length <= 0) return EngineVersion.UNKNOWN;
             return ((IntroducedAttribute)attributes[0]).IntroducedVersion;
         }
 
@@ -439,7 +447,7 @@ namespace UAssetAPI
             return (T)(object)-1;
         }
 
-        private static int GuessCustomVersionFromTypeAndEngineVersion(UE4Version chosenVersion, Type typ)
+        private static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
         {
             string[] allVals = Enum.GetNames(typ);
             for (int i = allVals.Length - 1; i >= 0; i--)
@@ -457,7 +465,7 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="chosenVersion">The version of the engine to check against.</param>
         /// <returns>A list of all the default custom version values for the given engine version.</returns>
-        public static List<CustomVersion> GetDefaultCustomVersionContainer(UE4Version chosenVersion)
+        public static List<CustomVersion> GetDefaultCustomVersionContainer(EngineVersion chosenVersion)
         {
             List<CustomVersion> res = new List<CustomVersion>();
             foreach (KeyValuePair<Guid, string> entry in CustomVersion.GuidToCustomVersionStringMap)
@@ -573,6 +581,10 @@ namespace UAssetAPI
         ///         <item>
         ///             <version>-7</version>
         ///             <description>indicates the texture allocation info has been removed from the summary</description>
+        ///         </item>
+        ///         <item>
+        ///             <version>-8</version>
+        ///             <description>indicates that the UE5 version has been added to the summary</description>
         ///         </item>
         ///     </list>
         /// </remarks>
@@ -832,7 +844,17 @@ namespace UAssetAPI
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             uint fileSignature = reader.ReadUInt32();
-            if (fileSignature != UASSET_MAGIC) throw new FormatException("File signature mismatch");
+            if (fileSignature != UASSET_MAGIC)
+            {
+                if (ObjectVersionUE5 > 0)
+                {
+                    reader.BaseStream.Position -= 4;
+                }
+                else
+                {
+                    throw new FormatException("File signature mismatch");
+                }
+            }
 
             LegacyFileVersion = reader.ReadInt32();
             if (LegacyFileVersion != -4)
@@ -850,6 +872,12 @@ namespace UAssetAPI
             {
                 IsUnversioned = true;
                 if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an object version is manually specified");
+            }
+
+            if (ObjectVersionUE5 > 0)
+            {
+                ObjectVersionUE5 fileVersionUE5 = (ObjectVersionUE5)reader.ReadInt32();
+                if (fileVersionUE5 > ObjectVersionUE5.UNKNOWN) ObjectVersionUE5 = fileVersionUE5;
             }
 
             FileVersionLicenseeUE4 = reader.ReadInt32();
@@ -1978,7 +2006,7 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, UE4Version engineVersion = UE4Version.UNKNOWN)
+        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN)
         {
             this.FilePath = path;
             SetEngineVersion(engineVersion);
@@ -1993,7 +2021,7 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, UE4Version engineVersion = UE4Version.UNKNOWN)
+        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN)
         {
             SetEngineVersion(engineVersion);
             Read(reader);
@@ -2003,7 +2031,7 @@ namespace UAssetAPI
         /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
         /// </summary>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
-        public UAsset(UE4Version engineVersion = UE4Version.UNKNOWN)
+        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN)
         {
             SetEngineVersion(engineVersion);
         }

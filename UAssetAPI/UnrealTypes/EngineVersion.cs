@@ -3,7 +3,7 @@
     /// <summary>
     /// An enum used to represent all retail versions of the Unreal Engine. Each version entry both a particular <see cref="ObjectVersion"/> and the default set of all applicable <see cref="CustomVersion"/> enum values.
     /// </summary>
-    public enum UE4Version
+    public enum EngineVersion
     {
         UNKNOWN,
         VER_UE4_OLDEST_LOADABLE_PACKAGE,
@@ -64,6 +64,9 @@
         VER_UE4_26,
         /// <summary>4.27</summary>
         VER_UE4_27,
+
+        /// <summary>5.0</summary>
+        VER_UE5_0,
 
         VER_UE4_AUTOMATIC_VERSION_PLUS_ONE,
         /// <summary>The newest specified version of the Unreal Engine.</summary>
