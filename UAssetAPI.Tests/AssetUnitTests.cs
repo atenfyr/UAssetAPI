@@ -315,11 +315,12 @@ namespace UAssetAPI.Tests
         /// 
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestUnversionedProperties/PC0000_00_Cloud_Standard.uasset", "TestUnversionedProperties")]
-        [DeploymentItem(@"TestAssets/TestUnversionedProperties/PC0000_00_Cloud_Standard.uexp", "TestUnversionedProperties")]
+        [DeploymentItem(@"TestAssets/TestUnversionedProperties/Harvestella.usmap", "TestUnversionedProperties")]
         public void TestUnversionedProperties()
         {
-            var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
+            var tester = new Usmap(Path.Combine("TestUnversionedProperties", "Harvestella.usmap"));
+
+            /*var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
             AssetBinaryReader test = new AssetBinaryReader(new MemoryStream((tester.Exports[3] as RawExport).Data), tester);
 
             FUnversionedHeader test2 = new FUnversionedHeader();
@@ -328,7 +329,7 @@ namespace UAssetAPI.Tests
             foreach (FFragment entry in test2.Fragments)
             {
                 Debug.WriteLine(entry.SkipNum + ", " + entry.bHasAnyZeroes + ", " + entry.ValueNum + ", " + entry.bIsLast);
-            }
+            }*/
         }
 
         /// <summary>
