@@ -73,7 +73,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     StructType = decidedStructType
                 };
-                nextStruct.Read(reader, false, 1);
+                nextStruct.Read(reader, reader.Asset.GetParentClassExportName(), false, 1);
                 Table.Data.Add(nextStruct);
             }
         }

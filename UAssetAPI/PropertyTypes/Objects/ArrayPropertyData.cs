@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("ArrayProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -97,7 +97,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     {
                         var data = new StructPropertyData(name, fullType);
                         data.Offset = reader.BaseStream.Position;
-                        data.Read(reader, false, structLength);
+                        data.Read(reader, parentName, false, structLength);
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }
@@ -114,10 +114,10 @@ namespace UAssetAPI.PropertyTypes.Objects
                     int averageSizeEstimate2 = (int)((leng1 - 4) / numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
-                        results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), reader.Asset);
+                        results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), parentName, reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
                         if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = FName.DefineDummy(reader.Asset, "Generic");
-                        results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
+                        results[i].Read(reader, parentName, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
                 }
                 Value = results;

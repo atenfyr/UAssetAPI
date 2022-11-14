@@ -17,7 +17,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -25,7 +25,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
 
             Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(FName.DefineDummy(reader.Asset, "AreaWeightedTriangleSampler"));
-            Value.Read(reader, false, 0);
+            Value.Read(reader, parentName, false, 0);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)

@@ -49,15 +49,15 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             PositionBaryCoordsAndDist = new Vector4PropertyData(FName.DefineDummy(reader.Asset, "PositionBaryCoordsAndDist"));
             PositionBaryCoordsAndDist.Offset = reader.BaseStream.Position;
-            PositionBaryCoordsAndDist.Read(reader, false, 0);
+            PositionBaryCoordsAndDist.Read(reader, null, false, 0);
 
             NormalBaryCoordsAndDist = new Vector4PropertyData(FName.DefineDummy(reader.Asset, "NormalBaryCoordsAndDist"));
             NormalBaryCoordsAndDist.Offset = reader.BaseStream.Position;
-            NormalBaryCoordsAndDist.Read(reader, false, 0);
+            NormalBaryCoordsAndDist.Read(reader, null, false, 0);
 
             TangentBaryCoordsAndDist = new Vector4PropertyData(FName.DefineDummy(reader.Asset, "TangentBaryCoordsAndDist"));
             TangentBaryCoordsAndDist.Offset = reader.BaseStream.Position;
-            TangentBaryCoordsAndDist.Read(reader, false, 0);
+            TangentBaryCoordsAndDist.Read(reader, null, false, 0);
 
             SourceMeshVertIndices = new ushort[4];
             for (int i = 0; i < 4; i++)
@@ -138,10 +138,10 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             StructType = FName.DefineDummy(reader.Asset, "Generic");
-            base.Read(reader, includeHeader, 1, leng2);
+            base.Read(reader, parentName, includeHeader, 1, leng2);
 
             int sizeUpData = reader.ReadInt32();
             TransitionUpSkinData = new FMeshToMeshVertData[sizeUpData];

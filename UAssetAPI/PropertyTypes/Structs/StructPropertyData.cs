@@ -39,7 +39,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             var data = Activator.CreateInstance(T, Name) as PropertyData;
             if (data == null) return;
             data.Offset = offset;
-            data.Read(reader, false, 0);
+            data.Read(reader, StructType, false, 0);
             Value = new List<PropertyData> { data };
         }
 
@@ -47,7 +47,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
-            while ((data = MainSerializer.Read(reader, true)) != null)
+            while ((data = MainSerializer.Read(reader, StructType, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -55,7 +55,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = resultingList;
         }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader) // originally !isForced
             {

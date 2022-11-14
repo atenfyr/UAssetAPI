@@ -25,7 +25,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -36,7 +36,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             for (int i = 0; i < 2; i++)
             {
                 var next = new VectorPropertyData(Name);
-                next.Read(reader, false, 0);
+                next.Read(reader, parentName, false, 0);
                 Value[i] = next;
             }
 

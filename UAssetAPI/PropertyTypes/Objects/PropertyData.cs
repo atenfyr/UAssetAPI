@@ -80,10 +80,11 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// Reads out a property from a BinaryReader.
         /// </summary>
         /// <param name="reader">The BinaryReader to read from.</param>
+        /// <param name="parentName">The name of the parent class/struct of this property.</param>
         /// <param name="includeHeader">Whether or not to also read the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
         /// <param name="leng1">An estimate for the length of the data being read out.</param>
         /// <param name="leng2">A second estimate for the length of the data being read out.</param>
-        public virtual void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public virtual void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
 
         }

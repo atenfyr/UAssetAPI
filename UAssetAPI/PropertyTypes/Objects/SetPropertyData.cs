@@ -24,7 +24,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("SetProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             this.ShouldSerializeStructsDifferently = false;
 
@@ -37,10 +37,10 @@ namespace UAssetAPI.PropertyTypes.Objects
             var removedItemsDummy = new ArrayPropertyData(FName.DefineDummy(reader.Asset, "ElementsToRemove"));
             removedItemsDummy.ShouldSerializeStructsDifferently = false;
             removedItemsDummy.ArrayType = ArrayType;
-            removedItemsDummy.Read(reader, false, leng1, leng2);
+            removedItemsDummy.Read(reader, parentName, false, leng1, leng2);
             ElementsToRemove = removedItemsDummy.Value;
 
-            base.Read(reader, false, leng1, leng2);
+            base.Read(reader, parentName, false, leng1, leng2);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)

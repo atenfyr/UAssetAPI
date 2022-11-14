@@ -34,12 +34,12 @@ namespace UAssetAPI.UnrealTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
             VariableName = reader.ReadFName();
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
-            while ((data = MainSerializer.Read(reader, true)) != null)
+            while ((data = MainSerializer.Read(reader, Name, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -89,9 +89,9 @@ namespace UAssetAPI.UnrealTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
-            base.Read(reader, includeHeader, leng1);
+            base.Read(reader, parentName, includeHeader, leng1);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)

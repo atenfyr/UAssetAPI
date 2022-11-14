@@ -10,6 +10,7 @@ using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
@@ -108,6 +109,12 @@ namespace UAssetAPI
         /// </summary>
         [JsonIgnore]
         public string FilePath;
+
+        /// <summary>
+        /// Corresponding mapping data for the game this asset is from. Only used to parse unversioned properties or ambiguous structs in maps.
+        /// </summary>
+        [JsonIgnore]
+        public Usmap Mappings;
 
         /// <summary>
         /// Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
@@ -377,6 +384,7 @@ namespace UAssetAPI
 
             var bgcCat = GetClassExport();
             if (bgcCat == null) return;
+            if (bgcCat.SuperStruct == null) return;
 
             Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
             if (parentClassLink == null) return;
@@ -384,6 +392,16 @@ namespace UAssetAPI
 
             parentClassExportName = parentClassLink.ObjectName;
             parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
+        }
+
+        /// <summary>
+        /// Finds the export name of the SuperStruct of this asset, if it exists.
+        /// </summary>
+        public FName GetParentClassExportName()
+        {
+            FName res = null;
+            GetParentClass(out _, out res);
+            return res;
         }
 
         /// <summary>

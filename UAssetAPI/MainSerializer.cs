@@ -122,13 +122,14 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="type">The serialized type of this property.</param>
         /// <param name="name">The serialized name of this property.</param>
+        /// <param name="parentName">The name of the parent class/struct of this property.</param>
         /// <param name="asset">The UAsset which this property is contained within.</param>
-        /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long)"/> method manually.</param>
+        /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, FName, bool, long, long)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
         /// <param name="duplicationIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
+        public static PropertyData TypeToClass(FName type, FName name, FName parentName, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
@@ -186,7 +187,7 @@ namespace UAssetAPI
             {
                 try
                 {
-                    data.Read(reader, includeHeader, leng);
+                    data.Read(reader, parentName, includeHeader, leng);
                 }
                 catch (Exception ex)
                 {
@@ -194,7 +195,7 @@ namespace UAssetAPI
                     {
                         data = new RawStructPropertyData(name);
                         data.DuplicationIndex = duplicationIndex;
-                        data.Read(reader, includeHeader, leng);
+                        data.Read(reader, parentName, includeHeader, leng);
                     }
                     else
                     {
@@ -211,9 +212,10 @@ namespace UAssetAPI
         /// Reads a property into memory.
         /// </summary>
         /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the property to be read.</param>
+        /// <param name="parentName">The name of the parent class/struct of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>The property read from disk.</returns>
-        public static PropertyData Read(AssetBinaryReader reader, bool includeHeader)
+        public static PropertyData Read(AssetBinaryReader reader, FName parentName, bool includeHeader)
         {
             long startingOffset = reader.BaseStream.Position;
             FName name = reader.ReadFName();
@@ -223,7 +225,7 @@ namespace UAssetAPI
 
             int leng = reader.ReadInt32();
             int duplicationIndex = reader.ReadInt32();
-            PropertyData result = TypeToClass(type, name, reader.Asset, reader, leng, duplicationIndex, includeHeader);
+            PropertyData result = TypeToClass(type, name, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader);
             result.Offset = startingOffset;
             return result;
         }

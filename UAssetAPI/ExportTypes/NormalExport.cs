@@ -97,7 +97,7 @@ namespace UAssetAPI.ExportTypes
         {
             Data = new List<PropertyData>();
             PropertyData bit;
-            while ((bit = MainSerializer.Read(reader, true)) != null)
+            while ((bit = MainSerializer.Read(reader, reader.Asset.GetParentClassExportName(), true)) != null)
             {
                 Data.Add(bit);
             }

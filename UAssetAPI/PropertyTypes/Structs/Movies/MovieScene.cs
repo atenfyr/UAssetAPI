@@ -587,7 +587,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 			for (int i = 0; i < itemsamount; i++) {
 				List<PropertyData> resultingList = new List<PropertyData>();
 				PropertyData data = null;
-				while ((data = MainSerializer.Read(reader, true)) != null) {
+				while ((data = MainSerializer.Read(reader, null, true)) != null) {
 					resultingList.Add(data);
 				}
 				items[i] = resultingList;
