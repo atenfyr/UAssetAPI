@@ -394,14 +394,16 @@ namespace UAssetAPI
             parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
         }
 
-        /// <summary>
-        /// Finds the export name of the SuperStruct of this asset, if it exists.
-        /// </summary>
-        public FName GetParentClassExportName()
+        private bool hasFoundParentClassExportName = false;
+        private FName parentClassExportNameCache = null;
+        internal FName GetParentClassExportName()
         {
-            FName res = null;
-            GetParentClass(out _, out res);
-            return res;
+            if (!hasFoundParentClassExportName)
+            {
+                hasFoundParentClassExportName = true;
+                GetParentClass(out _, out parentClassExportNameCache);
+            }
+            return parentClassExportNameCache;
         }
 
         /// <summary>
@@ -1041,6 +1043,8 @@ namespace UAssetAPI
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
+            hasFoundParentClassExportName = false;
+
             // Header
             ReadHeader(reader);
 

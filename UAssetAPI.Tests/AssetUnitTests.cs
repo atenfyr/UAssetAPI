@@ -547,5 +547,29 @@ namespace UAssetAPI.Tests
                 VerifyBinaryEquality(path, path.Substring(0, path.Length - 4));
             }
         }
+
+        private void BenchmarkAsset(string path, EngineVersion ver)
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+            var tester = new UAsset(path, ver);
+            timer.Stop();
+
+            Console.WriteLine("Parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+        }
+
+        /// <summary>
+        /// Measures how long it takes to load specific large files.
+        /// </summary>
+        [TestMethod]
+        [DeploymentItem(@"TestAssets/TestBenchmark/PlayerBase01.umap", "TestBenchmark")]
+        [DeploymentItem(@"TestAssets/TestBenchmark/PlayerBase01.uexp", "TestBenchmark")]
+        [DeploymentItem(@"TestAssets/TestBenchmark/HUB_Restaurant.umap", "TestBenchmark")]
+        [DeploymentItem(@"TestAssets/TestBenchmark/HUB_Restaurant.uexp", "TestBenchmark")]
+        public void Benchmark()
+        {
+            BenchmarkAsset(Path.Combine("TestBenchmark", "PlayerBase01.umap"), EngineVersion.VER_UE4_22);
+            BenchmarkAsset(Path.Combine("TestBenchmark", "HUB_Restaurant.umap"), EngineVersion.VER_UE4_22);
+        }
     }
 }
