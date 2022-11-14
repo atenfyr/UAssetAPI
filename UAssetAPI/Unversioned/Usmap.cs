@@ -71,6 +71,11 @@ namespace UAssetAPI.Unversioned
         {
             Type = EPropertyType.MapProperty;
         }
+        public override string ToString()
+        {
+            return base.ToString() + " : (" + InnerType.ToString() + ") : (" + ValueType.ToString() + ")";
+        }
+
     }
 
     public class UsmapArrayData : UsmapPropertyData
@@ -80,6 +85,11 @@ namespace UAssetAPI.Unversioned
         public UsmapArrayData(EPropertyType type) // array or map
         {
             Type = type;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " : (" + InnerType.ToString() + ")";
         }
     }
 
@@ -96,6 +106,11 @@ namespace UAssetAPI.Unversioned
         public UsmapStructData()
         {
             Type = EPropertyType.StructProperty;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " : " + StructType;
         }
     }
 
@@ -116,6 +131,11 @@ namespace UAssetAPI.Unversioned
         {
             Type = EPropertyType.EnumProperty;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + " : " + Name + " : " + string.Join(", ", Values ?? new List<string>()) + " : (" + InnerType.ToString() + ")";
+        }
     }
 
     public class UsmapPropertyData
@@ -130,6 +150,11 @@ namespace UAssetAPI.Unversioned
         public UsmapPropertyData()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return Type.ToString();
         }
     }
 
@@ -146,6 +171,11 @@ namespace UAssetAPI.Unversioned
             SchemaIndex = schemaIndex;
             ArraySize = arraySize;
             PropertyData = propertyData;
+        }
+
+        public override string ToString()
+        {
+            return Name + " : " + SchemaIndex + " : " + ArraySize + " : (" + PropertyData.ToString() + ")";
         }
     }
 
@@ -201,7 +231,7 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// .usmap schema map
         /// </summary>
-        public List<UsmapSchema> Schemas;
+        public Dictionary<string, UsmapSchema> Schemas;
 
         /// <summary>
         /// Creates a MemoryStream from an asset path.
@@ -248,6 +278,9 @@ namespace UAssetAPI.Unversioned
                 case ECompressionMethod.None:
                     if (compressedSize != decompressedSize) throw new FormatException(".usmap: Compressed size must be equal to decompressed size");
                     return reader;
+                case ECompressionMethod.Oodle:
+                    var dat = Oodle.Decompress(reader.ReadBytes((int)compressedSize), (int)compressedSize, (int)decompressedSize);
+                    return new UsmapBinaryReader(new MemoryStream(dat), this);
                 default:
                     // we only support uncompressed .usmap files at the moment
                     throw new NotImplementedException(".usmap: Compression method " + compressionMethod + " is unimplemented");
@@ -329,7 +362,7 @@ namespace UAssetAPI.Unversioned
 
             // part 3: schema
             //Console.WriteLine(reader.BaseStream.Position);
-            Schemas = new List<UsmapSchema>();
+            Schemas = new Dictionary<string, UsmapSchema>();
             int numSchema = reader.ReadInt32();
             for (int i = 0; i < numSchema; i++)
             {
@@ -349,7 +382,7 @@ namespace UAssetAPI.Unversioned
                     props.Add(currProp);
                 }
 
-                Schemas.Add(new UsmapSchema(schemaName, schemaSuperName, numProps, props));
+                Schemas.Add(schemaName, new UsmapSchema(schemaName, schemaSuperName, numProps, props));
             }
 
             //Console.WriteLine(reader.BaseStream.Position);

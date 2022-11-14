@@ -19,6 +19,10 @@
     <Exec ContinueOnError="true" Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\git_commit.txt&quot;" />
   </Target>
   <ItemGroup>
+    <None Remove="oo2core_9_win64.dll" />
+    <None Remove="Unversioned\oo2core_9_win64.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -37,6 +41,9 @@
     <None Include="Resources\AC7Key.bin" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="oo2core_9_win64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="PropertyTypes\Structs\Movies\_LICENSE.txt" />
     <Content Include="UnrealTypes\Objects\_LICENSE.txt" />
   </ItemGroup>

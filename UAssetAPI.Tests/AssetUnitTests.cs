@@ -317,10 +317,24 @@ namespace UAssetAPI.Tests
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestUnversionedProperties/Harvestella.usmap", "TestUnversionedProperties")]
         [DeploymentItem(@"TestAssets/TestUnversionedProperties/Grounded.usmap", "TestUnversionedProperties")]
+        [DeploymentItem(@"TestAssets/TestUnversionedProperties/FSD.usmap", "TestUnversionedProperties")]
+        [DeploymentItem(@"../UAssetAPI/oo2core_9_win64.dll")]
         public void TestUnversionedProperties()
         {
             var tester1 = new Usmap(Path.Combine("TestUnversionedProperties", "Harvestella.usmap"));
             var tester2 = new Usmap(Path.Combine("TestUnversionedProperties", "Grounded.usmap"));
+            var tester3 = new Usmap(Path.Combine("TestUnversionedProperties", "FSD.usmap"));
+
+            foreach (var schema in tester3.Schemas)
+            {
+                Debug.WriteLine(schema.Value.Name.ToString());
+                foreach (var prop in schema.Value.Properties)
+                {
+                    Debug.WriteLine(prop.ToString());
+                }
+                Debug.WriteLine("");
+            }
+            Debug.WriteLine("Done");
 
             /*var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
             AssetBinaryReader test = new AssetBinaryReader(new MemoryStream((tester.Exports[3] as RawExport).Data), tester);
