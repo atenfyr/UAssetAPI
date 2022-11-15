@@ -292,7 +292,7 @@ namespace UAssetAPI.Tests
             string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestManyAssets", game));
             foreach (string assetPath in allTestingAssets)
             {
-                Debug.WriteLine(assetPath);
+                Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
@@ -327,14 +327,14 @@ namespace UAssetAPI.Tests
 
             foreach (var schema in tester3.Schemas)
             {
-                Debug.WriteLine(schema.Value.Name.ToString());
+                Console.WriteLine(schema.Value.Name.ToString());
                 foreach (var prop in schema.Value.Properties)
                 {
-                    Debug.WriteLine(prop.ToString());
+                    Console.WriteLine(prop.ToString());
                 }
-                Debug.WriteLine("");
+                Console.WriteLine("");
             }
-            Debug.WriteLine("Done");
+            Console.WriteLine("Done");
 
             /*var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
             AssetBinaryReader test = new AssetBinaryReader(new MemoryStream((tester.Exports[3] as RawExport).Data), tester);
@@ -344,7 +344,7 @@ namespace UAssetAPI.Tests
 
             foreach (FFragment entry in test2.Fragments)
             {
-                Debug.WriteLine(entry.SkipNum + ", " + entry.bHasAnyZeroes + ", " + entry.ValueNum + ", " + entry.bIsLast);
+                Console.WriteLine(entry.SkipNum + ", " + entry.bHasAnyZeroes + ", " + entry.ValueNum + ", " + entry.bIsLast);
             }*/
         }
 
@@ -405,7 +405,7 @@ namespace UAssetAPI.Tests
             for (int i = 0; i < firstEntry.Value.Count; i++)
             {
                 var propData = firstEntry.Value[i];
-                Debug.WriteLine(i + ": " + propData.Name + ", " + propData.PropertyType);
+                Console.WriteLine(i + ": " + propData.Name + ", " + propData.PropertyType);
                 if (propData.Name == new FName(tester, "AcceleratorANDDoubleJump")) didFindTestName = true;
                 if (propData is BoolPropertyData boolProp) boolProp.Value = !boolProp.Value;
             }
@@ -435,7 +435,7 @@ namespace UAssetAPI.Tests
 
         private void TestJsonOnFile(string file, EngineVersion version)
         {
-            Debug.WriteLine(file);
+            Console.WriteLine(file);
             var tester = new UAsset(Path.Combine("TestJson", file), version);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
@@ -555,7 +555,7 @@ namespace UAssetAPI.Tests
             var tester = new UAsset(path, ver);
             timer.Stop();
 
-            Console.WriteLine("Parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+            Console.WriteLine(Path.GetFileName(path) + " parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestBenchmark/PlayerBase01.uexp", "TestBenchmark")]
         [DeploymentItem(@"TestAssets/TestBenchmark/HUB_Restaurant.umap", "TestBenchmark")]
         [DeploymentItem(@"TestAssets/TestBenchmark/HUB_Restaurant.uexp", "TestBenchmark")]
-        public void Benchmark()
+        public void TestBenchmark()
         {
             BenchmarkAsset(Path.Combine("TestBenchmark", "PlayerBase01.umap"), EngineVersion.VER_UE4_22);
             BenchmarkAsset(Path.Combine("TestBenchmark", "HUB_Restaurant.umap"), EngineVersion.VER_UE4_22);
