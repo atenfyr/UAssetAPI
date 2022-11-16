@@ -64,6 +64,7 @@ namespace UAssetAPI.Benchmark
                     EngineVersion ver = (EngineVersion)Enum.Parse(typeof(EngineVersion), args[args.Length - 1]);
 
                     int num = 0;
+                    timer.Restart();
                     timer.Start();
                     Console.WriteLine("Timer started");
                     foreach (string assetPath in allTestingAssets2)
@@ -75,10 +76,32 @@ namespace UAssetAPI.Benchmark
                     timer.Stop();
                     Console.WriteLine(num + " assets parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
                     break;
+                case "testcpu":
+                    int numCpuTrials = 5;
+                    double trialSum = 0;
+                    for (int i = 0; i < numCpuTrials; i++)
+                    {
+                        // load each time to avoid any weird stream optimizations
+                        MemoryStream oneBigAsset = new UAsset().PathToStream(Path.Combine("TestAssets", "PlayerBase01.umap"));
+                        var binReader = new AssetBinaryReader(oneBigAsset, null);
+
+                        timer.Restart();
+                        timer.Start();
+                        new UAsset(binReader, EngineVersion.VER_UE4_22);
+                        timer.Stop();
+
+                        binReader.Close();
+                        oneBigAsset.Dispose();
+                        trialSum += timer.Elapsed.TotalMilliseconds;
+                        Console.WriteLine("CPU trial " + (i + 1) + " completed in " + timer.Elapsed.TotalMilliseconds + " ms");
+                    }
+                    Console.WriteLine("\n" + numCpuTrials + " CPU trials completed in " + trialSum + " ms (" + (trialSum / numCpuTrials) + " ms/trial)");
+                    break;
                 case "test":
                     BenchmarkAsset(args[1], (EngineVersion)Enum.Parse(typeof(EngineVersion), args[2]));
                     break;
                 case "guesscustomversion":
+                    timer.Restart();
                     timer.Start();
                     UAsset.GuessCustomVersionFromTypeAndEngineVersion(EngineVersion.VER_UE4_AUTOMATIC_VERSION, typeof(FReleaseObjectVersion));
                     timer.Stop();
@@ -86,6 +109,7 @@ namespace UAssetAPI.Benchmark
 
                     int numCustomVersionTrials = 20000;
                     EngineVersion testingEngineVersion = EngineVersion.VER_UE4_16;
+                    timer.Restart();
                     timer.Start();
                     for (int i = 0; i < numCustomVersionTrials; i++)
                     {

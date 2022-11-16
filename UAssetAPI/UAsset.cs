@@ -1057,6 +1057,7 @@ namespace UAssetAPI
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
+            reader.Asset = this;
             hasFoundParentClassExportName = false;
 
             // Header
