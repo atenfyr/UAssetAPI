@@ -6,8 +6,14 @@
     <Product>UAssetAPI</Product>
     <Copyright>Copyright © Atenfyr 2022</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <Configurations>Debug;Release;Debug Verbose</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Verbose|AnyCPU'">
     <DebugType>full</DebugType>
     <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>

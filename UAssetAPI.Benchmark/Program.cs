@@ -13,7 +13,7 @@ namespace UAssetAPI.Benchmark
 {
     public class Program
     {
-        private static void BenchmarkAsset(string path, EngineVersion ver)
+        private static double BenchmarkAsset(string path, EngineVersion ver)
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -21,6 +21,7 @@ namespace UAssetAPI.Benchmark
             timer.Stop();
 
             Console.WriteLine(Path.GetFileName(path) + " parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+            return timer.Elapsed.TotalMilliseconds;
         }
 
 
@@ -48,16 +49,14 @@ namespace UAssetAPI.Benchmark
                 case "testset":
                     string[] allTestingAssets = Directory.GetFiles("TestAssets");
                     int num1 = 0;
-                    timer.Start();
-                    Console.WriteLine("Timer started");
+                    double totalTime = 0;
                     foreach (string assetPath in allTestingAssets)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
-                        BenchmarkAsset(assetPath, (EngineVersion)Enum.Parse(typeof(EngineVersion), allTestAssetVersions[Path.GetFileNameWithoutExtension(assetPath)]));
+                        totalTime += BenchmarkAsset(assetPath, (EngineVersion)Enum.Parse(typeof(EngineVersion), allTestAssetVersions[Path.GetFileNameWithoutExtension(assetPath)]));
                         num1 += 1;
                     }
-                    timer.Stop();
-                    Console.WriteLine("\n" + num1 + " assets parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+                    Console.WriteLine("\n" + num1 + " assets parsed in " + totalTime + " ms");
                     break;
                 case "testall":
                     string[] allRelevantArgs = args.Skip(1).Take(args.Length - 2).ToArray();
@@ -103,7 +102,7 @@ namespace UAssetAPI.Benchmark
 
         public static void Main(string[] args)
         {
-#if DEBUG
+#if DEBUG || DEBUG_VERBOSE
             while (true)
             {
                 Console.Write("Input: ");

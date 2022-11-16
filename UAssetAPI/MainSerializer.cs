@@ -34,7 +34,7 @@ namespace UAssetAPI
     /// </summary>
     public static class MainSerializer
     {
-#if DEBUG
+#if DEBUG_VERBOSE
         private static PropertyData lastType;
 #endif
 
@@ -152,7 +152,7 @@ namespace UAssetAPI
             }
             else
             {
-#if DEBUG
+#if DEBUG_VERBOSE
                 Debug.WriteLine("-----------");
                 Debug.WriteLine("Parsing unknown type " + type.ToString());
                 Debug.WriteLine("Length: " + leng);
@@ -187,7 +187,7 @@ namespace UAssetAPI
                 }
             }
 
-#if DEBUG
+#if DEBUG_VERBOSE
             lastType = data;
 #endif
 

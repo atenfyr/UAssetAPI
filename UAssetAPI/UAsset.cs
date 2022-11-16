@@ -1331,7 +1331,7 @@ namespace UAssetAPI
                     }
                     catch (Exception ex)
                     {
-#if DEBUG
+#if DEBUG_VERBOSE
                         Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
                         reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
