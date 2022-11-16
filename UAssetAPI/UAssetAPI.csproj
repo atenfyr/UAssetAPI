@@ -16,7 +16,7 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <Target Name="BeforeBuildMigrated" BeforeTargets="PreBuildEvent">
-    <Exec ContinueOnError="true" Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)\git_commit.txt&quot;" />
+    <Exec ContinueOnError="true" Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)git_commit.txt&quot;" />
   </Target>
   <ItemGroup>
     <None Remove="oo2core_9_win64.dll" />
