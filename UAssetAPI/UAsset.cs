@@ -2056,10 +2056,12 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN)
+        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, bool useSeparateBulkDataFiles = false)
         {
+            UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             SetEngineVersion(engineVersion);
             Read(reader);
         }
@@ -2096,10 +2098,12 @@ namespace UAssetAPI
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
         /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, bool useSeparateBulkDataFiles = false)
         {
+            UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             ObjectVersion = objectVersion;
             CustomVersionContainer = customVersionContainer;
             Read(reader);

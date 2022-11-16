@@ -87,10 +87,9 @@ namespace UAssetAPI.Benchmark
 
                         timer.Restart();
                         timer.Start();
-                        new UAsset(binReader, EngineVersion.VER_UE4_22);
+                        new UAsset(binReader, EngineVersion.VER_UE4_22, true);
                         timer.Stop();
 
-                        binReader.Close();
                         oneBigAsset.Dispose();
                         trialSum += timer.Elapsed.TotalMilliseconds;
                         Console.WriteLine("CPU trial " + (i + 1) + " completed in " + timer.Elapsed.TotalMilliseconds + " ms");

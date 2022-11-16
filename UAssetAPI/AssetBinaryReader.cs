@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
@@ -15,7 +14,7 @@ namespace UAssetAPI
     {
         public UAsset Asset;
 
-        public AssetBinaryReader(Stream stream, UAsset asset) : base(stream)
+        public AssetBinaryReader(Stream stream, UAsset asset = null) : base(stream)
         {
             Asset = asset;
         }
