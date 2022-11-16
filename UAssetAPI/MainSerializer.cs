@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UAssetAPI.FieldTypes;
@@ -20,6 +21,7 @@ namespace UAssetAPI
     {
         internal Type PropertyType;
         internal bool HasCustomStructSerialization;
+        internal Func<FName, PropertyData> Creator;
 
         public RegistryEntry()
         {
@@ -98,6 +100,13 @@ namespace UAssetAPI
                         RegistryEntry res = new RegistryEntry();
                         res.PropertyType = currentPropertyDataType;
                         res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
+
+                        var nameParam = Expression.Parameter(typeof(FName));
+                        res.Creator = Expression.Lambda<Func<FName, PropertyData>>(
+                           Expression.New(currentPropertyDataType.GetConstructor(new[] { typeof(FName), }), new[] { nameParam, }),
+                           nameParam
+                        ).Compile();
+
                         _propertyTypeRegistry[returnedPropType.Value] = res;
                     }
                 }
@@ -139,7 +148,7 @@ namespace UAssetAPI
             PropertyData data = null;
             if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
             {
-                data = (PropertyData)Activator.CreateInstance(PropertyTypeRegistry[type.Value.Value].PropertyType, name);
+                data = PropertyTypeRegistry[type.Value.Value].Creator.Invoke(name);
             }
             else
             {
