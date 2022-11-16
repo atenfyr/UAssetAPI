@@ -467,15 +467,29 @@ namespace UAssetAPI
             return (T)(object)-1;
         }
 
-        private static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
+        private static Dictionary<string, EngineVersion> cachedCustomVersionReflectionData = new Dictionary<string, EngineVersion>();
+        public static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
         {
+            string typeString = typ.ToString();
             string[] allVals = Enum.GetNames(typ);
             for (int i = allVals.Length - 1; i >= 0; i--)
             {
                 string val = allVals[i];
-                var attributes = typ.GetMember(val)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
-                if (attributes == null || attributes.Length <= 0) continue;
-                if (chosenVersion >= ((IntroducedAttribute)attributes[0]).IntroducedVersion) return i;
+                string cacheKey = typeString + val;
+
+                var attributeIntroducedVersion = EngineVersion.UNKNOWN;
+                if (cachedCustomVersionReflectionData.ContainsKey(cacheKey))
+                {
+                    attributeIntroducedVersion = cachedCustomVersionReflectionData[cacheKey];
+                }
+                else
+                {
+                    var attributes = typ.GetMember(val)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
+                    attributeIntroducedVersion = (attributes == null || attributes.Length <= 0) ? EngineVersion.UNKNOWN : ((IntroducedAttribute)attributes[0]).IntroducedVersion;
+                    cachedCustomVersionReflectionData[cacheKey] = attributeIntroducedVersion;
+                }
+
+                if (attributeIntroducedVersion != EngineVersion.UNKNOWN && chosenVersion >= attributeIntroducedVersion) return i;
             }
             return -1;
         }

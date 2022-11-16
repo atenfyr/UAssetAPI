@@ -154,18 +154,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestAssets\TestBenchmark\HUB_Restaurant.uexp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestAssets\TestBenchmark\HUB_Restaurant.umap">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestAssets\TestBenchmark\PlayerBase01.uexp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestAssets\TestBenchmark\PlayerBase01.umap">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="TestAssets\TestUnversionedProperties\FSD.usmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
