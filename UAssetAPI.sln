@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI", "UAssetAPI\UAss
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI.Tests", "UAssetAPI.Tests\UAssetAPI.Tests.csproj", "{CB796120-5EF8-4E9D-BCDB-D2F60A4EFC69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI.Benchmark", "UAssetAPI.Benchmark\UAssetAPI.Benchmark.csproj", "{A74E7E85-1797-477C-AEC1-583AE7D109D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
