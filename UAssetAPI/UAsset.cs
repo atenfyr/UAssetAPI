@@ -11,6 +11,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
+using System.Collections.Concurrent;
 
 namespace UAssetAPI
 {
@@ -467,7 +468,7 @@ namespace UAssetAPI
             return (T)(object)-1;
         }
 
-        private static Dictionary<string, EngineVersion> cachedCustomVersionReflectionData = new Dictionary<string, EngineVersion>();
+        private static ConcurrentDictionary<string, EngineVersion> cachedCustomVersionReflectionData = new ConcurrentDictionary<string, EngineVersion>();
         public static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
         {
             string typeString = typ.ToString();
