@@ -1,40 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.IO;
+﻿using System;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
     /// <summary>
-    /// Describes a function bound to an Object.
-    /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
-    public class FMulticastDelegate
-    {
-        /** Uncertain what this is for; if you find out, please let me know */
-        [JsonProperty]
-        public int Number;
-        /** Uncertain what this is for; if you find out, please let me know */
-        [JsonProperty]
-        public FName Delegate;
-
-        public FMulticastDelegate(int number, FName @delegate)
-        {
-            Number = number;
-            Delegate = @delegate;
-        }
-
-        public FMulticastDelegate()
-        {
-
-        }
-    }
-
-    /// <summary>
     /// Describes a list of functions bound to an Object.
     /// </summary>
-    public class MulticastDelegatePropertyData : PropertyData<FMulticastDelegate[]>
+    public class MulticastDelegatePropertyData : PropertyData<FDelegate[]>
     {
         public MulticastDelegatePropertyData(FName name) : base(name)
         {
@@ -57,10 +29,10 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
 
             int numVals = reader.ReadInt32();
-            Value = new FMulticastDelegate[numVals];
+            Value = new FDelegate[numVals];
             for (int i = 0; i < numVals; i++)
             {
-                Value[i] = new FMulticastDelegate(reader.ReadInt32(), reader.ReadFName());
+                Value[i] = new FDelegate(reader.XFER_OBJECT_POINTER(), reader.ReadFName());
             }
         }
 
@@ -74,7 +46,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             writer.Write(Value.Length);
             for (int i = 0; i < Value.Length; i++)
             {
-                writer.Write(Value[i].Number);
+                writer.XFERPTR(Value[i].Object);
                 writer.Write(Value[i].Delegate);
             }
             return sizeof(int) + sizeof(int) * 3 * Value.Length;
@@ -85,27 +57,67 @@ namespace UAssetAPI.PropertyTypes.Objects
             string oup = "(";
             for (int i = 0; i < Value.Length; i++)
             {
-                oup += "(" + Convert.ToString(Value[i].Number) + ", " + Value[i].Delegate.Value.Value + "), ";
+                oup += "(" + Convert.ToString(Value[i].Object.Index) + ", " + Value[i].Delegate.Value.Value + "), ";
             }
             return oup.Substring(0, oup.Length - 2) + ")";
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            
+
         }
 
         protected override void HandleCloned(PropertyData res)
         {
             MulticastDelegatePropertyData cloningProperty = (MulticastDelegatePropertyData)res;
 
-            FMulticastDelegate[] newData = new FMulticastDelegate[this.Value.Length];
-            for (int i = 0; i < this.Value.Length; i++)
+            FDelegate[] newData = new FDelegate[Value.Length];
+            for (int i = 0; i < Value.Length; i++)
             {
-                newData[i] = new FMulticastDelegate(this.Value[i].Number, (FName)this.Value[i].Delegate.Clone());
+                newData[i] = new FDelegate(Value[i].Object, (FName)Value[i].Delegate.Clone());
             }
 
             cloningProperty.Value = newData;
         }
+    }
+
+
+    /// <summary>
+    /// Describes a list of functions bound to an Object.
+    /// </summary>
+    public class MulticastSparseDelegatePropertyData : MulticastDelegatePropertyData
+    {
+        public MulticastSparseDelegatePropertyData(FName name) : base(name)
+        {
+
+        }
+
+        public MulticastSparseDelegatePropertyData()
+        {
+
+        }
+
+        private static readonly FString CurrentPropertyType = new FString("MulticastSparseDelegateProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
+    }
+
+
+    /// <summary>
+    /// Describes a list of functions bound to an Object.
+    /// </summary>
+    public class MulticastInlineDelegatePropertyData : MulticastDelegatePropertyData
+    {
+        public MulticastInlineDelegatePropertyData(FName name) : base(name)
+        {
+
+        }
+
+        public MulticastInlineDelegatePropertyData()
+        {
+
+        }
+
+        private static readonly FString CurrentPropertyType = new FString("MulticastInlineDelegateProperty");
+        public override FString PropertyType { get { return CurrentPropertyType; } }
     }
 }

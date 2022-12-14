@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -10,10 +9,14 @@ namespace UAssetAPI.PropertyTypes.Objects
     [JsonObject(MemberSerialization.OptIn)]
     public class FDelegate
     {
-        /** Uncertain what this is for; if you find out, please let me know */
+        /// <summary>
+        /// References the main actor export
+        /// </summary>
         [JsonProperty]
         public FPackageIndex Object;
-        /** Uncertain what this is for; if you find out, please let me know */
+        /// <summary>
+        /// The name of the delegate
+        /// </summary>
         [JsonProperty]
         public FName Delegate;
 
@@ -72,7 +75,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override string ToString()
         {
-           return null;
+            return null;
         }
 
         public override void FromString(string[] d, UAsset asset)
@@ -83,8 +86,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         protected override void HandleCloned(PropertyData res)
         {
             DelegatePropertyData cloningProperty = (DelegatePropertyData)res;
-            
-            cloningProperty.Value = new FDelegate(this.Value.Object, this.Value.Delegate); 
+
+            cloningProperty.Value = new FDelegate(this.Value.Object, this.Value.Delegate);
         }
     }
 }
