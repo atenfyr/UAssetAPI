@@ -1191,7 +1191,7 @@ namespace UAssetAPI
 
                 // For now: read binary data until next offset
                 int nextOffset = this.WorldTileInfoDataOffset;
-                if (this.UseSeparateBulkDataFiles && nextOffset <= 0) nextOffset = this.PreloadDependencyOffset;
+                if (this.PreloadDependencyOffset >= 0 && nextOffset <= 0) nextOffset = this.PreloadDependencyOffset;
                 if (SectionSixOffset > 0 && Exports.Count > 0 && nextOffset <= 0) nextOffset = (int)Exports[0].SerialOffset;
                 if (nextOffset <= 0) nextOffset = (int)this.BulkDataStartOffset;
                 AssetRegistryData = reader.ReadBytes(nextOffset - AssetRegistryDataOffset);
