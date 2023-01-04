@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.Diagnostics;
 
 namespace UAssetAPI.Unversioned
 {
@@ -29,6 +30,15 @@ namespace UAssetAPI.Unversioned
         /// Is this the last fragment of the header?
         /// </summary>
         public bool bIsLast = false;
+
+        public int FirstNum = -1;
+        public int LastNum
+        {
+            get
+            {
+                return FirstNum + ValueNum - 1;
+            }
+        }
 
         private static readonly uint SkipMax = 127;
         private static readonly uint ValueMax = 127;

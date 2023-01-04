@@ -2,6 +2,7 @@
 using System.IO;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -12,6 +13,12 @@ namespace UAssetAPI.PropertyTypes.Objects
     {
         [JsonProperty]
         public FName EnumType;
+        /// <summary>
+        /// Only used with unversioned properties.
+        /// </summary>
+        [JsonProperty]
+        public FName InnerType;
+
 
         public EnumPropertyData(FName name) : base(name)
         {
@@ -28,6 +35,34 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
+            if (reader.Asset.HasUnversionedProperties)
+            {
+                bool hasTypeBeenFound = false;
+                var schemaName = parentName.Value.Value;
+                while (!hasTypeBeenFound && schemaName != null)
+                {
+                    var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
+                    foreach (UsmapProperty prop in relevantSchema.Properties)
+                    {
+                        if (prop.Name == Name.Value.Value && prop.PropertyData is UsmapEnumData enumDat1)
+                        {
+                            EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
+                            InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
+                            hasTypeBeenFound = true;
+                            break;
+                        }
+                    }
+                    schemaName = relevantSchema.SuperType;
+                }
+
+                if (InnerType?.Value.Value == "ByteProperty")
+                {
+                    int enumIndice = (int)reader.ReadByte();
+                    Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value][enumIndice]);
+                    return;
+                }
+            }
+
             if (includeHeader)
             {
                 EnumType = reader.ReadFName();
@@ -38,6 +73,16 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
+            if (writer.Asset.HasUnversionedProperties)
+            {
+                if (InnerType.Value.Value == "ByteProperty")
+                {
+                    // TODO: re-serialize as byte here
+                    //writer.Write()
+                    return sizeof(byte);
+                }
+            }
+
             if (includeHeader)
             {
                 writer.Write(EnumType);

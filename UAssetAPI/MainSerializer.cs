@@ -11,6 +11,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
@@ -222,18 +223,58 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the property to be read.</param>
         /// <param name="parentName">The name of the parent class/struct of this property.</param>
+        /// <param name="header">The unversioned header to be used when reading this property. Leave null if none exists.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>The property read from disk.</returns>
-        public static PropertyData Read(AssetBinaryReader reader, FName parentName, bool includeHeader)
+        public static PropertyData Read(AssetBinaryReader reader, FName parentName, FUnversionedHeader header, bool includeHeader)
         {
             long startingOffset = reader.BaseStream.Position;
-            FName name = reader.ReadFName();
-            if (name.Value.Value == "None") return null;
+            FName name = null;
+            FName type = null;
+            int leng = 0;
+            int duplicationIndex = 0;
 
-            FName type = reader.ReadFName();
+            if (reader.Asset.HasUnversionedProperties)
+            {
+                //var x = FFragment.Unpack(BitConverter.ToUInt16(new byte[]{ 0x52, 0x05 }, 0));
+                UsmapSchema relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
+                if (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
+                {
+                    if (header.CurrentFragment.Value.bIsLast) return null;
+                    header.CurrentFragment = header.CurrentFragment.Next;
+                    header.UnversionedPropertyIndex = header.CurrentFragment.Value.FirstNum;
+                }
 
-            int leng = reader.ReadInt32();
-            int duplicationIndex = reader.ReadInt32();
+                int practicingUnversionedPropertyIndex = header.UnversionedPropertyIndex;
+                while (practicingUnversionedPropertyIndex >= relevantSchema.Properties.Count) // if needed, go to parent struct
+                {
+                    practicingUnversionedPropertyIndex -= relevantSchema.Properties.Count;
+                    relevantSchema = reader.Asset.Mappings.Schemas[relevantSchema.SuperType];
+                }
+                UsmapProperty relevantProperty = relevantSchema.Properties[practicingUnversionedPropertyIndex];
+                header.UnversionedPropertyIndex += 1;
+
+                name = FName.DefineDummy(reader.Asset, relevantProperty.Name);
+                type = FName.DefineDummy(reader.Asset, relevantProperty.PropertyData.Type.ToString());
+                leng = 1; // unknown
+                duplicationIndex = 0; // unknown
+
+                if (name.Value.Value == "SleepFamily")
+                {
+                    Debug.WriteLine("yo");
+                }
+            }
+            else
+            {
+                name = reader.ReadFName();
+                if (name.Value.Value == "None") return null;
+
+                type = reader.ReadFName();
+
+                leng = reader.ReadInt32();
+                duplicationIndex = reader.ReadInt32();
+            }
+
             PropertyData result = TypeToClass(type, name, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader);
             result.Offset = startingOffset;
             return result;
@@ -327,29 +368,39 @@ namespace UAssetAPI
             if (property == null) return 0;
 
             property.Offset = writer.BaseStream.Position;
-            writer.Write(property.Name);
-            if (property is UnknownPropertyData unknownProp)
+
+            if (writer.Asset.HasUnversionedProperties)
             {
-                writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
-            }
-            else if (property is RawStructPropertyData)
-            {
-                writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
+                // TODO: write unversioned properties
+                return -1;
             }
             else
             {
-                writer.Write(new FName(writer.Asset, property.PropertyType));
-            }
-            int oldLoc = (int)writer.BaseStream.Position;
-            writer.Write((int)0); // initial length
-            writer.Write(property.DuplicationIndex);
-            int realLength = property.Write(writer, includeHeader);
-            int newLoc = (int)writer.BaseStream.Position;
+                writer.Write(property.Name);
+                if (property is UnknownPropertyData unknownProp)
+                {
+                    writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
+                }
+                else if (property is RawStructPropertyData)
+                {
+                    writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
+                }
+                else
+                {
+                    writer.Write(new FName(writer.Asset, property.PropertyType));
+                }
+                int oldLoc = (int)writer.BaseStream.Position;
+                writer.Write((int)0); // initial length
+                writer.Write(property.DuplicationIndex);
+                int realLength = property.Write(writer, includeHeader);
+                int newLoc = (int)writer.BaseStream.Position;
 
-            writer.Seek(oldLoc, SeekOrigin.Begin);
-            writer.Write(realLength);
-            writer.Seek(newLoc, SeekOrigin.Begin);
-            return oldLoc;
+                writer.Seek(oldLoc, SeekOrigin.Begin);
+                writer.Write(realLength);
+                writer.Seek(newLoc, SeekOrigin.Begin);
+                return oldLoc;
+            }
+
         }
     }
 }

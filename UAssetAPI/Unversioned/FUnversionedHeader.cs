@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.Diagnostics;
 
 namespace UAssetAPI.Unversioned
 {
@@ -16,21 +17,27 @@ namespace UAssetAPI.Unversioned
     /// </summary>
     public class FUnversionedHeader
     {
-        public List<FFragment> Fragments;
+        public LinkedList<FFragment> Fragments;
+        public LinkedListNode<FFragment> CurrentFragment;
+        public int UnversionedPropertyIndex = 0;
         public byte[] ZeroMask;
         public bool bHasNonZeroValues = false;
 
         public void Read(AssetBinaryReader reader)
         {
-            Fragments = new List<FFragment>(32);
+            if (!reader.Asset.HasUnversionedProperties) return;
+            Fragments = new LinkedList<FFragment>();
 
             FFragment Fragment;
             uint ZeroMaskNum = 0;
             uint UnmaskedNum = 0;
+            int firstNum = 0;
             do
             {
                 Fragment = FFragment.Unpack(reader.ReadUInt16());
-                Fragments.Add(Fragment);
+                Fragment.FirstNum = firstNum + Fragment.SkipNum;
+                firstNum = firstNum + Fragment.SkipNum + Fragment.ValueNum;
+                Fragments.AddLast(Fragment);
 
                 if (Fragment.bHasAnyZeroes)
                 {
@@ -52,6 +59,9 @@ namespace UAssetAPI.Unversioned
             {
                 bHasNonZeroValues = UnmaskedNum > 0;
             }
+
+            CurrentFragment = Fragments.First;
+            UnversionedPropertyIndex = CurrentFragment.Value.FirstNum;
         }
 
         public void LoadZeroMaskData(AssetBinaryReader reader, uint NumBits)
@@ -82,6 +92,7 @@ namespace UAssetAPI.Unversioned
 
         public void Write(AssetBinaryWriter writer)
         {
+            if (!writer.Asset.HasUnversionedProperties) return;
             foreach (FFragment Fragment in Fragments)
             {
                 writer.Write(Fragment.Pack());
@@ -102,5 +113,15 @@ namespace UAssetAPI.Unversioned
 	    {
 		    return bHasNonZeroValues;
 	    }
+
+        public FUnversionedHeader(AssetBinaryReader reader)
+        {
+            Read(reader);
+        }
+
+        public FUnversionedHeader()
+        {
+
+        }
     }
 }

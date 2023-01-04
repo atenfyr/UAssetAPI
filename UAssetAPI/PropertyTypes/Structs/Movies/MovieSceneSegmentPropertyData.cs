@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -39,7 +40,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             {
                 List<PropertyData> resultingList = new List<PropertyData>();
                 PropertyData data = null;
-                while ((data = MainSerializer.Read(reader, Name, true)) != null)
+                var unversionedHeader = new FUnversionedHeader(reader);
+                while ((data = MainSerializer.Read(reader, Name, unversionedHeader, true)) != null)
                 {
                     resultingList.Add(data);
                 }

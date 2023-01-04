@@ -72,6 +72,7 @@ namespace UAssetAPI
 
         public virtual Guid? ReadPropertyGuid()
         {
+            if (Asset.HasUnversionedProperties) return null;
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 bool hasPropertyGuid = ReadBoolean();

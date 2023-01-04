@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -47,7 +49,9 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
-            while ((data = MainSerializer.Read(reader, StructType, true)) != null)
+
+            var unversionedHeader = new FUnversionedHeader(reader);
+            while ((data = MainSerializer.Read(reader, StructType, unversionedHeader, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -57,11 +61,37 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
         {
-            if (includeHeader) // originally !isForced
+            if (includeHeader && !reader.Asset.HasUnversionedProperties) // originally !isForced
             {
                 StructType = reader.ReadFName();
                 if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
                 PropertyGuid = reader.ReadPropertyGuid();
+            }
+
+            if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.Schemas.ContainsKey(parentName.Value.Value))
+            {
+                bool hasTypeBeenFound = false;
+                var schemaName = parentName.Value.Value;
+                while (!hasTypeBeenFound && schemaName != null)
+                {
+                    var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
+                    foreach (UsmapProperty prop in relevantSchema.Properties)
+                    {
+                        if (prop.Name == Name.Value.Value && prop.PropertyData is UsmapStructData strucDat1)
+                        {
+                            StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+                            hasTypeBeenFound = true;
+                            break;
+                        }
+                    }
+                    schemaName = relevantSchema.SuperType;
+                }
+                
+
+                if (reader.Asset.HasUnversionedProperties && StructType == null)
+                {
+                    throw new InvalidOperationException("Unable to determine struct type for struct " + Name.Value.Value + " in class " + parentName.Value.Value);
+                }
             }
 
             RegistryEntry targetEntry = null;

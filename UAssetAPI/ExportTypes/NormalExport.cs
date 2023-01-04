@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -97,7 +98,9 @@ namespace UAssetAPI.ExportTypes
         {
             Data = new List<PropertyData>();
             PropertyData bit;
-            while ((bit = MainSerializer.Read(reader, reader.Asset.GetParentClassExportName(), true)) != null)
+
+            var unversionedHeader = new FUnversionedHeader(reader);
+            while ((bit = MainSerializer.Read(reader, this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(reader.Asset).ObjectName : reader.Asset.GetParentClassExportName(), unversionedHeader, true)) != null)
             {
                 Data.Add(bit);
             }

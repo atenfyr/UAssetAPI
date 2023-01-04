@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -39,8 +40,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             data.Read(reader, parentName, includeHeader, leng1);
             resultingList.Add(data);
             if (((StrPropertyData)data).Value != null) {
-                
-                while ((data = MainSerializer.Read(reader, Name, true)) != null) {
+                var unversionedHeader = new FUnversionedHeader(reader);
+                while ((data = MainSerializer.Read(reader, Name, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }   
             }
@@ -110,7 +111,9 @@ namespace UAssetAPI.PropertyTypes.Structs
             resultingList.Add(data);
             if (((StrPropertyData)data).Value != null) {
 
-                while ((data = MainSerializer.Read(reader, Name, true)) != null) {
+                var unversionedHeader = new FUnversionedHeader(reader);
+
+                while ((data = MainSerializer.Read(reader, Name, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }
             }

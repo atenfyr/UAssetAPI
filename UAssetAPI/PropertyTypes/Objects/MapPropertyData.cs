@@ -66,22 +66,30 @@ namespace UAssetAPI.PropertyTypes.Objects
 
                     if (reader.Asset.Mappings != null && reader.Asset.Mappings.Schemas.ContainsKey(parentName.Value.Value))
                     {
-                        var relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
-                        foreach (UsmapProperty prop in relevantSchema.Properties)
+                        bool hasTypeBeenFound = false;
+                        var schemaName = parentName.Value.Value;
+                        while (!hasTypeBeenFound && schemaName != null)
                         {
-                            if (prop.Name == name.Value.Value && prop.PropertyData is UsmapMapData mapDat)
+                            var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
+                            foreach (UsmapProperty prop in relevantSchema.Properties)
                             {
-                                if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
+                                if (prop.Name == name.Value.Value && prop.PropertyData is UsmapMapData mapDat)
                                 {
-                                    strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
-                                    break;
-                                }
-                                else if (mapDat.ValueType is UsmapStructData strucDat2)
-                                {
-                                    strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
-                                    break;
+                                    if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
+                                    {
+                                        strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+                                        hasTypeBeenFound = true;
+                                        break;
+                                    }
+                                    else if (mapDat.ValueType is UsmapStructData strucDat2)
+                                    {
+                                        strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
+                                        hasTypeBeenFound = true;
+                                        break;
+                                    }
                                 }
                             }
+                            schemaName = relevantSchema.SuperType;
                         }
                     }
                     else if (reader.Asset.MapStructTypeOverride.ContainsKey(name.Value.Value))

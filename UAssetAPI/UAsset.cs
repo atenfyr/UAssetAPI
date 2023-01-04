@@ -699,6 +699,17 @@ namespace UAssetAPI
         public EPackageFlags PackageFlags;
 
         /// <summary>
+        /// Whether or not this asset uses unversioned properties.
+        /// </summary>
+        public bool HasUnversionedProperties
+        {
+            get
+            {
+                return PackageFlags.HasFlag(EPackageFlags.PKG_UnversionedProperties);
+            }
+        }
+
+        /// <summary>
         /// Value that is used by the Unreal Engine to determine if the package was saved by Epic, a licensee, modder, etc.
         /// </summary>
         public uint PackageSource;
