@@ -116,6 +116,14 @@ namespace UAssetAPI
             }
         }
 
+        /*
+        !!!!!
+
+        THE FOLLOWING METHODS ARE INTENDED ONLY TO BE USED IN PARSING KISMET BYTECODE; PLEASE DO NOT USE THEM FOR ANY OTHER PURPOSE!
+
+        !!!!!
+        */
+
         public int XFERSTRING(string val)
         {
             long startMetric = this.BaseStream.Position;
@@ -171,6 +179,7 @@ namespace UAssetAPI
             }
             return PointerSize;
         }
+
 
         public int XFER_OBJECT_POINTER(FPackageIndex val)
         {

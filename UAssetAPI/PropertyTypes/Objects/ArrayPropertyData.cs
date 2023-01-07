@@ -54,15 +54,12 @@ namespace UAssetAPI.PropertyTypes.Objects
                 while (!hasTypeBeenFound && schemaName != null)
                 {
                     var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    foreach (UsmapProperty prop in relevantSchema.Properties)
+                    UsmapArrayData strucDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapArrayData;
+                    if (strucDat1 != null)
                     {
-                        if (prop.Name == Name.Value.Value && prop.PropertyData is UsmapArrayData strucDat1)
-                        {
-                            ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
-                            if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
-                            hasTypeBeenFound = true;
-                            break;
-                        }
+                        ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
+                        if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
+                        hasTypeBeenFound = true;
                     }
                     schemaName = relevantSchema.SuperType;
                 }

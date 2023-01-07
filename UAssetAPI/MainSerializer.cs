@@ -233,9 +233,15 @@ namespace UAssetAPI
             FName type = null;
             int leng = 0;
             int duplicationIndex = 0;
+            bool doPostSerialization = true;
 
             if (reader.Asset.HasUnversionedProperties)
             {
+                if (reader.Asset.Mappings == null)
+                {
+                    throw new InvalidMappingsException();
+                }
+
                 //var x = FFragment.Unpack(BitConverter.ToUInt16(new byte[]{ 0x52, 0x05 }, 0));
                 UsmapSchema relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
                 if (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
@@ -249,7 +255,8 @@ namespace UAssetAPI
                 while (practicingUnversionedPropertyIndex >= relevantSchema.Properties.Count) // if needed, go to parent struct
                 {
                     practicingUnversionedPropertyIndex -= relevantSchema.Properties.Count;
-                    relevantSchema = reader.Asset.Mappings.Schemas[relevantSchema.SuperType];
+                    relevantSchema = (relevantSchema.SuperType != null && reader.Asset.Mappings.Schemas.ContainsKey(relevantSchema.SuperType)) ? reader.Asset.Mappings.Schemas[relevantSchema.SuperType] : null;
+                    if (relevantSchema == null) throw new FormatException("Failed to find a valid property for schema index " + header.UnversionedPropertyIndex + " in the class " + parentName.Value.Value);
                 }
                 UsmapProperty relevantProperty = relevantSchema.Properties[practicingUnversionedPropertyIndex];
                 header.UnversionedPropertyIndex += 1;
@@ -259,9 +266,12 @@ namespace UAssetAPI
                 leng = 1; // unknown
                 duplicationIndex = 0; // unknown
 
-                if (name.Value.Value == "SleepFamily")
+                // check if property is zero
+                if (header.CurrentFragment.Value.bHasAnyZeroes)
                 {
-                    Debug.WriteLine("yo");
+                    // TODO: test more thoroughly
+                    doPostSerialization = !(header.ZeroMaskIndex >= header.ZeroMask.Count ? false : header.ZeroMask.Get(header.ZeroMaskIndex));
+                    header.ZeroMaskIndex++;
                 }
             }
             else
@@ -275,7 +285,7 @@ namespace UAssetAPI
                 duplicationIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader);
+            PropertyData result = TypeToClass(type, name, parentName, reader.Asset, doPostSerialization ? reader : null, leng, duplicationIndex, includeHeader);
             result.Offset = startingOffset;
             return result;
         }

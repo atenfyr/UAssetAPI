@@ -1,11 +1,5 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using System.Diagnostics;
 
 namespace UAssetAPI.Unversioned
 {
@@ -20,7 +14,8 @@ namespace UAssetAPI.Unversioned
         public LinkedList<FFragment> Fragments;
         public LinkedListNode<FFragment> CurrentFragment;
         public int UnversionedPropertyIndex = 0;
-        public byte[] ZeroMask;
+        public int ZeroMaskIndex = 0;
+        public BitArray ZeroMask;
         public bool bHasNonZeroValues = false;
 
         public void Read(AssetBinaryReader reader)
@@ -41,11 +36,11 @@ namespace UAssetAPI.Unversioned
 
                 if (Fragment.bHasAnyZeroes)
                 {
-                    ZeroMaskNum += Fragment.ValueNum;
+                    ZeroMaskNum += (uint)Fragment.ValueNum;
                 }
                 else
                 {
-                    UnmaskedNum += Fragment.ValueNum;
+                    UnmaskedNum += (uint)Fragment.ValueNum;
                 }
             }
             while (!Fragment.bIsLast);
@@ -57,6 +52,7 @@ namespace UAssetAPI.Unversioned
             }
             else
             {
+                ZeroMask = new BitArray(0);
                 bHasNonZeroValues = UnmaskedNum > 0;
             }
 
@@ -68,24 +64,51 @@ namespace UAssetAPI.Unversioned
         {
             if (NumBits <= 8)
             {
-                ZeroMask = reader.ReadBytes(1);
+                ZeroMask = new BitArray(reader.ReadBytes(1));
             }
             else if (NumBits <= 16)
             {
-                ZeroMask = reader.ReadBytes(2);
+                ZeroMask = new BitArray(reader.ReadBytes(2));
             }
             else
             {
-                int numWords = (int)(NumBits / 32) + 1;
-                ZeroMask = reader.ReadBytes(numWords * 4);
+                int numWords = UAPUtils.DivideAndRoundUp((int)NumBits, 32);
+                int[] intData = new int[numWords];
+                for (int i = 0; i < numWords; i++)
+                {
+                    intData[i] = reader.ReadInt32();
+                }
+                ZeroMask = new BitArray(intData);
             }
+        }
+
+        public byte[] SaveZeroMaskData()
+        {
+            int NumBits = ZeroMask.Length;
+
+            byte[] res;
+            if (NumBits <= 8)
+            {
+                res = new byte[1];
+            }
+            else if (NumBits <= 16)
+            {
+                res = new byte[2];
+            }
+            else
+            {
+                res = new byte[UAPUtils.DivideAndRoundUp(NumBits, 32) * 4];
+            }
+
+            ZeroMask.CopyTo(res, 0);
+            return res;
         }
 
         public bool CheckIfZeroMaskIsAllOnes()
         {
-            foreach (byte x in ZeroMask)
+            for (int i = 0; i < ZeroMask.Length; i++)
             {
-                if (x != 0xFF) return false;
+                if (!ZeroMask[i]) return false;
             }
             return true;
         }
@@ -100,7 +123,7 @@ namespace UAssetAPI.Unversioned
 
             if (ZeroMask.Length > 0)
             {
-                writer.Write(ZeroMask);
+                writer.Write(SaveZeroMaskData());
             }
         }
 

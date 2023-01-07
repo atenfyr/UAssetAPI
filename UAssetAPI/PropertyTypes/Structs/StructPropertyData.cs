@@ -75,14 +75,11 @@ namespace UAssetAPI.PropertyTypes.Structs
                 while (!hasTypeBeenFound && schemaName != null)
                 {
                     var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    foreach (UsmapProperty prop in relevantSchema.Properties)
+                    UsmapStructData strucDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapStructData;
+                    if (strucDat1 != null)
                     {
-                        if (prop.Name == Name.Value.Value && prop.PropertyData is UsmapStructData strucDat1)
-                        {
-                            StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
-                            hasTypeBeenFound = true;
-                            break;
-                        }
+                        StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+                        hasTypeBeenFound = true;
                     }
                     schemaName = relevantSchema.SuperType;
                 }

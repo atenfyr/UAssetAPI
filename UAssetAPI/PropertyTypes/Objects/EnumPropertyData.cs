@@ -42,15 +42,12 @@ namespace UAssetAPI.PropertyTypes.Objects
                 while (!hasTypeBeenFound && schemaName != null)
                 {
                     var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    foreach (UsmapProperty prop in relevantSchema.Properties)
+                    UsmapEnumData enumDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapEnumData;
+                    if (enumDat1 != null)
                     {
-                        if (prop.Name == Name.Value.Value && prop.PropertyData is UsmapEnumData enumDat1)
-                        {
-                            EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
-                            InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
-                            hasTypeBeenFound = true;
-                            break;
-                        }
+                        EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
+                        InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
+                        hasTypeBeenFound = true;
                     }
                     schemaName = relevantSchema.SuperType;
                 }

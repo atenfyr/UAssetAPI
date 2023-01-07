@@ -71,22 +71,18 @@ namespace UAssetAPI.PropertyTypes.Objects
                         while (!hasTypeBeenFound && schemaName != null)
                         {
                             var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                            foreach (UsmapProperty prop in relevantSchema.Properties)
+                            UsmapMapData mapDat = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapMapData;
+                            if (mapDat != null)
                             {
-                                if (prop.Name == name.Value.Value && prop.PropertyData is UsmapMapData mapDat)
+                                if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
                                 {
-                                    if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
-                                    {
-                                        strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
-                                        hasTypeBeenFound = true;
-                                        break;
-                                    }
-                                    else if (mapDat.ValueType is UsmapStructData strucDat2)
-                                    {
-                                        strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
-                                        hasTypeBeenFound = true;
-                                        break;
-                                    }
+                                    strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+                                    hasTypeBeenFound = true;
+                                }
+                                else if (mapDat.ValueType is UsmapStructData strucDat2)
+                                {
+                                    strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
+                                    hasTypeBeenFound = true;
                                 }
                             }
                             schemaName = relevantSchema.SuperType;

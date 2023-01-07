@@ -25,6 +25,14 @@ namespace UAssetAPI
         }
     }
 
+    public class InvalidMappingsException : InvalidOperationException
+    {
+        public InvalidMappingsException(string message = "Unversioned properties cannot be serialized without valid mappings") : base(message)
+        {
+
+        }
+    }
+
     public class UnknownEngineVersionException : InvalidOperationException
     {
         public UnknownEngineVersionException(string message) : base(message)
@@ -2053,11 +2061,13 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN)
+        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null)
         {
             this.FilePath = path;
+            this.Mappings = mappings;
             SetEngineVersion(engineVersion);
 
             Read(PathToReader(path));
@@ -2068,11 +2078,13 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, bool useSeparateBulkDataFiles = false)
+        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
         {
+            this.Mappings = mappings;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             SetEngineVersion(engineVersion);
             Read(reader);
@@ -2082,8 +2094,10 @@ namespace UAssetAPI
         /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
         /// </summary>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
-        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN)
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
+        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null)
         {
+            this.Mappings = mappings;
             SetEngineVersion(engineVersion);
         }
 
@@ -2093,11 +2107,13 @@ namespace UAssetAPI
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
         /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null)
         {
             this.FilePath = path;
+            this.Mappings = mappings;
             ObjectVersion = objectVersion;
             CustomVersionContainer = customVersionContainer;
 
@@ -2110,11 +2126,13 @@ namespace UAssetAPI
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
         /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, bool useSeparateBulkDataFiles = false)
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
         {
+            this.Mappings = mappings;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             ObjectVersion = objectVersion;
             CustomVersionContainer = customVersionContainer;
@@ -2126,8 +2144,10 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
-        public UAsset(ObjectVersion objectVersion, List<CustomVersion> customVersionContainer)
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
+        public UAsset(ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null)
         {
+            this.Mappings = mappings;
             ObjectVersion = objectVersion;
             CustomVersionContainer = customVersionContainer;
         }

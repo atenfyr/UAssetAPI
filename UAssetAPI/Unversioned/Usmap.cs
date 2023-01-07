@@ -1,13 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
@@ -184,14 +178,28 @@ namespace UAssetAPI.Unversioned
         public string Name;
         public string SuperType;
         public ushort PropCount;
-        public List<UsmapProperty> Properties;
+        public ReadOnlyCollection<UsmapProperty> Properties => properties.AsReadOnly();
 
-        public UsmapSchema(string name, string superType, ushort propCount, List<UsmapProperty> properties)
+        private List<UsmapProperty> properties;
+        private Dictionary<string, UsmapProperty> propertiesMap;
+
+        public UsmapProperty GetProperty(string key)
+        {
+            return propertiesMap.ContainsKey(key) ? propertiesMap[key] : null;
+        }
+
+        public UsmapSchema(string name, string superType, ushort propCount, List<UsmapProperty> props)
         {
             Name = name;
             SuperType = superType;
             PropCount = propCount;
-            Properties = properties;
+            properties = props;
+
+            propertiesMap = new Dictionary<string, UsmapProperty>();
+            foreach (UsmapProperty entry in props)
+            {
+                propertiesMap[entry.Name] = entry;
+            }
         }
 
         public UsmapSchema()

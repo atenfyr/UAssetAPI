@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using System.Diagnostics;
-
-namespace UAssetAPI.Unversioned
+﻿namespace UAssetAPI.Unversioned
 {
     /// <summary>
     /// Unversioned header fragment.
@@ -18,8 +9,6 @@ namespace UAssetAPI.Unversioned
         /// Number of properties to skip before values.
         /// </summary>
         public byte SkipNum;
-
-        public bool bHasAnyZeroes = false;
 
         /// <summary>
         /// Number of subsequent property values stored.
@@ -39,6 +28,8 @@ namespace UAssetAPI.Unversioned
                 return FirstNum + ValueNum - 1;
             }
         }
+
+        public bool bHasAnyZeroes = false;
 
         private static readonly uint SkipMax = 127;
         private static readonly uint ValueMax = 127;

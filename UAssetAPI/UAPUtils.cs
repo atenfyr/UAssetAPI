@@ -156,5 +156,10 @@ namespace UAssetAPI
 
             return data;
         }
+
+        public static int DivideAndRoundUp(int a, int b)
+        {
+            return (a + b - 1) / b;
+        }
     }
 }
