@@ -87,7 +87,7 @@ namespace UAssetAPI.Benchmark
 
                         timer.Restart();
                         timer.Start();
-                        new UAsset(binReader, EngineVersion.VER_UE4_22, true);
+                        new UAsset(binReader, EngineVersion.VER_UE4_22);
                         timer.Stop();
 
                         oneBigAsset.Dispose();
