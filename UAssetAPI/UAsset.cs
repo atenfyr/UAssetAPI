@@ -1886,7 +1886,8 @@ namespace UAssetAPI
                 new FStringTableJsonConverter(),
                 new FStringJsonConverter(),
                 new FPackageIndexJsonConverter(),
-                new StringEnumConverter()
+                new StringEnumConverter(),
+                new GuidJsonConverter(),
             }
         };
 
@@ -1933,7 +1934,8 @@ namespace UAssetAPI
                     new FStringTableJsonConverter(),
                     new FStringJsonConverter(),
                     new FPackageIndexJsonConverter(),
-                    new StringEnumConverter()
+                    new StringEnumConverter(),
+                    new GuidJsonConverter(),
                 }
             });
 
@@ -1977,7 +1979,8 @@ namespace UAssetAPI
                     new FStringTableJsonConverter(),
                     new FStringJsonConverter(),
                     new FPackageIndexJsonConverter(),
-                    new StringEnumConverter()
+                    new StringEnumConverter(),
+                    new GuidJsonConverter(),
                 }
             });
 
@@ -2022,7 +2025,8 @@ namespace UAssetAPI
                     new FStringTableJsonConverter(),
                     new FStringJsonConverter(),
                     new FPackageIndexJsonConverter(),
-                    new StringEnumConverter()
+                    new StringEnumConverter(),
+                    new GuidJsonConverter(),
                 }
             });
 
