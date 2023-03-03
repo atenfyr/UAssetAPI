@@ -925,6 +925,7 @@ namespace UAssetAPI
             else
             {
                 IsUnversioned = true;
+                if (Mappings != null && Mappings.FileVersionUE4 > 0) ObjectVersion = Mappings.FileVersionUE4;
                 if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an object version is manually specified");
             }
 
@@ -933,6 +934,7 @@ namespace UAssetAPI
                 ObjectVersionUE5 fileVersionUE5 = (ObjectVersionUE5)reader.ReadInt32();
                 if (fileVersionUE5 > ObjectVersionUE5.UNKNOWN) ObjectVersionUE5 = fileVersionUE5;
             }
+            if (ObjectVersionUE5 == ObjectVersionUE5.UNKNOWN && Mappings != null && Mappings.FileVersionUE5 > 0) ObjectVersionUE5 = Mappings.FileVersionUE5;
 
             FileVersionLicenseeUE4 = reader.ReadInt32();
 

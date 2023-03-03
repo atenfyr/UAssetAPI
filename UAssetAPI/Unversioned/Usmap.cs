@@ -2,24 +2,33 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
     public enum UsmapVersion
     {
-        INITIAL,
+        /// <summary>
+        /// Initial format.
+        /// </summary>
+        Initial,
 
-		LATEST_PLUS_ONE,
-		LATEST = LATEST_PLUS_ONE - 1
-	};
+        /// <summary>
+        /// Adds package versioning to aid with compatibility
+        /// </summary>
+        PackageVersioning,
+
+        LatestPlusOne,
+        Latest = LatestPlusOne - 1
+     };
 
     public enum ECompressionMethod
     {
         None,
-		Oodle,
-		Brotli,
+        Oodle,
+        Brotli,
 
-		Unknown = 0xFF
+        Unknown = 0xFF
     };
 
     public enum EPropertyType
@@ -227,6 +236,21 @@ namespace UAssetAPI.Unversioned
         internal UsmapVersion Version;
 
         /// <summary>
+        /// Game UE4 object version
+        /// </summary>
+        public ObjectVersion FileVersionUE4;
+
+        /// <summary>
+        /// Game UE5 object version
+        /// </summary>
+        public ObjectVersionUE5 FileVersionUE5;
+
+        /// <summary>
+        /// All the custom versions stored in the archive.
+        /// </summary>
+        public List<CustomVersion> CustomVersionContainer = null;
+
+        /// <summary>
         /// .usmap name map
         /// </summary>
         public List<string> NameMap;
@@ -275,6 +299,28 @@ namespace UAssetAPI.Unversioned
             if (fileSignature != USMAP_MAGIC) throw new FormatException(".usmap: File signature mismatch");
 
             Version = (UsmapVersion)reader.ReadByte();
+            if (Version < UsmapVersion.Initial || Version > UsmapVersion.Latest) throw new FormatException(".usmap: Unknown file version " + Version);
+
+            // package versioning
+            if (Version >= UsmapVersion.PackageVersioning)
+            {
+                bool bHasVersioning = reader.ReadBoolean();
+                if (bHasVersioning)
+                {
+                    FileVersionUE4 = (ObjectVersion)reader.ReadInt32();
+                    FileVersionUE5 = (ObjectVersionUE5)reader.ReadInt32();
+
+                    CustomVersionContainer = new List<CustomVersion>();
+                    int numCustomVersions = reader.ReadInt32();
+                    for (int i = 0; i < numCustomVersions; i++)
+                    {
+                        var customVersionID = new Guid(reader.ReadBytes(16));
+                        var customVersionNumber = reader.ReadInt32();
+                        CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                    }
+                }
+
+            }
 
             ECompressionMethod compressionMethod = (ECompressionMethod)reader.ReadByte();
 
