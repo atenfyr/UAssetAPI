@@ -953,6 +953,14 @@ namespace UAssetAPI
                     existingCustomVersions.Add(customVersionID);
                 }
 
+                if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
+                {
+                    foreach (CustomVersion entry in Mappings.CustomVersionContainer)
+                    {
+                        if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                    }
+                }
+
                 if (CustomVersionContainer != null)
                 {
                     foreach (CustomVersion entry in CustomVersionContainer)
