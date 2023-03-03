@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
-    public class AncestryInfo
+    public class AncestryInfo : ICloneable
     {
         public List<FName> Ancestors = new List<FName>();
         public FName Parent
@@ -20,6 +20,20 @@ namespace UAssetAPI.PropertyTypes.Objects
             {
                 Ancestors[Ancestors.Count - 1] = value;
             }
+        }
+
+        public object Clone() // shallow
+        {
+            var res = new AncestryInfo();
+            res.Ancestors.AddRange(Ancestors);
+            return res;
+        }
+
+        public AncestryInfo CloneWithoutParent()
+        {
+            AncestryInfo res = (AncestryInfo)this.Clone();
+            res.Ancestors.RemoveAt(res.Ancestors.Count - 1);
+            return res;
         }
 
         public void Initialize(AncestryInfo ancestors, FName dad)

@@ -267,20 +267,37 @@ namespace UAssetAPI.Unversioned
         /// </summary>
         public Dictionary<string, UsmapSchema> Schemas;
 
+        /// <summary>
+        /// Attempts to retrieve the corresponding .usmap property data corresponding to a specific property, given its ancestry.
+        /// </summary>
+        /// <typeparam name="T">The type of property to output.</typeparam>
+        /// <param name="propertyName">The name of the property to search for.</param>
+        /// <param name="ancestry">The ancestry of the property to search for.</param>
+        /// <param name="propDat">The property data.</param>
+        /// <returns>Whether or not the property data was successfully found.</returns>
         public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, out T propDat) where T : class
         {
             propDat = null;
 
             var schemaName = ancestry.Parent.Value.Value;
-            if (!this.Schemas.ContainsKey(schemaName)) return false;
-
-            while (schemaName != null)
+            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
             {
                 var relevantSchema = this.Schemas[schemaName];
                 propDat = relevantSchema.GetProperty(propertyName.Value.Value)?.PropertyData as T;
                 if (propDat != null) return true;
                 schemaName = relevantSchema.SuperType;
             }
+
+            if (propertyName.IsDummy && int.TryParse(propertyName.Value.Value, out _))
+            {
+                // this is actually an array member; try to find its parent array
+                if (this.TryGetPropertyData(ancestry.Parent, ancestry.CloneWithoutParent(), out UsmapArrayData arrDat))
+                {
+                    propDat = arrDat.InnerType as T;
+                    if (propDat != null) return true;
+                }
+            }
+
             return false;
         }
 
