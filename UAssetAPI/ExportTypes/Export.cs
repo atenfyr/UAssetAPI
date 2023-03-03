@@ -56,17 +56,20 @@ namespace UAssetAPI.ExportTypes
         ///<summary>If this object is a top level package (which must have been forced into the export table via OBJECTMARK_ForceTagExp), this is the GUID for the original package file. Deprecated</summary>
         [DisplayIndexOrder(11)]
         public Guid PackageGuid;
-        ///<summary>If this export is a top-level package, this is the flags for the original package</summary>
+        ///<summary></summary>
         [DisplayIndexOrder(12)]
+        public bool IsInheritedInstance;
+        ///<summary>If this export is a top-level package, this is the flags for the original package</summary>
+        [DisplayIndexOrder(13)]
         public EPackageFlags PackageFlags;
         ///<summary>Should this export be always loaded in editor game?</summary>
-        [DisplayIndexOrder(13)]
+        [DisplayIndexOrder(14)]
         public bool bNotAlwaysLoadedForEditorGame;
         ///<summary>Is this export an asset?</summary>
-        [DisplayIndexOrder(14)]
+        [DisplayIndexOrder(15)]
         public bool bIsAsset;
         ///<summary></summary>
-        [DisplayIndexOrder(15)]
+        [DisplayIndexOrder(16)]
         public bool GeneratePublicHash;
 
         /// <summary>
@@ -78,13 +81,13 @@ namespace UAssetAPI.ExportTypes
         internal int SerializationBeforeCreateDependenciesSize;
         internal int CreateBeforeCreateDependenciesSize;
 
-        [DisplayIndexOrder(16)]
-        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(17)]
-        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
+        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(18)]
-        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(19)]
+        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        [DisplayIndexOrder(20)]
         public List<FPackageIndex> CreateBeforeCreateDependencies = new List<FPackageIndex>();
 
         /// <summary>

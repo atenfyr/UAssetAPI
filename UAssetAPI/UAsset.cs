@@ -1151,6 +1151,7 @@ namespace UAssetAPI
                     newExport.bNotForClient = reader.ReadInt32() == 1;
                     newExport.bNotForServer = reader.ReadInt32() == 1;
                     newExport.PackageGuid = new Guid(reader.ReadBytes(16));
+                    if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) newExport.IsInheritedInstance = reader.ReadInt32() == 1;
                     newExport.PackageFlags = (EPackageFlags)reader.ReadUInt32();
                     if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                     {
@@ -1606,6 +1607,7 @@ namespace UAssetAPI
                         writer.Write(us.bNotForClient ? 1 : 0);
                         writer.Write(us.bNotForServer ? 1 : 0);
                         writer.Write(us.PackageGuid.ToByteArray());
+                        if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) writer.Write(us.IsInheritedInstance ? 1 : 0);
                         writer.Write((uint)us.PackageFlags);
                         if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                         {
@@ -1787,6 +1789,7 @@ namespace UAssetAPI
                         writer.Write(us.bNotForClient ? 1 : 0);
                         writer.Write(us.bNotForServer ? 1 : 0);
                         writer.Write(us.PackageGuid.ToByteArray());
+                        if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) writer.Write(us.IsInheritedInstance ? 1 : 0);
                         writer.Write((uint)us.PackageFlags);
                         if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                         {
