@@ -45,7 +45,7 @@
     <ProjectReference Include="..\UAssetAPI\UAssetAPI.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="obj\Debug Verbose\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
