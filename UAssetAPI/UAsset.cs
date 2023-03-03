@@ -1447,7 +1447,7 @@ namespace UAssetAPI
             }
             writer.Write(ThumbnailTableOffset);
 
-            if (ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
+            if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
             writer.Write(PackageGuid.ToByteArray());
             writer.Write(Generations.Count);
