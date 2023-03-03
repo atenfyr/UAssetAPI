@@ -1000,7 +1000,7 @@ namespace UAssetAPI
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
-            if (generationCount > 1e6) // failsafe for some specific games
+            if (generationCount < 0 || generationCount > 1e5) // failsafe for some specific games
             {
                 reader.BaseStream.Position -= sizeof(int) + 16;
                 ValorantGarbageData = reader.ReadBytes(8); // garbage data
