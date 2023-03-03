@@ -65,6 +65,9 @@ namespace UAssetAPI.ExportTypes
         ///<summary>Is this export an asset?</summary>
         [DisplayIndexOrder(14)]
         public bool bIsAsset;
+        ///<summary></summary>
+        [DisplayIndexOrder(15)]
+        public bool GeneratePublicHash;
 
         /// <summary>
         /// The export table must serialize as a fixed size, this is used to index into a long list, which is later loaded into the array. -1 means dependencies are not present. These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies.
@@ -75,13 +78,13 @@ namespace UAssetAPI.ExportTypes
         internal int SerializationBeforeCreateDependenciesSize;
         internal int CreateBeforeCreateDependenciesSize;
 
-        [DisplayIndexOrder(15)]
-        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(16)]
-        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
+        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(17)]
-        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(18)]
+        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        [DisplayIndexOrder(19)]
         public List<FPackageIndex> CreateBeforeCreateDependencies = new List<FPackageIndex>();
 
         /// <summary>

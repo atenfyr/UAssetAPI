@@ -1160,6 +1160,10 @@ namespace UAssetAPI
                     {
                         newExport.bIsAsset = reader.ReadInt32() == 1;
                     }
+                    if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
+                    {
+                        newExport.GeneratePublicHash = reader.ReadInt32() == 1;
+                    }
                     if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                     {
                         newExport.FirstExportDependencyOffset = reader.ReadInt32();
@@ -1611,6 +1615,10 @@ namespace UAssetAPI
                         {
                             writer.Write(us.bIsAsset ? 1 : 0);
                         }
+                        if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
+                        {
+                            writer.Write(us.GeneratePublicHash ? 1 : 0);
+                        }
                         if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                         {
                             writer.Write(us.FirstExportDependencyOffset);
@@ -1787,6 +1795,10 @@ namespace UAssetAPI
                         if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                         {
                             writer.Write(us.bIsAsset ? 1 : 0);
+                        }
+                        if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
+                        {
+                            writer.Write(us.GeneratePublicHash ? 1 : 0);
                         }
                         if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                         {
