@@ -41,7 +41,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             var data = Activator.CreateInstance(T, Name) as PropertyData;
             if (data == null) return;
             data.Offset = offset;
-            data.Read(reader, StructType, false, 0);
+            data.Ancestry.Initialize(Ancestry, Name);
+            data.Read(reader, false, 0);
             Value = new List<PropertyData> { data };
         }
 
@@ -51,7 +52,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             PropertyData data = null;
 
             var unversionedHeader = new FUnversionedHeader(reader);
-            while ((data = MainSerializer.Read(reader, StructType, unversionedHeader, true)) != null)
+            while ((data = MainSerializer.Read(reader, Ancestry, StructType, unversionedHeader, true)) != null)
             {
                 resultingList.Add(data);
             }
@@ -59,7 +60,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = resultingList;
         }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader && !reader.Asset.HasUnversionedProperties) // originally !isForced
             {
@@ -68,27 +69,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.Schemas.ContainsKey(parentName.Value.Value))
+            if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapStructData strucDat1))
             {
-                bool hasTypeBeenFound = false;
-                var schemaName = parentName.Value.Value;
-                while (!hasTypeBeenFound && schemaName != null)
-                {
-                    var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    UsmapStructData strucDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapStructData;
-                    if (strucDat1 != null)
-                    {
-                        StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
-                        hasTypeBeenFound = true;
-                    }
-                    schemaName = relevantSchema.SuperType;
-                }
-                
+                StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+            }
 
-                if (reader.Asset.HasUnversionedProperties && StructType == null)
-                {
-                    throw new InvalidOperationException("Unable to determine struct type for struct " + Name.Value.Value + " in class " + parentName.Value.Value);
-                }
+            if (reader.Asset.HasUnversionedProperties && StructType == null)
+            {
+                throw new InvalidOperationException("Unable to determine struct type for struct " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
             }
 
             RegistryEntry targetEntry = null;

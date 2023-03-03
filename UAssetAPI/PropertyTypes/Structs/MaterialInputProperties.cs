@@ -2,6 +2,7 @@
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -86,7 +87,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -123,7 +124,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -160,7 +161,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -170,7 +171,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             ReadExpressionInput(reader, false, 0);
             reader.ReadInt32(); // bUseConstantValue; always false
             Value = new ColorPropertyData(Name);
-            Value.Read(reader, parentName, false, 0);
+            Value.Ancestry.Initialize(Ancestry, Name);
+            Value.Read(reader, false, 0);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -202,7 +204,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -244,7 +246,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -286,7 +288,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -296,7 +298,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             ReadExpressionInput(reader, false, 0);
             reader.ReadInt32(); // bUseConstantValue; always false
             Value = new VectorPropertyData(Name);
-            Value.Read(reader, parentName, false, 0);
+            Value.Ancestry.Initialize(Ancestry, Name);
+            Value.Read(reader, false, 0);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -328,7 +331,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -338,7 +341,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             ReadExpressionInput(reader, false, 0);
             reader.ReadInt32(); // bUseConstantValue; always false
             Value = new Vector2DPropertyData(Name);
-            Value.Read(reader, parentName, false, 0);
+            Value.Ancestry.Initialize(Ancestry, Name);
+            Value.Read(reader, false, 0);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)

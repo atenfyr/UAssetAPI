@@ -100,7 +100,7 @@ namespace UAssetAPI.ExportTypes
             PropertyData bit;
 
             var unversionedHeader = new FUnversionedHeader(reader);
-            while ((bit = MainSerializer.Read(reader, this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(reader.Asset).ObjectName : reader.Asset.GetParentClassExportName(), unversionedHeader, true)) != null)
+            while ((bit = MainSerializer.Read(reader, null, this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(reader.Asset).ObjectName : reader.Asset.GetParentClassExportName(), unversionedHeader, true)) != null)
             {
                 Data.Add(bit);
             }

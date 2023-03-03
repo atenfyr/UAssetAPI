@@ -57,35 +57,22 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("MapProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        private PropertyData MapTypeToClass(FName type, FName name, FName parentName, AssetBinaryReader reader, int leng, bool includeHeader, bool isKey)
+        private PropertyData MapTypeToClass(FName type, FName name, AssetBinaryReader reader, int leng, bool includeHeader, bool isKey)
         {
             switch (type.Value.Value)
             {
                 case "StructProperty":
                     FName strucType = null;
 
-                    if (reader.Asset.Mappings != null && reader.Asset.Mappings.Schemas.ContainsKey(parentName.Value.Value))
+                    if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapMapData mapDat))
                     {
-                        bool hasTypeBeenFound = false;
-                        var schemaName = parentName.Value.Value;
-                        while (!hasTypeBeenFound && schemaName != null)
+                        if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
                         {
-                            var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                            UsmapMapData mapDat = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapMapData;
-                            if (mapDat != null)
-                            {
-                                if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
-                                {
-                                    strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
-                                    hasTypeBeenFound = true;
-                                }
-                                else if (mapDat.ValueType is UsmapStructData strucDat2)
-                                {
-                                    strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
-                                    hasTypeBeenFound = true;
-                                }
-                            }
-                            schemaName = relevantSchema.SuperType;
+                            strucType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
+                        }
+                        else if (mapDat.ValueType is UsmapStructData strucDat2)
+                        {
+                            strucType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
                         }
                     }
                     else if (reader.Asset.MapStructTypeOverride.ContainsKey(name.Value.Value))
@@ -103,18 +90,19 @@ namespace UAssetAPI.PropertyTypes.Objects
                     if (strucType?.Value == null) strucType = FName.DefineDummy(reader.Asset, "Generic");
 
                     StructPropertyData data = new StructPropertyData(name, strucType);
+                    data.Ancestry.Initialize(Ancestry, Name);
                     data.Offset = reader.BaseStream.Position;
-                    data.Read(reader, Name, false, 1);
+                    data.Read(reader, false, 1);
                     return data;
                 default:
-                    var res = MainSerializer.TypeToClass(type, name, Name, reader.Asset, null, leng);
-                    res.Offset = reader.BaseStream.Position;
-                    res.Read(reader, Name, includeHeader, leng);
+                    var res = MainSerializer.TypeToClass(type, name, Ancestry, Name, reader.Asset, null, leng);
+                    res.Ancestry.Initialize(Ancestry, Name);
+                    res.Read(reader, includeHeader, leng);
                     return res;
             }
         }
 
-        private TMap<PropertyData, PropertyData> ReadRawMap(AssetBinaryReader reader, FName parentName, FName type1, FName type2, int numEntries)
+        private TMap<PropertyData, PropertyData> ReadRawMap(AssetBinaryReader reader, FName type1, FName type2, int numEntries)
         {
             var resultingDict = new TMap<PropertyData, PropertyData>();
 
@@ -122,8 +110,8 @@ namespace UAssetAPI.PropertyTypes.Objects
             PropertyData data2 = null;
             for (int i = 0; i < numEntries; i++)
             {
-                data1 = MapTypeToClass(type1, Name, parentName, reader, 0, false, true);
-                data2 = MapTypeToClass(type2, Name, parentName, reader, 0, false, false);
+                data1 = MapTypeToClass(type1, Name, reader, 0, false, true);
+                data2 = MapTypeToClass(type2, Name, reader, 0, false, false);
 
                 resultingDict.Add(data1, data2);
             }
@@ -131,7 +119,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             return resultingDict;
         }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             FName type1 = null, type2 = null;
             if (includeHeader)
@@ -145,7 +133,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             KeysToRemove = new PropertyData[numKeysToRemove];
             for (int i = 0; i < numKeysToRemove; i++)
             {
-                KeysToRemove[i] = MapTypeToClass(type1, Name, parentName, reader, 0, false, true);
+                KeysToRemove[i] = MapTypeToClass(type1, Name, reader, 0, false, true);
             }
 
             int numEntries = reader.ReadInt32();
@@ -155,7 +143,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 ValueType = type2;
             }
 
-            Value = ReadRawMap(reader, parentName, type1, type2, numEntries);
+            Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
         private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)

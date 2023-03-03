@@ -589,7 +589,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 				List<PropertyData> resultingList = new List<PropertyData>();
 				PropertyData data = null;
                 var unversionedHeader = new FUnversionedHeader(reader);
-                while ((data = MainSerializer.Read(reader, null, unversionedHeader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, null, null, unversionedHeader, true)) != null) {
 					resultingList.Add(data);
 				}
 				items[i] = resultingList;

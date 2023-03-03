@@ -33,12 +33,12 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("EnumProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (reader.Asset.HasUnversionedProperties)
             {
                 bool hasTypeBeenFound = false;
-                var schemaName = parentName.Value.Value;
+                var schemaName = Ancestry.Parent.Value.Value;
                 while (!hasTypeBeenFound && schemaName != null)
                 {
                     var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];

@@ -3,6 +3,8 @@ using Newtonsoft.Json.Converters;
 using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.Collections.Generic;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -51,7 +53,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("ByteProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             ReadCustom(reader, includeHeader, leng1, leng2, true);
         }
@@ -64,41 +66,57 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            switch (leng1)
+            bool useFailsafe = true;
+            if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapPropertyData propDat))
             {
-                case 1:
-                    ByteType = BytePropertyType.Byte;
-                    Value = reader.ReadByte();
-                    break;
-                case 0: // Should be only seen in maps; fallback "make our best guess and pray we're right" behavior
-                    int nameMapPointer = reader.ReadInt32();
-                    int nameMapIndex = reader.ReadInt32();
-                    reader.BaseStream.Position -= sizeof(int) * 2;
-
-                    // In the case of it being serialized as just a byte, it will probably try to parse part of the next property and produce something too big for the name map
-                    if (nameMapPointer >= 0 && nameMapPointer < reader.Asset.GetNameMapIndexList().Count && nameMapIndex == 0 && !reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("/"))
-                    {
-                        ByteType = BytePropertyType.FName;
-                        EnumValue = reader.ReadFName();
-                        break;
-                    } 
-                    else
-                    {
+                useFailsafe = false;
+                ByteType = propDat is UsmapEnumData ? BytePropertyType.FName : BytePropertyType.Byte;
+            }
+            
+            if (useFailsafe)
+            {
+                // if no mappings, use length
+                switch (leng1)
+                {
+                    case 1:
                         ByteType = BytePropertyType.Byte;
-                        Value = reader.ReadByte();
                         break;
-                    }
-                case 8:
-                    ByteType = BytePropertyType.FName;
-                    EnumValue = reader.ReadFName();
-                    break;
-                default:
-                    if (canRepeat)
-                    {
-                        ReadCustom(reader, false, leng2, 0, false);
-                        return;
-                    }
-                    throw new FormatException("Invalid length " + leng1 + " for ByteProperty");
+                    case 0: // Should be only seen in maps; fallback "make our best guess and pray we're right" behavior
+                        int nameMapPointer = reader.ReadInt32();
+                        int nameMapIndex = reader.ReadInt32();
+                        reader.BaseStream.Position -= sizeof(int) * 2;
+
+                        // In the case of it being serialized as just a byte, it will probably try to parse part of the next property and produce something too big for the name map
+                        if (nameMapPointer >= 0 && nameMapPointer < reader.Asset.GetNameMapIndexList().Count && nameMapIndex == 0 && !reader.Asset.GetNameReference(nameMapPointer).ToString().Contains("/"))
+                        {
+                            ByteType = BytePropertyType.FName;
+                            break;
+                        }
+                        else
+                        {
+                            ByteType = BytePropertyType.Byte;
+                            break;
+                        }
+                    case 8:
+                        ByteType = BytePropertyType.FName;
+                        break;
+                    default:
+                        if (canRepeat)
+                        {
+                            ReadCustom(reader, false, leng2, 0, false);
+                            return;
+                        }
+                        throw new FormatException("Invalid length " + leng1 + " for ByteProperty");
+                }
+            }
+
+            if (ByteType == BytePropertyType.Byte)
+            {
+                Value = reader.ReadByte();
+            }
+            else if (ByteType == BytePropertyType.FName)
+            {
+                EnumValue = reader.ReadFName();
             }
         }
 

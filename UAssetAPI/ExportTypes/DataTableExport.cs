@@ -66,6 +66,7 @@ namespace UAssetAPI.ExportTypes
             Table = new UDataTable();
 
             int numEntries = reader.ReadInt32();
+            FName pcen = reader.Asset.GetParentClassExportName();
             for (int i = 0; i < numEntries; i++)
             {
                 FName rowName = reader.ReadFName();
@@ -73,7 +74,8 @@ namespace UAssetAPI.ExportTypes
                 {
                     StructType = decidedStructType
                 };
-                nextStruct.Read(reader, reader.Asset.GetParentClassExportName(), false, 1);
+                nextStruct.Ancestry.Initialize(null, pcen);
+                nextStruct.Read(reader, false, 1);
                 Table.Data.Add(nextStruct);
             }
         }

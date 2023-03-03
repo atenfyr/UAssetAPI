@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Xml.Linq;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
@@ -264,6 +266,23 @@ namespace UAssetAPI.Unversioned
         /// .usmap schema map
         /// </summary>
         public Dictionary<string, UsmapSchema> Schemas;
+
+        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, out T propDat) where T : class
+        {
+            propDat = null;
+
+            var schemaName = ancestry.Parent.Value.Value;
+            if (!this.Schemas.ContainsKey(schemaName)) return false;
+
+            while (schemaName != null)
+            {
+                var relevantSchema = this.Schemas[schemaName];
+                propDat = relevantSchema.GetProperty(propertyName.Value.Value)?.PropertyData as T;
+                if (propDat != null) return true;
+                schemaName = relevantSchema.SuperType;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Creates a MemoryStream from an asset path.

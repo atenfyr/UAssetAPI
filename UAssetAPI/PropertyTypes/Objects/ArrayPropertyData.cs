@@ -38,7 +38,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("ArrayProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
@@ -47,27 +47,15 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
 
             FName arrayStructType = null;
-            if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.Schemas.ContainsKey(parentName.Value.Value))
+            if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapArrayData strucDat1))
             {
-                bool hasTypeBeenFound = false;
-                var schemaName = parentName.Value.Value;
-                while (!hasTypeBeenFound && schemaName != null)
-                {
-                    var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    UsmapArrayData strucDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapArrayData;
-                    if (strucDat1 != null)
-                    {
-                        ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
-                        if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
-                        hasTypeBeenFound = true;
-                    }
-                    schemaName = relevantSchema.SuperType;
-                }
+                ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
+                if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
+            }
 
-                if (reader.Asset.HasUnversionedProperties && ArrayType == null)
-                {
-                    throw new InvalidOperationException("Unable to determine array type for array " + Name.Value.Value + " in class " + parentName.Value.Value);
-                }
+            if (reader.Asset.HasUnversionedProperties && ArrayType == null)
+            {
+                throw new InvalidOperationException("Unable to determine array type for array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
             }
 
             int numEntries = reader.ReadInt32();
@@ -122,7 +110,8 @@ namespace UAssetAPI.PropertyTypes.Objects
                     {
                         var data = new StructPropertyData(name, fullType);
                         data.Offset = reader.BaseStream.Position;
-                        data.Read(reader, parentName, false, structLength);
+                        data.Ancestry.Initialize(Ancestry, Name);
+                        data.Read(reader, false, structLength);
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }
@@ -140,10 +129,10 @@ namespace UAssetAPI.PropertyTypes.Objects
                     if (averageSizeEstimate1 == 0) averageSizeEstimate1 = 1; if (averageSizeEstimate2 == 0) averageSizeEstimate2 = 0;
                     for (int i = 0; i < numEntries; i++)
                     {
-                        results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), parentName, reader.Asset);
+                        results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
                         if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = arrayStructType == null ? FName.DefineDummy(reader.Asset, "Generic") : arrayStructType;
-                        results[i].Read(reader, parentName, false, averageSizeEstimate1, averageSizeEstimate2);
+                        results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
                     }
                 }
                 Value = results;

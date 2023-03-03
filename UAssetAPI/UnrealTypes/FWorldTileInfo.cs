@@ -2,6 +2,7 @@
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -27,7 +28,8 @@ namespace UAssetAPI.UnrealTypes
             Name = reader.ReadFString();
             Reserved0 = reader.ReadInt32();
             Reserved1 = new IntPointPropertyData(FName.DefineDummy(asset, "Reserved1"));
-            Reserved1.Read(reader, reader.Asset.GetParentClassExportName(), false, 0, 0);
+            Reserved1.Ancestry.Initialize(null, reader.Asset.GetParentClassExportName());
+            Reserved1.Read(reader, false, 0, 0);
 
             if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
@@ -163,7 +165,8 @@ namespace UAssetAPI.UnrealTypes
                 Position[2] = reader.ReadInt32();
             }
             Bounds = new BoxPropertyData(FName.DefineDummy(asset, "Bounds"));
-            Bounds.Read(reader, reader.Asset.GetParentClassExportName(), false, 0, 0);
+            Bounds.Ancestry.Initialize(null, reader.Asset.GetParentClassExportName());
+            Bounds.Read(reader, false, 0, 0);
             Layer = new FWorldTileLayer();
             Layer.Read(reader, asset);
 

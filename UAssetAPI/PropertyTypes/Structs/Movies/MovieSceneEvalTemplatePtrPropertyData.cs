@@ -27,7 +27,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader) {
                 PropertyGuid = reader.ReadPropertyGuid();
@@ -36,12 +36,13 @@ namespace UAssetAPI.PropertyTypes.Structs
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
             data = new StrPropertyData(FName.DefineDummy(reader.Asset, "TypeName"));
+            data.Ancestry.Initialize(Ancestry, Name);
             //data = new StrPropertyData();
-            data.Read(reader, parentName, includeHeader, leng1);
+            data.Read(reader, includeHeader, leng1);
             resultingList.Add(data);
             if (((StrPropertyData)data).Value != null) {
                 var unversionedHeader = new FUnversionedHeader(reader);
-                while ((data = MainSerializer.Read(reader, Name, unversionedHeader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, Ancestry, Name, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }   
             }
@@ -97,7 +98,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
 
-        public override void Read(AssetBinaryReader reader, FName parentName, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             if (includeHeader)
             {
@@ -107,13 +108,14 @@ namespace UAssetAPI.PropertyTypes.Structs
             List<PropertyData> resultingList = new List<PropertyData>();
             PropertyData data = null;
             data = new StrPropertyData(FName.DefineDummy(reader.Asset, "TypeName"));
-            data.Read(reader, parentName, includeHeader, leng1);
+            data.Ancestry.Initialize(Ancestry, Name);
+            data.Read(reader, includeHeader, leng1);
             resultingList.Add(data);
             if (((StrPropertyData)data).Value != null) {
 
                 var unversionedHeader = new FUnversionedHeader(reader);
 
-                while ((data = MainSerializer.Read(reader, Name, unversionedHeader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, Ancestry,Name, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }
             }
