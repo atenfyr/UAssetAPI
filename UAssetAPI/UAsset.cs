@@ -669,6 +669,11 @@ namespace UAssetAPI
         public byte[] AssetRegistryData;
 
         /// <summary>
+        /// Some garbage data that appears to be present in certain games (e.g. Valorant)
+        /// </summary>
+        public byte[] ValorantGarbageData;
+
+        /// <summary>
         /// Tile information used by WorldComposition.
         /// Defines properties necessary for tile positioning in the world.
         /// </summary>
@@ -898,17 +903,7 @@ namespace UAssetAPI
         {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             uint fileSignature = reader.ReadUInt32();
-            if (fileSignature != UASSET_MAGIC)
-            {
-                if (ObjectVersionUE5 > 0)
-                {
-                    reader.BaseStream.Position -= 4;
-                }
-                else
-                {
-                    throw new FormatException("File signature mismatch");
-                }
-            }
+            if (fileSignature != UASSET_MAGIC) throw new FormatException("File signature mismatch");
 
             LegacyFileVersion = reader.ReadInt32();
             if (LegacyFileVersion != -4)
@@ -929,7 +924,7 @@ namespace UAssetAPI
                 if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization of an unversioned asset before an object version is manually specified");
             }
 
-            if (ObjectVersionUE5 > 0)
+            if (LegacyFileVersion <= -8)
             {
                 ObjectVersionUE5 fileVersionUE5 = (ObjectVersionUE5)reader.ReadInt32();
                 if (fileVersionUE5 > ObjectVersionUE5.UNKNOWN) ObjectVersionUE5 = fileVersionUE5;
@@ -999,10 +994,19 @@ namespace UAssetAPI
             }
             ThumbnailTableOffset = reader.ReadInt32();
 
+            // valorant garbage data is here
+
             PackageGuid = new Guid(reader.ReadBytes(16));
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
+            if (generationCount > 1e6) // failsafe for some specific games
+            {
+                reader.BaseStream.Position -= sizeof(int) + 16;
+                ValorantGarbageData = reader.ReadBytes(8); // garbage data
+                PackageGuid = new Guid(reader.ReadBytes(16));
+                generationCount = reader.ReadInt32();
+            }
             for (int i = 0; i < generationCount; i++)
             {
                 int genNumExports = reader.ReadInt32();
@@ -1442,6 +1446,8 @@ namespace UAssetAPI
                 writer.Write(SearchableNamesOffset);
             }
             writer.Write(ThumbnailTableOffset);
+
+            if (ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
             writer.Write(PackageGuid.ToByteArray());
             writer.Write(Generations.Count);
