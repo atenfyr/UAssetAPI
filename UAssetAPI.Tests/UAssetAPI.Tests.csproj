@@ -9,7 +9,7 @@
     <TestProjectType>UnitTest</TestProjectType>
     <AssemblyTitle>UAssetAPI.Tests</AssemblyTitle>
     <Product>UAssetAPI.Tests</Product>
-    <Copyright>Copyright © Atenfyr 2022</Copyright>
+    <Copyright>Copyright © Atenfyr 2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Configurations>Debug;Release;Debug Verbose</Configurations>
   </PropertyGroup>

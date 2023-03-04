@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyTitle>UAssetAPI</AssemblyTitle>
     <Product>UAssetAPI</Product>
-    <Copyright>Copyright © Atenfyr 2022</Copyright>
+    <Copyright>Copyright © Atenfyr 2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Configurations>Debug;Release;Debug Verbose</Configurations>
   </PropertyGroup>

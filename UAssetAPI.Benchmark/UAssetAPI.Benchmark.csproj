@@ -6,7 +6,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>UAssetAPI.Benchmark</AssemblyTitle>
     <Product>UAssetAPI.Benchmark</Product>
-    <Copyright>Copyright ©  2022</Copyright>
+    <Copyright>Copyright © Atenfyr 2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Configurations>Debug;Release;Debug Verbose</Configurations>
   </PropertyGroup>
