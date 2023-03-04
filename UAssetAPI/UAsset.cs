@@ -1290,6 +1290,7 @@ namespace UAssetAPI
                         }
                     }
 
+#pragma warning disable CS0168 // Variable is declared but never used
                     try
                     {
                         long nextStarting = reader.BaseStream.Length - 4;
@@ -1378,6 +1379,7 @@ namespace UAssetAPI
                         Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
                         ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
                     }
+#pragma warning restore CS0168 // Variable is declared but never used
                 }
             }
         }

@@ -103,6 +103,7 @@ namespace UAssetAPI.ExportTypes
             long startedReading = reader.BaseStream.Position;
 
             bool willParseRaw = true;
+#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 if (ParseBytecode && Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)
@@ -122,6 +123,7 @@ namespace UAssetAPI.ExportTypes
                 Debug.WriteLine(ex.StackTrace);
 #endif
             }
+#pragma warning restore CS0168 // Variable is declared but never used
 
             if (willParseRaw)
             {
