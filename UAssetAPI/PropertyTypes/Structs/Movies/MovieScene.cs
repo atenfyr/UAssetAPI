@@ -630,11 +630,13 @@ namespace UAssetAPI.PropertyTypes.Structs
 			for (int i = 0; i < itemsamount; i++) {
 
 				if (Tree.Data.Items[i] != null) {
-					foreach (var t in Tree.Data.Items[i]) {
+					var dat = Tree.Data.Items[i];
+                    MainSerializer.GenerateUnversionedHeader(ref dat, FName.DefineDummy(writer.Asset, "SectionEvaluationDataTree"), writer.Asset)?.Write(writer);
+                    foreach (var t in dat) {
 						MainSerializer.Write(t, writer, true);
 					}
 				}
-				writer.Write(FName.FromString(writer.Asset, "None"));
+                if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
 			}
 
 		}

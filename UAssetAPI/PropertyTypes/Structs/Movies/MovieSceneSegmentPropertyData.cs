@@ -74,12 +74,14 @@ namespace UAssetAPI.PropertyTypes.Structs
             {
                 if (Value.Impls[i] != null)
                 {
-                    foreach (var t in Value.Impls[i])
+                    var dat = Value.Impls[i];
+                    MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
+                    foreach (var t in dat)
                     {
                         MainSerializer.Write(t, writer, true);
                     }
                 }
-                writer.Write(FName.FromString(writer.Asset, "None"));
+                if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
                 //Value.Impls[i].Write(writer, false);
             }
 

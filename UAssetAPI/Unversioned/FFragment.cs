@@ -1,4 +1,6 @@
-﻿namespace UAssetAPI.Unversioned
+﻿using System.Diagnostics;
+
+namespace UAssetAPI.Unversioned
 {
     /// <summary>
     /// Unversioned header fragment.
@@ -8,12 +10,12 @@
         /// <summary>
         /// Number of properties to skip before values.
         /// </summary>
-        public byte SkipNum;
+        public int SkipNum;
 
         /// <summary>
         /// Number of subsequent property values stored.
         /// </summary>
-        public byte ValueNum = 0;
+        public int ValueNum = 0;
 
         /// <summary>
         /// Is this the last fragment of the header?
@@ -31,16 +33,21 @@
 
         public bool bHasAnyZeroes = false;
 
-        private static readonly uint SkipMax = 127;
-        private static readonly uint ValueMax = 127;
-        private static readonly uint SkipNumMask = 0x007fu;
-        private static readonly uint HasZeroMask = 0x0080u;
-        private static readonly int ValueNumShift = 9;
-		private static readonly uint IsLastMask  = 0x0100u;
+        internal static readonly byte SkipMax = 127;
+        internal static readonly byte ValueMax = 127;
+        internal static readonly uint SkipNumMask = 0x007fu;
+        internal static readonly uint HasZeroMask = 0x0080u;
+        internal static readonly int ValueNumShift = 9;
+        internal static readonly uint IsLastMask = 0x0100u;
+
+        public override string ToString()
+        {
+            return "{" + SkipNum + "," + ValueNum + "," + bHasAnyZeroes + "," + bIsLast + "}";
+        }
 
         public ushort Pack()
 		{
-			return (ushort)(SkipNum | (bHasAnyZeroes ? HasZeroMask : 0) | (ushort)(ValueNum << ValueNumShift) | (bIsLast ? IsLastMask : 0));
+			return (ushort)((byte)SkipNum | (bHasAnyZeroes ? HasZeroMask : 0) | (ushort)((byte)ValueNum << ValueNumShift) | (bIsLast ? IsLastMask : 0));
 		}
 
         public static FFragment Unpack(ushort Int)
@@ -51,6 +58,31 @@
             Fragment.ValueNum = (byte)(Int >> ValueNumShift);
             Fragment.bIsLast = (Int & IsLastMask) != 0;
             return Fragment;
+        }
+
+        public static FFragment GetFromBounds(int LastNumBefore, int FirstNum, int LastNum, bool hasAnyZeros, bool isLast) // for 1st fragment: LastNumBefore = -1
+        {
+            FFragment Fragment = new FFragment();
+            Fragment.SkipNum = FirstNum - LastNumBefore - 1;
+            Fragment.ValueNum = LastNum - FirstNum + 1;
+            Fragment.bHasAnyZeroes = hasAnyZeros; // temp
+            Fragment.bIsLast = isLast;
+
+            Fragment.FirstNum = FirstNum;
+            return Fragment;
+        }
+
+        public FFragment()
+        {
+
+        }
+
+        public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes)
+        {
+            SkipNum = skipNum;
+            ValueNum = valueNum;
+            this.bIsLast = bIsLast;
+            this.bHasAnyZeroes = bHasAnyZeroes;
         }
     }
 }

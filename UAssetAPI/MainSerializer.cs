@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,11 +7,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
@@ -128,6 +129,121 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Generates an unversioned header based on a list of properties, and sorts the list in the correct order to be serialized.
+        /// </summary>
+        /// <param name="data">The list of properties to sort and generate an unversioned header from.</param>
+        /// <param name="parentName">The name of the parent of all the properties.</param>
+        /// <param name="asset">The UAsset which the properties are contained within.</param>
+        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, UAsset asset)
+        {
+            var sortedProps = new List<PropertyData>();
+            if (asset.Mappings == null) return null;
+
+            int firstNumAll = int.MaxValue;
+            int lastNumAll = int.MinValue;
+            HashSet<int> propertiesToTouch = new HashSet<int>();
+            Dictionary<int, PropertyData> propMap = new Dictionary<int, PropertyData>();
+            Dictionary<int, bool> zeroProps = new Dictionary<int, bool>();
+            foreach (PropertyData entry in data)
+            {
+                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
+                propMap[idx] = entry;
+                zeroProps[idx] = entry.IsZero;
+
+                if (idx < firstNumAll) firstNumAll = idx;
+                if (idx > lastNumAll) lastNumAll = idx;
+                propertiesToTouch.Add(idx);
+            }
+
+            int lastNumBefore = -1;
+            List<FFragment> allFrags = new List<FFragment>();
+            if (propertiesToTouch.Count > 0)
+            {
+                while (true)
+                {
+                    bool hasAnyZeros = false;
+
+                    int firstNum = lastNumBefore + 1;
+                    while (!propertiesToTouch.Contains(firstNum) && firstNum <= lastNumAll) firstNum++;
+                    if (firstNum > lastNumAll) break;
+
+#if DEBUG_VERBOSE
+                    if (allFrags.Count > 0) Debug.WriteLine("W: " + allFrags[allFrags.Count - 1]);
+#endif
+
+                    int lastNum = firstNum;
+                    while (propertiesToTouch.Contains(lastNum))
+                    {
+                        if (zeroProps[lastNum]) hasAnyZeros = true;
+                        sortedProps.Add(propMap[lastNum]);
+
+                        lastNum++;
+                    }
+                    lastNum--;
+
+                    var newFrag = FFragment.GetFromBounds(lastNumBefore, firstNum, lastNum, hasAnyZeros, false);
+
+                    // add extra 127s if we went over the max for either skip or value
+                    while (newFrag.SkipNum > FFragment.SkipMax)
+                    {
+                        allFrags.Add(new FFragment(FFragment.SkipMax, 0, false, false));
+                        newFrag.SkipNum -= FFragment.SkipMax;
+                    }
+                    while (newFrag.ValueNum > FFragment.ValueMax)
+                    {
+                        allFrags.Add(new FFragment(0, FFragment.ValueMax, false, false));
+                        newFrag.ValueNum -= FFragment.ValueMax;
+                    }
+
+                    allFrags.Add(newFrag);
+                    lastNumBefore = lastNum;
+                }
+                allFrags[allFrags.Count - 1].bIsLast = true;
+#if DEBUG_VERBOSE
+                Debug.WriteLine("W: " + allFrags[allFrags.Count - 1]);
+#endif
+            }
+            else
+            {
+                // add "blank" fragment
+                // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
+                allFrags.Add(new FFragment(Math.Min(asset.Mappings.GetNumPropertiesDeep(parentName?.Value?.Value), FFragment.SkipMax), 0, true, false));
+            }
+
+            // generate zero mask
+            bool bHasNonZeroValues = false;
+            List<bool> zeroMaskList = new List<bool>();
+            foreach (var frag in allFrags)
+            {
+                if (frag.bHasAnyZeroes)
+                {
+                    for (int i = 0; i < frag.ValueNum; i++)
+                    {
+                        bool isZero = zeroProps[frag.FirstNum + i];
+                        if (!isZero) bHasNonZeroValues = true;
+                        zeroMaskList.Add(isZero);
+                    }
+                }
+            }
+            BitArray zeroMask = new BitArray(zeroMaskList.ToArray());
+
+            var res = new FUnversionedHeader();
+            res.Fragments = new LinkedList<FFragment>();
+            foreach (var frag in allFrags) res.Fragments.AddLast(frag);
+            res.ZeroMask = zeroMask;
+            res.bHasNonZeroValues = bHasNonZeroValues;
+            if (res.Fragments.Count > 0)
+            {
+                res.CurrentFragment = res.Fragments.First;
+                res.UnversionedPropertyIndex = res.CurrentFragment.Value.FirstNum;
+            }
+
+            data.Clear();
+            data.AddRange(sortedProps);
+            return res;
+        }
+
+        /// <summary>
         /// Initializes the correct PropertyData class based off of serialized name, type, etc.
         /// </summary>
         /// <param name="type">The serialized type of this property.</param>
@@ -139,8 +255,9 @@ namespace UAssetAPI
         /// <param name="leng">The length of this property on disk in bytes.</param>
         /// <param name="duplicationIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
+        /// <param name="isZero">Is the body of this property empty?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
@@ -193,9 +310,10 @@ namespace UAssetAPI
             lastType = data;
 #endif
 
+            data.IsZero = isZero;
             data.Ancestry.Initialize(ancestry, parentName);
             data.DuplicationIndex = duplicationIndex;
-            if (reader != null)
+            if (reader != null && !isZero)
             {
                 try
                 {
@@ -237,7 +355,7 @@ namespace UAssetAPI
             FName type = null;
             int leng = 0;
             int duplicationIndex = 0;
-            bool doPostSerialization = true;
+            bool isZero = false;
 
             if (reader.Asset.HasUnversionedProperties)
             {
@@ -246,7 +364,6 @@ namespace UAssetAPI
                     throw new InvalidMappingsException();
                 }
 
-                //var x = FFragment.Unpack(BitConverter.ToUInt16(new byte[]{ 0x52, 0x05 }, 0));
                 UsmapSchema relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
                 while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
@@ -268,13 +385,13 @@ namespace UAssetAPI
                 name = FName.DefineDummy(reader.Asset, relevantProperty.Name);
                 type = FName.DefineDummy(reader.Asset, relevantProperty.PropertyData.Type.ToString());
                 leng = 1; // not serialized
-                duplicationIndex = relevantProperty.SchemaIndex;
+                duplicationIndex = relevantProperty.ArrayIndex;
 
                 // check if property is zero
                 if (header.CurrentFragment.Value.bHasAnyZeroes)
                 {
                     // TODO: test more thoroughly
-                    doPostSerialization = !(header.ZeroMaskIndex >= header.ZeroMask.Count ? false : header.ZeroMask.Get(header.ZeroMaskIndex));
+                    isZero = header.ZeroMaskIndex >= header.ZeroMask.Count ? false : header.ZeroMask.Get(header.ZeroMaskIndex);
                     header.ZeroMaskIndex++;
                 }
             }
@@ -289,7 +406,7 @@ namespace UAssetAPI
                 duplicationIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, ancestry, parentName, reader.Asset, doPostSerialization ? reader : null, leng, duplicationIndex, includeHeader);
+            PropertyData result = TypeToClass(type, name, ancestry, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
             result.Offset = startingOffset;
             return result;
         }
@@ -379,14 +496,14 @@ namespace UAssetAPI
         /// <returns>The serial offset where the length of the property is stored.</returns>
         public static int Write(PropertyData property, AssetBinaryWriter writer, bool includeHeader)
         {
-            if (property == null) return 0;
+            if (property == null) return -1;
 
             property.Offset = writer.BaseStream.Position;
 
             if (writer.Asset.HasUnversionedProperties)
             {
-                // TODO: write unversioned properties
-                return -1;
+                if (!property.IsZero) property.Write(writer, includeHeader);
+                return -1; // length is not serialized
             }
             else
             {
@@ -406,7 +523,7 @@ namespace UAssetAPI
                 int oldLoc = (int)writer.BaseStream.Position;
                 writer.Write((int)0); // initial length
                 writer.Write(property.DuplicationIndex);
-                int realLength = property.Write(writer, includeHeader);
+                int realLength = property.IsZero ? 0 : property.Write(writer, includeHeader);
                 int newLoc = (int)writer.BaseStream.Position;
 
                 writer.Seek(oldLoc, SeekOrigin.Begin);

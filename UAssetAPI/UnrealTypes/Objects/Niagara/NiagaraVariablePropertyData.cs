@@ -58,11 +58,13 @@ namespace UAssetAPI.UnrealTypes
             writer.XFERNAME(VariableName);
             
             if (Value != null) {
-                foreach (var t in Value) {
+                var dat = Value;
+                MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
+                foreach (var t in dat) {
                     MainSerializer.Write(t, writer, true);
                 }
             }
-            writer.Write(FName.FromString(writer.Asset, "None"));
+            if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
             writer.Write(VariableOffset);
             return (int)writer.BaseStream.Position - here;
         }

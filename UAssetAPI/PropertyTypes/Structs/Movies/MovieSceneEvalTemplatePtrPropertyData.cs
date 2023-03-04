@@ -115,7 +115,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
                 var unversionedHeader = new FUnversionedHeader(reader);
 
-                while ((data = MainSerializer.Read(reader, Ancestry,Name, unversionedHeader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, Ancestry, Name, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }
             }
@@ -134,14 +134,17 @@ namespace UAssetAPI.PropertyTypes.Structs
             int here = (int)writer.BaseStream.Position;
 
             if (Value != null) {
-                foreach (var t in Value) {
+                var dat = Value;
+                MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
+
+                foreach (var t in dat) {
                     if (t.Name.ToString() == "TypeName") {
                         writer.Write(((StrPropertyData)t).Value);
                     } else { MainSerializer.Write(t, writer, true); }
                 }
 
-                if (((StrPropertyData)Value[0]).Value != null) {
-                    writer.Write(FName.FromString(writer.Asset, "None"));
+                if (((StrPropertyData)dat[0]).Value != null) {
+                    if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
                 }
             }
 

@@ -108,12 +108,13 @@ namespace UAssetAPI.ExportTypes
 
         public override void Write(AssetBinaryWriter writer)
         {
+            MainSerializer.GenerateUnversionedHeader(ref Data, this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(writer.Asset).ObjectName : writer.Asset.GetParentClassExportName(), writer.Asset)?.Write(writer);
             for (int j = 0; j < Data.Count; j++)
             {
                 PropertyData current = Data[j];
                 MainSerializer.Write(current, writer, true);
             }
-            writer.Write(new FName(writer.Asset, "None"));
+            if (!writer.Asset.HasUnversionedProperties) writer.Write(new FName(writer.Asset, "None"));
         }
     }
 }

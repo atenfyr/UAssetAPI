@@ -126,18 +126,20 @@ namespace UAssetAPI.PropertyTypes.Structs
             int here = (int)writer.BaseStream.Position;
             if (Value != null)
             {
-                foreach (var t in Value)
+                List<PropertyData> allDat = Value;
+                MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, writer.Asset)?.Write(writer);
+                foreach (var t in allDat)
                 {
                     MainSerializer.Write(t, writer, true);
                 }
             }
-            writer.Write(new FName(writer.Asset, "None"));
+            if (!writer.Asset.HasUnversionedProperties) writer.Write(new FName(writer.Asset, "None"));
             return (int)writer.BaseStream.Position - here;
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(StructType);
                 if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());

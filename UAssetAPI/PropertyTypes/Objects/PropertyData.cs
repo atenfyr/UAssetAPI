@@ -79,6 +79,11 @@ namespace UAssetAPI.PropertyTypes.Objects
         public Guid? PropertyGuid = null;
 
         /// <summary>
+        /// Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
+        /// </summary>
+        public bool IsZero = false;
+
+        /// <summary>
         /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
         /// </summary>
         public long Offset = -1;

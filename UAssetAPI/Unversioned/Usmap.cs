@@ -168,25 +168,27 @@ namespace UAssetAPI.Unversioned
     {
         public string Name;
         public ushort SchemaIndex;
+        public ushort ArrayIndex; // not serialized
         public byte ArraySize;
         public UsmapPropertyData PropertyData;
 
-        public UsmapProperty(string name, ushort schemaIndex, byte arraySize, UsmapPropertyData propertyData)
+        public UsmapProperty(string name, ushort schemaIndex, ushort arrayIndex, byte arraySize, UsmapPropertyData propertyData)
         {
             Name = name;
             SchemaIndex = schemaIndex;
+            ArrayIndex = arrayIndex;
             ArraySize = arraySize;
             PropertyData = propertyData;
         }
 
         public object Clone()
         {
-            return new UsmapProperty(Name, SchemaIndex, ArraySize, PropertyData);
+            return new UsmapProperty(Name, SchemaIndex, ArrayIndex, ArraySize, PropertyData);
         }
 
         public override string ToString()
         {
-            return Name + " : " + SchemaIndex + " : " + ArraySize + " : (" + PropertyData.ToString() + ")";
+            return Name + " : " + SchemaIndex + " : " + ArrayIndex + " : " + ArraySize + " : (" + PropertyData.ToString() + ")";
         }
     }
 
@@ -274,14 +276,63 @@ namespace UAssetAPI.Unversioned
         public Dictionary<string, UsmapSchema> Schemas;
 
         /// <summary>
-        /// Attempts to retrieve the corresponding .usmap property data corresponding to a specific property, given its ancestry.
+        /// Retrieve the total number of properties that a particular schema can reference.
+        /// </summary>
+        /// <param name="schemaName">The name of the schema of interest.</param>
+        /// <returns>The number of properties that the schema can reference.</returns>
+        public int GetNumPropertiesDeep(string schemaName)
+        {
+            int num = 0;
+            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            {
+                var relevantSchema = this.Schemas[schemaName];
+                num += relevantSchema.PropCount;
+                schemaName = relevantSchema.SuperType;
+            }
+            return num;
+        }
+
+        /// <summary>
+        /// Attempts to retrieve the corresponding .usmap property, given its ancestry.
         /// </summary>
         /// <typeparam name="T">The type of property to output.</typeparam>
         /// <param name="propertyName">The name of the property to search for.</param>
         /// <param name="ancestry">The ancestry of the property to search for.</param>
+        /// <param name="propDat">The property.</param>
+        /// <param name="idx">The index of the property.</param>
+        /// <returns>Whether or not the property was successfully found.</returns>
+        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, out T propDat, out int idx) where T : UsmapProperty
+        {
+            propDat = null;
+
+            idx = 0;
+            var schemaName = ancestry.Parent.Value.Value;
+            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            {
+                var relevantSchema = this.Schemas[schemaName];
+                propDat = relevantSchema.GetProperty(propertyName.Value.Value) as T;
+                if (propDat != null)
+                {
+                    idx += propDat.SchemaIndex;
+                    return true;
+                }
+
+                idx += relevantSchema.PropCount;
+                schemaName = relevantSchema.SuperType;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to retrieve the corresponding .usmap property data corresponding to a specific property, given its ancestry.
+        /// </summary>
+        /// <typeparam name="T">The type of property data to output.</typeparam>
+        /// <param name="propertyName">The name of the property to search for.</param>
+        /// <param name="ancestry">The ancestry of the property to search for.</param>
         /// <param name="propDat">The property data.</param>
         /// <returns>Whether or not the property data was successfully found.</returns>
-        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, out T propDat) where T : class
+        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, out T propDat) where T : UsmapPropertyData
         {
             propDat = null;
 
@@ -471,12 +522,13 @@ namespace UAssetAPI.Unversioned
                     byte ArraySize = reader.ReadByte();
                     string Name = reader.ReadName();
 
-                    var currProp = new UsmapProperty(Name, SchemaIdx, ArraySize, null);
+                    var currProp = new UsmapProperty(Name, SchemaIdx, 0, ArraySize, null);
                     currProp.PropertyData = DeserializePropData(reader);
                     for (int k = 0; k < ArraySize; k++)
                     {
                         var cln = (UsmapProperty)currProp.Clone();
-                        cln.SchemaIndex = (ushort)k;
+                        cln.SchemaIndex = (ushort)(SchemaIdx + k);
+                        cln.ArrayIndex = (ushort)k;
                         props.Add(SchemaIdx + k, cln);
                     }
                 }

@@ -3,6 +3,7 @@ using System.IO;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
+using System.Diagnostics;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -18,7 +19,6 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         [JsonProperty]
         public FName InnerType;
-
 
         public EnumPropertyData(FName name) : base(name)
         {
@@ -37,24 +37,15 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (reader.Asset.HasUnversionedProperties)
             {
-                bool hasTypeBeenFound = false;
-                var schemaName = Ancestry.Parent.Value.Value;
-                while (!hasTypeBeenFound && schemaName != null)
+                if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapEnumData enumDat1))
                 {
-                    var relevantSchema = reader.Asset.Mappings.Schemas[schemaName];
-                    UsmapEnumData enumDat1 = relevantSchema.GetProperty(Name.Value.Value)?.PropertyData as UsmapEnumData;
-                    if (enumDat1 != null)
-                    {
-                        EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
-                        InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
-                        hasTypeBeenFound = true;
-                    }
-                    schemaName = relevantSchema.SuperType;
+                    EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
+                    InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
                 }
 
                 if (InnerType?.Value.Value == "ByteProperty")
                 {
-                    int enumIndice = (int)reader.ReadByte();
+                    int enumIndice = reader.ReadByte();
                     Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value][enumIndice]);
                     return;
                 }
@@ -72,10 +63,10 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (writer.Asset.HasUnversionedProperties)
             {
-                if (InnerType.Value.Value == "ByteProperty")
+                if (InnerType?.Value?.Value == "ByteProperty")
                 {
-                    // TODO: re-serialize as byte here
-                    //writer.Write()
+                    int enumIndice = writer.Asset.Mappings.EnumMap[EnumType.Value.Value].FindIndex(a => a == Value.Value.Value); // wow this code is stupid
+                    writer.Write((byte)enumIndice);
                     return sizeof(byte);
                 }
             }

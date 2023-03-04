@@ -109,6 +109,7 @@ namespace UAssetAPI
 
         public virtual void WritePropertyGuid(Guid? guid)
         {
+            if (Asset.HasUnversionedProperties) return;
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 Write(guid != null);

@@ -33,6 +33,9 @@ namespace UAssetAPI.Unversioned
                 Fragment.FirstNum = firstNum + Fragment.SkipNum;
                 firstNum = firstNum + Fragment.SkipNum + Fragment.ValueNum;
                 Fragments.AddLast(Fragment);
+#if DEBUG_VERBOSE
+                Debug.WriteLine("R: " + Fragment);
+#endif
 
                 if (Fragment.bHasAnyZeroes)
                 {

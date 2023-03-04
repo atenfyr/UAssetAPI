@@ -143,7 +143,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
 
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(ArrayType);
                 writer.WritePropertyGuid(PropertyGuid);
@@ -151,7 +151,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             int here = (int)writer.BaseStream.Position;
             writer.Write(Value.Length);
-            if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently)
+            if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
             {
                 if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
                 if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
