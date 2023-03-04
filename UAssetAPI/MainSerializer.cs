@@ -146,7 +146,7 @@ namespace UAssetAPI
             Dictionary<int, bool> zeroProps = new Dictionary<int, bool>();
             foreach (PropertyData entry in data)
             {
-                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
+                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
                 zeroProps[idx] = entry.IsZero;
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Xml.Linq;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -200,11 +198,12 @@ namespace UAssetAPI.Unversioned
         public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
         private Dictionary<int, UsmapProperty> properties;
-        private Dictionary<string, UsmapProperty> propertiesMap;
+        private Dictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
 
-        public UsmapProperty GetProperty(string key)
+        public UsmapProperty GetProperty(string key, int dupIndex)
         {
-            return propertiesMap.ContainsKey(key) ? propertiesMap[key] : null;
+            var keyTuple = new Tuple<string, int>(key, dupIndex);
+            return propertiesMap.ContainsKey(keyTuple) ? propertiesMap[keyTuple] : null;
         }
 
         public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props)
@@ -214,10 +213,10 @@ namespace UAssetAPI.Unversioned
             PropCount = propCount;
             properties = props;
 
-            propertiesMap = new Dictionary<string, UsmapProperty>();
+            propertiesMap = new Dictionary<Tuple<string, int>, UsmapProperty>();
             foreach (KeyValuePair<int, UsmapProperty> entry in props)
             {
-                propertiesMap[entry.Value.Name] = entry.Value;
+                propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
             }
         }
 
@@ -298,10 +297,11 @@ namespace UAssetAPI.Unversioned
         /// <typeparam name="T">The type of property to output.</typeparam>
         /// <param name="propertyName">The name of the property to search for.</param>
         /// <param name="ancestry">The ancestry of the property to search for.</param>
+        /// <param name="dupIndex">The duplication index of the property to search for. If unknown, set to 0.</param>
         /// <param name="propDat">The property.</param>
         /// <param name="idx">The index of the property.</param>
         /// <returns>Whether or not the property was successfully found.</returns>
-        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, out T propDat, out int idx) where T : UsmapProperty
+        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, out T propDat, out int idx) where T : UsmapProperty
         {
             propDat = null;
 
@@ -310,7 +310,7 @@ namespace UAssetAPI.Unversioned
             while (schemaName != null && this.Schemas.ContainsKey(schemaName))
             {
                 var relevantSchema = this.Schemas[schemaName];
-                propDat = relevantSchema.GetProperty(propertyName.Value.Value) as T;
+                propDat = relevantSchema.GetProperty(propertyName.Value.Value, dupIndex) as T;
                 if (propDat != null)
                 {
                     idx += propDat.SchemaIndex;
@@ -340,7 +340,7 @@ namespace UAssetAPI.Unversioned
             while (schemaName != null && this.Schemas.ContainsKey(schemaName))
             {
                 var relevantSchema = this.Schemas[schemaName];
-                propDat = relevantSchema.GetProperty(propertyName.Value.Value)?.PropertyData as T;
+                propDat = relevantSchema.GetProperty(propertyName.Value.Value, 0)?.PropertyData as T;
                 if (propDat != null) return true;
                 schemaName = relevantSchema.SuperType;
             }
