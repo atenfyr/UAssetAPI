@@ -29,6 +29,7 @@ namespace UAssetAPI.Unversioned
         None,
         Oodle,
         Brotli,
+        ZStandard,
 
         Unknown = 0xFF
     };
@@ -360,7 +361,6 @@ namespace UAssetAPI.Unversioned
                         CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
                     }
                 }
-
             }
 
             ECompressionMethod compressionMethod = (ECompressionMethod)reader.ReadByte();
@@ -377,7 +377,6 @@ namespace UAssetAPI.Unversioned
                     var dat = Oodle.Decompress(reader.ReadBytes((int)compressedSize), (int)compressedSize, (int)decompressedSize);
                     return new UsmapBinaryReader(new MemoryStream(dat), this);
                 default:
-                    // we only support uncompressed .usmap files at the moment
                     throw new NotImplementedException(".usmap: Compression method " + compressionMethod + " is unimplemented");
             }
         }

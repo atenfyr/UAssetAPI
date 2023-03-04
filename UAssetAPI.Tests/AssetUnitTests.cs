@@ -318,7 +318,6 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestUnversionedProperties/Harvestella.usmap", "TestUnversionedProperties")]
         [DeploymentItem(@"TestAssets/TestUnversionedProperties/Grounded.usmap", "TestUnversionedProperties")]
         [DeploymentItem(@"TestAssets/TestUnversionedProperties/FSD.usmap", "TestUnversionedProperties")]
-        [DeploymentItem(@"../UAssetAPI/oo2core_9_win64.dll")]
         public void TestUnversionedProperties()
         {
             var tester1 = new Usmap(Path.Combine("TestUnversionedProperties", "Harvestella.usmap"));
