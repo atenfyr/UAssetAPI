@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace UAssetAPI
@@ -15,11 +16,12 @@ namespace UAssetAPI
 
         public static byte[] Decompress(byte[] buffer, int size, int uncompressedSize)
         {
-            if (!File.Exists(OODLE_DLL_NAME))
+            var targetPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), OODLE_DLL_NAME);
+            if (!File.Exists(targetPath))
             {
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile(OODLE_DOWNLOAD_LINK, OODLE_DLL_NAME);
+                    client.DownloadFile(OODLE_DOWNLOAD_LINK, targetPath);
                 }
             }
 
