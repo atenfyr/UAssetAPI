@@ -248,7 +248,7 @@ namespace UAssetAPI
 
                 //var x = FFragment.Unpack(BitConverter.ToUInt16(new byte[]{ 0x52, 0x05 }, 0));
                 UsmapSchema relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
-                if (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
+                while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
                     if (header.CurrentFragment.Value.bIsLast) return null;
                     header.CurrentFragment = header.CurrentFragment.Next;
@@ -256,9 +256,9 @@ namespace UAssetAPI
                 }
 
                 int practicingUnversionedPropertyIndex = header.UnversionedPropertyIndex;
-                while (practicingUnversionedPropertyIndex >= relevantSchema.Properties.Count) // if needed, go to parent struct
+                while (practicingUnversionedPropertyIndex >= relevantSchema.PropCount) // if needed, go to parent struct
                 {
-                    practicingUnversionedPropertyIndex -= relevantSchema.Properties.Count;
+                    practicingUnversionedPropertyIndex -= relevantSchema.PropCount;
                     relevantSchema = (relevantSchema.SuperType != null && reader.Asset.Mappings.Schemas.ContainsKey(relevantSchema.SuperType)) ? reader.Asset.Mappings.Schemas[relevantSchema.SuperType] : null;
                     if (relevantSchema == null) throw new FormatException("Failed to find a valid property for schema index " + header.UnversionedPropertyIndex + " in the class " + parentName.Value.Value);
                 }
@@ -267,8 +267,8 @@ namespace UAssetAPI
 
                 name = FName.DefineDummy(reader.Asset, relevantProperty.Name);
                 type = FName.DefineDummy(reader.Asset, relevantProperty.PropertyData.Type.ToString());
-                leng = 1; // unknown
-                duplicationIndex = 0; // unknown
+                leng = 1; // not serialized
+                duplicationIndex = relevantProperty.SchemaIndex;
 
                 // check if property is zero
                 if (header.CurrentFragment.Value.bHasAnyZeroes)

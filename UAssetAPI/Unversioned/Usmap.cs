@@ -163,7 +163,7 @@ namespace UAssetAPI.Unversioned
         }
     }
 
-    public class UsmapProperty
+    public class UsmapProperty : ICloneable
     {
         public string Name;
         public ushort SchemaIndex;
@@ -178,6 +178,11 @@ namespace UAssetAPI.Unversioned
             PropertyData = propertyData;
         }
 
+        public object Clone()
+        {
+            return new UsmapProperty(Name, SchemaIndex, ArraySize, PropertyData);
+        }
+
         public override string ToString()
         {
             return Name + " : " + SchemaIndex + " : " + ArraySize + " : (" + PropertyData.ToString() + ")";
@@ -189,9 +194,9 @@ namespace UAssetAPI.Unversioned
         public string Name;
         public string SuperType;
         public ushort PropCount;
-        public ReadOnlyCollection<UsmapProperty> Properties => properties.AsReadOnly();
+        public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
-        private List<UsmapProperty> properties;
+        private Dictionary<int, UsmapProperty> properties;
         private Dictionary<string, UsmapProperty> propertiesMap;
 
         public UsmapProperty GetProperty(string key)
@@ -199,7 +204,7 @@ namespace UAssetAPI.Unversioned
             return propertiesMap.ContainsKey(key) ? propertiesMap[key] : null;
         }
 
-        public UsmapSchema(string name, string superType, ushort propCount, List<UsmapProperty> props)
+        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props)
         {
             Name = name;
             SuperType = superType;
@@ -207,9 +212,9 @@ namespace UAssetAPI.Unversioned
             properties = props;
 
             propertiesMap = new Dictionary<string, UsmapProperty>();
-            foreach (UsmapProperty entry in props)
+            foreach (KeyValuePair<int, UsmapProperty> entry in props)
             {
-                propertiesMap[entry.Name] = entry;
+                propertiesMap[entry.Value.Name] = entry.Value;
             }
         }
 
@@ -460,7 +465,7 @@ namespace UAssetAPI.Unversioned
                 string schemaSuperName = reader.ReadName();
                 ushort numProps = reader.ReadUInt16();
                 ushort serializablePropCount = reader.ReadUInt16();
-                List<UsmapProperty> props = new List<UsmapProperty>();
+                Dictionary<int, UsmapProperty> props = new Dictionary<int, UsmapProperty>();
                 for (int j = 0; j < serializablePropCount; j++)
                 {
                     ushort SchemaIdx = reader.ReadUInt16();
@@ -469,7 +474,12 @@ namespace UAssetAPI.Unversioned
 
                     var currProp = new UsmapProperty(Name, SchemaIdx, ArraySize, null);
                     currProp.PropertyData = DeserializePropData(reader);
-                    props.Add(currProp);
+                    for (int k = 0; k < ArraySize; k++)
+                    {
+                        var cln = (UsmapProperty)currProp.Clone();
+                        cln.SchemaIndex = (ushort)k;
+                        props.Add(SchemaIdx + k, cln);
+                    }
                 }
 
                 Schemas.Add(schemaName, new UsmapSchema(schemaName, schemaSuperName, numProps, props));
