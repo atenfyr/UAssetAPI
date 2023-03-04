@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.IO;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using System.Collections.Generic;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -140,6 +138,14 @@ namespace UAssetAPI.PropertyTypes.Objects
         public virtual void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
 
+        }
+
+        /// <summary>
+        /// Resolves the ancestry of all child properties of this property.
+        /// </summary>
+        public virtual void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            Ancestry = ancestrySoFar;
         }
 
         /// <summary>

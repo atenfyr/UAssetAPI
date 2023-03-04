@@ -80,6 +80,23 @@ namespace UAssetAPI.ExportTypes
             }
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            FName pcen = asset.GetParentClassExportName();
+            ancestryNew.SetAsParent(pcen);
+
+            if (Data != null)
+            {
+                for (int i = 0; i < Data.Count; i++) Data[i].ResolveAncestries(asset, ancestryNew);
+            }
+            if (Table?.Data != null)
+            {
+                for (int i = 0; i < Table.Data.Count; i++) Table.Data[i].ResolveAncestries(asset, ancestryNew);
+            }
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);

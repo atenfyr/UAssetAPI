@@ -131,14 +131,14 @@ namespace UAssetAPI.Unversioned
         }
 
         public bool HasValues()
-	    {
-		    return bHasNonZeroValues | (ZeroMask.Length > 0);
-	    }
+        {
+            return bHasNonZeroValues | (ZeroMask.Length > 0);
+        }
 
         public bool HasNonZeroValues()
-	    {
-		    return bHasNonZeroValues;
-	    }
+        {
+            return bHasNonZeroValues;
+        }
 
         public FUnversionedHeader(AssetBinaryReader reader)
         {

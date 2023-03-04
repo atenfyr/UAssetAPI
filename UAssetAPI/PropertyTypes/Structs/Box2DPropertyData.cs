@@ -42,6 +42,15 @@ namespace UAssetAPI.PropertyTypes.Structs
             IsValid = reader.ReadBoolean();
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            foreach (var entry in Value) entry.ResolveAncestries(asset, ancestryNew);
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)

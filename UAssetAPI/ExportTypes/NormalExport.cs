@@ -106,6 +106,18 @@ namespace UAssetAPI.ExportTypes
             }
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(asset).ObjectName : asset.GetParentClassExportName());
+
+            if (Data != null)
+            {
+                for (int i = 0; i < Data.Count; i++) Data[i].ResolveAncestries(asset, ancestryNew);
+            }
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override void Write(AssetBinaryWriter writer)
         {
             MainSerializer.GenerateUnversionedHeader(ref Data, this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(writer.Asset).ObjectName : writer.Asset.GetParentClassExportName(), writer.Asset)?.Write(writer);

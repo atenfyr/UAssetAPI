@@ -1525,12 +1525,28 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Resolves the ancestry of all properties present in this asset.
+        /// </summary>
+        public void ResolveAncestries()
+        {
+            if (WorldTileInfo != null) WorldTileInfo.ResolveAncestries(this, new AncestryInfo());
+            if (Exports != null)
+            {
+                for (int i = 0; i < Exports.Count; i++) Exports[i].ResolveAncestries(this, new AncestryInfo());
+            }
+        }
+
+        /// <summary>
         /// Serializes an asset from memory.
         /// </summary>
         /// <returns>A stream that the asset has been serialized to.</returns>
         public MemoryStream WriteData()
         {
             isSerializationTime = true;
+
+            // resolve ancestries
+            ResolveAncestries();
+
             var stre = new MemoryStream();
             try
             {
@@ -2034,6 +2050,8 @@ namespace UAssetAPI
             toBeFilled.Clear();
 
             foreach (Export ex in res.Exports) ex.Asset = res;
+
+            res.ResolveAncestries();
             return res;
         }
 

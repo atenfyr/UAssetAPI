@@ -175,6 +175,15 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Read(reader, false, 0);
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            Value.ResolveAncestries(asset, ancestryNew);
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
@@ -302,6 +311,15 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Read(reader, false, 0);
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            Value.ResolveAncestries(asset, ancestryNew);
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader)
@@ -343,6 +361,15 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = new Vector2DPropertyData(Name);
             Value.Ancestry.Initialize(Ancestry, Name);
             Value.Read(reader, false, 0);
+        }
+
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            Value.ResolveAncestries(asset, ancestryNew);
+            base.ResolveAncestries(asset, ancestrySoFar);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)

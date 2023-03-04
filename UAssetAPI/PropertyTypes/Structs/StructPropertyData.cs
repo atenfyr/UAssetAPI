@@ -114,6 +114,18 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(StructType);
+
+            if (Value != null)
+            {
+                foreach (var entry in Value) entry.ResolveAncestries(asset, ancestryNew);
+            }
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         private int WriteOnce(AssetBinaryWriter writer)
         {
             if (Value.Count != 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " must have exactly one entry");

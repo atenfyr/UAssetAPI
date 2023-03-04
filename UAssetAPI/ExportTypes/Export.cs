@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -113,6 +112,14 @@ namespace UAssetAPI.ExportTypes
         }
 
         public virtual void Read(AssetBinaryReader reader, int nextStarting = 0)
+        {
+
+        }
+
+        /// <summary>
+        /// Resolves the ancestry of all child properties of this export.
+        /// </summary>
+        public virtual void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
         {
 
         }

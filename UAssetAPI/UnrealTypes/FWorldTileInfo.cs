@@ -3,6 +3,7 @@ using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes.Objects;
+using System.Xml.Linq;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -40,6 +41,14 @@ namespace UAssetAPI.UnrealTypes
             {
                 DistanceStreamingEnabled = reader.ReadInt32() == 1;
             }
+        }
+
+        public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(FName.DefineDummy(asset, "WorldTileLayer"));
+
+            Reserved1.ResolveAncestries(asset, ancestryNew);
         }
 
         public void Write(AssetBinaryWriter writer, UAsset asset)
@@ -200,6 +209,15 @@ namespace UAssetAPI.UnrealTypes
                 AbsolutePosition[2] = reader.ReadInt32();
             }
 #pragma warning restore CS0162 // Unreachable code detected
+        }
+
+        public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(FName.DefineDummy(asset, "WorldTileInfo"));
+
+            Bounds.ResolveAncestries(asset, ancestryNew);
+            Layer.ResolveAncestries(asset, ancestryNew);
         }
 
         public void Write(AssetBinaryWriter writer, UAsset asset)

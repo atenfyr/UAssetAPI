@@ -46,11 +46,11 @@ namespace UAssetAPI.Unversioned
         }
 
         public ushort Pack()
-		{
+        {
             if (SkipNum > SkipMax) throw new InvalidOperationException("Skip num " + SkipNum + " is greater than maximum possible value " + SkipMax);
             if (ValueNum > ValueMax) throw new InvalidOperationException("Value num " + ValueNum + " is greater than maximum possible value " + ValueMax);
             return (ushort)((byte)SkipNum | (bHasAnyZeroes ? HasZeroMask : 0) | (ushort)((byte)ValueNum << ValueNumShift) | (bIsLast ? IsLastMask : 0));
-		}
+        }
 
         public static FFragment Unpack(ushort Int)
         {

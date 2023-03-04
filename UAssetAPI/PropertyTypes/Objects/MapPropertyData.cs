@@ -146,6 +146,22 @@ namespace UAssetAPI.PropertyTypes.Objects
             Value = ReadRawMap(reader, type1, type2, numEntries);
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            if (Value != null)
+            {
+                foreach (var entry in Value)
+                {
+                    entry.Key.ResolveAncestries(asset, ancestryNew);
+                    entry.Value.ResolveAncestries(asset, ancestryNew);
+                }
+            }
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
             foreach (var entry in map)

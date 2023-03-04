@@ -139,6 +139,18 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
         }
 
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        {
+            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
+            ancestryNew.SetAsParent(Name);
+
+            if (Value != null)
+            {
+                for (int i = 0; i < Value.Length; i++) Value[i].ResolveAncestries(asset, ancestryNew);
+            }
+            base.ResolveAncestries(asset, ancestrySoFar);
+        }
+
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
