@@ -1,17 +1,16 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
-using System.Collections.Concurrent;
 
 namespace UAssetAPI
 {
@@ -766,7 +765,7 @@ namespace UAssetAPI
         };
 
         /// <summary>
-        /// External programs often improperly specify name map hashes, so in this map we can preserve those changes to avoid confusion.
+        /// A map of name map entries to hashes to use when serializing instead of the default engine hash algorithm. Useful when external programs improperly specify name map hashes and binary equality must be maintained.
         /// </summary>
         [JsonIgnore]
         public Dictionary<FString, uint> OverrideNameMapHashes;
@@ -1532,7 +1531,7 @@ namespace UAssetAPI
             if (WorldTileInfo != null) WorldTileInfo.ResolveAncestries(this, new AncestryInfo());
             if (Exports != null)
             {
-                for (int i = 0; i < Exports.Count; i++) Exports[i].ResolveAncestries(this, new AncestryInfo());
+                for (int i = 0; i < Exports.Count; i++) Exports[i]?.ResolveAncestries(this, new AncestryInfo());
             }
         }
 
