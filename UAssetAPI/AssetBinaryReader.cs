@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 
@@ -116,9 +117,21 @@ namespace UAssetAPI
 
         public virtual FName ReadFName()
         {
-            int nameMapPointer = this.ReadInt32();
-            int number = this.ReadInt32();
-            return new FName(Asset, nameMapPointer, number);
+            if (Asset is ZenAsset)
+            {
+                uint Index = this.ReadUInt32();
+                uint Number = this.ReadUInt32();
+
+                var res = new FName(Asset, (int)(Index & FName.IndexMask), (int)Number);
+                res.Type = (EMappedNameType)((Index & FName.TypeMask) >> FName.TypeShift);
+                return res;
+            }
+            else
+            {
+                int nameMapPointer = this.ReadInt32();
+                int number = this.ReadInt32();
+                return new FName(Asset, nameMapPointer, number);
+            }
         }
 
         public string XFERSTRING()

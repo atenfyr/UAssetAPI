@@ -4,10 +4,19 @@ using System.IO;
 using System.Text;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI
+namespace UAssetAPI.IO
 {
+    public enum EZenPackageVersion : uint
+    {
+        Initial,
+
+        LatestPlusOne,
+        Latest = LatestPlusOne - 1
+    }
+
     public class ZenAsset : UnrealPackage
     {
+
         /// <summary>
         /// Reads an asset into memory.
         /// </summary>
@@ -18,6 +27,15 @@ namespace UAssetAPI
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public override void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
+            if (ObjectVersionUE5 >= ObjectVersionUE5.INITIAL_VERSION)
+            {
+                // equivalent of cue4parse's FZenPackageSummary
+            }
+            else
+            {
+                // equivalent of cue4parse's FPackageSummary
+                // i dont know if pre-5.0 io store assets are just equivalent to regular uassets or not... investigate further
+            }
             throw new NotImplementedException("IO store parsing is not implemented");
         }
 

@@ -1,12 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Text;
 using UAssetAPI.JSON;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.UnrealTypes
 {
+    public enum EMappedNameType
+    {
+        Package,
+        Container,
+        Global
+    }
+
     /// <summary>
     /// Unreal name - consists of an FString (which is serialized as an index in the name map) and an instance number
     /// </summary>
@@ -17,6 +21,7 @@ namespace UAssetAPI.UnrealTypes
         {
             get
             {
+                // TODO: if type = Global, retrieve value from global name map (= script objects from usmap apparently?)
                 if (DummyValue != null) return DummyValue;
                 if (Asset == null) throw new InvalidOperationException("Attempt to get Value with no Asset defined");
                 if (Index < 0) return null;
@@ -40,6 +45,21 @@ namespace UAssetAPI.UnrealTypes
 
         /// <summary>Instance number.</summary>
         public int Number;
+
+        internal const int IndexBits = 30;
+        internal const uint IndexMask = (1u << IndexBits) - 1u;
+        internal const uint TypeMask = ~IndexMask;
+        internal const int TypeShift = IndexBits;
+
+        /// <summary>
+        /// The type of this FName; i.e. whether it points to a package-level name table, container-level name table, or global name table. This value is always <see cref="EMappedNameType.Package"/> for non-Zen assets.
+        /// </summary>
+        public EMappedNameType Type = EMappedNameType.Package;
+
+        /// <summary>
+        /// Does this FName point into the global name table? This value is always false for non-Zen assets.
+        /// </summary>
+        public bool IsGlobal => Type != EMappedNameType.Package;
 
         /// <summary>
         /// The asset that this FName is bound to.

@@ -45,7 +45,7 @@ namespace UAssetAPI
         public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
 
         /// <summary>
-        /// The object version of UE5 that will be used to parse this asset.
+        /// The object version of UE5 that will be used to parse this asset. Set to <see cref="ObjectVersionUE5.UNKNOWN"/> for UE4 games.
         /// </summary>
         public ObjectVersionUE5 ObjectVersionUE5 = ObjectVersionUE5.UNKNOWN;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
@@ -103,8 +103,16 @@ namespace UAssetAPI
 
         public virtual void Write(FName name)
         {
-            this.Write(name.Index);
-            this.Write(name.Number);
+            if (Asset is ZenAsset)
+            {
+                this.Write(((uint)name.Type << FName.TypeShift) | (uint)name.Index);
+                this.Write(name.Number);
+            }
+            else
+            {
+                this.Write(name.Index);
+                this.Write(name.Number);
+            }
         }
 
         public virtual void WritePropertyGuid(Guid? guid)
