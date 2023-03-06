@@ -104,115 +104,8 @@ namespace UAssetAPI
     /// <summary>
     /// Represents an Unreal Engine asset.
     /// </summary>
-    public class UAsset
+    public class UAsset : UnrealPackage
     {
-        /// <summary>
-        /// Agent string to provide context in serialized JSON.
-        /// </summary>
-        [JsonProperty(Order = -99)]
-        public string Info = "Serialized with UAssetAPI";
-
-        /// <summary>
-        /// The path of the file on disk that this asset represents. This does not need to be specified for regular parsing.
-        /// </summary>
-        [JsonIgnore]
-        public string FilePath;
-
-        /// <summary>
-        /// Corresponding mapping data for the game this asset is from. Only used to parse unversioned properties or ambiguous structs in maps.
-        /// </summary>
-        [JsonIgnore]
-        public Usmap Mappings;
-
-        /// <summary>
-        /// Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
-        /// </summary>
-        public bool UseSeparateBulkDataFiles = false;
-
-        /// <summary>
-        /// The object version of UE4 that will be used to parse this asset.
-        /// </summary>
-        public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
-
-        /// <summary>
-        /// The object version of UE5 that will be used to parse this asset.
-        /// </summary>
-        public ObjectVersionUE5 ObjectVersionUE5 = ObjectVersionUE5.UNKNOWN;
-
-        /// <summary>
-        /// All the custom versions stored in the archive.
-        /// </summary>
-        public List<CustomVersion> CustomVersionContainer = null;
-
-        /// <summary>
-        /// Sets the version of the Unreal Engine to use in serialization.
-        /// </summary>
-        /// <param name="newVersion">The new version of the Unreal Engine to use in serialization.</param>
-        /// <exception cref="InvalidOperationException">Thrown when an invalid UE4Version is specified.</exception>
-        public void SetEngineVersion(EngineVersion newVersion)
-        {
-            if (newVersion == EngineVersion.UNKNOWN) return;
-            if (!Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
-            ObjectVersion = (ObjectVersion)(int)bridgeVer;
-
-            if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE5VersionToObjectVersion bridgeVer2)) ObjectVersionUE5 = (ObjectVersionUE5)(int)bridgeVer2;
-
-            CustomVersionContainer = GetDefaultCustomVersionContainer(newVersion);
-        }
-
-        /// <summary>
-        /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
-        /// </summary>
-        /// <returns>The estimated retail version of the Unreal Engine.</returns>
-        public EngineVersion GetEngineVersion()
-        {
-            // analyze all possible versions based off of the object version alone
-            List<EngineVersion> allPossibleVersions = new List<EngineVersion>();
-            int targetVer = (int)ObjectVersion;
-            while (allPossibleVersions.Count == 0 && targetVer > (int)ObjectVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)
-            {
-                allPossibleVersions = Enum.GetNames(typeof(UE4VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE4VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (EngineVersion)Enum.Parse(typeof(EngineVersion), str)).ToList();
-                targetVer -= 1;
-            }
-
-            if (allPossibleVersions.Count == 0) return EngineVersion.UNKNOWN;
-            if (allPossibleVersions.Count == 1) return allPossibleVersions[0];
-
-            // multiple possible versions; use custom versions to eliminate some
-            EngineVersion minIntroduced = EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE;
-            EngineVersion maxIntroduced = EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
-            foreach (CustomVersion entry in CustomVersionContainer)
-            {
-                Type customVersionType = Type.GetType("UAssetAPI." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
-                if (customVersionType == null) continue;
-                EngineVersion minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
-                EngineVersion maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
-
-                if (minIntroducedThis != EngineVersion.UNKNOWN && minIntroducedThis > minIntroduced) minIntroduced = minIntroducedThis;
-                if (maxIntroducedThis != EngineVersion.UNKNOWN && maxIntroducedThis < maxIntroduced) maxIntroduced = maxIntroducedThis;
-            }
-
-            List<EngineVersion> finalPossibleVersions = new List<EngineVersion>();
-            foreach (EngineVersion entry in allPossibleVersions)
-            {
-                if (entry >= minIntroduced && entry < maxIntroduced) finalPossibleVersions.Add(entry);
-            }
-            finalPossibleVersions.Sort();
-
-            if (finalPossibleVersions.Count == 0) return allPossibleVersions[0]; // there must be a special set of custom versions; we'll just ignore our intuitions and go with the object version alone
-            if (finalPossibleVersions.Count >= 1) return finalPossibleVersions[0];
-            return EngineVersion.UNKNOWN;
-        }
-
-        private EngineVersion GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
-        {
-            var nm = Enum.GetName(customVersionType, val);
-            if (nm == null) return EngineVersion.UNKNOWN;
-            var attributes = customVersionType.GetMember(nm)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
-            if (attributes == null || attributes.Length <= 0) return EngineVersion.UNKNOWN;
-            return ((IntroducedAttribute)attributes[0]).IntroducedVersion;
-        }
-
         /// <summary>
         /// Checks whether or not this asset maintains binary equality when serialized.
         /// </summary>
@@ -238,287 +131,6 @@ namespace UAssetAPI
             }
 
             return true;
-        }
-
-        private void FixNameMapLookupIfNeeded()
-        {
-            if (nameMapIndexList.Count > 0 && nameMapLookup.Count == 0)
-            {
-                for (int i = 0; i < nameMapIndexList.Count; i++)
-                {
-                    nameMapLookup[nameMapIndexList[i].Value] = i;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the name map as a read-only list of FStrings.
-        /// </summary>
-        /// <returns>The name map as a read-only list of FStrings.</returns>
-        public IReadOnlyList<FString> GetNameMapIndexList()
-        {
-            FixNameMapLookupIfNeeded();
-            return nameMapIndexList.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Clears the name map. This method should be used with extreme caution, as it may break unparsed references to the name map.
-        /// </summary>
-        public void ClearNameIndexList()
-        {
-            nameMapIndexList = new List<FString>();
-            nameMapLookup = new Dictionary<string, int>();
-        }
-
-        /// <summary>
-        /// Replaces a value in the name map at a particular index.
-        /// </summary>
-        /// <param name="index">The index to overwrite in the name map.</param>
-        /// <param name="value">The value that will be replaced in the name map.</param>
-        public void SetNameReference(int index, FString value)
-        {
-            FixNameMapLookupIfNeeded();
-            nameMapIndexList[index] = value;
-            nameMapLookup[value.Value] = index;
-        }
-
-        /// <summary>
-        /// Gets a value in the name map at a particular index.
-        /// </summary>
-        /// <param name="index">The index to return the value at.</param>
-        /// <returns>The value at the index provided.</returns>
-        public FString GetNameReference(int index)
-        {
-            FixNameMapLookupIfNeeded();
-            if (index < 0) return new FString(Convert.ToString(-index));
-            if (index >= nameMapIndexList.Count) return new FString(Convert.ToString(index));
-            return nameMapIndexList[index];
-        }
-
-        /// <summary>
-        /// Gets a value in the name map at a particular index, but with the index zero being treated as if it is not valid.
-        /// </summary>
-        /// <param name="index">The index to return the value at.</param>
-        /// <returns>The value at the index provided.</returns>
-        public FString GetNameReferenceWithoutZero(int index)
-        {
-            FixNameMapLookupIfNeeded();
-            if (index <= 0) return new FString(Convert.ToString(-index));
-            if (index >= nameMapIndexList.Count) return new FString(Convert.ToString(index));
-            return nameMapIndexList[index];
-        }
-
-        /// <summary>
-        /// Checks whether or not the value exists in the name map.
-        /// </summary>
-        /// <param name="search">The value to search the name map for.</param>
-        /// <returns>true if the value appears in the name map, otherwise false.</returns>
-        public bool ContainsNameReference(FString search)
-        {
-            FixNameMapLookupIfNeeded();
-            return nameMapLookup.ContainsKey(search.Value);
-        }
-
-        /// <summary>
-        /// Searches the name map for a particular value.
-        /// </summary>
-        /// <param name="search">The value to search the name map for.</param>
-        /// <returns>The index at which the value appears in the name map.</returns>
-        /// <exception cref="UAssetAPI.NameMapOutOfRangeException">Thrown when the value provided does not appear in the name map.</exception>
-        public int SearchNameReference(FString search)
-        {
-            FixNameMapLookupIfNeeded();
-            if (ContainsNameReference(search)) return nameMapLookup[search.Value];
-            throw new NameMapOutOfRangeException(search);
-        }
-
-        /// <summary>
-        /// Adds a new value to the name map.
-        /// </summary>
-        /// <param name="name">The value to add to the name map.</param>
-        /// <param name="forceAddDuplicates">Whether or not to add a new entry if the value provided already exists in the name map.</param>
-        /// <returns>The index of the new value in the name map. If the value already existed in the name map beforehand, that index will be returned instead.</returns>
-        /// <exception cref="ArgumentException">Thrown when forceAddDuplicates is false and the value provided is null or empty.</exception>
-        public int AddNameReference(FString name, bool forceAddDuplicates = false)
-        {
-            FixNameMapLookupIfNeeded();
-
-            if (!forceAddDuplicates)
-            {
-                if (name?.Value == null) throw new ArgumentException("Cannot add a null FString to the name map");
-                if (name.Value == string.Empty) throw new ArgumentException("Cannot add an empty FString to the name map");
-                if (ContainsNameReference(name)) return SearchNameReference(name);
-            }
-
-            if (isSerializationTime) throw new InvalidOperationException("Attempt to add name \"" + name + "\" to name map during serialization time");
-            nameMapIndexList.Add(name);
-            nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
-            return nameMapIndexList.Count - 1;
-        }
-
-        /// <summary>
-        /// Adds a new import to the import map. This is equivalent to adding directly to the <see cref="Imports"/> list.
-        /// </summary>
-        /// <param name="li">The new import to add to the import map.</param>
-        /// <returns>The FPackageIndex corresponding to the newly-added import.</returns>
-        public FPackageIndex AddImport(Import li)
-        {
-            Imports.Add(li);
-            return FPackageIndex.FromImport(Imports.Count - 1);
-        }
-
-        /// <summary>
-        /// Searches for and returns this asset's ClassExport, if one exists.
-        /// </summary>
-        /// <returns>The asset's ClassExport if one exists, otherwise null.</returns>
-        public ClassExport GetClassExport()
-        {
-            foreach (Export cat in Exports)
-            {
-                if (cat is ClassExport bgcCat) return bgcCat;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Finds the class path and export name of the SuperStruct of this asset, if it exists.
-        /// </summary>
-        /// <param name="parentClassPath">The class path of the SuperStruct of this asset, if it exists.</param>
-        /// <param name="parentClassExportName">The export name of the SuperStruct of this asset, if it exists.</param>
-        public void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
-        {
-            parentClassPath = null;
-            parentClassExportName = null;
-
-            var bgcCat = GetClassExport();
-            if (bgcCat == null) return;
-            if (bgcCat.SuperStruct == null) return;
-
-            Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
-            if (parentClassLink == null) return;
-            if (parentClassLink.OuterIndex.Index >= 0) return;
-
-            parentClassExportName = parentClassLink.ObjectName;
-            parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
-        }
-
-        private bool hasFoundParentClassExportName = false;
-        private FName parentClassExportNameCache = null;
-        internal FName GetParentClassExportName()
-        {
-            if (!hasFoundParentClassExportName)
-            {
-                hasFoundParentClassExportName = true;
-                GetParentClass(out _, out parentClassExportNameCache);
-            }
-            return parentClassExportNameCache;
-        }
-
-        /// <summary>
-        /// Fetches the version of a custom version in this asset.
-        /// </summary>
-        /// <param name="key">The GUID of the custom version to retrieve.</param>
-        /// <returns>The version of the retrieved custom version.</returns>
-        public int GetCustomVersion(Guid key)
-        {
-            for (int i = 0; i < CustomVersionContainer.Count; i++)
-            {
-                CustomVersion custVer = CustomVersionContainer[i];
-                if (custVer.Key == key)
-                {
-                    return custVer.Version;
-                }
-            }
-
-            return -1; // https://github.com/EpicGames/UnrealEngine/blob/99b6e203a15d04fc7bbbf554c421a985c1ccb8f1/Engine/Source/Runtime/Core/Private/Serialization/Archive.cpp#L578
-        }
-
-        /// <summary>
-        /// Fetches the version of a custom version in this asset.
-        /// </summary>
-        /// <param name="friendlyName">The friendly name of the custom version to retrieve.</param>
-        /// <returns>The version of the retrieved custom version.</returns>
-        public int GetCustomVersion(string friendlyName)
-        {
-            for (int i = 0; i < CustomVersionContainer.Count; i++)
-            {
-                CustomVersion custVer = CustomVersionContainer[i];
-                if (custVer.FriendlyName == friendlyName)
-                {
-                    return custVer.Version;
-                }
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// Fetches a custom version's enum value based off of its type.
-        /// </summary>
-        /// <typeparam name="T">The enum type of the custom version to retrieve.</typeparam>
-        /// <returns>The enum value of the requested custom version.</returns>
-        /// <exception cref="ArgumentException">Thrown when T is not an enumerated type.</exception>
-        public T GetCustomVersion<T>()
-        {
-            Type customVersionEnumType = typeof(T);
-            if (!customVersionEnumType.IsEnum) throw new ArgumentException("T must be an enumerated type");
-
-            for (int i = 0; i < CustomVersionContainer.Count; i++)
-            {
-                CustomVersion custVer = CustomVersionContainer[i];
-                if (custVer.FriendlyName == customVersionEnumType.Name)
-                {
-                    return (T)(object)custVer.Version;
-                }
-            }
-
-            return (T)(object)-1;
-        }
-
-        private static ConcurrentDictionary<string, EngineVersion> cachedCustomVersionReflectionData = new ConcurrentDictionary<string, EngineVersion>();
-        public static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
-        {
-            string typeString = typ.ToString();
-            string[] allVals = Enum.GetNames(typ);
-            for (int i = allVals.Length - 1; i >= 0; i--)
-            {
-                string val = allVals[i];
-                string cacheKey = typeString + val;
-
-                var attributeIntroducedVersion = EngineVersion.UNKNOWN;
-                if (cachedCustomVersionReflectionData.ContainsKey(cacheKey))
-                {
-                    attributeIntroducedVersion = cachedCustomVersionReflectionData[cacheKey];
-                }
-                else
-                {
-                    var attributes = typ.GetMember(val)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
-                    attributeIntroducedVersion = (attributes == null || attributes.Length <= 0) ? EngineVersion.UNKNOWN : ((IntroducedAttribute)attributes[0]).IntroducedVersion;
-                    cachedCustomVersionReflectionData[cacheKey] = attributeIntroducedVersion;
-                }
-
-                if (attributeIntroducedVersion != EngineVersion.UNKNOWN && chosenVersion >= attributeIntroducedVersion) return i;
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// Fetches a list of all default custom versions for a specific Unreal version.
-        /// </summary>
-        /// <param name="chosenVersion">The version of the engine to check against.</param>
-        /// <returns>A list of all the default custom version values for the given engine version.</returns>
-        public static List<CustomVersion> GetDefaultCustomVersionContainer(EngineVersion chosenVersion)
-        {
-            List<CustomVersion> res = new List<CustomVersion>();
-            foreach (KeyValuePair<Guid, string> entry in CustomVersion.GuidToCustomVersionStringMap)
-            {
-                Type customVersionType = Type.GetType("UAssetAPI." + entry.Value);
-                if (customVersionType == null) continue;
-                int guessedCustomVersion = GuessCustomVersionFromTypeAndEngineVersion(chosenVersion, customVersionType);
-                if (guessedCustomVersion < 0) continue;
-                res.Add(new CustomVersion(entry.Key, guessedCustomVersion));
-            }
-            return res;
         }
 
         /// <summary>
@@ -643,16 +255,6 @@ namespace UAssetAPI
         public int FileVersionLicenseeUE4;
 
         /// <summary>
-        /// Map of object imports. UAssetAPI used to call these "links."
-        /// </summary>
-        public List<Import> Imports;
-
-        /// <summary>
-        /// Map of object exports. UAssetAPI used to call these "categories."
-        /// </summary>
-        public List<Export> Exports;
-
-        /// <summary>
         /// List of dependency lists for each export.
         /// </summary>
         public List<int[]> DependsMap;
@@ -671,12 +273,6 @@ namespace UAssetAPI
         /// Some garbage data that appears to be present in certain games (e.g. Valorant)
         /// </summary>
         public byte[] ValorantGarbageData;
-
-        /// <summary>
-        /// Tile information used by WorldComposition.
-        /// Defines properties necessary for tile positioning in the world.
-        /// </summary>
-        public FWorldTileInfo WorldTileInfo;
 
         /// <summary>
         /// Data about previous versions of this package.
@@ -705,23 +301,6 @@ namespace UAssetAPI
         public int[] ChunkIDs;
 
         /// <summary>
-        /// The flags for this package.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public EPackageFlags PackageFlags;
-
-        /// <summary>
-        /// Whether or not this asset uses unversioned properties.
-        /// </summary>
-        public bool HasUnversionedProperties
-        {
-            get
-            {
-                return PackageFlags.HasFlag(EPackageFlags.PKG_UnversionedProperties);
-            }
-        }
-
-        /// <summary>
         /// Value that is used by the Unreal Engine to determine if the package was saved by Epic, a licensee, modder, etc.
         /// </summary>
         public uint PackageSource;
@@ -730,39 +309,6 @@ namespace UAssetAPI
         /// The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
         /// </summary>
         public FString FolderName;
-
-        /// <summary>
-        /// In MapProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct.
-        /// <para />
-        /// To that end, this dictionary maps MapProperty names to the type of the structs within them (tuple of key struct type and value struct type) if they are not None-terminated property lists.
-        /// </summary>
-        [JsonIgnore]
-        public Dictionary<string, Tuple<FString, FString>> MapStructTypeOverride = new Dictionary<string, Tuple<FString, FString>>()
-        {
-            { "ColorDatabase", new Tuple<FString, FString>(null, new FString("LinearColor")) },
-            { "PlayerCharacterIDs", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "m_PerConditionValueToNodeMap", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "BindingIdToReferences", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "UserParameterRedirects", new Tuple<FString, FString>(new FString("NiagaraVariable"), new FString("NiagaraVariable"))},
-            { "Tracks", new Tuple<FString, FString>(new FString("MovieSceneTrackIdentifier"), null)},
-            { "SubSequences", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
-            { "Hierarchy", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
-            { "TrackSignatureToTrackIdentifier", new Tuple<FString, FString>(new FString("Guid"), new FString("MovieSceneTrackIdentifier"))},
-            { "ItemsToRefund", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) },
-            { "RainChanceMinMaxPerWeatherState", new Tuple<FString, FString>(null, new FString("FloatRange")) }
-        };
-
-        /// <summary>
-        /// IN ENGINE VERSIONS BEFORE <see cref="ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO"/>:
-        /// <para />
-        /// In ArrayProperties that have StructProperties as their keys or values, there is no universal, context-free way to determine the type of the struct. To that end, this dictionary maps ArrayProperty names to the type of the structs within them.
-        /// </summary>
-        [JsonIgnore]
-        public Dictionary<string, FString> ArrayStructTypeOverride = new Dictionary<string, FString>()
-        {
-            { "Keys", new FString("RichCurveKey") }
-        };
 
         /// <summary>
         /// A map of name map entries to hashes to use when serializing instead of the default engine hash algorithm. Useful when external programs improperly specify name map hashes and binary equality must be maintained.
@@ -847,19 +393,6 @@ namespace UAssetAPI
         internal bool doWeHaveAssetRegistryData = true;
         [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
-        [JsonIgnore]
-        internal bool isSerializationTime = false;
-
-        /// <summary>
-        /// Internal list of name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
-        /// </summary>
-        [JsonProperty("NameMap", Order = -2)]
-        private List<FString> nameMapIndexList;
-
-        /// <summary>
-        /// Internal lookup for name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
-        /// </summary>
-        private Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
@@ -868,7 +401,7 @@ namespace UAssetAPI
         /// <param name="output">The output stream.</param>
         /// <param name="start">The offset in the input stream to start copying from.</param>
         /// <param name="leng">The length in bytes of the data to be copied.</param>
-        private static void CopySplitUp(Stream input, Stream output, int start, int leng)
+        internal static void CopySplitUp(Stream input, Stream output, int start, int leng)
         {
             input.Seek(start, SeekOrigin.Begin);
             output.Seek(0, SeekOrigin.Begin);
@@ -1088,7 +621,7 @@ namespace UAssetAPI
         /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
+        public override void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
             reader.Asset = this;
             hasFoundParentClassExportName = false;
@@ -1115,7 +648,7 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(ImportOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ImportCount; i++)
                 {
-                    Imports.Add(new Import(reader.ReadFName(), reader.ReadFName(), new FPackageIndex(reader.ReadInt32()), reader.ReadFName()));
+                    Imports.Add(new Import(reader));
                 }
             }
 
@@ -1524,22 +1057,10 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Resolves the ancestry of all properties present in this asset.
-        /// </summary>
-        public void ResolveAncestries()
-        {
-            if (WorldTileInfo != null) WorldTileInfo.ResolveAncestries(this, new AncestryInfo());
-            if (Exports != null)
-            {
-                for (int i = 0; i < Exports.Count; i++) Exports[i]?.ResolveAncestries(this, new AncestryInfo());
-            }
-        }
-
-        /// <summary>
         /// Serializes an asset from memory.
         /// </summary>
         /// <returns>A stream that the asset has been serialized to.</returns>
-        public MemoryStream WriteData()
+        public override MemoryStream WriteData()
         {
             isSerializationTime = true;
 
@@ -1845,54 +1366,11 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Creates a MemoryStream from an asset path.
-        /// </summary>
-        /// <param name="p">The path to the input file.</param>
-        /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
-        public MemoryStream PathToStream(string p)
-        {
-            using (FileStream origStream = File.Open(p, FileMode.Open))
-            {
-                MemoryStream completeStream = new MemoryStream();
-                origStream.CopyTo(completeStream);
-
-                UseSeparateBulkDataFiles = false;
-                try
-                {
-                    var targetFile = Path.ChangeExtension(p, "uexp");
-                    if (File.Exists(targetFile))
-                    {
-                        using (FileStream newStream = File.Open(targetFile, FileMode.Open))
-                        {
-                            completeStream.Seek(0, SeekOrigin.End);
-                            newStream.CopyTo(completeStream);
-                            UseSeparateBulkDataFiles = true;
-                        }
-                    }
-                }
-                catch (FileNotFoundException) { }
-
-                completeStream.Seek(0, SeekOrigin.Begin);
-                return completeStream;
-            }
-        }
-
-        /// <summary>
-        /// Creates a BinaryReader from an asset path.
-        /// </summary>
-        /// <param name="p">The path to the input file.</param>
-        /// <returns>A new BinaryReader that stores the binary data of the input file.</returns>
-        public AssetBinaryReader PathToReader(string p)
-        {
-            return new AssetBinaryReader(PathToStream(p), this);
-        }
-
-        /// <summary>
         /// Serializes and writes an asset to disk from memory.
         /// </summary>
         /// <param name="outputPath">The path on disk to write the asset to.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
-        public void Write(string outputPath)
+        public override void Write(string outputPath)
         {
             if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
 
@@ -1919,25 +1397,6 @@ namespace UAssetAPI
                 }
             }
         }
-
-        internal static JsonSerializerSettings jsonSettings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Objects,
-            NullValueHandling = NullValueHandling.Include,
-            FloatParseHandling = FloatParseHandling.Double,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            ContractResolver = new UAssetContractResolver(null),
-            Converters = new List<JsonConverter>()
-            {
-                new FSignedZeroJsonConverter(),
-                new FNameJsonConverter(null),
-                new FStringTableJsonConverter(),
-                new FStringJsonConverter(),
-                new FPackageIndexJsonConverter(),
-                new StringEnumConverter(),
-                new GuidJsonConverter(),
-            }
-        };
 
         /// <summary>
         /// Serializes this asset as JSON.

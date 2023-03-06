@@ -94,7 +94,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this index is used in.</param>
         /// <returns>The import that this index represents in the import map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the import map.</exception>
-        public Import ToImport(UAsset asset)
+        public Import ToImport(UnrealPackage asset)
         {
             if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
             int newIndex = -Index - 1;
@@ -108,7 +108,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this index is used in.</param>
         /// <returns>The export that this index represents in the the export map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
-        public Export ToExport(UAsset asset)
+        public Export ToExport(UnrealPackage asset)
         {
             if (!IsExport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
             int newIndex = Index - 1;

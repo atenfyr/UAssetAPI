@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -275,20 +276,55 @@ namespace UAssetAPI.Unversioned
         public Dictionary<string, UsmapSchema> Schemas;
 
         /// <summary>
-        /// Retrieve the total number of properties that a particular schema can reference.
+        /// Retrieve all the properties that a particular schema can reference.
         /// </summary>
         /// <param name="schemaName">The name of the schema of interest.</param>
-        /// <returns>The number of properties that the schema can reference.</returns>
-        public int GetNumPropertiesDeep(string schemaName)
+        /// <returns>All the properties that the schema can reference.</returns>
+        public IList<UsmapProperty> GetAllProperties(string schemaName)
         {
-            int num = 0;
+            List<UsmapProperty> res = new List<UsmapProperty>();
             while (schemaName != null && this.Schemas.ContainsKey(schemaName))
             {
                 var relevantSchema = this.Schemas[schemaName];
-                num += relevantSchema.PropCount;
+                res.AddRange(relevantSchema.Properties.Values);
                 schemaName = relevantSchema.SuperType;
             }
-            return num;
+            return res;
+        }
+
+        /// <summary>
+        /// Retrieve all the properties that a particular schema can reference as an annotated, human-readable text file.
+        /// </summary>
+        /// <param name="schemaName">The name of the schema of interest.</param>
+        /// <param name="customAnnotations">A map of strings to give custom annotations.</param>
+        /// <param name="recursive">Whether or not to dump data for parent schemas as well.</param>
+        /// <param name="headerPrefix">The prefix of the subheader for each relevant schema.</param>
+        /// <param name="headerSuffix">The suffix of the subheader for each relevant schema.</param>
+        /// <returns>An annotated, human-readable text file containing the properties that the schema can reference.</returns>
+        public string GetAllPropertiesAnnotated(string schemaName, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
+        {
+            List<string> res = new List<string>();
+            bool hasDoneFirst = false;
+            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            {
+                res.Add(headerPrefix + schemaName + headerSuffix);
+
+                var relevantSchema = this.Schemas[schemaName];
+                if (recursive || !hasDoneFirst)
+                {
+                    foreach (UsmapProperty prop in relevantSchema.Properties.Values)
+                    {
+                        if (prop.ArrayIndex > 0) continue;
+                        res.Add(prop.Name + (customAnnotations != null && customAnnotations.ContainsKey(prop.Name) ? (" (" + customAnnotations[prop.Name] + ")") : string.Empty));
+                    }
+                    if (relevantSchema.Properties.Values.Count() == 0) res.Add("N/A");
+                    res.Add(string.Empty);
+                }
+
+                schemaName = relevantSchema.SuperType;
+                hasDoneFirst = true;
+            }
+            return string.Join("\n", res.ToArray());
         }
 
         /// <summary>

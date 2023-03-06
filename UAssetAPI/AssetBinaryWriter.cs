@@ -12,24 +12,24 @@ namespace UAssetAPI
     /// </summary>
     public class AssetBinaryWriter : BinaryWriter
     {
-        public UAsset Asset;
+        public UnrealPackage Asset;
 
-        public AssetBinaryWriter(UAsset asset) : base()
+        public AssetBinaryWriter(UnrealPackage asset) : base()
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, UAsset asset) : base(stream)
+        public AssetBinaryWriter(Stream stream, UnrealPackage asset) : base(stream)
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, UAsset asset) : base(stream, encoding)
+        public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset) : base(stream, encoding)
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UAsset asset) : base(stream, encoding, leaveOpen)
+        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UnrealPackage asset) : base(stream, encoding, leaveOpen)
         {
             Asset = asset;
         }

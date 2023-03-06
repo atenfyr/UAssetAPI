@@ -175,7 +175,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Read(reader, false, 0);
         }
 
-        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(Name);
@@ -311,7 +311,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Read(reader, false, 0);
         }
 
-        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(Name);
@@ -363,7 +363,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.Read(reader, false, 0);
         }
 
-        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(Name);

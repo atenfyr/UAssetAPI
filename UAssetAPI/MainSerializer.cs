@@ -133,8 +133,8 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="data">The list of properties to sort and generate an unversioned header from.</param>
         /// <param name="parentName">The name of the parent of all the properties.</param>
-        /// <param name="asset">The UAsset which the properties are contained within.</param>
-        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, UAsset asset)
+        /// <param name="asset">The UnrealPackage which the properties are contained within.</param>
+        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, UnrealPackage asset)
         {
             var sortedProps = new List<PropertyData>();
             if (asset.Mappings == null) return null;
@@ -207,7 +207,7 @@ namespace UAssetAPI
             {
                 // add "blank" fragment
                 // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
-                allFrags.Add(new FFragment(Math.Min(asset.Mappings.GetNumPropertiesDeep(parentName?.Value?.Value), FFragment.SkipMax), 0, true, false));
+                allFrags.Add(new FFragment(Math.Min(asset.Mappings.GetAllProperties(parentName?.Value?.Value).Count, FFragment.SkipMax), 0, true, false));
             }
 
             // generate zero mask
@@ -250,14 +250,14 @@ namespace UAssetAPI
         /// <param name="name">The serialized name of this property.</param>
         /// <param name="ancestry">The ancestry of the parent of this property.</param>
         /// <param name="parentName">The name of the parent class/struct of this property.</param>
-        /// <param name="asset">The UAsset which this property is contained within.</param>
+        /// <param name="asset">The UnrealPackage which this property is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
         /// <param name="duplicationIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <param name="isZero">Is the body of this property empty?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UAsset asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;

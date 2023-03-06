@@ -143,7 +143,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>
         /// Resolves the ancestry of all child properties of this property.
         /// </summary>
-        public virtual void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public virtual void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             Ancestry = ancestrySoFar;
         }

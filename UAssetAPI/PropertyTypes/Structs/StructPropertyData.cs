@@ -114,7 +114,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
         }
 
-        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(StructType);

@@ -13,9 +13,13 @@ namespace UAssetAPI.ExportTypes
     internal class DisplayIndexOrderAttribute : Attribute
     {
         internal int DisplayingIndex = 0;
-        internal DisplayIndexOrderAttribute(int displayingIndex)
+        internal bool IsIoStore = false;
+        internal bool IsTraditional = false;
+        internal DisplayIndexOrderAttribute(int displayingIndex, bool isIoStore = false, bool isTraditional = true)
         {
             DisplayingIndex = displayingIndex;
+            IsIoStore = isIoStore;
+            IsTraditional = isTraditional;
         }
     }
 
@@ -23,8 +27,14 @@ namespace UAssetAPI.ExportTypes
     /// UObject resource type for objects that are contained within this package and can be referenced by other packages.
     /// </summary>
     [JsonObject(MemberSerialization.OptOut)]
-    public class Export : FObjectResource, ICloneable
+    public class Export : ICloneable
     {
+        ///<summary>The name of the UObject represented by this resource.</summary>
+        [DisplayIndexOrder(0)]
+        public FName ObjectName;
+        ///<summary>Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage</summary>
+        [DisplayIndexOrder(1)]
+        public FPackageIndex OuterIndex;
         ///<summary>Location of this export's class (import/other export). 0 = this export is a UClass</summary>
         [DisplayIndexOrder(2)]
         public FPackageIndex ClassIndex;
@@ -98,9 +108,9 @@ namespace UAssetAPI.ExportTypes
         /// The asset that this export is parsed with.
         /// </summary>
         [JsonIgnore]
-        public UAsset Asset;
+        public UnrealPackage Asset;
 
-        public Export(UAsset asset, byte[] extras)
+        public Export(UnrealPackage asset, byte[] extras)
         {
             Asset = asset;
             Extras = extras;
@@ -119,7 +129,7 @@ namespace UAssetAPI.ExportTypes
         /// <summary>
         /// Resolves the ancestry of all child properties of this export.
         /// </summary>
-        public virtual void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public virtual void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
 
         }
@@ -158,6 +168,12 @@ namespace UAssetAPI.ExportTypes
         public FName GetExportClassType()
         {
             return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(Asset).ObjectName : FName.DefineDummy(Asset, this.ClassIndex.Index.ToString());
+        }
+
+        public FName GetClassTypeForAncestry(UnrealPackage asset = null)
+        {
+            if (asset == null) asset = Asset;
+            return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(asset).ObjectName : asset.GetParentClassExportName();
         }
 
         public override string ToString()

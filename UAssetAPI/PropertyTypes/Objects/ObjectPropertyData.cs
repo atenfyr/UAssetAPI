@@ -56,7 +56,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         /// <returns>The import that this ObjectProperty represents in the import map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the import map.</exception>
-        public Import ToImport(UAsset asset)
+        public Import ToImport(UnrealPackage asset)
         {
             return Value.ToImport(asset);
         }
@@ -66,7 +66,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         /// <returns>The export that this ObjectProperty represents in the the export map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
-        public Export ToExport(UAsset asset)
+        public Export ToExport(UnrealPackage asset)
         {
             return Value.ToExport(asset);
         }

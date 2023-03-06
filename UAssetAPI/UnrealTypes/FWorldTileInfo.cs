@@ -43,7 +43,7 @@ namespace UAssetAPI.UnrealTypes
             }
         }
 
-        public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(FName.DefineDummy(asset, "WorldTileLayer"));
@@ -211,7 +211,7 @@ namespace UAssetAPI.UnrealTypes
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
+        public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(FName.DefineDummy(asset, "WorldTileInfo"));

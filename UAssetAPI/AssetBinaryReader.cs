@@ -12,9 +12,9 @@ namespace UAssetAPI
     /// </summary>
     public class AssetBinaryReader : BinaryReader
     {
-        public UAsset Asset;
+        public UnrealPackage Asset;
 
-        public AssetBinaryReader(Stream stream, UAsset asset = null) : base(stream)
+        public AssetBinaryReader(Stream stream, UnrealPackage asset = null) : base(stream)
         {
             Asset = asset;
         }

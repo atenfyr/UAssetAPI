@@ -44,7 +44,7 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>
         /// The asset that this FName is bound to.
         /// </summary>
-        public UAsset Asset;
+        public UnrealPackage Asset;
 
         /// <summary>
         /// Index into the name map of <see cref="Asset"/> that this FName points to.
@@ -57,7 +57,7 @@ namespace UAssetAPI.UnrealTypes
         internal FString DummyValue = null;
 
         /// <summary>
-        /// Converts this FName instance into a human-readable string. This is the inverse of <see cref="FromString(UAsset, string)"/>.
+        /// Converts this FName instance into a human-readable string. This is the inverse of <see cref="FromString(UnrealPackage, string)"/>.
         /// </summary>
         /// <returns>The human-readable string that represents this FName.</returns>
         public override string ToString()
@@ -73,7 +73,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that the new FName will be bound to.</param>
         /// <param name="val">The human-readable string to convert into an FName instance.</param>
         /// <returns>An FName instance that this string represents.</returns>
-        public static FName FromString(UAsset asset, string val)
+        public static FName FromString(UnrealPackage asset, string val)
         {
             if (val == null || val == FString.NullCase) return null;
             if (val.Length == 0) return new FName(asset, val, 0);
@@ -105,12 +105,12 @@ namespace UAssetAPI.UnrealTypes
         /// </summary>
         /// <param name="newAsset">The asset to bound the new FName to.</param>
         /// <returns>An equivalent FName bound to a different asset.</returns>
-        public FName Transfer(UAsset newAsset)
+        public FName Transfer(UnrealPackage newAsset)
         {
             return new FName(newAsset, Value, Number);
         }
 
-        public static FName DefineDummy(UAsset asset, FString val, int number = 0)
+        public static FName DefineDummy(UnrealPackage asset, FString val, int number = 0)
         {
             var res = new FName();
             res.Asset = asset;
@@ -119,7 +119,7 @@ namespace UAssetAPI.UnrealTypes
             return res;
         }
 
-        public static FName DefineDummy(UAsset asset, string val, int number = 0)
+        public static FName DefineDummy(UnrealPackage asset, string val, int number = 0)
         {
             var res = new FName();
             res.Asset = asset;
@@ -163,7 +163,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this FName is bound to.</param>
         /// <param name="value">The string literal that the new FName's value will be, verbatim.</param>
         /// <param name="number">The instance number of the new FName.</param>
-        public FName(UAsset asset, string value, int number = 0)
+        public FName(UnrealPackage asset, string value, int number = 0)
         {
             Asset = asset;
             if (value == null)
@@ -183,7 +183,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this FName is bound to.</param>
         /// <param name="value">The FString that the FName's value will be, verbatim.</param>
         /// <param name="number">The instance number of the new FName.</param>
-        public FName(UAsset asset, FString value, int number = 0)
+        public FName(UnrealPackage asset, FString value, int number = 0)
         {
             Asset = asset;
             Value = value;
@@ -196,7 +196,7 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this FName is bound to.</param>
         /// <param name="index">The index that this FName's value will be.</param>
         /// <param name="number">The instance number of the new FName.</param>
-        public FName(UAsset asset, int index, int number = 0)
+        public FName(UnrealPackage asset, int index, int number = 0)
         {
             Asset = asset;
             Index = index;
@@ -207,7 +207,7 @@ namespace UAssetAPI.UnrealTypes
         /// Creates a new blank FName instance.
         /// </summary>
         /// <param name="asset">The asset that this FName is bound to.</param>
-        public FName(UAsset asset)
+        public FName(UnrealPackage asset)
         {
             Asset = asset;
             Value = new FString(string.Empty);

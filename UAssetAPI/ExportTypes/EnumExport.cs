@@ -23,7 +23,7 @@ namespace UAssetAPI.ExportTypes
         /// <summary>How the enum was originally defined.</summary>
         public ECppForm CppForm = ECppForm.Regular;
 
-        public void Read(AssetBinaryReader reader, UAsset asset)
+        public void Read(AssetBinaryReader reader, UnrealPackage asset)
         {
             if (asset.ObjectVersion < ObjectVersion.VER_UE4_TIGHTLY_PACKED_ENUMS)
             {
@@ -66,7 +66,7 @@ namespace UAssetAPI.ExportTypes
             }
         }
 
-        public void Write(AssetBinaryWriter writer, UAsset asset)
+        public void Write(AssetBinaryWriter writer, UnrealPackage asset)
         {
             writer.Write(Names.Count);
             if (asset.ObjectVersion < ObjectVersion.VER_UE4_TIGHTLY_PACKED_ENUMS)
