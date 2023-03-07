@@ -1,8 +1,13 @@
 ﻿namespace UAssetAPI.UnrealTypes
 {
+    /*
+		The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
+		Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
+	*/
 
-	// Enum CoreUObject.EInterpCurveMode
-	public enum EInterpCurveMode : byte {
+
+    // Enum CoreUObject.EInterpCurveMode
+    public enum EInterpCurveMode : byte {
 		CIM_Linear = 0,
 		CIM_CurveAuto = 1,
 		CIM_Constant = 2,

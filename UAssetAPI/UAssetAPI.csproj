@@ -42,8 +42,4 @@
   <ItemGroup>
     <None Include="Resources\AC7Key.bin" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="PropertyTypes\Structs\Movies\_LICENSE.txt" />
-    <Content Include="UnrealTypes\Objects\_LICENSE.txt" />
-  </ItemGroup>
 </Project>

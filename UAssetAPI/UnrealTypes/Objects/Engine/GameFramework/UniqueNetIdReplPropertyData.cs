@@ -3,6 +3,10 @@ using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes
 {
+    /*
+        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
+        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
+    */
 
     public class FUniqueNetId
     {
