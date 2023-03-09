@@ -54,12 +54,26 @@ namespace UAssetAPI
         /// </summary>
         public List<CustomVersion> CustomVersionContainer = null;
 
+        private EPackageFlags _packageFlags;
         /// <summary>
         /// The flags for this package.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public EPackageFlags PackageFlags;
+        public EPackageFlags PackageFlags
+        {
+            get
+            {
+                return _packageFlags;
+            }
+            set
+            {
+                _packageFlags = value;
+                _hasUnversionedPropertiesCacheDirty = true;
+            }
+        }
 
+        private bool _hasUnversionedPropertiesCacheDirty = true;
+        private bool _hasUnversionedPropertiesCache; // HasFlag is a little bit expensive so we cache the bool value for good measure
         /// <summary>
         /// Whether or not this asset uses unversioned properties.
         /// </summary>
@@ -67,7 +81,12 @@ namespace UAssetAPI
         {
             get
             {
-                return PackageFlags.HasFlag(EPackageFlags.PKG_UnversionedProperties);
+                if (_hasUnversionedPropertiesCacheDirty)
+                {
+                    _hasUnversionedPropertiesCache = PackageFlags.HasFlag(EPackageFlags.PKG_UnversionedProperties);
+                    _hasUnversionedPropertiesCacheDirty = false;
+                }
+                return _hasUnversionedPropertiesCache;
             }
         }
 

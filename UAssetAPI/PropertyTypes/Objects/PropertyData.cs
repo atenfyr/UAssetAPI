@@ -7,7 +7,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 {
     public class AncestryInfo : ICloneable
     {
-        public List<FName> Ancestors = new List<FName>();
+        public List<FName> Ancestors = new List<FName>(5);
         public FName Parent
         {
             get

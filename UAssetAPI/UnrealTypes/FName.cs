@@ -66,13 +66,26 @@ namespace UAssetAPI.UnrealTypes
         /// </summary>
         public UnrealPackage Asset;
 
+        private int _index;
         /// <summary>
         /// Index into the name map of <see cref="Asset"/> that this FName points to.
         /// </summary>
-        internal int Index;
+        internal int Index
+        {
+            get
+            {
+                if (IsDummy) throw new InvalidOperationException("Attempt to retrieve index of dummy FName");
+                return _index;
+            }
+            set
+            {
+                _index = value;
+                DummyValue = null;
+            }
+        }
 
         /// <summary>
-        /// Dummy value. If defined, this FName does not actually point to a value in the name map, but will still act as if it does. Used for debugging and display only.
+        /// Dummy value. If defined, this FName does not actually point to a value in any name map, but will still act as if it does.
         /// </summary>
         internal FString DummyValue = null;
 
@@ -130,6 +143,16 @@ namespace UAssetAPI.UnrealTypes
             return new FName(newAsset, Value, Number);
         }
 
+        /// <summary>
+        /// Creates a new dummy FName.
+        /// This can be used for cases where a valid FName must be produced without referencing a specific asset's name map.
+        /// <para />
+        /// USE WITH CAUTION! UAssetAPI must never attempt to serialize a dummy FName to disk.
+        /// </summary>
+        /// <param name="asset">The asset that this FName is bound to.</param>
+        /// <param name="val">The FString that the FName's value will be, verbatim.</param>
+        /// <param name="number">The instance number of the new FName.</param>
+        /// <returns>A dummy FName instance that represents the string.</returns>
         public static FName DefineDummy(UnrealPackage asset, FString val, int number = 0)
         {
             var res = new FName();
@@ -139,6 +162,16 @@ namespace UAssetAPI.UnrealTypes
             return res;
         }
 
+        /// <summary>
+        /// Creates a new dummy FName.
+        /// This can be used for cases where a valid FName must be produced without referencing a specific asset's name map.
+        /// <para />
+        /// USE WITH CAUTION! UAssetAPI must never attempt to serialize a dummy FName to disk.
+        /// </summary>
+        /// <param name="asset">The asset that this FName is bound to.</param>
+        /// <param name="val">The string literal that the FName's value will be, verbatim.</param>
+        /// <param name="number">The instance number of the new FName.</param>
+        /// <returns>A dummy FName instance that represents the string.</returns>
         public static FName DefineDummy(UnrealPackage asset, string val, int number = 0)
         {
             var res = new FName();
