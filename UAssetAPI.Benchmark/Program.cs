@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Benchmark
@@ -119,6 +117,22 @@ namespace UAssetAPI.Benchmark
                     }
                     timer.Stop();
                     Console.WriteLine("Custom version then retrieved " + numCustomVersionTrials + " times in " + timer.Elapsed.TotalMilliseconds + " ms (" + (timer.Elapsed.TotalMilliseconds / numCustomVersionTrials) + " ms/trial)");
+                    break;
+                case "longestnames":
+                    timer.Restart();
+                    timer.Start();
+                    Assembly relevantAssembly = typeof(UAsset).Assembly;
+                    List<string> lineas = new List<string>();
+                    foreach (Type type in relevantAssembly.GetTypes())
+                    {
+                        if (type.IsEnum) continue;
+                        lineas.Add(type.Name);
+                        foreach (MemberInfo memb in type.GetMembers()) lineas.Add(memb.Name);
+                    }
+
+                    Console.WriteLine(string.Join('\n', lineas.OrderByDescending(x => x.Length).Distinct().Take(20)));
+                    Console.WriteLine("Operation completed in " + timer.Elapsed.TotalMilliseconds + " ms");
+                    timer.Stop();
                     break;
             }
         }

@@ -137,6 +137,7 @@ namespace UAssetAPI
         public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, UnrealPackage asset)
         {
             var sortedProps = new List<PropertyData>();
+            if (!asset.HasUnversionedProperties) return null; // no point in wasting time generating it
             if (asset.Mappings == null) return null;
 
             int firstNumAll = int.MaxValue;
