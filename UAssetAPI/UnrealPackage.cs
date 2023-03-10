@@ -587,7 +587,7 @@ namespace UAssetAPI
         /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
         public virtual void Write(string outputPath)
         {
-            
+
         }
 
 

@@ -949,7 +949,7 @@ namespace UAssetAPI
                     writer.Write(0);
                 }
                 else
-                { 
+                {
                     // TODO: support for enum-based custom versions
                     writer.Write(CustomVersionContainer.Count);
                     for (int i = 0; i < CustomVersionContainer.Count; i++)
