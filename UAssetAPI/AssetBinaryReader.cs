@@ -82,36 +82,48 @@ namespace UAssetAPI
             return null;
         }
 
-        public virtual FString ReadFString()
+        public virtual FString ReadFString(FSerializedNameHeader nameHeader = null)
         {
-            int length = this.ReadInt32();
-            switch (length)
+            if (nameHeader == null)
             {
-                case 0:
-                    return null;
-                default:
-                    if (length < 0)
-                    {
-                        byte[] data = this.ReadBytes(-length * 2);
-                        return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
-                    }
-                    else
-                    {
-                        byte[] data = this.ReadBytes(length);
-                        return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
-                    }
+                int length = this.ReadInt32();
+                switch (length)
+                {
+                    case 0:
+                        return null;
+                    default:
+                        if (length < 0)
+                        {
+                            byte[] data = this.ReadBytes(-length * 2);
+                            return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
+                        }
+                        else
+                        {
+                            byte[] data = this.ReadBytes(length);
+                            return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
+                        }
+                }
+            }
+            else
+            {
+                if (nameHeader.bIsWide)
+                {
+                    byte[] data = this.ReadBytes(nameHeader.Len * 2); // TODO: are we actually supposed to divide by two?
+                    return new FString(Encoding.Unicode.GetString(data, 0, data.Length), Encoding.Unicode);
+                }
+                else
+                {
+                    byte[] data = this.ReadBytes(nameHeader.Len);
+                    return new FString(Encoding.ASCII.GetString(data, 0, data.Length), Encoding.ASCII);
+                }
             }
         }
 
-        public virtual FString ReadNameMapString(out uint hashes)
+        public virtual FString ReadNameMapString(FSerializedNameHeader nameHeader, out uint hashes)
         {
-            FString str = this.ReadFString();
             hashes = 0;
-
-            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value))
-            {
-                hashes = this.ReadUInt32();
-            }
+            FString str = this.ReadFString(nameHeader);
+            if (this.Asset is UAsset && Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value)) hashes = this.ReadUInt32();
             return str;
         }
 

@@ -40,6 +40,16 @@ namespace UAssetAPI
         public bool UseSeparateBulkDataFiles = false;
 
         /// <summary>
+        /// Should this asset not serialize its engine and custom versions?
+        /// </summary>
+        public bool IsUnversioned;
+
+        /// <summary>
+        /// The licensee file version. Used by some games to add their own Engine-level versioning.
+        /// </summary>
+        public int FileVersionLicenseeUE;
+
+        /// <summary>
         /// The object version of UE4 that will be used to parse this asset.
         /// </summary>
         public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
@@ -510,6 +520,50 @@ namespace UAssetAPI
             }
 
             return (T)(object)-1;
+        }
+
+        public void ReadCustomVersionContainer(AssetBinaryReader reader)
+        {
+            // TODO: support for enum-based custom versions
+            var newCustomVersionContainer = new List<CustomVersion>();
+            var existingCustomVersions = new HashSet<Guid>();
+            int numCustomVersions = reader.ReadInt32();
+            for (int i = 0; i < numCustomVersions; i++)
+            {
+                var customVersionID = new Guid(reader.ReadBytes(16));
+                var customVersionNumber = reader.ReadInt32();
+                newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                existingCustomVersions.Add(customVersionID);
+            }
+
+            if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
+            {
+                foreach (CustomVersion entry in Mappings.CustomVersionContainer)
+                {
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                }
+            }
+
+            if (CustomVersionContainer != null)
+            {
+                foreach (CustomVersion entry in CustomVersionContainer)
+                {
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                }
+            }
+
+            CustomVersionContainer = newCustomVersionContainer;
+        }
+
+        public void WriteCustomVersionContainer(AssetBinaryWriter writer)
+        {
+            // TODO: support for enum-based custom versions
+            writer.Write(CustomVersionContainer.Count);
+            for (int i = 0; i < CustomVersionContainer.Count; i++)
+            {
+                writer.Write(CustomVersionContainer[i].Key.ToByteArray());
+                writer.Write(CustomVersionContainer[i].Version);
+            }
         }
 
         private static ConcurrentDictionary<string, EngineVersion> cachedCustomVersionReflectionData = new ConcurrentDictionary<string, EngineVersion>();

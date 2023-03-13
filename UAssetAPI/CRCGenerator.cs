@@ -8,6 +8,24 @@ namespace UAssetAPI
 {
     public static class CRCGenerator
     {
+        public static unsafe ulong CityHash64(FString text)
+        {
+            return CityHash64(text?.Value, text?.Encoding);
+        }
+
+        public static unsafe ulong CityHash64(string text, Encoding encoding)
+        {
+            return CityHash64(encoding.GetBytes(text));
+        }
+
+        public static unsafe ulong CityHash64(byte[] data)
+        {
+            fixed (byte* arr = data)
+            {
+                return CityHash.CityHash64(arr, (uint)data.Length);
+            }
+        }
+
         public static uint GenerateHash(FString text)
         {
             return GenerateHash(text?.Value, text?.Encoding);
@@ -28,6 +46,25 @@ namespace UAssetAPI
         public static char ToUpper(char input)
         {
             return (char)((uint)input - ((((uint)input - 'a' < 26u) ? 1 : 0) << 5));
+        }
+
+        public static string ToUpper(string input)
+        {
+            var res = "";
+            foreach (char x in input) res += ToUpper(x); // todo: revise for better perf if needed
+            return res;
+        }
+
+        public static char ToLower(char input)
+        {
+            return (char)((uint)input + ((((uint)input - 'A' < 26u) ? 1 : 0) << 5));
+        }
+
+        public static string ToLower(string input)
+        {
+            var res = "";
+            foreach (char x in input) res += ToLower(x); // todo: revise for better perf if needed
+            return res;
         }
 
         public static uint Strihash_DEPRECATED(string text, Encoding encoding)

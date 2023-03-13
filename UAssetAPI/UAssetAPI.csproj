@@ -6,6 +6,7 @@
     <Product>UAssetAPI</Product>
     <Copyright>Copyright © Atenfyr 2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release;Debug Verbose</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

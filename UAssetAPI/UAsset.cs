@@ -245,16 +245,6 @@ namespace UAssetAPI
         public int LegacyFileVersion;
 
         /// <summary>
-        /// Should this asset not serialize its engine and custom versions?
-        /// </summary>
-        public bool IsUnversioned;
-
-        /// <summary>
-        /// The licensee file version. Used by some games to add their own Engine-level versioning.
-        /// </summary>
-        public int FileVersionLicenseeUE4;
-
-        /// <summary>
         /// List of dependency lists for each export.
         /// </summary>
         public List<int[]> DependsMap;
@@ -463,40 +453,12 @@ namespace UAssetAPI
             }
             if (ObjectVersionUE5 == ObjectVersionUE5.UNKNOWN && Mappings != null && Mappings.FileVersionUE5 > 0) ObjectVersionUE5 = Mappings.FileVersionUE5;
 
-            FileVersionLicenseeUE4 = reader.ReadInt32();
+            FileVersionLicenseeUE = reader.ReadInt32();
 
             // Custom versions container
             if (LegacyFileVersion <= -2)
             {
-                // TODO: support for enum-based custom versions
-                var newCustomVersionContainer = new List<CustomVersion>();
-                var existingCustomVersions = new HashSet<Guid>();
-                int numCustomVersions = reader.ReadInt32();
-                for (int i = 0; i < numCustomVersions; i++)
-                {
-                    var customVersionID = new Guid(reader.ReadBytes(16));
-                    var customVersionNumber = reader.ReadInt32();
-                    newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
-                    existingCustomVersions.Add(customVersionID);
-                }
-
-                if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
-                {
-                    foreach (CustomVersion entry in Mappings.CustomVersionContainer)
-                    {
-                        if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
-                    }
-                }
-
-                if (CustomVersionContainer != null)
-                {
-                    foreach (CustomVersion entry in CustomVersionContainer)
-                    {
-                        if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
-                    }
-                }
-
-                CustomVersionContainer = newCustomVersionContainer;
+                ReadCustomVersionContainer(reader);
             }
 
             SectionSixOffset = reader.ReadInt32(); // 24
@@ -636,7 +598,7 @@ namespace UAssetAPI
             ClearNameIndexList();
             for (int i = 0; i < NameCount; i++)
             {
-                FString nameInMap = reader.ReadNameMapString(out uint hashes);
+                FString nameInMap = reader.ReadNameMapString(null, out uint hashes);
                 if (hashes == 0) OverrideNameMapHashes[nameInMap] = 0;
                 AddNameReference(nameInMap, true);
             }
@@ -941,7 +903,7 @@ namespace UAssetAPI
                 writer.Write((int)ObjectVersion);
             }
 
-            writer.Write(FileVersionLicenseeUE4);
+            writer.Write(FileVersionLicenseeUE);
             if (LegacyFileVersion <= -2)
             {
                 if (IsUnversioned)
@@ -950,13 +912,7 @@ namespace UAssetAPI
                 }
                 else
                 {
-                    // TODO: support for enum-based custom versions
-                    writer.Write(CustomVersionContainer.Count);
-                    for (int i = 0; i < CustomVersionContainer.Count; i++)
-                    {
-                        writer.Write(CustomVersionContainer[i].Key.ToByteArray());
-                        writer.Write(CustomVersionContainer[i].Version);
-                    }
+                    WriteCustomVersionContainer(writer);
                 }
             }
 

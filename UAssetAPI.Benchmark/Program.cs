@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UAssetAPI.IO;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.Benchmark
 {
@@ -51,6 +53,7 @@ namespace UAssetAPI.Benchmark
                     foreach (string assetPath in allTestingAssets)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
+                        if (!allTestAssetVersions.ContainsKey(Path.GetFileNameWithoutExtension(assetPath))) continue;
                         totalTime += BenchmarkAsset(assetPath, (EngineVersion)Enum.Parse(typeof(EngineVersion), allTestAssetVersions[Path.GetFileNameWithoutExtension(assetPath)]));
                         num1 += 1;
                     }
@@ -134,12 +137,23 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine("Operation completed in " + timer.Elapsed.TotalMilliseconds + " ms");
                     timer.Stop();
                     break;
+                case "zen":
+                    ZenAsset test = new ZenAsset(EngineVersion.VER_UE5_0, new Usmap(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UAssetGUI", "Mappings", "Clay.usmap")));
+                    test.Read(test.PathToReader(Path.Combine("TestAssets", "B_Gamemode.uasset")));
+                    Console.WriteLine(test.Name);
+
+                    MemoryStream testStrm = new MemoryStream();
+                    test.WriteNameBatch(new AssetBinaryWriter(testStrm, test));
+                    Console.WriteLine(BitConverter.ToString(testStrm.ToArray()));
+                    break;
             }
         }
 
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
+            Run(new string[] { "zen" });
+
             while (true)
             {
                 Console.Write("Input: ");
