@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
-using UAssetAPI.JSON;
-using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.IO;
+using UAssetAPI.JSON;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -97,9 +97,15 @@ namespace UAssetAPI.UnrealTypes
         public Import ToImport(UnrealPackage asset)
         {
             if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
-            int newIndex = -Index - 1;
-            if (newIndex < 0 || newIndex >= asset.Imports.Count) return null;
-            return asset.Imports[newIndex];
+            if (asset is ZenAsset) throw new NotImplementedException("ToImport currently unimplemented for ZenAsset");
+
+            if (asset is UAsset uas)
+            {
+                int newIndex = -Index - 1;
+                if (newIndex < 0 || newIndex >= uas.Imports.Count) return null;
+                return uas.Imports[newIndex];
+            }
+            return null;
         }
 
         /// <summary>

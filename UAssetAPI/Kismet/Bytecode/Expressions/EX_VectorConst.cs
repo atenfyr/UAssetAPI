@@ -25,7 +25,14 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                Value = new FVector(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+            }
+            else
+            {
+                Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            }
         }
 
         /// <summary>
@@ -35,10 +42,20 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <returns>The iCode offset of the data that was written.</returns>
         public override int Write(AssetBinaryWriter writer)
         {
-            writer.Write(Value.X);
-            writer.Write(Value.Y);
-            writer.Write(Value.Z);
-            return sizeof(float) * 3;
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write(Value.X);
+                writer.Write(Value.Y);
+                writer.Write(Value.Z);
+                return sizeof(double) * 3;
+            }
+            else
+            {
+                writer.Write(Value.XFloat);
+                writer.Write(Value.YFloat);
+                writer.Write(Value.ZFloat);
+                return sizeof(float) * 3;
+            }
         }
     }
 }

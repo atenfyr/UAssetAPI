@@ -133,6 +133,52 @@ namespace UAssetAPI
             return true;
         }
 
+
+        /// <summary>
+        /// Finds the class path and export name of the SuperStruct of this asset, if it exists.
+        /// </summary>
+        /// <param name="parentClassPath">The class path of the SuperStruct of this asset, if it exists.</param>
+        /// <param name="parentClassExportName">The export name of the SuperStruct of this asset, if it exists.</param>
+        public override void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
+        {
+            parentClassPath = null;
+            parentClassExportName = null;
+
+            var bgcCat = GetClassExport();
+            if (bgcCat == null) return;
+            if (bgcCat.SuperStruct == null) return;
+
+            Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
+            if (parentClassLink == null) return;
+            if (parentClassLink.OuterIndex.Index >= 0) return;
+
+            parentClassExportName = parentClassLink.ObjectName;
+            parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
+        }
+
+        internal bool hasFoundParentClassExportName = false;
+        internal FName parentClassExportNameCache = null;
+        internal override FName GetParentClassExportName()
+        {
+            if (!hasFoundParentClassExportName)
+            {
+                hasFoundParentClassExportName = true;
+                GetParentClass(out _, out parentClassExportNameCache);
+            }
+            return parentClassExportNameCache;
+        }
+
+        /// <summary>
+        /// Adds a new import to the import map. This is equivalent to adding directly to the <see cref="Imports"/> list.
+        /// </summary>
+        /// <param name="li">The new import to add to the import map.</param>
+        /// <returns>The FPackageIndex corresponding to the newly-added import.</returns>
+        public FPackageIndex AddImport(Import li)
+        {
+            Imports.Add(li);
+            return FPackageIndex.FromImport(Imports.Count - 1);
+        }
+
         /// <summary>
         /// Searches for an import in the import map based off of certain parameters.
         /// </summary>
@@ -243,6 +289,11 @@ namespace UAssetAPI
         ///     </list>
         /// </remarks>
         public int LegacyFileVersion;
+
+        /// <summary>
+        /// Map of object imports. UAssetAPI used to call these "links."
+        /// </summary>
+        public List<Import> Imports;
 
         /// <summary>
         /// List of dependency lists for each export.

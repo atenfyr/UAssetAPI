@@ -4,7 +4,6 @@ namespace UAssetAPI
 {
     /// <summary>
     /// UObject resource type for objects that are referenced by this package, but contained within another package.
-    /// In IO store assets, this is serialized as an FPackageObjectIndex.
     /// </summary>
     public class Import
     {

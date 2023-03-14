@@ -115,11 +115,6 @@ namespace UAssetAPI
         internal Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
-        /// Map of object imports. UAssetAPI used to call these "links."
-        /// </summary>
-        public List<Import> Imports;
-
-        /// <summary>
         /// Map of object exports. UAssetAPI used to call these "categories."
         /// </summary>
         public List<Export> Exports;
@@ -323,17 +318,6 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Adds a new import to the import map. This is equivalent to adding directly to the <see cref="Imports"/> list.
-        /// </summary>
-        /// <param name="li">The new import to add to the import map.</param>
-        /// <returns>The FPackageIndex corresponding to the newly-added import.</returns>
-        public FPackageIndex AddImport(Import li)
-        {
-            Imports.Add(li);
-            return FPackageIndex.FromImport(Imports.Count - 1);
-        }
-
-        /// <summary>
         /// Searches for and returns this asset's ClassExport, if one exists.
         /// </summary>
         /// <returns>The asset's ClassExport if one exists, otherwise null.</returns>
@@ -351,33 +335,15 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="parentClassPath">The class path of the SuperStruct of this asset, if it exists.</param>
         /// <param name="parentClassExportName">The export name of the SuperStruct of this asset, if it exists.</param>
-        public void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
+        public virtual void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
         {
             parentClassPath = null;
             parentClassExportName = null;
-
-            var bgcCat = GetClassExport();
-            if (bgcCat == null) return;
-            if (bgcCat.SuperStruct == null) return;
-
-            Import parentClassLink = bgcCat.SuperStruct.ToImport(this);
-            if (parentClassLink == null) return;
-            if (parentClassLink.OuterIndex.Index >= 0) return;
-
-            parentClassExportName = parentClassLink.ObjectName;
-            parentClassPath = parentClassLink.OuterIndex.ToImport(this).ObjectName;
         }
 
-        internal bool hasFoundParentClassExportName = false;
-        internal FName parentClassExportNameCache = null;
-        internal FName GetParentClassExportName()
+        internal virtual FName GetParentClassExportName()
         {
-            if (!hasFoundParentClassExportName)
-            {
-                hasFoundParentClassExportName = true;
-                GetParentClass(out _, out parentClassExportNameCache);
-            }
-            return parentClassExportNameCache;
+            return null;
         }
 
         /// <summary>

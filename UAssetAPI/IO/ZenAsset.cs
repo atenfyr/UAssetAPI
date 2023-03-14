@@ -55,6 +55,27 @@ namespace UAssetAPI.IO
         /// </summary>
         public bool VerifyHashes = false;
         public ulong HashVersion = CityHash64;
+        public byte[] BulkDataMap;
+
+        /// <summary>
+        /// Map of object imports. UAssetAPI used to call these "links."
+        /// </summary>
+        public List<FPackageObjectIndex> Imports;
+
+        /// <summary>
+        /// Finds the class path and export name of the SuperStruct of this asset, if it exists.
+        /// </summary>
+        /// <param name="parentClassPath">The class path of the SuperStruct of this asset, if it exists.</param>
+        /// <param name="parentClassExportName">The export name of the SuperStruct of this asset, if it exists.</param>
+        public override void GetParentClass(out FName parentClassPath, out FName parentClassExportName)
+        {
+            throw new NotImplementedException("Unimplemented method ZenAsset.GetParentClass");
+        }
+
+        internal override FName GetParentClassExportName()
+        {
+            throw new NotImplementedException("Unimplemented method ZenAsset.GetParentClassExportName");
+        }
 
         private const ulong CityHash64 = 0x00000000C1640000;
         public void ReadNameBatch(AssetBinaryReader reader)
@@ -183,7 +204,30 @@ namespace UAssetAPI.IO
                 ReadNameBatch(reader);
 
                 // bulk data map
+                if (ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+                {
+                    ulong bulkDataMapSize = reader.ReadUInt64();
+                    BulkDataMap = reader.ReadBytes((int)bulkDataMapSize); // i don't like this cast; if it becomes a problem, we can use a workaround instead
+                }
 
+                // imported public export hashes
+                reader.BaseStream.Seek(ImportedPublicExportHashesOffset, SeekOrigin.Begin);
+                ulong[] ImportedPublicExportHashes = new ulong[(ImportMapOffset - ImportedPublicExportHashesOffset) / sizeof(ulong)];
+                for (int i = 0; i < ImportedPublicExportHashes.Length; i++) ImportedPublicExportHashes[i] = reader.ReadUInt64();
+
+                // import map
+                reader.BaseStream.Seek(ImportMapOffset, SeekOrigin.Begin);
+                Imports = new List<FPackageObjectIndex>();
+                for (int i = 0; i < (ExportMapOffset - ImportMapOffset) / sizeof(ulong); i++)
+                {
+                    Imports.Add(FPackageObjectIndex.Read(reader));
+                }
+
+                // export map
+
+                // export bundle entries
+
+                // graph data/export bundle headers (?), once this is implemented fix FPackageIndex ToImport & GetParentClass
             }
             else
             {
@@ -203,6 +247,15 @@ namespace UAssetAPI.IO
 
                 // name map batch
                 ReadNameBatch(reader);
+
+                // import map
+
+                // export map
+
+                // export bundle entries
+
+                // graph data (?)
+
             }
 
             // end summary

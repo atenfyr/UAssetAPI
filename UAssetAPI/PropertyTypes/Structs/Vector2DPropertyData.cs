@@ -4,6 +4,7 @@ using System.IO;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.JSON;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -12,13 +13,48 @@ namespace UAssetAPI.PropertyTypes.Structs
     /// </summary>
     public class Vector2DPropertyData : PropertyData
     {
-        /// <summary>Vector's X-component.</summary>
-        [JsonProperty]
-        public double X;
+        private float? _x1;
+        private double _x2;
+        private float? _y1;
+        private double _y2;
 
-        /// <summary>Vector's Y-component.</summary>
+        /// <summary>The vector's X-component.</summary>
         [JsonProperty]
-        public double Y;
+        [JsonConverter(typeof(FSignedZeroJsonConverter))]
+        public double X
+        {
+            get
+            {
+                return _x1 == null ? _x2 : (double)_x1;
+            }
+            set
+            {
+                _x1 = null;
+                _x2 = value;
+            }
+        }
+
+        [JsonIgnore]
+        public float XFloat => _x1 == null ? (float)_x2 : (float)_x1;
+
+        /// <summary>The vector's Y-component.</summary>
+        [JsonProperty]
+        [JsonConverter(typeof(FSignedZeroJsonConverter))]
+        public double Y
+        {
+            get
+            {
+                return _y1 == null ? _y2 : (double)_y1;
+            }
+            set
+            {
+                _y1 = null;
+                _y2 = value;
+            }
+        }
+
+        [JsonIgnore]
+        public float YFloat => _y1 == null ? (float)_y2 : (float)_y1;
 
         public Vector2DPropertyData(FName name) : base(name)
         {
@@ -43,13 +79,13 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
             {
-                X = reader.ReadDouble();
-                Y = reader.ReadDouble();
+                _x2 = reader.ReadDouble();
+                _y2 = reader.ReadDouble();
             }
             else
             {
-                X = reader.ReadSingle();
-                Y = reader.ReadSingle();
+                _x1 = reader.ReadSingle();
+                _y1 = reader.ReadSingle();
             }
         }
 
@@ -62,14 +98,14 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
             {
-                writer.Write((double)X);
-                writer.Write((double)Y);
+                writer.Write(X);
+                writer.Write(Y);
                 return sizeof(double) * 2;
             }
             else
             {
-                writer.Write((float)X);
-                writer.Write((float)Y);
+                writer.Write(XFloat);
+                writer.Write(YFloat);
                 return sizeof(float) * 2;
             }
         }

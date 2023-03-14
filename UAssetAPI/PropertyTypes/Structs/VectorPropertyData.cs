@@ -52,16 +52,16 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
             {
-                writer.Write((double)Value.X);
-                writer.Write((double)Value.Y);
-                writer.Write((double)Value.Z);
+                writer.Write(Value.X);
+                writer.Write(Value.Y);
+                writer.Write(Value.Z);
                 return sizeof(double) * 3;
             }
             else
             {
-                writer.Write((float)Value.X);
-                writer.Write((float)Value.Y);
-                writer.Write((float)Value.Z);
+                writer.Write(Value.XFloat);
+                writer.Write(Value.YFloat);
+                writer.Write(Value.ZFloat);
                 return sizeof(float) * 3;
             }
         }

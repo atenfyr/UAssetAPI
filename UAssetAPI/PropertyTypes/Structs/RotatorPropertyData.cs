@@ -51,19 +51,18 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-
             if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
             {
-                writer.Write((double)Value.Pitch);
-                writer.Write((double)Value.Yaw);
-                writer.Write((double)Value.Roll);
+                writer.Write(Value.Pitch);
+                writer.Write(Value.Yaw);
+                writer.Write(Value.Roll);
                 return sizeof(double) * 3;
             }
             else
             {
-                writer.Write((float)Value.Pitch);
-                writer.Write((float)Value.Yaw);
-                writer.Write((float)Value.Roll);
+                writer.Write(Value.PitchFloat);
+                writer.Write(Value.YawFloat);
+                writer.Write(Value.RollFloat);
                 return sizeof(float) * 3;
             }
         }
