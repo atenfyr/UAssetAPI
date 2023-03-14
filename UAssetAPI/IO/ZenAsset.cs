@@ -181,6 +181,9 @@ namespace UAssetAPI.IO
 
                 // name map batch
                 ReadNameBatch(reader);
+
+                // bulk data map
+
             }
             else
             {
@@ -197,7 +200,14 @@ namespace UAssetAPI.IO
                 int ExportBundlesOffset = reader.ReadInt32();
                 int GraphDataOffset = reader.ReadInt32();
                 int GraphDataSize = reader.ReadInt32();
+
+                // name map batch
+                ReadNameBatch(reader);
             }
+
+            // end summary
+            
+            // preload dependencies, etc.
         }
 
         /// <summary>

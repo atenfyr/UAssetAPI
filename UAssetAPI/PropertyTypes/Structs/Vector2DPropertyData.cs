@@ -14,11 +14,11 @@ namespace UAssetAPI.PropertyTypes.Structs
     {
         /// <summary>Vector's X-component.</summary>
         [JsonProperty]
-        public float X;
+        public double X;
 
         /// <summary>Vector's Y-component.</summary>
         [JsonProperty]
-        public float Y;
+        public double Y;
 
         public Vector2DPropertyData(FName name) : base(name)
         {
@@ -41,8 +41,16 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            X = reader.ReadSingle();
-            Y = reader.ReadSingle();
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                X = reader.ReadDouble();
+                Y = reader.ReadDouble();
+            }
+            else
+            {
+                X = reader.ReadSingle();
+                Y = reader.ReadSingle();
+            }
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -52,15 +60,24 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(X);
-            writer.Write(Y);
-            return sizeof(float) * 2;
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write((double)X);
+                writer.Write((double)Y);
+                return sizeof(double) * 2;
+            }
+            else
+            {
+                writer.Write((float)X);
+                writer.Write((float)Y);
+                return sizeof(float) * 2;
+            }
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (float.TryParse(d[0], out float res1)) X = res1;
-            if (float.TryParse(d[1], out float res2)) Y = res2;
+            if (double.TryParse(d[0], out double res1)) X = res1;
+            if (double.TryParse(d[1], out double res2)) Y = res2;
         }
 
         public override string ToString()

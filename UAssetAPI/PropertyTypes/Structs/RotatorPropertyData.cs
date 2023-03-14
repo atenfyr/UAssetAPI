@@ -34,7 +34,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new FRotator(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                Value = new FRotator(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+            }
+            else
+            {
+                Value = new FRotator(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            }
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -44,17 +51,28 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(Value.Pitch);
-            writer.Write(Value.Yaw);
-            writer.Write(Value.Roll);
-            return sizeof(float) * 3;
+
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write((double)Value.Pitch);
+                writer.Write((double)Value.Yaw);
+                writer.Write((double)Value.Roll);
+                return sizeof(double) * 3;
+            }
+            else
+            {
+                writer.Write((float)Value.Pitch);
+                writer.Write((float)Value.Yaw);
+                writer.Write((float)Value.Roll);
+                return sizeof(float) * 3;
+            }
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            float.TryParse(d[0], out float Roll);
-            float.TryParse(d[1], out float Pitch);
-            float.TryParse(d[2], out float Yaw);
+            double.TryParse(d[0], out double Roll);
+            double.TryParse(d[1], out double Pitch);
+            double.TryParse(d[2], out double Yaw);
             Value = new FRotator(Pitch, Yaw, Roll);
         }
 

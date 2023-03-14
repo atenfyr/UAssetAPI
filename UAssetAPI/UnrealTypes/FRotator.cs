@@ -15,19 +15,19 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>Rotation around the right axis (around Y axis), Looking up and down (0=Straight Ahead, +Up, -Down)</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Pitch;
+        public double Pitch;
 
         /// <summary>Rotation around the up axis (around Z axis), Running in circles 0=East, +North, -South.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Yaw;
+        public double Yaw;
 
         /// <summary>Rotation around the forward axis (around X axis), Tilting your head, 0=Straight, +Clockwise, -CCW.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Roll;
+        public double Roll;
 
-        public FRotator(float pitch, float yaw, float roll)
+        public FRotator(double pitch, double yaw, double roll)
         {
             Pitch = pitch;
             Yaw = yaw;

@@ -13,19 +13,19 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>Vector's X-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float X;
+        public double X;
 
         /// <summary>Vector's Y-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Y;
+        public double Y;
 
         /// <summary>Vector's Z-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Z;
+        public double Z;
 
-        public FVector(float x, float y, float z)
+        public FVector(double x, double y, double z)
         {
             X = x;
             Y = y;

@@ -33,7 +33,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                Value = new FVector(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+            }
+            else
+            {
+                Value = new FVector(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            }
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -43,17 +50,27 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(Value.X);
-            writer.Write(Value.Y);
-            writer.Write(Value.Z);
-            return sizeof(float) * 3;
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write((double)Value.X);
+                writer.Write((double)Value.Y);
+                writer.Write((double)Value.Z);
+                return sizeof(double) * 3;
+            }
+            else
+            {
+                writer.Write((float)Value.X);
+                writer.Write((float)Value.Y);
+                writer.Write((float)Value.Z);
+                return sizeof(float) * 3;
+            }
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            float.TryParse(d[0], out float X);
-            float.TryParse(d[1], out float Y);
-            float.TryParse(d[2], out float Z);
+            double.TryParse(d[0], out double X);
+            double.TryParse(d[1], out double Y);
+            double.TryParse(d[2], out double Z);
             Value = new FVector(X, Y, Z);
         }
 

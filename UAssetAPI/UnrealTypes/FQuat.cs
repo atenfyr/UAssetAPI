@@ -15,24 +15,24 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>The quaternion's X-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float X;
+        public double X;
 
         /// <summary>The quaternion's Y-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Y;
+        public double Y;
 
         /// <summary>The quaternion's Z-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float Z;
+        public double Z;
 
         /// <summary>The quaternion's W-component.</summary>
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
-        public float W;
+        public double W;
 
-        public FQuat(float x, float y, float z, float w)
+        public FQuat(double x, double y, double z, double w)
         {
             X = x;
             Y = y;

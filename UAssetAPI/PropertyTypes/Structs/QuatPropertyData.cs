@@ -34,7 +34,14 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                Value = new FQuat(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+            }
+            else
+            {
+                Value = new FQuat(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            }
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
@@ -44,19 +51,30 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(Value.X);
-            writer.Write(Value.Y);
-            writer.Write(Value.Z);
-            writer.Write(Value.W);
-            return sizeof(float) * 4;
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write((double)Value.X);
+                writer.Write((double)Value.Y);
+                writer.Write((double)Value.Z);
+                writer.Write((double)Value.W);
+                return sizeof(double) * 4;
+            }
+            else
+            {
+                writer.Write((float)Value.X);
+                writer.Write((float)Value.Y);
+                writer.Write((float)Value.Z);
+                writer.Write((float)Value.W);
+                return sizeof(float) * 4;
+            }
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            float.TryParse(d[0], out float X);
-            float.TryParse(d[1], out float Y);
-            float.TryParse(d[2], out float Z);
-            float.TryParse(d[3], out float W);
+            double.TryParse(d[0], out double X);
+            double.TryParse(d[1], out double Y);
+            double.TryParse(d[2], out double Z);
+            double.TryParse(d[3], out double W);
             Value = new FQuat(X, Y, Z, W);
         }
 
