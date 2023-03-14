@@ -50,6 +50,10 @@ namespace UAssetAPI.IO
         public EZenPackageVersion ZenVersion;
         public FName Name;
         public FName SourceName;
+        /// <summary>
+        /// Should serialized hashes be verified on read?
+        /// </summary>
+        public bool VerifyHashes = false;
         public ulong HashVersion = CityHash64;
 
         private const ulong CityHash64 = 0x00000000C1640000;
@@ -57,14 +61,15 @@ namespace UAssetAPI.IO
         {
             int numStrings = reader.ReadInt32();
             if (numStrings == 0) return;
-            int numBytesOfStrings = reader.ReadInt32();
+            reader.ReadInt32(); // length of strings in bytes
 
             // read hashes
             HashVersion = reader.ReadUInt64();
+            ulong[] hashes = new ulong[numStrings];
             switch (HashVersion)
             {
                 case CityHash64:
-                    for (int i = 0; i < numStrings; i++) reader.ReadUInt64(); // CityHash64 of str.ToLowerCase();
+                    for (int i = 0; i < numStrings; i++) hashes[i] = reader.ReadUInt64(); // CityHash64 of str.ToLowerCase();
                     break;
                 default:
                     throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
@@ -80,6 +85,23 @@ namespace UAssetAPI.IO
             {
                 AddNameReference(reader.ReadNameMapString(nameHeaders[i], out _), true);
             }
+
+            // verify hashes if requested
+            if (VerifyHashes)
+            {
+                for (int i = 0; i < this.nameMapIndexList.Count; i++)
+                {
+                    switch (HashVersion)
+                    {
+                        case CityHash64:
+                            ulong expectedHash = CRCGenerator.CityHash64(CRCGenerator.ToLower(this.nameMapIndexList[i].Value), this.nameMapIndexList[i].Encoding);
+                            if (expectedHash != hashes[i]) throw new IOException("Expected hash \"" + expectedHash + "\", received \"" + hashes[i] + "\" for string " + this.nameMapIndexList[i].Value + " in name map; corrupt data?");
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
+                    }
+                }
+            }
         }
 
         public void WriteNameBatch(AssetBinaryWriter writer)
@@ -87,7 +109,7 @@ namespace UAssetAPI.IO
             writer.Write(this.nameMapIndexList.Count);
             if (this.nameMapIndexList.Count == 0) return;
             long numBytesOfStringsPos = writer.BaseStream.Position;
-            writer.Write(0);
+            writer.Write((int)0);
 
             // write hashes
             writer.Write(HashVersion);
