@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -224,6 +225,15 @@ namespace UAssetAPI.IO
                 }
 
                 // export map
+                reader.BaseStream.Seek(ExportMapOffset, SeekOrigin.Begin);
+                Exports = new List<Export>();
+                int exportMapEntrySize = (int)Export.GetExportMapEntrySize(this);
+                for (int i = 0; i < (ExportBundleEntriesOffset - ExportMapOffset) / exportMapEntrySize; i++)
+                {
+                    var newExport = new Export(this, new byte[0]);
+                    newExport.ReadExportMapEntry(reader);
+                    Exports.Add(newExport);
+                }
 
                 // export bundle entries
 

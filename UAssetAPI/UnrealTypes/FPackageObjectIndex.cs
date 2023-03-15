@@ -15,7 +15,7 @@ namespace UAssetAPI.UnrealTypes
         TypeCount = Null
     }
 
-    public class FPackageObjectIndex
+    public struct FPackageObjectIndex
     {
         private const int IndexBits = 62;
         private const ulong IndexMask = (1UL << IndexBits) - 1UL;
@@ -67,6 +67,7 @@ namespace UAssetAPI.UnrealTypes
         {
             ulong rawVal = reader.ReadUInt64();
 
+            // TODO: is this interpretation actually right? results don't always make sense
             var res = new FPackageObjectIndex();
             res.Type = (EPackageObjectIndexType)(rawVal >> TypeShift);
             res.Hash = rawVal;

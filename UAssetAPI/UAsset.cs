@@ -673,52 +673,7 @@ namespace UAssetAPI
                 for (int i = 0; i < ExportCount; i++)
                 {
                     var newExport = new Export(this, new byte[0]);
-                    newExport.ClassIndex = new FPackageIndex(reader.ReadInt32());
-                    newExport.SuperIndex = new FPackageIndex(reader.ReadInt32());
-                    if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
-                    {
-                        newExport.TemplateIndex = new FPackageIndex(reader.ReadInt32());
-                    }
-                    newExport.OuterIndex = new FPackageIndex(reader.ReadInt32());
-                    newExport.ObjectName = reader.ReadFName();
-                    newExport.ObjectFlags = (EObjectFlags)reader.ReadUInt32();
-                    if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
-                    {
-                        newExport.SerialSize = reader.ReadInt32();
-                        newExport.SerialOffset = reader.ReadInt32();
-                    }
-                    else
-                    {
-                        newExport.SerialSize = reader.ReadInt64();
-                        newExport.SerialOffset = reader.ReadInt64();
-                    }
-                    newExport.bForcedExport = reader.ReadInt32() == 1;
-                    newExport.bNotForClient = reader.ReadInt32() == 1;
-                    newExport.bNotForServer = reader.ReadInt32() == 1;
-                    newExport.PackageGuid = new Guid(reader.ReadBytes(16));
-                    if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) newExport.IsInheritedInstance = reader.ReadInt32() == 1;
-                    newExport.PackageFlags = (EPackageFlags)reader.ReadUInt32();
-                    if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
-                    {
-                        newExport.bNotAlwaysLoadedForEditorGame = reader.ReadInt32() == 1;
-                    }
-                    if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
-                    {
-                        newExport.bIsAsset = reader.ReadInt32() == 1;
-                    }
-                    if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
-                    {
-                        newExport.GeneratePublicHash = reader.ReadInt32() == 1;
-                    }
-                    if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
-                    {
-                        newExport.FirstExportDependencyOffset = reader.ReadInt32();
-                        newExport.SerializationBeforeSerializationDependenciesSize = reader.ReadInt32();
-                        newExport.CreateBeforeSerializationDependenciesSize = reader.ReadInt32();
-                        newExport.SerializationBeforeCreateDependenciesSize = reader.ReadInt32();
-                        newExport.CreateBeforeCreateDependenciesSize = reader.ReadInt32();
-                    }
-
+                    newExport.ReadExportMapEntry(reader);
                     Exports.Add(newExport);
                 }
             }
@@ -1129,51 +1084,7 @@ namespace UAssetAPI
                     for (int i = 0; i < this.Exports.Count; i++)
                     {
                         Export us = this.Exports[i];
-                        writer.Write(us.ClassIndex.Index);
-                        writer.Write(us.SuperIndex.Index);
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
-                        {
-                            writer.Write(us.TemplateIndex.Index);
-                        }
-                        writer.Write(us.OuterIndex.Index);
-                        writer.Write(us.ObjectName);
-                        writer.Write((uint)us.ObjectFlags);
-                        if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
-                        {
-                            writer.Write((int)us.SerialSize);
-                            writer.Write((int)us.SerialOffset);
-                        }
-                        else
-                        {
-                            writer.Write(us.SerialSize);
-                            writer.Write(us.SerialOffset);
-                        }
-                        writer.Write(us.bForcedExport ? 1 : 0);
-                        writer.Write(us.bNotForClient ? 1 : 0);
-                        writer.Write(us.bNotForServer ? 1 : 0);
-                        writer.Write(us.PackageGuid.ToByteArray());
-                        if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) writer.Write(us.IsInheritedInstance ? 1 : 0);
-                        writer.Write((uint)us.PackageFlags);
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
-                        {
-                            writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
-                        }
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
-                        {
-                            writer.Write(us.bIsAsset ? 1 : 0);
-                        }
-                        if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
-                        {
-                            writer.Write(us.GeneratePublicHash ? 1 : 0);
-                        }
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
-                        {
-                            writer.Write(us.FirstExportDependencyOffset);
-                            writer.Write(us.SerializationBeforeSerializationDependenciesSize);
-                            writer.Write(us.CreateBeforeSerializationDependenciesSize);
-                            writer.Write(us.SerializationBeforeCreateDependenciesSize);
-                            writer.Write(us.CreateBeforeCreateDependenciesSize);
-                        }
+                        us.WriteExportMapEntry(writer);
                     }
                 }
                 else
@@ -1294,7 +1205,7 @@ namespace UAssetAPI
                         writer.Write(us.Extras);
                     }
                 }
-                writer.Write(new byte[] { 0xC1, 0x83, 0x2A, 0x9E });
+                writer.Write(UAsset.UASSET_MAGIC);
 
                 this.BulkDataStartOffset = (int)stre.Length - 4;
 
@@ -1311,51 +1222,7 @@ namespace UAssetAPI
                         us.SerialOffset = categoryStarts[i];
                         us.SerialSize = nextLoc - categoryStarts[i];
 
-                        writer.Write(us.ClassIndex.Index);
-                        writer.Write(us.SuperIndex.Index);
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
-                        {
-                            writer.Write(us.TemplateIndex.Index);
-                        }
-                        writer.Write(us.OuterIndex.Index);
-                        writer.Write(us.ObjectName);
-                        writer.Write((uint)us.ObjectFlags);
-                        if (ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
-                        {
-                            writer.Write((int)us.SerialSize);
-                            writer.Write((int)us.SerialOffset);
-                        }
-                        else
-                        {
-                            writer.Write(us.SerialSize);
-                            writer.Write(us.SerialOffset);
-                        }
-                        writer.Write(us.bForcedExport ? 1 : 0);
-                        writer.Write(us.bNotForClient ? 1 : 0);
-                        writer.Write(us.bNotForServer ? 1 : 0);
-                        writer.Write(us.PackageGuid.ToByteArray());
-                        if (ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) writer.Write(us.IsInheritedInstance ? 1 : 0);
-                        writer.Write((uint)us.PackageFlags);
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
-                        {
-                            writer.Write(us.bNotAlwaysLoadedForEditorGame ? 1 : 0);
-                        }
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
-                        {
-                            writer.Write(us.bIsAsset ? 1 : 0);
-                        }
-                        if (ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
-                        {
-                            writer.Write(us.GeneratePublicHash ? 1 : 0);
-                        }
-                        if (ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
-                        {
-                            writer.Write(us.FirstExportDependencyOffset);
-                            writer.Write(us.SerializationBeforeSerializationDependenciesSize);
-                            writer.Write(us.CreateBeforeSerializationDependenciesSize);
-                            writer.Write(us.SerializationBeforeCreateDependenciesSize);
-                            writer.Write(us.CreateBeforeCreateDependenciesSize);
-                        }
+                        us.WriteExportMapEntry(writer);
                     }
                 }
 

@@ -138,7 +138,7 @@ namespace UAssetAPI.Benchmark
                     timer.Stop();
                     break;
                 case "zen":
-                    ZenAsset test = new ZenAsset(EngineVersion.VER_UE5_0, new Usmap(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UAssetGUI", "Mappings", "Clay.usmap")));
+                    ZenAsset test = new ZenAsset(EngineVersion.VER_UE5_1, new Usmap(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UAssetGUI", "Mappings", "Clay.usmap")));
                     test.Read(test.PathToReader(Path.Combine("TestAssets", "B_Gamemode.uasset")));
                     Console.WriteLine(test.Name);
 

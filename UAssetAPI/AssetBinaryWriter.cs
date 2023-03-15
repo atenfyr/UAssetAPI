@@ -103,6 +103,7 @@ namespace UAssetAPI
 
         public virtual void Write(FName name)
         {
+            if (name == null) name = new FName(Asset, 0, 0);
             if (Asset is ZenAsset)
             {
                 this.Write(((uint)name.Type << FName.TypeShift) | (uint)name.Index);
