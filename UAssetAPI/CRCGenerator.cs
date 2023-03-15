@@ -8,6 +8,26 @@ namespace UAssetAPI
 {
     public static class CRCGenerator
     {
+        public static unsafe ulong GenerateImportHashFromObjectPath(FString text)
+        {
+            return GenerateImportHashFromObjectPath(text?.Value);
+        }
+
+        public static unsafe ulong GenerateImportHashFromObjectPath(string text)
+        {
+            return CityHash64(Encoding.Unicode.GetBytes(ToLower(text, true))) & FPackageObjectIndex.IndexMask;
+        }
+
+        public static unsafe ulong CityHash64WithLower(FString text)
+        {
+            return CityHash64WithLower(text?.Value, text?.Encoding);
+        }
+
+        public static unsafe ulong CityHash64WithLower(string text, Encoding encoding)
+        {
+            return CityHash64(encoding.GetBytes(ToLower(text)));
+        }
+
         public static unsafe ulong CityHash64(FString text)
         {
             return CityHash64(text?.Value, text?.Encoding);
@@ -60,10 +80,15 @@ namespace UAssetAPI
             return (char)((uint)input + ((((uint)input - 'A' < 26u) ? 1 : 0) << 5));
         }
 
-        public static string ToLower(string input)
+        public static string ToLower(string input, bool coalesceToSlash = false)
         {
             var res = "";
-            foreach (char x in input) res += ToLower(x); // todo: revise for better perf if needed
+            foreach (char x in input)
+            {
+                char chosenX = x;
+                if (coalesceToSlash && (chosenX == '.' || chosenX == ':')) chosenX = '/';
+                res += ToLower(chosenX); // todo: revise for better perf if needed
+            }
             return res;
         }
 

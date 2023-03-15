@@ -73,13 +73,53 @@ namespace UAssetAPI
 
         public static FieldInfo[] GetOrderedFields<T>()
         {
-            return typeof(T).GetFields().Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true)).OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex).ToArray();
+            return GetOrderedFields(typeof(T));
         }
 
         public static FieldInfo[] GetOrderedFields(Type t)
         {
             return t.GetFields().Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true)).OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex).ToArray();
         }
+
+        public static MemberInfo[] GetOrderedMembers<T>()
+        {
+            return GetOrderedMembers(typeof(T));
+        }
+
+        public static MemberInfo[] GetOrderedMembers(Type t)
+        {
+            return t.GetMembers().Where(fld => fld.IsDefined(typeof(DisplayIndexOrderAttribute), true)).OrderBy(fld => ((DisplayIndexOrderAttribute[])fld.GetCustomAttributes(typeof(DisplayIndexOrderAttribute), true))[0].DisplayingIndex).Where(x => x.MemberType == MemberTypes.Field || x.MemberType == MemberTypes.Property).ToArray();
+        }
+
+        // https://stackoverflow.com/a/33446914
+        public static object GetValue(this MemberInfo memberInfo, object forObject)
+        {
+            switch (memberInfo.MemberType)
+            {
+                case MemberTypes.Field:
+                    return ((FieldInfo)memberInfo).GetValue(forObject);
+                case MemberTypes.Property:
+                    return ((PropertyInfo)memberInfo).GetValue(forObject);
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public static void SetValue(this MemberInfo memberInfo, object forObject, object forVal)
+        {
+            switch (memberInfo.MemberType)
+            {
+                case MemberTypes.Field:
+                    ((FieldInfo)memberInfo).SetValue(forObject, forVal);
+                    break;
+                case MemberTypes.Property:
+                    ((PropertyInfo)memberInfo).SetValue(forObject, forVal);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
 
         public static FString GetImportNameReferenceWithoutZero(int j, UAsset asset)
         {

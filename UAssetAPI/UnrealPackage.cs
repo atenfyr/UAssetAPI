@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
@@ -576,6 +577,100 @@ namespace UAssetAPI
                 res.Add(new CustomVersion(entry.Key, guessedCustomVersion));
             }
             return res;
+        }
+
+        protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i)
+        {
+#pragma warning disable CS0168 // Variable is declared but never used
+            try
+            {
+                long nextStarting = reader.BaseStream.Length - 4;
+                if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].SerialOffset;
+
+                FName exportClassTypeName = Exports[i].GetExportClassType();
+                string exportClassType = exportClassTypeName.Value.Value;
+                switch (exportClassType)
+                {
+                    case "Level":
+                        Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
+                        Exports[i].Read(reader, (int)nextStarting);
+                        break;
+                    case "Enum":
+                    case "UserDefinedEnum":
+                        Exports[i] = Exports[i].ConvertToChildExport<EnumExport>();
+                        Exports[i].Read(reader, (int)nextStarting);
+                        break;
+                    case "Function":
+                        Exports[i] = Exports[i].ConvertToChildExport<FunctionExport>();
+                        Exports[i].Read(reader, (int)nextStarting);
+                        break;
+                    default:
+                        if (exportClassType.EndsWith("DataTable"))
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
+                            Exports[i].Read(reader, (int)nextStarting);
+                        }
+                        else if (exportClassType.EndsWith("StringTable"))
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<StringTableExport>();
+                            Exports[i].Read(reader, (int)nextStarting);
+                        }
+                        else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
+                        {
+                            var bgc = Exports[i].ConvertToChildExport<ClassExport>();
+                            Exports[i] = bgc;
+                            Exports[i].Read(reader, (int)nextStarting);
+
+                            // Check to see if we can add some new map type overrides
+                            if (bgc.LoadedProperties != null)
+                            {
+                                foreach (FProperty entry in bgc.LoadedProperties)
+                                {
+                                    if (entry is FMapProperty fMapEntry)
+                                    {
+                                        FString keyOverride = null;
+                                        FString valueOverride = null;
+                                        if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName.Value;
+                                        if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName.Value;
+
+                                        this.MapStructTypeOverride.Add(fMapEntry.Name.Value.Value, new Tuple<FString, FString>(keyOverride, valueOverride));
+                                    }
+                                }
+                            }
+                        }
+                        else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || exportClassType == "ClassProperty")
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
+                            Exports[i].Read(reader, (int)nextStarting);
+                        }
+                        else
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
+                            Exports[i].Read(reader, (int)nextStarting);
+                        }
+                        break;
+                }
+
+                long extrasLen = nextStarting - reader.BaseStream.Position;
+                if (extrasLen < 0)
+                {
+                    throw new FormatException("Invalid padding at end of export " + (i + 1) + ": " + extrasLen + " bytes");
+                }
+                else
+                {
+                    Exports[i].Extras = reader.ReadBytes((int)extrasLen);
+                }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG_VERBOSE
+                        Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
+#endif
+                reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
+                ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+            }
+#pragma warning restore CS0168 // Variable is declared but never used
         }
 
         /// <summary>

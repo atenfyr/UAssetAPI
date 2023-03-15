@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Text;
 using System.Xml.Linq;
+using UAssetAPI.IO;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -17,9 +20,10 @@ namespace UAssetAPI.UnrealTypes
 
     public struct FPackageObjectIndex
     {
-        private const int IndexBits = 62;
-        private const ulong IndexMask = (1UL << IndexBits) - 1UL;
-        private const int TypeShift = IndexBits;
+        internal const int IndexBits = 62;
+        internal const ulong IndexMask = (1UL << IndexBits) - 1UL;
+        internal const ulong ExportMask = (1UL << sizeof(uint)) - 1UL;
+        internal const int TypeShift = IndexBits;
         public const ulong Invalid = ~0UL;
 
         public EPackageObjectIndexType Type;
@@ -29,33 +33,43 @@ namespace UAssetAPI.UnrealTypes
         {
             get
             {
-                return ImportedPublicExportHashIndex;
+                return (uint)Hash;
             }
             set
             {
-                ImportedPublicExportHashIndex = value;
+                Hash = (Hash & ~ExportMask) | value;
             }
         }
 
         // ScriptImport
-        // This is usually the CityHash64 of the lowercase path
+        // This is usually the CityHash64 of the lowercase UTF-16 path
         // The first 2 bits will be discarded if set
-        public ulong Hash
+        public ulong Hash;
+
+        // PackageImport
+        public uint ImportedPackageIndex
         {
             get
             {
-                return ((ulong)ImportedPackageIndex << sizeof(uint)) | (ulong)ImportedPublicExportHashIndex;
+                return (uint)((Hash & IndexMask) >> sizeof(uint));
             }
             set
             {
-                ImportedPackageIndex = (uint)((value & IndexMask) >> sizeof(uint));
-                ImportedPublicExportHashIndex = (uint)value;
+                Hash = (value << sizeof(uint)) | (uint)Hash;
             }
         }
 
-        // PackageImport
-        public uint ImportedPackageIndex;
-        public uint ImportedPublicExportHashIndex;
+        public uint ImportedPublicExportHashIndex
+        {
+            get
+            {
+                return (uint)Hash;
+            }
+            set
+            {
+                Hash = (Hash & ~ExportMask) | value;
+            }
+        }
 
         public bool IsNull => Type == EPackageObjectIndexType.Null;
         public bool IsExport => Type == EPackageObjectIndexType.Export;
@@ -63,20 +77,103 @@ namespace UAssetAPI.UnrealTypes
         public bool IsScriptImport => Type == EPackageObjectIndexType.ScriptImport;
         public bool IsPackageImport => Type == EPackageObjectIndexType.PackageImport;
 
-        public static FPackageObjectIndex Read(AssetBinaryReader reader)
+        public FPackageIndex ToFPackageIndex(ZenAsset asset)
         {
-            ulong rawVal = reader.ReadUInt64();
+            if (asset == null) return null;
 
+            int idx = 0;
+            switch (Type)
+            {
+                case EPackageObjectIndexType.Null:
+                    idx = 0;
+                    break;
+                case EPackageObjectIndexType.Export:
+                    idx = (int)Export;
+                    break;
+                case EPackageObjectIndexType.ScriptImport:
+                case EPackageObjectIndexType.PackageImport:
+                    for (int i = 0; i < asset.Imports.Count; i++)
+                    {
+                        if (asset.Imports[i].Equals(this))
+                        {
+                            idx = FPackageIndex.FromImport(i).Index;
+                            break;
+                        }
+                    }
+                    break;
+            }
+            return new FPackageIndex(idx);
+        }
+
+        public Import ToImport(ZenAsset asset)
+        {
+            throw new NotImplementedException("ZenAsset ToImport is currently unimplemented");
+
+            switch (Type)
+            {
+                case EPackageObjectIndexType.Null:
+                    return null;
+                case EPackageObjectIndexType.Export:
+                    throw new InvalidOperationException("Attempt to call ToImport on an FPackageObjectIndex with type " + Type);
+                case EPackageObjectIndexType.ScriptImport:
+                    // TODO: why do some hashes not show up here properly? need to get some test cases with their actual intended values
+                    string derivedStr = asset.GetStringFromCityHash64(Hash);
+                    if (derivedStr != null)
+                    {
+                        Console.WriteLine(derivedStr);
+                    }
+                    else
+                    {
+                        throw new FormatException("Unable to find valid path for hash " + Hash);
+                    }
+                    break;
+                case EPackageObjectIndexType.PackageImport:
+                    throw new NotImplementedException("ToImport on an FPackageObjectIndex with type " + Type + " is currently unimplemented");
+            }
+            return null;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -921245338;
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + Hash.GetHashCode();
+            return hashCode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is FPackageObjectIndex poi2)) return false;
+            return this.GetHashCode() == poi2.GetHashCode();
+        }
+
+        public static FPackageObjectIndex Unpack(ulong packed)
+        {
             // TODO: is this interpretation actually right? results don't always make sense
             var res = new FPackageObjectIndex();
-            res.Type = (EPackageObjectIndexType)(rawVal >> TypeShift);
-            res.Hash = rawVal;
+            res.Type = (EPackageObjectIndexType)(packed >> TypeShift);
+            res.Hash = packed;
             return res;
+        }
+
+        public static ulong Pack(EPackageObjectIndexType typ, ulong hash)
+        {
+            return typ == EPackageObjectIndexType.Null ? ulong.MaxValue : (((ulong)typ << TypeShift) | hash);
+        }
+
+        public static ulong Pack(FPackageObjectIndex unpacked)
+        {
+            return FPackageObjectIndex.Pack(unpacked.Type, unpacked.Hash);
+        }
+
+        public static FPackageObjectIndex Read(AssetBinaryReader reader)
+        {
+            return Unpack(reader.ReadUInt64());
         }
 
         public static int Write(AssetBinaryWriter writer, EPackageObjectIndexType typ, ulong hash)
         {
-            writer.Write(typ == EPackageObjectIndexType.Null ? ulong.MaxValue : (((ulong)typ << TypeShift) | hash));
+            writer.Write(FPackageObjectIndex.Pack(typ, hash));
             return sizeof(ulong);
         }
 

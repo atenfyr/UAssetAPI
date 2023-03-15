@@ -11,7 +11,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.ExportTypes
 {
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     internal class DisplayIndexOrderAttribute : Attribute
     {
         internal int DisplayingIndex = 0;
@@ -42,22 +42,66 @@ namespace UAssetAPI.ExportTypes
     public class Export : ICloneable
     {
         // traditional info
+        private FPackageIndex _OuterIndex;
+        private FPackageIndex _ClassIndex;
+        private FPackageIndex _SuperIndex;
+        private FPackageIndex _TemplateIndex;
 
         ///<summary>The name of the UObject represented by this resource.</summary>
         [DisplayIndexOrder(0, true)]
         public FName ObjectName;
         ///<summary>Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage</summary>
         [DisplayIndexOrder(1)]
-        public FPackageIndex OuterIndex;
+        public FPackageIndex OuterIndex
+        {
+            get
+            {
+                return _OuterIndex ?? Zen_OuterIndex.ToFPackageIndex(Asset as ZenAsset);
+            }
+            set
+            {
+                _OuterIndex = value;
+            }
+        }
         ///<summary>Location of this export's class (import/other export). 0 = this export is a UClass</summary>
         [DisplayIndexOrder(2)]
-        public FPackageIndex ClassIndex;
+        public FPackageIndex ClassIndex
+        {
+            get
+            {
+                return _ClassIndex ?? Zen_ClassIndex.ToFPackageIndex(Asset as ZenAsset);
+            }
+            set
+            {
+                _ClassIndex = value;
+            }
+        }
         ///<summary>Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct</summary>
         [DisplayIndexOrder(3)]
-        public FPackageIndex SuperIndex;
+        public FPackageIndex SuperIndex
+        {
+            get
+            {
+                return _SuperIndex ?? Zen_SuperIndex.ToFPackageIndex(Asset as ZenAsset);
+            }
+            set
+            {
+                _SuperIndex = value;
+            }
+        }
         ///<summary>Location of this export's template (import/other export). 0 = there is some problem</summary>
         [DisplayIndexOrder(4)]
-        public FPackageIndex TemplateIndex;
+        public FPackageIndex TemplateIndex
+        {
+            get
+            {
+                return _TemplateIndex ?? Zen_TemplateIndex.ToFPackageIndex(Asset as ZenAsset);
+            }
+            set
+            {
+                _TemplateIndex = value;
+            }
+        }
         ///<summary>The object flags for the UObject represented by this resource. Only flags that match the RF_Load combination mask will be loaded from disk and applied to the UObject.</summary>
         [DisplayIndexOrder(5, true)]
         public EObjectFlags ObjectFlags;
@@ -122,6 +166,9 @@ namespace UAssetAPI.ExportTypes
         public FPackageObjectIndex Zen_SuperIndex;
         [DisplayIndexOrder(1004, true, false)]
         public FPackageObjectIndex Zen_TemplateIndex;
+        /// <summary>
+        /// PublicExportHash. Interpreted as a global import FPackageObjectIndex in UE4 assets.
+        /// </summary>
         [DisplayIndexOrder(1005, true, false)]
         public ulong PublicExportHash;
         [DisplayIndexOrder(1007, true, false)]
@@ -315,18 +362,18 @@ namespace UAssetAPI.ExportTypes
             }
         }
 
-        private static FieldInfo[] _allFields = null;
+        private static MemberInfo[] _allFields = null;
         private static void InitAllFields()
         {
             if (_allFields != null) return;
-            _allFields = UAPUtils.GetOrderedFields<Export>();
+            _allFields = UAPUtils.GetOrderedMembers<Export>();
         }
 
-        public static FieldInfo[] GetAllObjectExportFields(UnrealPackage asset)
+        public static MemberInfo[] GetAllObjectExportFields(UnrealPackage asset)
         {
             InitAllFields();
 
-            var finalFields = new List<FieldInfo>();
+            var finalFields = new List<MemberInfo>();
             for (int i = 0; i < _allFields.Length; i++)
             {
                 if (_allFields[i] == null) continue;
@@ -343,7 +390,7 @@ namespace UAssetAPI.ExportTypes
         {
             InitAllFields();
 
-            FieldInfo[] relevantFields = GetAllObjectExportFields(asset);
+            MemberInfo[] relevantFields = GetAllObjectExportFields(asset);
             string[] allFieldNames = new string[relevantFields.Length];
             for (int i = 0; i < relevantFields.Length; i++)
             {

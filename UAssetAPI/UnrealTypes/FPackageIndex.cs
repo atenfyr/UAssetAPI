@@ -97,11 +97,17 @@ namespace UAssetAPI.UnrealTypes
         public Import ToImport(UnrealPackage asset)
         {
             if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
-            if (asset is ZenAsset) throw new NotImplementedException("ToImport currently unimplemented for ZenAsset");
 
-            if (asset is UAsset uas)
+            int newIndex = -Index - 1;
+
+            if (asset is ZenAsset za)
             {
-                int newIndex = -Index - 1;
+                if (newIndex < 0 || newIndex >= za.Imports.Count) return null;
+                FPackageObjectIndex poi = za.Imports[newIndex];
+                return poi.ToImport(za);
+            }
+            else if (asset is UAsset uas)
+            {
                 if (newIndex < 0 || newIndex >= uas.Imports.Count) return null;
                 return uas.Imports[newIndex];
             }

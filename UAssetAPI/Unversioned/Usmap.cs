@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -260,6 +261,8 @@ namespace UAssetAPI.Unversioned
         /// </summary>
         public List<CustomVersion> CustomVersionContainer = null;
 
+        public uint NetCL;
+
         /// <summary>
         /// .usmap name map
         /// </summary>
@@ -274,6 +277,30 @@ namespace UAssetAPI.Unversioned
         /// .usmap schema map
         /// </summary>
         public Dictionary<string, UsmapSchema> Schemas;
+
+        /// <summary>
+        /// Pre-computed CityHash64 map for all relevant strings
+        /// </summary>
+        public Dictionary<ulong, string> CityHash64Map;
+
+        private void AddCityHash64MapEntry(string val)
+        {
+            // a bit of a brute force method
+            AddCityHash64MapEntryRaw(val);
+            AddCityHash64MapEntryRaw("/Script/" + val);
+            AddCityHash64MapEntryRaw("/Script/Engine/" + val);
+        }
+
+        private void AddCityHash64MapEntryRaw(string val)
+        {
+            ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
+            if (CityHash64Map.ContainsKey(hsh))
+            {
+                if (CRCGenerator.ToLower(CityHash64Map[hsh]) == CRCGenerator.ToLower(val)) return;
+                throw new FormatException("CityHash64 hash collision between \"" + CityHash64Map[hsh] + "\" and \"" + val + "\"");
+            }
+            CityHash64Map.Add(hsh, val);
+        }
 
         /// <summary>
         /// Retrieve all the properties that a particular schema can reference.
@@ -447,6 +474,8 @@ namespace UAssetAPI.Unversioned
                         var customVersionNumber = reader.ReadInt32();
                         CustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
                     }
+
+                    NetCL = reader.ReadUInt32();
                 }
             }
 
@@ -515,6 +544,7 @@ namespace UAssetAPI.Unversioned
         public void Read(UsmapBinaryReader compressedReader)
         {
             var reader = ReadHeader(compressedReader);
+            CityHash64Map = new Dictionary<ulong, string>();
 
             // part 1: names
             //Console.WriteLine(reader.BaseStream.Position);
@@ -522,7 +552,8 @@ namespace UAssetAPI.Unversioned
             int numNames = reader.ReadInt32();
             for (int i = 0; i < numNames; i++)
             {
-                NameMap.Add(reader.ReadString());
+                var str = reader.ReadString();
+                NameMap.Add(str);
             }
 
             // part 2: enums
@@ -570,6 +601,7 @@ namespace UAssetAPI.Unversioned
                 }
 
                 Schemas[schemaName] = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
+                AddCityHash64MapEntry(schemaName);
             }
 
             //Console.WriteLine(reader.BaseStream.Position);

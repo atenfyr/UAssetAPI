@@ -176,10 +176,30 @@ namespace UAssetAPI.IO
         public ulong HashVersion = CityHash64;
         public byte[] BulkDataMap;
 
+        public ulong[] ImportedPublicExportHashes;
+
         /// <summary>
         /// Map of object imports. UAssetAPI used to call these "links."
         /// </summary>
         public List<FPackageObjectIndex> Imports;
+
+        private Dictionary<ulong, string> CityHash64Map = new Dictionary<ulong, string>();
+        private void AddCityHash64MapEntryRaw(string val)
+        {
+            ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
+            if (CityHash64Map.ContainsKey(hsh))
+            {
+                if (CRCGenerator.ToLower(CityHash64Map[hsh]) == CRCGenerator.ToLower(val)) return;
+                throw new FormatException("CityHash64 hash collision between \"" + CityHash64Map[hsh] + "\" and \"" + val + "\"");
+            }
+            CityHash64Map.Add(hsh, val);
+        }
+        public string GetStringFromCityHash64(ulong val)
+        {
+            if (CityHash64Map.ContainsKey(val)) return CityHash64Map[val];
+            if (Mappings.CityHash64Map.ContainsKey(val)) return Mappings.CityHash64Map[val];
+            return null;
+        }
 
         /// <summary>
         /// Finds the class path and export name of the SuperStruct of this asset, if it exists.
@@ -234,7 +254,7 @@ namespace UAssetAPI.IO
                     switch (HashVersion)
                     {
                         case CityHash64:
-                            ulong expectedHash = CRCGenerator.CityHash64(CRCGenerator.ToLower(this.nameMapIndexList[i].Value), this.nameMapIndexList[i].Encoding);
+                            ulong expectedHash = CRCGenerator.CityHash64WithLower(this.nameMapIndexList[i]);
                             if (expectedHash != hashes[i]) throw new IOException("Expected hash \"" + expectedHash + "\", received \"" + hashes[i] + "\" for string " + this.nameMapIndexList[i].Value + " in name map; corrupt data?");
                             break;
                         default:
@@ -295,12 +315,13 @@ namespace UAssetAPI.IO
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public override void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
         {
+            if (Mappings == null) throw new InvalidOperationException();
             if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
 
-            FExportBundleEntry[] exportBundleEntries;
-            FExportBundleHeader[] exportBundleHeaders;
-            FInternalArc[] internalArcs;
-            FExternalArc[][] externalArcs; // the index is the same as the index into the ImportedPackageIds map
+            FExportBundleEntry[] exportBundleEntries = null;
+            FExportBundleHeader[] exportBundleHeaders = null;
+            FInternalArc[] internalArcs = null;
+            FExternalArc[][] externalArcs = null; // the index is the same as the index into the ImportedPackageIds map
             if (ObjectVersionUE5 >= ObjectVersionUE5.INITIAL_VERSION)
             {
                 IsUnversioned = reader.ReadUInt32() == 0;
@@ -335,7 +356,7 @@ namespace UAssetAPI.IO
 
                 // imported public export hashes
                 reader.BaseStream.Seek(ImportedPublicExportHashesOffset, SeekOrigin.Begin);
-                ulong[] ImportedPublicExportHashes = new ulong[(ImportMapOffset - ImportedPublicExportHashesOffset) / sizeof(ulong)];
+                ImportedPublicExportHashes = new ulong[(ImportMapOffset - ImportedPublicExportHashesOffset) / sizeof(ulong)];
                 for (int i = 0; i < ImportedPublicExportHashes.Length; i++) ImportedPublicExportHashes[i] = reader.ReadUInt64();
 
                 // import map
@@ -439,8 +460,20 @@ namespace UAssetAPI.IO
             }
 
             // end summary
-
-            // preload dependencies, etc.
+            
+            foreach (FExportBundleHeader headr in exportBundleHeaders)
+            {
+                for (uint i = 0u; i < headr.EntryCount; i++)
+                {
+                    FExportBundleEntry entry = exportBundleEntries[headr.FirstEntryIndex + i];
+                    switch (entry.CommandType)
+                    {
+                        case EExportCommandType.ExportCommandType_Serialize:
+                            ConvertExportToChildExportAndRead(reader, (int)entry.LocalExportIndex);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -468,6 +501,7 @@ namespace UAssetAPI.IO
         /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
         public override void Write(string outputPath)
         {
+            if (Mappings == null) throw new InvalidOperationException();
             if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
 
             MemoryStream newData = WriteData();
