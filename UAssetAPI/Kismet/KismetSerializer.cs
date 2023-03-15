@@ -1015,7 +1015,7 @@ namespace UAssetAPI.Kismet
                 case EX_RotationConst exp:
                     {
                         jexp.Add("Inst", exp.Inst);
-                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(int)) * 3;
+                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(float)) * 3;
                         jexp.Add("Pitch", exp.Value.Pitch);
                         jexp.Add("Yaw", exp.Value.Yaw);
                         jexp.Add("Roll", exp.Value.Roll);
@@ -1024,7 +1024,7 @@ namespace UAssetAPI.Kismet
                 case EX_VectorConst exp:
                     {
                         jexp.Add("Inst", exp.Inst);
-                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(int)) * 3;
+                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(float)) * 3;
                         jexp.Add("X", exp.Value.X);
                         jexp.Add("Y", exp.Value.Y);
                         jexp.Add("Z", exp.Value.Z);
@@ -1033,7 +1033,7 @@ namespace UAssetAPI.Kismet
                 case EX_TransformConst exp:
                     {
                         jexp.Add("Inst", exp.Inst);
-                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(int)) * 10;
+                        index += ((asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES) ? sizeof(double) : sizeof(float)) * 10;
                         JObject jrot = new JObject();
                         JObject jtrans = new JObject();
                         JObject jscale = new JObject();
