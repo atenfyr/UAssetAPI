@@ -157,6 +157,12 @@ namespace UAssetAPI
             return data;
         }
 
+        public static long AlignPadding(long numBytes, int align)
+        {
+            long remainder = numBytes % align;
+            return remainder == 0 ? remainder : (align - remainder);
+        }
+
         public static int DivideAndRoundUp(int a, int b)
         {
             return (a + b - 1) / b;

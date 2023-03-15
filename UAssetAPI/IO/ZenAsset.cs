@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Text;
 using UAssetAPI.ExportTypes;
@@ -9,6 +10,123 @@ using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.IO
 {
+    public struct FInternalArc
+    {
+        public int FromExportBundleIndex;
+        public int ToExportBundleIndex;
+
+        public static FInternalArc Read(AssetBinaryReader reader)
+        {
+            var res = new FInternalArc();
+            res.FromExportBundleIndex = reader.ReadInt32();
+            res.ToExportBundleIndex = reader.ReadInt32();
+            return res;
+        }
+
+        public static int Write(AssetBinaryWriter writer, int v2, int v3)
+        {
+            writer.Write(v2);
+            writer.Write(v3);
+            return sizeof(int) * 2;
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            return FInternalArc.Write(writer, FromExportBundleIndex, ToExportBundleIndex);
+        }
+    }
+
+    public struct FExternalArc
+    {
+        public int FromImportIndex;
+        EExportCommandType FromCommandType;
+        public int ToExportBundleIndex;
+
+        public static FExternalArc Read(AssetBinaryReader reader)
+        {
+            var res = new FExternalArc();
+            res.FromImportIndex = reader.ReadInt32();
+            res.FromCommandType = (EExportCommandType)reader.ReadByte();
+            res.ToExportBundleIndex = reader.ReadInt32();
+            return res;
+        }
+
+        public static int Write(AssetBinaryWriter writer, int v1, EExportCommandType v2, int v3)
+        {
+            writer.Write(v1);
+            writer.Write((byte)v2);
+            writer.Write(v3);
+            return sizeof(int) + sizeof(uint) + sizeof(int);
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            return FExternalArc.Write(writer, FromImportIndex, FromCommandType, ToExportBundleIndex);
+        }
+    }
+
+    public enum EExportCommandType : uint
+    {
+        ExportCommandType_Create,
+        ExportCommandType_Serialize,
+        ExportCommandType_Count
+    }
+
+    public struct FExportBundleHeader
+    {
+        public ulong SerialOffset;
+        public uint FirstEntryIndex;
+        public uint EntryCount;
+
+        public static FExportBundleHeader Read(AssetBinaryReader reader)
+        {
+            var res = new FExportBundleHeader();
+            res.SerialOffset = reader.Asset.ObjectVersionUE5 > ObjectVersionUE5.UNKNOWN ? reader.ReadUInt64() : ulong.MaxValue;
+            res.FirstEntryIndex = reader.ReadUInt32();
+            res.EntryCount = reader.ReadUInt32();
+            return res;
+        }
+
+        public static int Write(AssetBinaryWriter writer, ulong v1, uint v2, uint v3)
+        {
+            if (writer.Asset.ObjectVersionUE5 > ObjectVersionUE5.UNKNOWN) writer.Write(v1);
+            writer.Write(v2);
+            writer.Write(v3);
+            return (writer.Asset.ObjectVersionUE5 > ObjectVersionUE5.UNKNOWN ? sizeof(ulong) : 0) + sizeof(uint) * 2;
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            return FExportBundleHeader.Write(writer, SerialOffset, FirstEntryIndex, EntryCount);
+        }
+    }    
+
+    public struct FExportBundleEntry
+    {
+        public uint LocalExportIndex;
+        public EExportCommandType CommandType;
+
+        public static FExportBundleEntry Read(AssetBinaryReader reader)
+        {
+            var res = new FExportBundleEntry();
+            res.LocalExportIndex = reader.ReadUInt32();
+            res.CommandType = (EExportCommandType)reader.ReadUInt32();
+            return res;
+        }
+
+        public static int Write(AssetBinaryWriter writer, uint lei, EExportCommandType typ)
+        {
+            writer.Write((uint)lei);
+            writer.Write((uint)typ);
+            return sizeof(uint) * 2;
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            return FExportBundleEntry.Write(writer, LocalExportIndex, CommandType);
+        }
+    }
+
     public enum EZenPackageVersion : uint
     {
         Initial,
@@ -179,6 +297,10 @@ namespace UAssetAPI.IO
         {
             if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
 
+            FExportBundleEntry[] exportBundleEntries;
+            FExportBundleHeader[] exportBundleHeaders;
+            FInternalArc[] internalArcs;
+            FExternalArc[][] externalArcs; // the index is the same as the index into the ImportedPackageIds map
             if (ObjectVersionUE5 >= ObjectVersionUE5.INITIAL_VERSION)
             {
                 IsUnversioned = reader.ReadUInt32() == 0;
@@ -235,9 +357,40 @@ namespace UAssetAPI.IO
                     Exports.Add(newExport);
                 }
 
-                // export bundle entries
+                // export bundle entries; gives order that exports should be serialized
+                reader.BaseStream.Seek(ExportBundleEntriesOffset, SeekOrigin.Begin);
+                long startPos = reader.BaseStream.Position;
+                exportBundleEntries = new FExportBundleEntry[Exports.Count * (int)(uint)EExportCommandType.ExportCommandType_Count];
+                for (int i = 0; i < exportBundleEntries.Length; i++) exportBundleEntries[i] = FExportBundleEntry.Read(reader);
+                long endPos = reader.BaseStream.Position;
+                if (endPos != GraphDataOffset) throw new FormatException("extra padding is needed; please report if you see this error message");
+                //reader.ReadBytes((int)UAPUtils.AlignPadding(endPos - startPos, 8));
 
-                // graph data/export bundle headers (?), once this is implemented fix FPackageIndex ToImport & GetParentClass
+                // graph data, once this is implemented fix FPackageIndex ToImport & GetParentClass
+                reader.BaseStream.Seek(GraphDataOffset, SeekOrigin.Begin);
+                var exportBundleHeadersList = new List<FExportBundleHeader>();
+                int numEntriesTotal = 0;
+                while (numEntriesTotal < exportBundleEntries.Length)
+                {
+                    var nxt = FExportBundleHeader.Read(reader);
+                    numEntriesTotal += (int)nxt.EntryCount;
+                    exportBundleHeadersList.Add(nxt);
+                }
+                exportBundleHeaders = exportBundleHeadersList.ToArray();
+
+                int numInternalArcs = reader.ReadInt32();
+                internalArcs = new FInternalArc[numInternalArcs];
+                for (int i = 0; i < numInternalArcs; i++) internalArcs[i] = FInternalArc.Read(reader);
+
+                var externalArcsList = new List<FExternalArc[]>();
+                while (reader.BaseStream.Position < HeaderSize)
+                {
+                    int numExternalArcs = reader.ReadInt32();
+                    var externalArcsThese = new FExternalArc[numExternalArcs];
+                    for (int i = 0; i < numExternalArcs; i++) externalArcsThese[i] = FExternalArc.Read(reader);
+                    externalArcsList.Add(externalArcsThese);
+                }
+                externalArcs = externalArcsList.ToArray();
             }
             else
             {
@@ -259,17 +412,34 @@ namespace UAssetAPI.IO
                 ReadNameBatch(reader);
 
                 // import map
+                reader.BaseStream.Seek(ImportMapOffset, SeekOrigin.Begin);
+                Imports = new List<FPackageObjectIndex>();
+                for (int i = 0; i < (ExportMapOffset - ImportMapOffset) / sizeof(ulong); i++)
+                {
+                    Imports.Add(FPackageObjectIndex.Read(reader));
+                }
 
                 // export map
+                reader.BaseStream.Seek(ExportMapOffset, SeekOrigin.Begin);
+                Exports = new List<Export>();
+                int exportMapEntrySize = (int)Export.GetExportMapEntrySize(this);
+                for (int i = 0; i < (ExportBundlesOffset - ExportMapOffset) / exportMapEntrySize; i++)
+                {
+                    var newExport = new Export(this, new byte[0]);
+                    newExport.ReadExportMapEntry(reader);
+                    Exports.Add(newExport);
+                }
 
                 // export bundle entries
+                reader.BaseStream.Seek(ExportBundlesOffset, SeekOrigin.Begin);
+                // weird parsing here, combine both bundles and headers
 
                 // graph data (?)
 
             }
 
             // end summary
-            
+
             // preload dependencies, etc.
         }
 

@@ -52,6 +52,9 @@
     <Compile Remove="obj\Debug Verbose\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="TestAssets\Begin_Player.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\B_Gamemode.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
