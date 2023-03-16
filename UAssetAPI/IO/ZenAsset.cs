@@ -243,7 +243,9 @@ namespace UAssetAPI.IO
             ClearNameIndexList();
             for (int i = 0; i < numStrings; i++)
             {
-                AddNameReference(reader.ReadNameMapString(nameHeaders[i], out _), true);
+                FString newStr = reader.ReadNameMapString(nameHeaders[i], out _);
+                AddCityHash64MapEntryRaw(newStr.Value);
+                AddNameReference(newStr, true);
             }
 
             // verify hashes if requested

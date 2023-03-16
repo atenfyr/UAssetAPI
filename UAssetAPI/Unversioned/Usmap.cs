@@ -22,7 +22,24 @@ namespace UAssetAPI.Unversioned
 
         LatestPlusOne,
         Latest = LatestPlusOne - 1
-     };
+    }
+
+    /// <summary>
+    /// List of valid usmap extensions, which describe optional information of value. Serialized in order of least to greatest.
+    /// </summary>
+    [Flags]
+    public enum UsmapExtensionVersion : uint
+    {
+        /// <summary>
+        /// No extension data is present.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Module path information is present.
+        /// </summary>
+        Scripts = 1
+    }
 
     public enum ECompressionMethod
     {
@@ -197,6 +214,7 @@ namespace UAssetAPI.Unversioned
         public string Name;
         public string SuperType;
         public ushort PropCount;
+        public string ModulePath;
         public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
         private Dictionary<int, UsmapProperty> properties;
@@ -245,6 +263,11 @@ namespace UAssetAPI.Unversioned
         /// .usmap file version
         /// </summary>
         internal UsmapVersion Version;
+
+        /// <summary>
+        /// .usmap extension file version
+        /// </summary>
+        internal UsmapExtensionVersion ExtensionVersion;
 
         /// <summary>
         /// Game UE4 object version
@@ -576,6 +599,7 @@ namespace UAssetAPI.Unversioned
             //Console.WriteLine(reader.BaseStream.Position);
             Schemas = new Dictionary<string, UsmapSchema>();
             int numSchema = reader.ReadInt32();
+            UsmapSchema[] schemaIndexMap = new UsmapSchema[numSchema];
             for (int i = 0; i < numSchema; i++)
             {
                 string schemaName = reader.ReadName();
@@ -600,11 +624,27 @@ namespace UAssetAPI.Unversioned
                     }
                 }
 
-                Schemas[schemaName] = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
+                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
+                schemaIndexMap[i] = newSchema;
+                Schemas[schemaName] = newSchema;
                 AddCityHash64MapEntry(schemaName);
             }
 
-            //Console.WriteLine(reader.BaseStream.Position);
+            // read extension data if it's present
+            if (reader.BaseStream.Length > reader.BaseStream.Position)
+            {
+                ExtensionVersion = (UsmapExtensionVersion)reader.ReadUInt32();
+                if (ExtensionVersion.HasFlag(UsmapExtensionVersion.Scripts))
+                {
+                    ushort numModulePaths = reader.ReadUInt16();
+                    string[] modulePaths = new string[numModulePaths];
+                    for (int i = 0; i < numModulePaths; i++) modulePaths[i] = reader.ReadString();
+                    for (int i = 0; i < schemaIndexMap.Length; i++)
+                    {
+                        schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
+                    }
+                }
+            }
         }
 
         /// <summary>
