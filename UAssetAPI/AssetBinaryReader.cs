@@ -5,13 +5,14 @@ using System.Text;
 using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
     /// <summary>
     /// Any binary reader used in the parsing of Unreal file types.
     /// </summary>
-    public abstract class UnrealBinaryReader : BinaryReader
+    public class UnrealBinaryReader : BinaryReader
     {
         public UnrealBinaryReader(Stream stream) : base(stream)
         {
@@ -168,6 +169,47 @@ namespace UAssetAPI
                     }
                 }
             }
+        }
+
+        public List<CustomVersion> ReadCustomVersionContainer(ECustomVersionSerializationFormat format, List<CustomVersion> oldCustomVersionContainer = null, Usmap Mappings = null)
+        {
+            var newCustomVersionContainer = new List<CustomVersion>();
+            var existingCustomVersions = new HashSet<Guid>();
+            switch (format)
+            {
+                case ECustomVersionSerializationFormat.Enums:
+                    throw new NotImplementedException("Custom version serialization format Enums is currently unimplemented");
+                case ECustomVersionSerializationFormat.Guids:
+                case ECustomVersionSerializationFormat.Optimized:
+                    int numCustomVersions = ReadInt32();
+                    for (int i = 0; i < numCustomVersions; i++)
+                    {
+                        var customVersionID = new Guid(ReadBytes(16));
+                        var customVersionNumber = ReadInt32();
+                        newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                        existingCustomVersions.Add(customVersionID);
+                    }
+                    break;
+
+            }    
+
+            if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
+            {
+                foreach (CustomVersion entry in Mappings.CustomVersionContainer)
+                {
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                }
+            }
+
+            if (oldCustomVersionContainer != null)
+            {
+                foreach (CustomVersion entry in oldCustomVersionContainer)
+                {
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                }
+            }
+
+            return newCustomVersionContainer;
         }
     }
 

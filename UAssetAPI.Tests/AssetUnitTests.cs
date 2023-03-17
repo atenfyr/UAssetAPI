@@ -296,6 +296,7 @@ namespace UAssetAPI.Tests
                 var tester = new UAsset(assetPath, version);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                Console.WriteLine(tester.GetEngineVersion());
             }
         }
 

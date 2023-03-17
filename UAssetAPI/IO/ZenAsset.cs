@@ -257,7 +257,7 @@ namespace UAssetAPI.IO
                     ObjectVersion = (ObjectVersion)reader.ReadInt32();
                     ObjectVersionUE5 = (ObjectVersionUE5)reader.ReadInt32();
                     FileVersionLicenseeUE = reader.ReadInt32();
-                    ReadCustomVersionContainer(reader);
+                    CustomVersionContainer = reader.ReadCustomVersionContainer(ECustomVersionSerializationFormat.Optimized, CustomVersionContainer, Mappings);
                 }
 
                 // name map batch

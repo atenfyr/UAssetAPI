@@ -376,15 +376,17 @@ namespace UAssetAPI
             CustomVersionContainer = GetDefaultCustomVersionContainer(newVersion);
         }
 
-        /// <summary>
-        /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
-        /// </summary>
-        /// <returns>The estimated retail version of the Unreal Engine.</returns>
-        public EngineVersion GetEngineVersion()
+        public static EngineVersion GetEngineVersion(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer)
         {
             // analyze all possible versions based off of the object version alone
             List<EngineVersion> allPossibleVersions = new List<EngineVersion>();
-            int targetVer = (int)ObjectVersion;
+            int targetVer = (int)objectVersionUE5;
+            while (allPossibleVersions.Count == 0 && targetVer >= (int)ObjectVersionUE5.INITIAL_VERSION)
+            {
+                allPossibleVersions = Enum.GetNames(typeof(UE5VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE5VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (EngineVersion)Enum.Parse(typeof(EngineVersion), str)).ToList();
+                targetVer -= 1;
+            }
+            targetVer = (int)objectVersion;
             while (allPossibleVersions.Count == 0 && targetVer > (int)ObjectVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)
             {
                 allPossibleVersions = Enum.GetNames(typeof(UE4VersionToObjectVersion)).Where(n => ((int)Enum.Parse(typeof(UE4VersionToObjectVersion), n)).Equals(targetVer)).Select(str => (EngineVersion)Enum.Parse(typeof(EngineVersion), str)).ToList();
@@ -392,12 +394,12 @@ namespace UAssetAPI
             }
 
             if (allPossibleVersions.Count == 0) return EngineVersion.UNKNOWN;
-            if (allPossibleVersions.Count == 1) return allPossibleVersions[0];
+            if (allPossibleVersions.Count == 1 || customVersionContainer == null) return allPossibleVersions[0];
 
             // multiple possible versions; use custom versions to eliminate some
             EngineVersion minIntroduced = EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE;
             EngineVersion maxIntroduced = EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
-            foreach (CustomVersion entry in CustomVersionContainer)
+            foreach (CustomVersion entry in customVersionContainer)
             {
                 Type customVersionType = Type.GetType("UAssetAPI." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
                 if (customVersionType == null) continue;
@@ -420,7 +422,16 @@ namespace UAssetAPI
             return EngineVersion.UNKNOWN;
         }
 
-        private EngineVersion GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
+        /// <summary>
+        /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
+        /// </summary>
+        /// <returns>The estimated retail version of the Unreal Engine.</returns>
+        public EngineVersion GetEngineVersion()
+        {
+            return UnrealPackage.GetEngineVersion(ObjectVersion, ObjectVersionUE5, CustomVersionContainer);
+        }
+
+        private static EngineVersion GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
         {
             var nm = Enum.GetName(customVersionType, val);
             if (nm == null) return EngineVersion.UNKNOWN;
@@ -488,50 +499,6 @@ namespace UAssetAPI
             }
 
             return (T)(object)-1;
-        }
-
-        public void ReadCustomVersionContainer(AssetBinaryReader reader)
-        {
-            // TODO: support for enum-based custom versions
-            var newCustomVersionContainer = new List<CustomVersion>();
-            var existingCustomVersions = new HashSet<Guid>();
-            int numCustomVersions = reader.ReadInt32();
-            for (int i = 0; i < numCustomVersions; i++)
-            {
-                var customVersionID = new Guid(reader.ReadBytes(16));
-                var customVersionNumber = reader.ReadInt32();
-                newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
-                existingCustomVersions.Add(customVersionID);
-            }
-
-            if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
-            {
-                foreach (CustomVersion entry in Mappings.CustomVersionContainer)
-                {
-                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
-                }
-            }
-
-            if (CustomVersionContainer != null)
-            {
-                foreach (CustomVersion entry in CustomVersionContainer)
-                {
-                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
-                }
-            }
-
-            CustomVersionContainer = newCustomVersionContainer;
-        }
-
-        public void WriteCustomVersionContainer(AssetBinaryWriter writer)
-        {
-            // TODO: support for enum-based custom versions
-            writer.Write(CustomVersionContainer.Count);
-            for (int i = 0; i < CustomVersionContainer.Count; i++)
-            {
-                writer.Write(CustomVersionContainer[i].Key.ToByteArray());
-                writer.Write(CustomVersionContainer[i].Version);
-            }
         }
 
         private static ConcurrentDictionary<string, EngineVersion> cachedCustomVersionReflectionData = new ConcurrentDictionary<string, EngineVersion>();

@@ -5,13 +5,14 @@ using System.Text;
 using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
     /// <summary>
     /// Any binary writer used in the parsing of Unreal file types.
     /// </summary>
-    public abstract class UnrealBinaryWriter : BinaryWriter
+    public class UnrealBinaryWriter : BinaryWriter
     {
         public UnrealBinaryWriter() : base()
         {
@@ -139,6 +140,27 @@ namespace UAssetAPI
             Seek((int)numBytesOfStringsPos, SeekOrigin.Begin);
             Write((int)(stringsEndPos - stringsStartPos));
             Seek((int)stringsEndPos, SeekOrigin.Begin);
+        }
+
+        public void WriteCustomVersionContainer(ECustomVersionSerializationFormat format, List<CustomVersion> CustomVersionContainer)
+        {
+            // TODO: support for enum-based custom versions
+            int num = CustomVersionContainer == null ? 0 : CustomVersionContainer.Count;
+
+            switch (format)
+            {
+                case ECustomVersionSerializationFormat.Enums:
+                    throw new NotImplementedException("Custom version serialization format Enums is currently unimplemented");
+                case ECustomVersionSerializationFormat.Guids:
+                case ECustomVersionSerializationFormat.Optimized:
+                    Write(num);
+                    for (int i = 0; i < num; i++)
+                    {
+                        Write(CustomVersionContainer[i].Key.ToByteArray());
+                        Write(CustomVersionContainer[i].Version);
+                    }
+                    break;
+            }
         }
     }
 

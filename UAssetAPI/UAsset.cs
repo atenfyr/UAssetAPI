@@ -56,7 +56,7 @@ namespace UAssetAPI
         /// <summary>Branch name.</summary>
         public FString Branch;
 
-        public void Write(AssetBinaryWriter writer)
+        public void Write(UnrealBinaryWriter writer)
         {
             writer.Write(Major);
             writer.Write(Minor);
@@ -65,7 +65,7 @@ namespace UAssetAPI
             writer.Write(Branch);
         }
 
-        public FEngineVersion(AssetBinaryReader reader)
+        public FEngineVersion(UnrealBinaryReader reader)
         {
             Major = reader.ReadUInt16();
             Minor = reader.ReadUInt16();
@@ -290,6 +290,16 @@ namespace UAssetAPI
         /// </remarks>
         public int LegacyFileVersion;
 
+        public ECustomVersionSerializationFormat CustomVersionSerializationFormat
+        {
+            get
+            {
+                if (LegacyFileVersion > -3) return ECustomVersionSerializationFormat.Enums;
+                if (LegacyFileVersion > -6) return ECustomVersionSerializationFormat.Guids;
+                return ECustomVersionSerializationFormat.Optimized;
+            }
+        }
+
         /// <summary>
         /// Map of object imports. UAssetAPI used to call these "links."
         /// </summary>
@@ -509,7 +519,7 @@ namespace UAssetAPI
             // Custom versions container
             if (LegacyFileVersion <= -2)
             {
-                ReadCustomVersionContainer(reader);
+                CustomVersionContainer = reader.ReadCustomVersionContainer(CustomVersionSerializationFormat, CustomVersionContainer, Mappings);
             }
 
             SectionSixOffset = reader.ReadInt32(); // 24
@@ -829,7 +839,7 @@ namespace UAssetAPI
                 }
                 else
                 {
-                    WriteCustomVersionContainer(writer);
+                    writer.WriteCustomVersionContainer(CustomVersionSerializationFormat, CustomVersionContainer);
                 }
             }
 
