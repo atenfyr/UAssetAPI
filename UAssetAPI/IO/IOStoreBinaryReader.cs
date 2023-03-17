@@ -13,5 +13,15 @@ namespace UAssetAPI.IO
         {
             Asset = asset;
         }
+
+        public virtual FName ReadFName(INameMap nameMap)
+        {
+            uint Index = this.ReadUInt32();
+            uint Number = this.ReadUInt32();
+
+            var res = new FName(nameMap, (int)(Index & FName.IndexMask), (int)Number);
+            res.Type = (EMappedNameType)((Index & FName.TypeMask) >> FName.TypeShift);
+            return res;
+        }
     }
 }

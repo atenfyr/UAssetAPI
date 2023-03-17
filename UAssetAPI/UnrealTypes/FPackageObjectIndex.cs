@@ -163,18 +163,18 @@ namespace UAssetAPI.UnrealTypes
             return FPackageObjectIndex.Pack(unpacked.Type, unpacked.Hash);
         }
 
-        public static FPackageObjectIndex Read(AssetBinaryReader reader)
+        public static FPackageObjectIndex Read(UnrealBinaryReader reader)
         {
             return Unpack(reader.ReadUInt64());
         }
 
-        public static int Write(AssetBinaryWriter writer, EPackageObjectIndexType typ, ulong hash)
+        public static int Write(UnrealBinaryWriter writer, EPackageObjectIndexType typ, ulong hash)
         {
             writer.Write(FPackageObjectIndex.Pack(typ, hash));
             return sizeof(ulong);
         }
 
-        public int Write(AssetBinaryWriter writer)
+        public int Write(UnrealBinaryWriter writer)
         {
             return FPackageObjectIndex.Write(writer, Type, Hash);
         }

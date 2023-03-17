@@ -169,7 +169,7 @@ namespace UAssetAPI.IO
         /// <summary>
         /// The global data of the game that this asset is from.
         /// </summary>
-        public IOStoreContainer GlobalData;
+        public IOGlobalData GlobalData;
 
         public EZenPackageVersion ZenVersion;
         public FName Name;

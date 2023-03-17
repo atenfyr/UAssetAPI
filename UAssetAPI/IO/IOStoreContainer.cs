@@ -123,6 +123,27 @@ namespace UAssetAPI.IO
         {
             return FIoChunkId.Write(writer, ChunkId, ChunkIndex, ChunkType);
         }
+
+        public FIoChunkId(ulong chunkId, ushort chunkIndex, byte chunkType)
+        {
+            ChunkId = chunkId;
+            ChunkIndex = chunkIndex;
+            ChunkType = chunkType;
+        }
+
+        public FIoChunkId(ulong chunkId, ushort chunkIndex, EIoChunkType4 chunkType)
+        {
+            ChunkId = chunkId;
+            ChunkIndex = chunkIndex;
+            ChunkType = (byte)chunkType;
+        }
+
+        public FIoChunkId(ulong chunkId, ushort chunkIndex, EIoChunkType5 chunkType)
+        {
+            ChunkId = chunkId;
+            ChunkIndex = chunkIndex;
+            ChunkType = (byte)chunkType;
+        }
     }
 
     public struct FIoOffsetAndLength
@@ -395,6 +416,7 @@ namespace UAssetAPI.IO
         {
             if (FilePathTOC == null) throw new InvalidOperationException("FilePathTOC must be defined before beginning to read");
             if (!HasReadToc) ReadToc(PathToReader(FilePathTOC));
+            if (PartitionStreams.Count > 0) return; // already ready
 
             GetPartitionInfo(out int numPartitions, out _);
             for (int i = 0; i < numPartitions; i++)
@@ -607,6 +629,7 @@ namespace UAssetAPI.IO
                 }
             }
 
+            Files = new Dictionary<string, FIoChunkId>();
             if (TocVersion >= EIoStoreTocVersion.DirectoryIndex && ContainerFlags.HasFlag(EIoContainerFlags.Indexed) && DirectoryIndexSize > 0)
             {
                 // todo: sometimes this stuff is encrypted, provide option for AES key
@@ -624,7 +647,6 @@ namespace UAssetAPI.IO
                 ClearNameIndexList();
                 for (int i = 0; i < numStrs; i++) AddNameReference(reader.ReadFString(), true);
 
-                Files = new Dictionary<string, FIoChunkId>();
                 ParseDirectory(string.Empty, 0u);
             }
 
@@ -661,25 +683,6 @@ namespace UAssetAPI.IO
                 ParseDirectory(thisPath, dirEntry.FirstChildEntry);
                 idx = dirEntry.NextSiblingEntry;
             }
-        }
-
-        public MemoryStream WriteToc()
-        {
-            var stre = new MemoryStream();
-            IOStoreBinaryWriter writer = new IOStoreBinaryWriter(stre, this);
-
-            return stre;
-        }
-
-        /// <summary>
-        /// Writes a specific partition to disk.
-        /// </summary>
-        /// <param name="stre">A file stream to the partition in question.</param>
-        /// <param name="partitionNum">The index of this partition.</param>
-        /// <param name="partitionSize">The maximum size of this partition. This will be automatically increased if required.</param>
-        public void WriteCas(Stream stre, int partitionNum, ulong partitionSize)
-        {
-            IOStoreBinaryWriter writer = new IOStoreBinaryWriter(stre, this);
         }
 
         /// <summary>
@@ -721,8 +724,27 @@ namespace UAssetAPI.IO
             return Path.ChangeExtension(Path.Combine(Path.GetDirectoryName(tocPath), Path.GetFileNameWithoutExtension(tocPath) + "_s" + num), ".ucas");
         }
 
+        /*public MemoryStream WriteToc()
+        {
+            var stre = new MemoryStream();
+            IOStoreBinaryWriter writer = new IOStoreBinaryWriter(stre, this);
+
+            return stre;
+        }
+
         /// <summary>
-        /// Serializes and writes an asset to disk from memory.
+        /// Writes a specific partition to disk.
+        /// </summary>
+        /// <param name="stre">A file stream to the partition in question.</param>
+        /// <param name="partitionNum">The index of this partition.</param>
+        /// <param name="partitionSize">The maximum size of this partition. This will be automatically increased if required.</param>
+        public void WriteCas(Stream stre, int partitionNum, ulong partitionSize)
+        {
+            IOStoreBinaryWriter writer = new IOStoreBinaryWriter(stre, this);
+        }
+
+        /// <summary>
+        /// Serializes and writes a container to disk from memory.
         /// </summary>
         /// <param name="outputPath">The path on disk to write the .utoc file to. Respective .ucas files will be located in the same directory.</param>
         public void Write(string outputPath)
@@ -742,7 +764,7 @@ namespace UAssetAPI.IO
             {
                 newData.CopyTo(f);
             }
-        }
+        }*/
 
         /// <summary>
         /// Reads an io store container from disk and initializes a new instance of the <see cref="IOStoreContainer"/> class to store its data in memory.

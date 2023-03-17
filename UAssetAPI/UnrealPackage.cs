@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
+using UAssetAPI.IO;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
@@ -15,7 +16,7 @@ using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
-    public abstract class UnrealPackage
+    public abstract class UnrealPackage : INameMap
     {
         /// <summary>
         /// Agent string to provide context in serialized JSON.
