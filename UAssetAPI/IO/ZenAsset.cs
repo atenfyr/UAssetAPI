@@ -262,6 +262,7 @@ namespace UAssetAPI.IO
 
                 // name map batch
                 reader.ReadNameBatch(VerifyHashes, out HashVersion, out List<FString> tempNameMap);
+                ClearNameIndexList();
                 foreach (var entry in tempNameMap)
                 {
                     AddCityHash64MapEntryRaw(entry.Value);

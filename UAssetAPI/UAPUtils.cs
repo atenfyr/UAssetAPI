@@ -206,6 +206,11 @@ namespace UAssetAPI
             return pos + (remainder == 0 ? remainder : (align - remainder));
         }
 
+        public static int AlignPadding(int pos, int align)
+        {
+            return (int)AlignPadding((long)pos, align);
+        }
+
         public static int DivideAndRoundUp(int a, int b)
         {
             return (a + b - 1) / b;

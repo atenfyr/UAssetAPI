@@ -139,7 +139,13 @@ namespace UAssetAPI.Benchmark
                     break;
                 case "zen":
                     IOStoreContainer test1 = new IOStoreContainer(@"C:\Program Files (x86)\Steam\steamapps\common\Garten Of Banban\Clay\Content\Paks\Clay-Windows.utoc");
+                    test1.BeginRead();
+                    Console.WriteLine(BitConverter.ToString(test1.ReadRaw(0, 500)));
+                    test1.Extract(@"C:\Program Files (x86)\Steam\steamapps\common\Garten Of Banban\Clay\Content\Paks\test");
+                    test1.EndRead();
 
+                    Console.ReadKey();
+                    
                     ZenAsset test = new ZenAsset(EngineVersion.VER_UE5_1, new Usmap(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UAssetGUI", "Mappings", "Clay.usmap")));
                     test.Read(test.PathToReader(Path.Combine("TestAssets", "B_Gamemode.uasset")));
                     Console.WriteLine(test.Name);

@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Xml.Linq;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.IO
 {
@@ -217,63 +215,27 @@ namespace UAssetAPI.IO
         {
             get
             {
-                if (NameIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[NameIndex];
+                if (NameIndex == uint.MaxValue) return null;
+                return ParentContainer.directoryStringMapIndexList[(int)NameIndex];
             }
             set
             {
-                NameIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
-            }
-        }
-        public FString FirstChildEntry
-        {
-            get
-            {
-                if (FirstChildEntryIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[FirstChildEntryIndex];
-            }
-            set
-            {
-                FirstChildEntryIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
-            }
-        }
-        public FString NextSiblingEntry
-        {
-            get
-            {
-                if (NextSiblingEntryIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[NextSiblingEntryIndex];
-            }
-            set
-            {
-                NextSiblingEntryIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
-            }
-        }
-        public FString FirstFileEntry
-        {
-            get
-            {
-                if (FirstFileEntryIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[FirstFileEntryIndex];
-            }
-            set
-            {
-                FirstFileEntryIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
+                NameIndex = value == null ? uint.MaxValue : (uint)ParentContainer.AddNameReference(value);
             }
         }
 
-        private int NameIndex;
-        private int FirstChildEntryIndex;
-        private int NextSiblingEntryIndex;
-        private int FirstFileEntryIndex;
+        private uint NameIndex;
+        public uint FirstChildEntry;
+        public uint NextSiblingEntry;
+        public uint FirstFileEntry;
 
-        public FIoDirectoryEntry(IOStoreContainer padre, int nameIndex, int firstChildEntryIndex, int nextSiblingEntryIndex, int firstFileEntryIndex)
+        public FIoDirectoryEntry(IOStoreContainer padre, uint nameIndex, uint firstChildEntryIndex, uint nextSiblingEntryIndex, uint firstFileEntryIndex)
         {
             ParentContainer = padre;
             NameIndex = nameIndex;
-            FirstChildEntryIndex = firstChildEntryIndex;
-            NextSiblingEntryIndex = nextSiblingEntryIndex;
-            FirstFileEntryIndex = firstFileEntryIndex;
+            FirstChildEntry = firstChildEntryIndex;
+            NextSiblingEntry = nextSiblingEntryIndex;
+            FirstFileEntry = firstFileEntryIndex;
         }
     }
 
@@ -284,50 +246,32 @@ namespace UAssetAPI.IO
         {
             get
             {
-                if (NameIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[NameIndex];
+                if (NameIndex == uint.MaxValue) return null;
+                return ParentContainer.directoryStringMapIndexList[(int)NameIndex];
             }
             set
             {
-                NameIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
-            }
-        }
-        public FString NextFileEntry
-        {
-            get
-            {
-                if (NextFileEntryIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[NextFileEntryIndex];
-            }
-            set
-            {
-                NextFileEntryIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
-            }
-        }
-        public FString UserData
-        {
-            get
-            {
-                if (UserDataIndex < 0) return null;
-                return ParentContainer.directoryStringMapIndexList[UserDataIndex];
-            }
-            set
-            {
-                UserDataIndex = value == null ? -1 : ParentContainer.AddNameReference(value);
+                NameIndex = value == null ? uint.MaxValue : (uint)ParentContainer.AddNameReference(value);
             }
         }
 
-        private int NameIndex;
-        private int NextFileEntryIndex;
-        private int UserDataIndex;
+        private uint NameIndex;
+        public uint NextFileEntry;
+        public uint UserData;
 
-        public FIoFileEntry(IOStoreContainer padre, int nameIndex, int nextFileEntryIndex, int userDataIndex)
+        public FIoFileEntry(IOStoreContainer padre, uint nameIndex, uint nextFileEntryIndex, uint userDataIndex)
         {
             ParentContainer = padre;
             NameIndex = nameIndex;
-            NextFileEntryIndex = nextFileEntryIndex;
-            UserDataIndex = userDataIndex;
+            NextFileEntry = nextFileEntryIndex;
+            UserData = userDataIndex;
         }
+    }
+
+    public struct FIoStoreMetaData
+    {
+        public byte[] SHA1Hash;
+        public EIoStoreTocEntryMetaFlags Flags;
     }
 
     [Flags]
@@ -355,19 +299,32 @@ namespace UAssetAPI.IO
     /// <summary>
     /// Represents an IO store container (utoc/ucas).
     /// </summary>
-    public class IOStoreContainer
+    public class IOStoreContainer : IDisposable
     {
+        /// <summary>
+        /// The path of the .utoc file on disk.
+        /// </summary>
+        [JsonIgnore]
+        public string FilePathTOC = null;
+
+        public bool HasReadToc = false;
         public EIoStoreTocVersion TocVersion;
+        public FIoChunkId[] ChunkIds;
+        public Dictionary<FIoChunkId, FIoOffsetAndLength> ChunkMap;
         public List<EIoCompressionMethod> CompressionMethods;
+        public List<FIoStoreTocCompressedBlockEntry> CompressionBlocks;
+        public Dictionary<string, FIoChunkId> Files;
 
         public byte _reserved0;
         public ushort _reserved1;
+        public uint CompressionBlockSize;
         public uint PartitionCount;
         public ulong ContainerId;
         public Guid EncryptionKeyGuid;
         public EIoContainerFlags ContainerFlags;
         public byte _reserved3;
         public ushort _reserved4;
+        public ulong PartitionSize;
         public uint _reserved7;
         public ulong[] _reserved8;
 
@@ -378,7 +335,7 @@ namespace UAssetAPI.IO
         public FString MountPoint;
         public List<FIoDirectoryEntry> DirectoryEntries;
         public List<FIoFileEntry> FileEntries;
-        public List<EIoStoreTocEntryMetaFlags> MetaData;
+        public List<FIoStoreMetaData> MetaData;
 
         internal List<FString> directoryStringMapIndexList;
         internal Dictionary<string, int> directoryStringMapLookup;
@@ -429,12 +386,149 @@ namespace UAssetAPI.IO
             return directoryStringMapIndexList.Count - 1;
         }
 
+        private readonly List<IOStoreBinaryReader> PartitionStreams = new List<IOStoreBinaryReader>();
+        /// <summary>
+        /// Opens a file stream for each partition in this container.
+        /// This must be called before reading any CAS blocks.
+        /// </summary>
+        public void BeginRead()
+        {
+            if (FilePathTOC == null) throw new InvalidOperationException("FilePathTOC must be defined before beginning to read");
+            if (!HasReadToc) ReadToc(PathToReader(FilePathTOC));
+
+            GetPartitionInfo(out int numPartitions, out _);
+            for (int i = 0; i < numPartitions; i++)
+            {
+                PartitionStreams.Add(new IOStoreBinaryReader(File.Open(GetPartitionFileName(FilePathTOC, i), FileMode.Open, FileAccess.Read), this));
+            }
+        }
+
+        /// <summary>
+        /// Closes all partition file streams.
+        /// This must be called once reading CAS blocks has been finished.
+        /// </summary>
+        public void EndRead()
+        {
+            if (PartitionStreams == null) return;
+            for (int i = 0; i < PartitionStreams.Count; i++) PartitionStreams[i].Dispose();
+            PartitionStreams.Clear();
+        }
+
+        public void Dispose()
+        {
+            EndRead();
+        }
+
+        /// <summary>
+        /// Returns a list of the path of every in this container.
+        /// </summary>
+        /// <returns>A list of the path of every in this container.</returns>
+        public string[] GetAllFiles()
+        {
+            string[] res = new string[Files.Count];
+            int i = 0;
+            foreach (KeyValuePair<string, FIoChunkId> entry in Files) res[i++] = entry.Key;
+            return res;
+        }
+
+        /// <summary>
+        /// Extracts every file in this container to disk. This operation may take a while.
+        /// </summary>
+        /// <param name="outPath">The directory to extract to.</param>
+        public void Extract(string outPath)
+        {
+            Directory.CreateDirectory(outPath);
+            foreach (KeyValuePair<string, FIoChunkId> entry in Files)
+            {
+                Directory.CreateDirectory(Path.Combine(outPath, Path.GetDirectoryName(entry.Key)));
+                byte[] f = ReadChunk(entry.Value);
+                File.WriteAllBytes(Path.Combine(outPath, entry.Key), f);
+            }
+        }
+
+        /// <summary>
+        /// Reads out a specific file within this container.
+        /// </summary>
+        /// <param name="path">The path to the file in question.</param>
+        /// <returns>The raw data of the file.</returns>
+        public byte[] ReadFile(string path)
+        {
+            if (!Files.ContainsKey(path)) return new byte[0];
+            return ReadChunk(Files[path]);
+        }
+
+        public bool DoesChunkExist(FIoChunkId chunkId) => ChunkMap.ContainsKey(chunkId);
+
+        /// <summary>
+        /// Reads out a specific chunk.
+        /// </summary>
+        /// <param name="chunkId">The ID of the chunk to read.</param>
+        /// <returns>The raw data of the chunk in question.</returns>
+        public byte[] ReadChunk(FIoChunkId chunkId)
+        {
+            if (chunkId.ChunkType == 0 || !DoesChunkExist(chunkId)) return new byte[0];
+            return ReadRaw((long)ChunkMap[chunkId].Offset, (long)ChunkMap[chunkId].Length);
+        }
+
+        /// <summary>
+        /// Reads out any segment of CAS data.
+        /// </summary>
+        /// <param name="offset">The offset of the chunk to read.</param>
+        /// <param name="length">The length of the chunk to read.</param>
+        /// <returns>The raw data that was read.</returns>
+        public byte[] ReadRaw(long offset, long length)
+        {
+            if (PartitionStreams == null || PartitionStreams.Count == 0) throw new InvalidOperationException("BeginRead must be called before reading CAS data");
+
+            var res = new byte[length];
+            int resDoneSoFar = 0;
+            int firstBlock = (int)(offset / CompressionBlockSize);
+            int lastBlock = (int)((UAPUtils.AlignPadding(offset + length, (int)CompressionBlockSize) - 1) / CompressionBlockSize);
+            long startingOffset = offset % CompressionBlockSize;
+            for (int i = firstBlock; i <= lastBlock; i++)
+            {
+                FIoStoreTocCompressedBlockEntry ourBlock = CompressionBlocks[i];
+                EIoCompressionMethod compressionType = ourBlock.CompressionMethodIndex == 0 ? EIoCompressionMethod.None : CompressionMethods[ourBlock.CompressionMethodIndex - 1];
+
+                int partitionIdx = (int)(ourBlock.Offset / PartitionSize);
+                long offsetWithinPartition = (long)(ourBlock.Offset - ((ulong)partitionIdx * PartitionSize));
+                if (partitionIdx > PartitionStreams.Count) throw new FormatException("Attempt to reference a partition that doesn't exist");
+                IOStoreBinaryReader chosenReader = PartitionStreams[partitionIdx];
+
+                chosenReader.BaseStream.Position = offsetWithinPartition;
+                byte[] compressedBuffer = chosenReader.ReadBytes(UAPUtils.AlignPadding((int)ourBlock.CompressedSize, 16));
+                // TODO: decrypt compressed buffer if necessary
+
+                // decompress
+                byte[] uncompressedBuffer = new byte[ourBlock.UncompressedSize];
+                switch (compressionType)
+                {
+                    case EIoCompressionMethod.None:
+                        uncompressedBuffer = compressedBuffer;
+                        break;
+                    case EIoCompressionMethod.Oodle:
+                        uncompressedBuffer = Oodle.Decompress(compressedBuffer, compressedBuffer.Length, uncompressedBuffer.Length);
+                        break;
+                    default:
+                        throw new NotImplementedException("Unimplemented compression method " + compressionType);
+                }
+
+                int amountToAdd = Math.Min(res.Length - resDoneSoFar, uncompressedBuffer.Length);
+                Buffer.BlockCopy(uncompressedBuffer, (int)startingOffset, res, resDoneSoFar, amountToAdd);
+                startingOffset = 0;
+                resDoneSoFar += amountToAdd;
+            }
+
+            return res;
+        }
+
         public static readonly byte[] TOC_MAGIC = Encoding.ASCII.GetBytes("-==--==--==--==-");
         public void ReadToc(IOStoreBinaryReader reader)
         {
             if (!reader.ReadBytes(TOC_MAGIC.Length).SequenceEqual(TOC_MAGIC)) throw new FormatException("Invalid TOC magic");
 
             TocVersion = (EIoStoreTocVersion)reader.ReadByte();
+            if (TocVersion < EIoStoreTocVersion.Initial || TocVersion > EIoStoreTocVersion.Latest) throw new FormatException("Invalid TOC version " + TocVersion);
             _reserved0 = reader.ReadByte();
             _reserved1 = reader.ReadUInt16();
             uint TocHeaderSize = reader.ReadUInt32();
@@ -443,7 +537,7 @@ namespace UAssetAPI.IO
             uint TocCompressedBlockEntrySize = reader.ReadUInt32();
             uint CompressionMethodNameCount = reader.ReadUInt32();
             uint CompressionMethodNameLength = reader.ReadUInt32();
-            uint CompressionBlockSize = reader.ReadUInt32();
+            CompressionBlockSize = reader.ReadUInt32();
             uint DirectoryIndexSize = reader.ReadUInt32();
             PartitionCount = reader.ReadUInt32();
             ContainerId = reader.ReadUInt64();
@@ -452,24 +546,25 @@ namespace UAssetAPI.IO
             _reserved3 = reader.ReadByte();
             _reserved4 = reader.ReadUInt16();
             uint TocChunkPerfectHashSeedsCount = reader.ReadUInt32();
-            ulong PartitionSize = reader.ReadUInt64();
+            PartitionSize = reader.ReadUInt64();
             uint TocChunksWithoutPerfectHashCount = reader.ReadUInt32();
             _reserved7 = reader.ReadUInt32();
             _reserved8 = new ulong[5];
             for (int i = 0; i < _reserved8.Length; i++) _reserved8[i] = reader.ReadUInt64();
             reader.BaseStream.Position = UAPUtils.AlignPadding(reader.BaseStream.Position, 4);
 
-            if (TocVersion < EIoStoreTocVersion.PartitionSize)
-            {
-                PartitionCount = 1;
-                PartitionSize = uint.MaxValue;
-            }
+            // TocHeaderSize == reader.BaseStream.Position
 
-            FIoChunkId[] chunkIds = new FIoChunkId[TocEntryCount];
-            for (int i = 0; i < TocEntryCount; i++) chunkIds[i] = FIoChunkId.Read(reader);
+            ChunkMap = new Dictionary<FIoChunkId, FIoOffsetAndLength>();
+            ChunkIds = new FIoChunkId[TocEntryCount];
+            for (int i = 0; i < TocEntryCount; i++) ChunkIds[i] = FIoChunkId.Read(reader);
 
             FIoOffsetAndLength[] chunkOffsetsAndLengths = new FIoOffsetAndLength[TocEntryCount];
-            for (int i = 0; i < TocEntryCount; i++) chunkOffsetsAndLengths[i] = FIoOffsetAndLength.Read(reader);
+            for (int i = 0; i < TocEntryCount; i++)
+            {
+                chunkOffsetsAndLengths[i] = FIoOffsetAndLength.Read(reader);
+                ChunkMap[ChunkIds[i]] = chunkOffsetsAndLengths[i];
+            }
 
             TocChunkPerfectHashSeedsCount = TocVersion >= EIoStoreTocVersion.PerfectHash ? TocChunkPerfectHashSeedsCount : 0u;
             TocChunksWithoutPerfectHashCount = TocVersion >= EIoStoreTocVersion.PerfectHashWithOverflow ? TocChunksWithoutPerfectHashCount : 0u;
@@ -477,13 +572,16 @@ namespace UAssetAPI.IO
             int[] ChunkPerfectHashSeeds = new int[TocChunkPerfectHashSeedsCount];
             for (int i = 0; i < TocChunkPerfectHashSeedsCount; i++) ChunkPerfectHashSeeds[i] = reader.ReadInt32();
             int[] ChunkIndicesWithoutPerfectHash = new int[TocChunksWithoutPerfectHashCount];
-            for (int i = 0; i < TocChunksWithoutPerfectHashCount; i++) ChunkIndicesWithoutPerfectHash[i] = reader.ReadInt32();
+            for (int i = 0; i < TocChunksWithoutPerfectHashCount; i++)
+            {
+                ChunkIndicesWithoutPerfectHash[i] = reader.ReadInt32();
+                ChunkMap[ChunkIds[ChunkIndicesWithoutPerfectHash[i]]] = chunkOffsetsAndLengths[ChunkIndicesWithoutPerfectHash[i]];
+            }
 
-            FIoStoreTocCompressedBlockEntry[] CompressionBlocks = new FIoStoreTocCompressedBlockEntry[TocCompressedBlockEntryCount];
-            for (int i = 0; i < TocCompressedBlockEntryCount; i++) CompressionBlocks[i] = FIoStoreTocCompressedBlockEntry.Read(reader);
+            CompressionBlocks = new List<FIoStoreTocCompressedBlockEntry>((int)TocCompressedBlockEntryCount);
+            for (int i = 0; i < TocCompressedBlockEntryCount; i++) CompressionBlocks.Add(FIoStoreTocCompressedBlockEntry.Read(reader));
 
             CompressionMethods = new List<EIoCompressionMethod>();
-            CompressionMethods.Add(EIoCompressionMethod.None); // 0 = none
             for (int i = 0; i < CompressionMethodNameCount; i++)
             {
                 byte[] methodBytes = reader.ReadBytes((int)CompressionMethodNameLength);
@@ -516,25 +614,52 @@ namespace UAssetAPI.IO
 
                 int numDiec = reader.ReadInt32();
                 DirectoryEntries = new List<FIoDirectoryEntry>(numDiec);
-                for (int i = 0; i < numDiec; i++) DirectoryEntries.Add(new FIoDirectoryEntry(this, reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32()));
+                for (int i = 0; i < numDiec; i++) DirectoryEntries.Add(new FIoDirectoryEntry(this, reader.ReadUInt32(), reader.ReadUInt32(), reader.ReadUInt32(), reader.ReadUInt32()));
 
                 int numFiec = reader.ReadInt32();
                 FileEntries = new List<FIoFileEntry>(numFiec);
-                for (int i = 0; i < numFiec; i++) FileEntries.Add(new FIoFileEntry(this, reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32()));
+                for (int i = 0; i < numFiec; i++) FileEntries.Add(new FIoFileEntry(this, reader.ReadUInt32(), reader.ReadUInt32(), reader.ReadUInt32()));
 
                 int numStrs = reader.ReadInt32();
                 ClearNameIndexList();
                 for (int i = 0; i < numStrs; i++) AddNameReference(reader.ReadFString(), true);
+
+                Files = new Dictionary<string, FIoChunkId>();
+                ParseDirectory(string.Empty, 0u);
             }
 
             // meta data
-            MetaData = new List<EIoStoreTocEntryMetaFlags>();
+            MetaData = new List<FIoStoreMetaData>();
             for (int i = 0; i < TocEntryCount; i++)
             {
-                var actualHash = reader.ReadBytes(20);
-                var padding = reader.ReadBytes(32 - 20);
-                var flags = (EIoStoreTocEntryMetaFlags)reader.ReadByte();
-                MetaData.Add(flags);
+                var res = new FIoStoreMetaData();
+                res.SHA1Hash = reader.ReadBytes(20);
+                reader.ReadBytes(32 - 20); // padding
+                res.Flags = (EIoStoreTocEntryMetaFlags)reader.ReadByte();
+                MetaData.Add(res);
+            }
+
+            HasReadToc = true;
+        }
+
+        private void ParseDirectory(string parentPath, uint idx)
+        {
+            while (idx != uint.MaxValue)
+            {
+                FIoDirectoryEntry dirEntry = DirectoryEntries[(int)idx];
+                string thisPath = dirEntry.Name == null ? parentPath : ((string.IsNullOrWhiteSpace(parentPath) ? "" : (parentPath + "/")) + dirEntry.Name.Value);
+
+                // first parse files
+                uint subFile = dirEntry.FirstFileEntry;
+                while (subFile != uint.MaxValue)
+                {
+                    FIoFileEntry fileEntry = FileEntries[(int)subFile];
+                    Files[thisPath + "/" + fileEntry.Name.Value] = ChunkIds[fileEntry.UserData];
+                    subFile = fileEntry.NextFileEntry;
+                }
+
+                ParseDirectory(thisPath, dirEntry.FirstChildEntry);
+                idx = dirEntry.NextSiblingEntry;
             }
         }
 
@@ -546,17 +671,15 @@ namespace UAssetAPI.IO
             return stre;
         }
 
-        public void ReadCas(IOStoreBinaryReader reader)
+        /// <summary>
+        /// Writes a specific partition to disk.
+        /// </summary>
+        /// <param name="stre">A file stream to the partition in question.</param>
+        /// <param name="partitionNum">The index of this partition.</param>
+        /// <param name="partitionSize">The maximum size of this partition. This will be automatically increased if required.</param>
+        public void WriteCas(Stream stre, int partitionNum, ulong partitionSize)
         {
-
-        }
-
-        public MemoryStream WriteCas()
-        {
-            var stre = new MemoryStream();
             IOStoreBinaryWriter writer = new IOStoreBinaryWriter(stre, this);
-
-            return stre;
         }
 
         /// <summary>
@@ -586,39 +709,58 @@ namespace UAssetAPI.IO
             return new IOStoreBinaryReader(PathToStream(p), this);
         }
 
+        private void GetPartitionInfo(out int numPartitions, out ulong partitionSize)
+        {
+            numPartitions = (TocVersion < EIoStoreTocVersion.PartitionSize || PartitionCount == 0) ? 1 : (int)PartitionCount;
+            partitionSize = TocVersion < EIoStoreTocVersion.PartitionSize ? uint.MaxValue : PartitionSize;
+        }
+
+        private string GetPartitionFileName(string tocPath, int num)
+        {
+            if (num == 0) return Path.ChangeExtension(tocPath, ".ucas");
+            return Path.ChangeExtension(Path.Combine(Path.GetDirectoryName(tocPath), Path.GetFileNameWithoutExtension(tocPath) + "_s" + num), ".ucas");
+        }
+
         /// <summary>
         /// Serializes and writes an asset to disk from memory.
         /// </summary>
-        /// <param name="outputPath1">The path on disk to write the .utoc to.</param>
-        /// <param name="outputPath2">The path on disk to write the .ucas to.</param>
-        public void Write(string outputPath1, string outputPath2 = null)
+        /// <param name="outputPath">The path on disk to write the .utoc file to. Respective .ucas files will be located in the same directory.</param>
+        public void Write(string outputPath)
         {
-            if (outputPath2 == null) outputPath2 = Path.ChangeExtension(outputPath1, ".ucas");
+            GetPartitionInfo(out int numPartitions, out ulong partitionSize);
+
+            for (int i = 0; i < numPartitions; i++)
+            {
+                using (FileStream f = File.Open(GetPartitionFileName(outputPath, i), FileMode.Open, FileAccess.Write))
+                {
+                    WriteCas(f, i, partitionSize);
+                }
+            }
 
             MemoryStream newData = WriteToc();
-            using (FileStream f = File.Open(outputPath1, FileMode.Create, FileAccess.Write))
+            using (FileStream f = File.Open(outputPath, FileMode.Create, FileAccess.Write))
             {
                 newData.CopyTo(f);
-            }
-            MemoryStream newData2 = WriteCas();
-            using (FileStream f = File.Open(outputPath2, FileMode.Create, FileAccess.Write))
-            {
-                newData2.CopyTo(f);
             }
         }
 
         /// <summary>
         /// Reads an io store container from disk and initializes a new instance of the <see cref="IOStoreContainer"/> class to store its data in memory.
         /// </summary>
-        /// <param name="path1">The path of the .utoc file on disk that this instance will read from.</param>
-        /// <param name="path2">The path of the .ucas file on disk that this instance will read from.</param>
+        /// <param name="tocPath">The path of the .utoc file on disk that this instance will read from. Respective .ucas files must be located in the same directory.</param>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public IOStoreContainer(string path1, string path2 = null)
+        public IOStoreContainer(string tocPath)
         {
-            if (path2 == null) path2 = Path.ChangeExtension(path1, ".ucas");
+            FilePathTOC = tocPath;
+            ReadToc(PathToReader(FilePathTOC));
+        }
 
-            ReadToc(PathToReader(path1));
-            ReadCas(PathToReader(path2));
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IOStoreContainer"/> class. This instance will store no container data and does not represent any container in particular until the <see cref="ReadToc"/> method is manually called.
+        /// </summary>
+        public IOStoreContainer()
+        {
+
         }
     }
 }
