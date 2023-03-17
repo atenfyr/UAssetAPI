@@ -457,15 +457,19 @@ namespace UAssetAPI.IO
         /// Extracts every file in this container to disk. This operation may take a while.
         /// </summary>
         /// <param name="outPath">The directory to extract to.</param>
-        public void Extract(string outPath)
+        /// <returns>The number of files that were successfully extracted.</returns>
+        public int Extract(string outPath)
         {
+            int n = 0;
             Directory.CreateDirectory(outPath);
             foreach (KeyValuePair<string, FIoChunkId> entry in Files)
             {
                 Directory.CreateDirectory(Path.Combine(outPath, Path.GetDirectoryName(entry.Key)));
                 byte[] f = ReadChunk(entry.Value);
                 File.WriteAllBytes(Path.Combine(outPath, entry.Key), f);
+                n++;
             }
+            return n;
         }
 
         /// <summary>
