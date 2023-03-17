@@ -9,18 +9,16 @@ using UAssetAPI.UnrealTypes;
 namespace UAssetAPI
 {
     /// <summary>
-    /// Reads primitive data types from Unreal Engine assets.
+    /// Any binary reader used in the parsing of Unreal file types.
     /// </summary>
-    public class AssetBinaryReader : BinaryReader
+    public abstract class UnrealBinaryReader : BinaryReader
     {
-        public UnrealPackage Asset;
-
-        public AssetBinaryReader(Stream stream, UnrealPackage asset = null) : base(stream)
+        public UnrealBinaryReader(Stream stream) : base(stream)
         {
-            Asset = asset;
+
         }
 
-        private byte[] ReverseIfBigEndian(byte[] data)
+        protected byte[] ReverseIfBigEndian(byte[] data)
         {
             if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             return data;
@@ -71,17 +69,6 @@ namespace UAssetAPI
             return ReadFString()?.Value;
         }
 
-        public virtual Guid? ReadPropertyGuid()
-        {
-            if (Asset.HasUnversionedProperties) return null;
-            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
-            {
-                bool hasPropertyGuid = ReadBoolean();
-                if (hasPropertyGuid) return new Guid(ReadBytes(16));
-            }
-            return null;
-        }
-
         public virtual FString ReadFString(FSerializedNameHeader nameHeader = null)
         {
             if (nameHeader == null)
@@ -123,8 +110,88 @@ namespace UAssetAPI
         {
             hashes = 0;
             FString str = this.ReadFString(nameHeader);
-            if (this.Asset is UAsset && Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value)) hashes = this.ReadUInt32();
+            if (this is AssetBinaryReader abr)
+            {
+                if (abr.Asset is UAsset && abr.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value)) hashes = this.ReadUInt32();
+            }
             return str;
+        }
+
+        internal const ulong CityHash64 = 0x00000000C1640000;
+        public void ReadNameBatch(bool VerifyHashes, out ulong HashVersion, out List<FString> nameMap)
+        {
+            // TODO: implement pre-ue5 serialization
+
+            HashVersion = 0;
+            nameMap = new List<FString>();
+
+            int numStrings = ReadInt32();
+            if (numStrings == 0) return;
+            ReadInt32(); // length of strings in bytes
+
+            // read hashes
+            HashVersion = ReadUInt64();
+            ulong[] hashes = new ulong[numStrings];
+            switch (HashVersion)
+            {
+                case UnrealBinaryReader.CityHash64:
+                    for (int i = 0; i < numStrings; i++) hashes[i] = ReadUInt64(); // CityHash64 of str.ToLowerCase();
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
+            }
+
+            // read headers
+            FSerializedNameHeader[] nameHeaders = new FSerializedNameHeader[numStrings];
+            for (int i = 0; i < numStrings; i++) nameHeaders[i] = FSerializedNameHeader.Read(this);
+
+            // read strings
+            for (int i = 0; i < numStrings; i++)
+            {
+                FString newStr = ReadNameMapString(nameHeaders[i], out _);
+                nameMap.Add(newStr);
+            }
+
+            // verify hashes if requested
+            if (VerifyHashes)
+            {
+                for (int i = 0; i < nameMap.Count; i++)
+                {
+                    switch (HashVersion)
+                    {
+                        case UnrealBinaryReader.CityHash64:
+                            ulong expectedHash = CRCGenerator.CityHash64WithLower(nameMap[i]);
+                            if (expectedHash != hashes[i]) throw new IOException("Expected hash \"" + expectedHash + "\", received \"" + hashes[i] + "\" for string " + nameMap[i].Value + " in name map; corrupt data?");
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reads primitive data types from Unreal Engine assets.
+    /// </summary>
+    public class AssetBinaryReader : UnrealBinaryReader
+    {
+        public UnrealPackage Asset;
+
+        public AssetBinaryReader(Stream stream, UnrealPackage asset = null) : base(stream)
+        {
+            Asset = asset;
+        }
+
+        public virtual Guid? ReadPropertyGuid()
+        {
+            if (Asset.HasUnversionedProperties) return null;
+            if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
+            {
+                bool hasPropertyGuid = ReadBoolean();
+                if (hasPropertyGuid) return new Guid(ReadBytes(16));
+            }
+            return null;
         }
 
         public virtual FName ReadFName()

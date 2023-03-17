@@ -55,7 +55,7 @@ namespace UAssetAPI.UnrealTypes
             }
             set
             {
-                Hash = (value << sizeof(uint)) | (uint)Hash;
+                Hash = ((ulong)value << sizeof(uint)) | (uint)Hash;
             }
         }
 
@@ -107,8 +107,9 @@ namespace UAssetAPI.UnrealTypes
 
         public Import ToImport(ZenAsset asset)
         {
-            throw new NotImplementedException("ZenAsset ToImport is currently unimplemented");
+            //throw new NotImplementedException("ZenAsset ToImport is currently unimplemented");
 
+            var res = new Import();
             switch (Type)
             {
                 case EPackageObjectIndexType.Null:
@@ -116,21 +117,17 @@ namespace UAssetAPI.UnrealTypes
                 case EPackageObjectIndexType.Export:
                     throw new InvalidOperationException("Attempt to call ToImport on an FPackageObjectIndex with type " + Type);
                 case EPackageObjectIndexType.ScriptImport:
-                    // TODO: why do some hashes not show up here properly? need to get some test cases with their actual intended values
-                    string derivedStr = asset.GetStringFromCityHash64(Hash);
-                    if (derivedStr != null)
-                    {
-                        Console.WriteLine(derivedStr);
-                    }
-                    else
-                    {
-                        throw new FormatException("Unable to find valid path for hash " + Hash);
-                    }
+                    string derivedStr = asset.GetStringFromCityHash64(Hash); // TODO: why do some hashes not show up here properly? need to get some test cases with their actual intended values
+                    string[] derivedStrSplit = derivedStr?.Split('.');
+                    res.ObjectName = null; // TODO: how can we derive this value?
+                    res.ClassPackage = FName.DefineDummy(asset, derivedStrSplit?[0] ?? Hash.ToString());
+                    res.ClassName = FName.DefineDummy(asset, derivedStrSplit?[1] ?? Hash.ToString());
+                    res.OuterIndex = new FPackageIndex(0);
                     break;
                 case EPackageObjectIndexType.PackageImport:
                     throw new NotImplementedException("ToImport on an FPackageObjectIndex with type " + Type + " is currently unimplemented");
             }
-            return null;
+            return res;
         }
 
         public override int GetHashCode()

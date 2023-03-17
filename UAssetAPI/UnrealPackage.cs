@@ -246,7 +246,7 @@ namespace UAssetAPI
         /// <exception cref="UAssetAPI.NameMapOutOfRangeException">Thrown when the value provided does not appear in the name map.</exception>
         public int SearchNameReference(FString search)
         {
-            FixNameMapLookupIfNeeded();
+            //FixNameMapLookupIfNeeded();
             if (ContainsNameReference(search)) return nameMapLookup[search.Value];
             throw new NameMapOutOfRangeException(search);
         }

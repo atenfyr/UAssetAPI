@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UAssetAPI.IO;
@@ -8,33 +9,31 @@ using UAssetAPI.UnrealTypes;
 namespace UAssetAPI
 {
     /// <summary>
-    /// Writes primitive data types from Unreal Engine assets.
+    /// Any binary writer used in the parsing of Unreal file types.
     /// </summary>
-    public class AssetBinaryWriter : BinaryWriter
+    public abstract class UnrealBinaryWriter : BinaryWriter
     {
-        public UnrealPackage Asset;
-
-        public AssetBinaryWriter(UnrealPackage asset) : base()
+        public UnrealBinaryWriter() : base()
         {
-            Asset = asset;
+
         }
 
-        public AssetBinaryWriter(Stream stream, UnrealPackage asset) : base(stream)
+        public UnrealBinaryWriter(Stream stream) : base(stream)
         {
-            Asset = asset;
+
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset) : base(stream, encoding)
+        public UnrealBinaryWriter(Stream stream, Encoding encoding) : base(stream, encoding)
         {
-            Asset = asset;
+
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UnrealPackage asset) : base(stream, encoding, leaveOpen)
+        public UnrealBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen) : base(stream, encoding, leaveOpen)
         {
-            Asset = asset;
+
         }
 
-        private byte[] ReverseIfBigEndian(byte[] data)
+        protected byte[] ReverseIfBigEndian(byte[] data)
         {
             if (!BitConverter.IsLittleEndian) Array.Reverse(data);
             return data;
@@ -101,6 +100,75 @@ namespace UAssetAPI
             }
         }
 
+        public void WriteNameBatch(ulong HashVersion, IList<FString> nameMap)
+        {
+            Write(nameMap.Count);
+            if (nameMap.Count == 0) return;
+            long numBytesOfStringsPos = this.BaseStream.Position;
+            Write((int)0);
+
+            // write hashes
+            Write(HashVersion);
+            switch (HashVersion)
+            {
+                case UnrealBinaryReader.CityHash64:
+                    for (int i = 0; i < nameMap.Count; i++)
+                    {
+                        Write(CRCGenerator.CityHash64(CRCGenerator.ToLower(nameMap[i].Value), nameMap[i].Encoding));
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
+            }
+
+            // write headers
+            for (int i = 0; i < nameMap.Count; i++)
+            {
+                FSerializedNameHeader.Write(this, nameMap[i].Encoding is UnicodeEncoding, nameMap[i].Value.Length);
+            }
+
+            // write strings
+            long stringsStartPos = BaseStream.Position;
+            for (int i = 0; i < nameMap.Count; i++)
+            {
+                Write(nameMap[i].Encoding.GetBytes(nameMap[i].Value));
+            }
+            long stringsEndPos = BaseStream.Position;
+
+            // fix length
+            Seek((int)numBytesOfStringsPos, SeekOrigin.Begin);
+            Write((int)(stringsEndPos - stringsStartPos));
+            Seek((int)stringsEndPos, SeekOrigin.Begin);
+        }
+    }
+
+    /// <summary>
+    /// Writes primitive data types from Unreal Engine assets.
+    /// </summary>
+    public class AssetBinaryWriter : UnrealBinaryWriter
+    {
+        public UnrealPackage Asset;
+
+        public AssetBinaryWriter(UnrealPackage asset) : base()
+        {
+            Asset = asset;
+        }
+
+        public AssetBinaryWriter(Stream stream, UnrealPackage asset) : base(stream)
+        {
+            Asset = asset;
+        }
+
+        public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset) : base(stream, encoding)
+        {
+            Asset = asset;
+        }
+
+        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UnrealPackage asset) : base(stream, encoding, leaveOpen)
+        {
+            Asset = asset;
+        }
+
         public virtual void Write(FName name)
         {
             if (name == null) name = new FName(Asset, 0, 0);
@@ -134,6 +202,7 @@ namespace UAssetAPI
         !!!!!
         */
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFERSTRING(string val)
         {
             long startMetric = this.BaseStream.Position;
@@ -141,6 +210,7 @@ namespace UAssetAPI
             return (int)(this.BaseStream.Position - startMetric);
         }
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFERUNICODESTRING(string val)
         {
             long startMetric = this.BaseStream.Position;
@@ -148,12 +218,14 @@ namespace UAssetAPI
             return (int)(this.BaseStream.Position - startMetric);
         }
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFERNAME(FName val)
         {
             this.Write(val);
             return 12; // FScriptName's iCode offset is 12 bytes, not 8
         }
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFER_FUNC_NAME(FName val)
         {
             return this.XFERNAME(val);
@@ -161,17 +233,20 @@ namespace UAssetAPI
 
         private static readonly int PointerSize = sizeof(ulong);
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFERPTR(FPackageIndex val)
         {
             this.Write(val.Index);
             return PointerSize; // For the iCode offset, we return the size of a pointer in memory rather than the size of an FPackageIndex on disk
         }
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFER_FUNC_POINTER(FPackageIndex val)
         {
             return this.XFERPTR(val);
         }
 
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFER_PROP_POINTER(KismetPropertyPointer val)
         {
             if (Asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
@@ -190,7 +265,7 @@ namespace UAssetAPI
             return PointerSize;
         }
 
-
+        /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFER_OBJECT_POINTER(FPackageIndex val)
         {
             return this.XFERPTR(val);

@@ -38,7 +38,7 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// Module path information is present.
         /// </summary>
-        Scripts = 1
+        Paths = 1
     }
 
     public enum ECompressionMethod
@@ -307,14 +307,6 @@ namespace UAssetAPI.Unversioned
         public Dictionary<ulong, string> CityHash64Map;
 
         private void AddCityHash64MapEntry(string val)
-        {
-            // a bit of a brute force method
-            AddCityHash64MapEntryRaw(val);
-            AddCityHash64MapEntryRaw("/Script/" + val);
-            AddCityHash64MapEntryRaw("/Script/Engine/" + val);
-        }
-
-        private void AddCityHash64MapEntryRaw(string val)
         {
             ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
             if (CityHash64Map.ContainsKey(hsh))
@@ -627,14 +619,13 @@ namespace UAssetAPI.Unversioned
                 var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
                 schemaIndexMap[i] = newSchema;
                 Schemas[schemaName] = newSchema;
-                AddCityHash64MapEntry(schemaName);
             }
 
             // read extension data if it's present
             if (reader.BaseStream.Length > reader.BaseStream.Position)
             {
                 ExtensionVersion = (UsmapExtensionVersion)reader.ReadUInt32();
-                if (ExtensionVersion.HasFlag(UsmapExtensionVersion.Scripts))
+                if (ExtensionVersion.HasFlag(UsmapExtensionVersion.Paths))
                 {
                     ushort numModulePaths = reader.ReadUInt16();
                     string[] modulePaths = new string[numModulePaths];
@@ -642,6 +633,7 @@ namespace UAssetAPI.Unversioned
                     for (int i = 0; i < schemaIndexMap.Length; i++)
                     {
                         schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
+                        AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
                     }
                 }
             }

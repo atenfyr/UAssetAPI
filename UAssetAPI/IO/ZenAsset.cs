@@ -140,7 +140,7 @@ namespace UAssetAPI.IO
         public bool bIsWide;
         public int Len;
 
-        public static FSerializedNameHeader Read(AssetBinaryReader reader)
+        public static FSerializedNameHeader Read(BinaryReader reader)
         {
             var b1 = reader.ReadByte();
             var b2 = reader.ReadByte();
@@ -151,14 +151,14 @@ namespace UAssetAPI.IO
             return res;
         }
 
-        public static void Write(AssetBinaryWriter writer, bool bIsWideVal, int lenVal)
+        public static void Write(BinaryWriter writer, bool bIsWideVal, int lenVal)
         {
             byte b1 = (byte)(((byte)(bIsWideVal ? 1 : 0)) << 7 | (byte)(lenVal >> 8));
             byte b2 = (byte)lenVal;
             writer.Write(b1); writer.Write(b2);
         }
 
-        public void Write(AssetBinaryWriter writer)
+        public void Write(BinaryWriter writer)
         {
             FSerializedNameHeader.Write(writer, bIsWide, Len);
         }
@@ -166,6 +166,11 @@ namespace UAssetAPI.IO
 
     public class ZenAsset : UnrealPackage
     {
+        /// <summary>
+        /// The global data of the game that this asset is from.
+        /// </summary>
+        public IOStoreContainer GlobalData;
+
         public EZenPackageVersion ZenVersion;
         public FName Name;
         public FName SourceName;
@@ -173,7 +178,7 @@ namespace UAssetAPI.IO
         /// Should serialized hashes be verified on read?
         /// </summary>
         public bool VerifyHashes = false;
-        public ulong HashVersion = CityHash64;
+        public ulong HashVersion = UnrealBinaryReader.CityHash64;
         public byte[] BulkDataMap;
 
         public ulong[] ImportedPublicExportHashes;
@@ -216,97 +221,6 @@ namespace UAssetAPI.IO
             throw new NotImplementedException("Unimplemented method ZenAsset.GetParentClassExportName");
         }
 
-        private const ulong CityHash64 = 0x00000000C1640000;
-        public void ReadNameBatch(AssetBinaryReader reader)
-        {
-            int numStrings = reader.ReadInt32();
-            if (numStrings == 0) return;
-            reader.ReadInt32(); // length of strings in bytes
-
-            // read hashes
-            HashVersion = reader.ReadUInt64();
-            ulong[] hashes = new ulong[numStrings];
-            switch (HashVersion)
-            {
-                case CityHash64:
-                    for (int i = 0; i < numStrings; i++) hashes[i] = reader.ReadUInt64(); // CityHash64 of str.ToLowerCase();
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-            }
-
-            // read headers
-            FSerializedNameHeader[] nameHeaders = new FSerializedNameHeader[numStrings];
-            for (int i = 0; i < numStrings; i++) nameHeaders[i] = FSerializedNameHeader.Read(reader);
-
-            // read strings
-            ClearNameIndexList();
-            for (int i = 0; i < numStrings; i++)
-            {
-                FString newStr = reader.ReadNameMapString(nameHeaders[i], out _);
-                AddCityHash64MapEntryRaw(newStr.Value);
-                AddNameReference(newStr, true);
-            }
-
-            // verify hashes if requested
-            if (VerifyHashes)
-            {
-                for (int i = 0; i < this.nameMapIndexList.Count; i++)
-                {
-                    switch (HashVersion)
-                    {
-                        case CityHash64:
-                            ulong expectedHash = CRCGenerator.CityHash64WithLower(this.nameMapIndexList[i]);
-                            if (expectedHash != hashes[i]) throw new IOException("Expected hash \"" + expectedHash + "\", received \"" + hashes[i] + "\" for string " + this.nameMapIndexList[i].Value + " in name map; corrupt data?");
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-                    }
-                }
-            }
-        }
-
-        public void WriteNameBatch(AssetBinaryWriter writer)
-        {
-            writer.Write(this.nameMapIndexList.Count);
-            if (this.nameMapIndexList.Count == 0) return;
-            long numBytesOfStringsPos = writer.BaseStream.Position;
-            writer.Write((int)0);
-
-            // write hashes
-            writer.Write(HashVersion);
-            switch (HashVersion)
-            {
-                case CityHash64:
-                    for (int i = 0; i < this.nameMapIndexList.Count; i++)
-                    {
-                        writer.Write(CRCGenerator.CityHash64(CRCGenerator.ToLower(this.nameMapIndexList[i].Value), this.nameMapIndexList[i].Encoding));
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-            }
-
-            // write headers
-            for (int i = 0; i < this.nameMapIndexList.Count; i++)
-            {
-                FSerializedNameHeader.Write(writer, this.nameMapIndexList[i].Encoding is UnicodeEncoding, this.nameMapIndexList[i].Value.Length);
-            }
-
-            // write strings
-            long stringsStartPos = writer.BaseStream.Position;
-            for (int i = 0; i < this.nameMapIndexList.Count; i++)
-            {
-                writer.Write(this.nameMapIndexList[i].Encoding.GetBytes(this.nameMapIndexList[i].Value));
-            }
-            long stringsEndPos = writer.BaseStream.Position;
-
-            // fix length
-            writer.Seek((int)numBytesOfStringsPos, SeekOrigin.Begin);
-            writer.Write((int)(stringsEndPos - stringsStartPos));
-            writer.Seek((int)stringsEndPos, SeekOrigin.Begin);
-        }
-
         /// <summary>
         /// Reads an asset into memory.
         /// </summary>
@@ -330,7 +244,7 @@ namespace UAssetAPI.IO
                 uint HeaderSize = reader.ReadUInt32();
                 Name = reader.ReadFName();
                 PackageFlags = (EPackageFlags)reader.ReadUInt32();
-                uint CookedHeaderSize = reader.ReadUInt32();
+                uint CookedHeaderSize = reader.ReadUInt32(); // where does this number come from?
                 int ImportedPublicExportHashesOffset = reader.ReadInt32();
                 int ImportMapOffset = reader.ReadInt32();
                 int ExportMapOffset = reader.ReadInt32();
@@ -347,7 +261,12 @@ namespace UAssetAPI.IO
                 }
 
                 // name map batch
-                ReadNameBatch(reader);
+                reader.ReadNameBatch(VerifyHashes, out HashVersion, out List<FString> tempNameMap);
+                foreach (var entry in tempNameMap)
+                {
+                    AddCityHash64MapEntryRaw(entry.Value);
+                    AddNameReference(entry, true);
+                }
 
                 // bulk data map
                 if (ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
@@ -432,7 +351,12 @@ namespace UAssetAPI.IO
                 int GraphDataSize = reader.ReadInt32();
 
                 // name map batch
-                ReadNameBatch(reader);
+                reader.ReadNameBatch(VerifyHashes, out HashVersion, out List<FString> tempNameMap);
+                foreach (var entry in tempNameMap)
+                {
+                    AddCityHash64MapEntryRaw(entry.Value);
+                    AddNameReference(entry, true);
+                }
 
                 // import map
                 reader.BaseStream.Seek(ImportMapOffset, SeekOrigin.Begin);

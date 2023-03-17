@@ -8,6 +8,9 @@ using System.Reflection;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.IO;
+using System.Text;
+using UAssetAPI.IO;
 
 namespace UAssetAPI
 {
@@ -197,15 +200,16 @@ namespace UAssetAPI
             return data;
         }
 
-        public static long AlignPadding(long numBytes, int align)
+        public static long AlignPadding(long pos, int align)
         {
-            long remainder = numBytes % align;
-            return remainder == 0 ? remainder : (align - remainder);
+            long remainder = pos % align;
+            return pos + (remainder == 0 ? remainder : (align - remainder));
         }
 
         public static int DivideAndRoundUp(int a, int b)
         {
             return (a + b - 1) / b;
         }
+
     }
 }
