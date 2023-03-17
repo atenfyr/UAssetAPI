@@ -119,19 +119,12 @@ namespace UAssetAPI.Unversioned
                 if (ver < UsmapVersion.Initial || ver > UsmapVersion.Latest) throw new FormatException(".usmap: Unknown file version " + ver);
                 if (ver >= UsmapVersion.PackageVersioning)
                 {
-                    bool bHasVersioning = reader.ReadBoolean();
+                    bool bHasVersioning = reader.ReadInt32() > 0;
                     if (bHasVersioning)
                     {
-                        reader.ReadInt32();
-                        reader.ReadInt32();
-
-                        int numCustomVersions = reader.ReadInt32();
-                        for (int i = 0; i < numCustomVersions; i++)
-                        {
-                            reader.ReadBytes(16);
-                            reader.ReadInt32();
-                        }
-
+                        reader.ReadUInt32();
+                        reader.ReadUInt32();
+                        reader.ReadCustomVersionContainer(ECustomVersionSerializationFormat.Optimized);
                         reader.ReadUInt32();
                     }
                 }
@@ -148,7 +141,7 @@ namespace UAssetAPI.Unversioned
                 writer.Seek(0, SeekOrigin.Begin);
                 writer.Write(Usmap.USMAP_MAGIC);
                 writer.Write((byte)ver);
-                writer.Write(true);
+                writer.Write((int)1);
                 writer.Write((uint)ObjectVersion);
                 writer.Write((uint)ObjectVersionUE5);
                 writer.WriteCustomVersionContainer(ECustomVersionSerializationFormat.Optimized, CustomVersionContainer);

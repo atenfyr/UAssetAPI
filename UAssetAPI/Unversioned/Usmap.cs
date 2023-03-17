@@ -475,7 +475,7 @@ namespace UAssetAPI.Unversioned
             // package versioning
             if (Version >= UsmapVersion.PackageVersioning)
             {
-                bool bHasVersioning = reader.ReadBoolean();
+                bool bHasVersioning = reader.ReadInt32() > 0;
                 if (bHasVersioning)
                 {
                     FileVersionUE4 = (ObjectVersion)reader.ReadInt32();
