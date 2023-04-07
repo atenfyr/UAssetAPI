@@ -283,7 +283,7 @@ namespace UAssetAPI
         /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
         public MemoryStream PathToStream(string p)
         {
-            using (FileStream origStream = File.Open(p, FileMode.Open))
+            using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
             {
                 MemoryStream completeStream = new MemoryStream();
                 origStream.CopyTo(completeStream);
