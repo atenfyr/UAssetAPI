@@ -117,6 +117,8 @@ namespace UAssetAPI.UnrealTypes
                 case EPackageObjectIndexType.Export:
                     throw new InvalidOperationException("Attempt to call ToImport on an FPackageObjectIndex with type " + Type);
                 case EPackageObjectIndexType.ScriptImport:
+                    //var test = asset.GlobalData.ScriptObjectEntriesMap[this];
+
                     string derivedStr = asset.GetStringFromCityHash64(Hash); // TODO: why do some hashes not show up here properly? need to get some test cases with their actual intended values
                     string[] derivedStrSplit = derivedStr?.Split('.');
                     res.ObjectName = null; // TODO: how can we derive this value?

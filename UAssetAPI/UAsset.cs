@@ -1244,15 +1244,15 @@ namespace UAssetAPI
             foreach (KeyValuePair<FName, string> entry in toBeFilled)
             {
                 entry.Key.Asset = this;
-                if (entry.Value == string.Empty)
-                {
-                    entry.Key.DummyValue = new FString(entry.Value);
-                }
-                else
+                if (FName.IsFromStringValid(this, entry.Value))
                 {
                     var dummy = FName.FromString(this, entry.Value);
                     entry.Key.Value = dummy.Value;
                     entry.Key.Number = dummy.Number;
+                }
+                else
+                {
+                    entry.Key.DummyValue = FString.FromString(entry.Value);
                 }
             }
             toBeFilled.Clear();
@@ -1289,15 +1289,15 @@ namespace UAssetAPI
             foreach (KeyValuePair<FName, string> entry in toBeFilled)
             {
                 entry.Key.Asset = res;
-                if (entry.Value == string.Empty)
-                {
-                    entry.Key.DummyValue = new FString(entry.Value);
-                }
-                else
+                if (FName.IsFromStringValid(res, entry.Value))
                 {
                     var dummy = FName.FromString(res, entry.Value);
                     entry.Key.Value = dummy.Value;
                     entry.Key.Number = dummy.Number;
+                }
+                else
+                {
+                    entry.Key.DummyValue = FString.FromString(entry.Value);
                 }
             }
             toBeFilled.Clear();
@@ -1347,15 +1347,15 @@ namespace UAssetAPI
             foreach (KeyValuePair<FName, string> entry in toBeFilled)
             {
                 entry.Key.Asset = res;
-                if (entry.Value == string.Empty)
-                {
-                    entry.Key.DummyValue = new FString(entry.Value);
-                }
-                else
+                if (FName.IsFromStringValid(res, entry.Value))
                 {
                     var dummy = FName.FromString(res, entry.Value);
                     entry.Key.Value = dummy.Value;
                     entry.Key.Number = dummy.Number;
+                }
+                else
+                {
+                    entry.Key.DummyValue = FString.FromString(entry.Value);
                 }
             }
             toBeFilled.Clear();
