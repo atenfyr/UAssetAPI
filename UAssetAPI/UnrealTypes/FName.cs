@@ -91,7 +91,7 @@ namespace UAssetAPI.UnrealTypes
         internal FString DummyValue = null;
 
         /// <summary>
-        /// Converts this FName instance into a human-readable string. This is the inverse of <see cref="FromString(UnrealPackage, string)"/>.
+        /// Converts this FName instance into a human-readable string. This is the inverse of <see cref="FromString(INameMap, string)"/>.
         /// </summary>
         /// <returns>The human-readable string that represents this FName.</returns>
         public override string ToString()
@@ -101,16 +101,9 @@ namespace UAssetAPI.UnrealTypes
             return Value.ToString();
         }
 
-        /// <summary>
-        /// Converts a human-readable string into an FName instance. This is the inverse of <see cref="ToString"/>.
-        /// </summary>
-        /// <param name="asset">The asset that the new FName will be bound to.</param>
-        /// <param name="val">The human-readable string to convert into an FName instance.</param>
-        /// <returns>An FName instance that this string represents.</returns>
-        public static FName FromString(UnrealPackage asset, string val)
+        internal static void FromStringFragments(INameMap asset, string val, out string str, out int num)
         {
-            if (val == null || val == FString.NullCase) return null;
-            if (val.Length == 0) return new FName(asset, val, 0);
+            str = val; num = 0;
 
             if (val[val.Length - 1] >= '0' && val[val.Length - 1] <= '9')
             {
@@ -126,12 +119,39 @@ namespace UAssetAPI.UnrealTypes
                     string endSegment = val.Substring(i + 1, val.Length - i - 1);
                     if (endSegment.Length == 1 || endSegment[0] != '0')
                     {
-                        if (int.TryParse(endSegment, out int endSegmentVal)) return new FName(asset, startSegment, endSegmentVal + 1);
+                        if (int.TryParse(endSegment, out int endSegmentVal))
+                        {
+                            str = startSegment;
+                            num = endSegmentVal + 1;
+                            return;
+                        }
                     }
                 }
             }
-            
-            return new FName(asset, val, 0);
+        }
+
+        public static bool IsFromStringValid(INameMap asset, string val)
+        {
+            if (val == null || val == FString.NullCase) return true;
+            if (val.Length == 0) return true;
+
+            FromStringFragments(asset, val, out string value, out _);
+            return asset.ContainsNameReference(FString.FromString(value));
+        }
+
+        /// <summary>
+        /// Converts a human-readable string into an FName instance. This is the inverse of <see cref="ToString"/>.
+        /// </summary>
+        /// <param name="asset">The asset that the new FName will be bound to.</param>
+        /// <param name="val">The human-readable string to convert into an FName instance.</param>
+        /// <returns>An FName instance that this string represents.</returns>
+        public static FName FromString(INameMap asset, string val)
+        {
+            if (val == null || val == FString.NullCase) return null;
+            if (val.Length == 0) return new FName(asset, val, 0);
+
+            FromStringFragments(asset, val, out string value, out int number);
+            return new FName(asset, value, number);
         }
 
         /// <summary>

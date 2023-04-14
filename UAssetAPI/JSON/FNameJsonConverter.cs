@@ -20,7 +20,7 @@ namespace UAssetAPI.JSON
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var realVal = (FName)value;
-            writer.WriteValue(realVal.DummyValue == null ? (realVal is null ? "null" : realVal.ToString()) : string.Empty);
+            writer.WriteValue(realVal.DummyValue == null ? (realVal is null ? "null" : realVal.ToString()) : realVal.DummyValue.ToString());
         }
 
         public override bool CanRead

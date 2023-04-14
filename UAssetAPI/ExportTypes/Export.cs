@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +42,40 @@ namespace UAssetAPI.ExportTypes
     [JsonObject(MemberSerialization.OptOut)]
     public class Export : ICloneable
     {
+        public bool ShouldSerializeOuterIndex()
+        {
+            return _OuterIndex != null;
+        }
+        public bool ShouldSerializeClassIndex()
+        {
+            return _ClassIndex != null;
+        }
+        public bool ShouldSerializeSuperIndex()
+        {
+            return _SuperIndex != null;
+        }
+        public bool ShouldSerializeTemplateIndex()
+        {
+            return _TemplateIndex != null;
+        }
+
+        public bool ShouldSerializeZen_OuterIndex()
+        {
+            return _OuterIndex == null;
+        }
+        public bool ShouldSerializeZen_ClassIndex()
+        {
+            return _ClassIndex == null;
+        }
+        public bool ShouldSerializeZen_SuperIndex()
+        {
+            return _SuperIndex == null;
+        }
+        public bool ShouldSerializeZen_TemplateIndex()
+        {
+            return _TemplateIndex == null;
+        }
+
         // traditional info
         private FPackageIndex _OuterIndex;
         private FPackageIndex _ClassIndex;
