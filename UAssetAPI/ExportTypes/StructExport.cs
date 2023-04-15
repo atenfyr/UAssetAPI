@@ -106,7 +106,7 @@ namespace UAssetAPI.ExportTypes
 #pragma warning disable CS0168 // Variable is declared but never used
             try
             {
-                if (ParseBytecode && Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SWEEP_WHILE_WALKING_FLAG)
+                if (ParseBytecode)
                 {
                     var tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)
