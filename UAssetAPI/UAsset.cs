@@ -695,7 +695,7 @@ namespace UAssetAPI
 
             // DependsMap
             DependsMap = new List<int[]>();
-            if (DependsOffset > 0 || (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)) // 4.14-4.16 the depends offset wasnt updated so always serialized as 0
+            if (DependsOffset > 0 || (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)) // 4.14-4.15 the depends offset wasnt updated so always serialized as 0
             {
                 for (int i = 0; i < ExportCount; i++)
                 {
