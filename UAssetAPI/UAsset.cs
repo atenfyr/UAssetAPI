@@ -301,6 +301,11 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Whether or not this asset is loaded with the Event Driven Loader.
+        /// </summary>
+        public bool UsesEventDrivenLoader;
+
+        /// <summary>
         /// Map of object imports. UAssetAPI used to call these "links."
         /// </summary>
         public List<Import> Imports;
@@ -690,9 +695,8 @@ namespace UAssetAPI
 
             // DependsMap
             DependsMap = new List<int[]>();
-            if (DependsOffset > 0)
+            if (DependsOffset > 0 || (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)) // 4.14-4.16 the depends offset wasnt updated so always serialized as 0
             {
-                reader.BaseStream.Seek(DependsOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ExportCount; i++)
                 {
                     int size = reader.ReadInt32();
@@ -763,25 +767,25 @@ namespace UAssetAPI
             }
 
             // PreloadDependencies
-            if (this.UseSeparateBulkDataFiles)
+            for (int i = 0; i < Exports.Count; i++)
             {
-                for (int i = 0; i < Exports.Count; i++)
-                {
-                    reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
-                    reader.BaseStream.Seek(Exports[i].FirstExportDependencyOffset * sizeof(int), SeekOrigin.Current);
+                if (Exports[i].FirstExportDependencyOffset < 0) continue;
+                this.UsesEventDrivenLoader = true;
 
-                    Exports[i].SerializationBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeSerializationDependenciesSize);
-                    for (int j = 0; j < Exports[i].SerializationBeforeSerializationDependenciesSize; j++) Exports[i].SerializationBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+                reader.BaseStream.Seek(PreloadDependencyOffset, SeekOrigin.Begin);
+                reader.BaseStream.Seek(Exports[i].FirstExportDependencyOffset * sizeof(int), SeekOrigin.Current);
 
-                    Exports[i].CreateBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeSerializationDependenciesSize);
-                    for (int j = 0; j < Exports[i].CreateBeforeSerializationDependenciesSize; j++) Exports[i].CreateBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+                Exports[i].SerializationBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeSerializationDependenciesSize);
+                for (int j = 0; j < Exports[i].SerializationBeforeSerializationDependenciesSize; j++) Exports[i].SerializationBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
 
-                    Exports[i].SerializationBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeCreateDependenciesSize);
-                    for (int j = 0; j < Exports[i].SerializationBeforeCreateDependenciesSize; j++) Exports[i].SerializationBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+                Exports[i].CreateBeforeSerializationDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeSerializationDependenciesSize);
+                for (int j = 0; j < Exports[i].CreateBeforeSerializationDependenciesSize; j++) Exports[i].CreateBeforeSerializationDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
 
-                    Exports[i].CreateBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeCreateDependenciesSize);
-                    for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) Exports[i].CreateBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
-                }
+                Exports[i].SerializationBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].SerializationBeforeCreateDependenciesSize);
+                for (int j = 0; j < Exports[i].SerializationBeforeCreateDependenciesSize; j++) Exports[i].SerializationBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
+
+                Exports[i].CreateBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeCreateDependenciesSize);
+                for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) Exports[i].CreateBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
             }
 
             // Export data
@@ -1016,7 +1020,7 @@ namespace UAssetAPI
                 // DependsMap
                 if (this.doWeHaveDependsMap)
                 {
-                    this.DependsOffset = (int)writer.BaseStream.Position;
+                    this.DependsOffset = (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES) ? 0 : (int)writer.BaseStream.Position;
                     for (int i = 0; i < this.Exports.Count; i++)
                     {
                         if (i >= this.DependsMap.Count) this.DependsMap.Add(new int[0]);
@@ -1032,6 +1036,7 @@ namespace UAssetAPI
                 else
                 {
                     this.DependsOffset = 0;
+                    writer.Write((int)0);
                 }
 
                 // SoftPackageReferenceList
@@ -1080,7 +1085,8 @@ namespace UAssetAPI
 
                 // PreloadDependencies
                 this.PreloadDependencyOffset = (int)writer.BaseStream.Position;
-                if (this.UseSeparateBulkDataFiles)
+                if (this.UseSeparateBulkDataFiles) this.UsesEventDrivenLoader = true;
+                if (this.UsesEventDrivenLoader)
                 {
                     this.PreloadDependencyCount = 0;
                     for (int i = 0; i < this.Exports.Count; i++)

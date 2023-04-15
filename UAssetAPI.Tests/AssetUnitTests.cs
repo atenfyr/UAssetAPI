@@ -371,6 +371,7 @@ namespace UAssetAPI.Tests
         [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uexp", "TestManyAssets/CodeVein")]
         [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uasset", "TestManyAssets/StarlitSeason")]
         [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uexp", "TestManyAssets/StarlitSeason")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Tekken/BP_TekkenPlayer_Modular.uasset", "TestManyAssets/Tekken")]
         [DeploymentItem(@"TestAssets/TestManyAssets/VERSIONED/Assault_M1A1Thompson_WW2_DrumSuppressor.uasset", "TestManyAssets/VERSIONED")]
         public void TestManyAssets()
         {
@@ -378,6 +379,7 @@ namespace UAssetAPI.Tests
             TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
+            TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
             TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
             TestManyAssetsSubsection("VERSIONED", EngineVersion.UNKNOWN);
         }
