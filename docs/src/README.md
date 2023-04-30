@@ -2,19 +2,16 @@
 
 UAssetAPI is a .NET library for reading and writing Unreal Engine 4 game assets.
 
-## Major features
+## Features
+- Low-level read/write capability for a wide variety of cooked .uasset files from ~4.13 to 4.27
+- Support for more than 80 property types and 10 export types
+- Support for JSON export and import to a proprietary format that maintains binary equality
+- Support for reading and writing raw Kismet (blueprint) bytecode
+- Reading capability for the unofficial .usmap format to parse ambiguous and unversioned properties
+- Robust fail-safes for many properties and exports that fail serialization
+- Automatic reflection for new property types in other loaded assemblies
+- Continual updates to support games with custom or obfuscated serialization
 
-- Lua scripting API: Write lua mods based on the UE object system
-- Blueprint Modloading: Spawn blueprint mods automatically without editing/replacing game files.
-- Live property editor: Search, view, edit & watch the properties of every loaded object, great for debugging mods or figuring out how values are changed during runtime
-- Generate Unreal Header Tool compatible C++ headers for creating a mirror .uproject for your game
-- Generate standard C++ headers from reflected classes and blueprints, with offsets
-- Unlock the game console
-- Generate .usmap mapping files for unversioned properties
-- Dump all loaded actors to file to generate .umaps in-editor
+## Usage
+To get started using UAssetAPI, first build the API using the [Build Instructions guide](guide/build.md) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](guide/basic.md).
 
-## Targeting UE Versions: From 4.12 To 5.1
-
-The goal of UE4SS is not to be a plug-n-play solution that always works with every game.  
-The goal is to have an underlying system that works for most games.  
-You may need to update AOBs on your own, and there's a guide for that below.  
