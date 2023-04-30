@@ -1,0 +1,18 @@
+# EAirAbsorptionMethod
+
+Namespace: UAssetAPI.UnrealTypes
+
+```csharp
+public enum EAirAbsorptionMethod
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EAirAbsorptionMethod](./uassetapi.unrealtypes.eairabsorptionmethod.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| Linear | 0 |  |
+| CustomCurve | 1 |  |
+| EAirAbsorptionMethod_MAX | 2 |  |

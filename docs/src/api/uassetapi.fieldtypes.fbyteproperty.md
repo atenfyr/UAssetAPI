@@ -1,0 +1,109 @@
+# FByteProperty
+
+Namespace: UAssetAPI.FieldTypes
+
+```csharp
+public class FByteProperty : FProperty
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FField](./uassetapi.fieldtypes.ffield.md) → [FProperty](./uassetapi.fieldtypes.fproperty.md) → [FByteProperty](./uassetapi.fieldtypes.fbyteproperty.md)
+
+## Fields
+
+### **Enum**
+
+A pointer to the UEnum represented by this property
+
+```csharp
+public FPackageIndex Enum;
+```
+
+### **ArrayDim**
+
+```csharp
+public EArrayDim ArrayDim;
+```
+
+### **ElementSize**
+
+```csharp
+public int ElementSize;
+```
+
+### **PropertyFlags**
+
+```csharp
+public EPropertyFlags PropertyFlags;
+```
+
+### **RepIndex**
+
+```csharp
+public ushort RepIndex;
+```
+
+### **RepNotifyFunc**
+
+```csharp
+public FName RepNotifyFunc;
+```
+
+### **BlueprintReplicationCondition**
+
+```csharp
+public ELifetimeCondition BlueprintReplicationCondition;
+```
+
+### **RawValue**
+
+```csharp
+public object RawValue;
+```
+
+### **SerializedType**
+
+```csharp
+public FName SerializedType;
+```
+
+### **Name**
+
+```csharp
+public FName Name;
+```
+
+### **Flags**
+
+```csharp
+public EObjectFlags Flags;
+```
+
+## Constructors
+
+### **FByteProperty()**
+
+```csharp
+public FByteProperty()
+```
+
+## Methods
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+public void Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public void Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

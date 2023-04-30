@@ -1,0 +1,19 @@
+# AnimationKeyFormat
+
+Namespace: UAssetAPI.UnrealTypes
+
+```csharp
+public enum AnimationKeyFormat
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [AnimationKeyFormat](./uassetapi.unrealtypes.animationkeyformat.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| AKF_ConstantKeyLerp | 0 |  |
+| AKF_VariableKeyLerp | 1 |  |
+| AKF_PerTrackCompression | 2 |  |
+| AKF_MAX | 3 |  |

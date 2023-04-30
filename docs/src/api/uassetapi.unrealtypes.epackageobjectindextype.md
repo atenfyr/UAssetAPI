@@ -1,0 +1,20 @@
+# EPackageObjectIndexType
+
+Namespace: UAssetAPI.UnrealTypes
+
+```csharp
+public enum EPackageObjectIndexType
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EPackageObjectIndexType](./uassetapi.unrealtypes.epackageobjectindextype.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| Export | 0 |  |
+| ScriptImport | 1 |  |
+| PackageImport | 2 |  |
+| Null | 3 |  |
+| TypeCount | 3 |  |

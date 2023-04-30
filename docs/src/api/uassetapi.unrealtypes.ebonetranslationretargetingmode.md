@@ -1,0 +1,21 @@
+# EBoneTranslationRetargetingMode
+
+Namespace: UAssetAPI.UnrealTypes
+
+```csharp
+public enum EBoneTranslationRetargetingMode
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EBoneTranslationRetargetingMode](./uassetapi.unrealtypes.ebonetranslationretargetingmode.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| Animation | 0 |  |
+| Skeleton | 1 |  |
+| AnimationScaled | 2 |  |
+| AnimationRelative | 3 |  |
+| OrientAndScale | 4 |  |
+| EBoneTranslationRetargetingMode_MAX | 5 |  |

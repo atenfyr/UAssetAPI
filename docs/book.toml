@@ -1,0 +1,13 @@
+[book]
+authors = ["atenfyr"]
+language = "en"
+multilingual = false
+src = "src"
+title = "UAssetAPI Documentation"
+
+[output.html]
+additional-css = ["css/custom.css"]
+
+[output.html.fold]
+enable = true
+level = 0
