@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UAssetAPI.Unversioned
 {
@@ -15,6 +16,7 @@ namespace UAssetAPI.Unversioned
         public LinkedListNode<FFragment> CurrentFragment;
         public int UnversionedPropertyIndex = 0;
         public int ZeroMaskIndex = 0;
+        public uint ZeroMaskNum = 0;
         public BitArray ZeroMask;
         public bool bHasNonZeroValues = false;
 
@@ -24,7 +26,6 @@ namespace UAssetAPI.Unversioned
             Fragments = new LinkedList<FFragment>();
 
             FFragment Fragment;
-            uint ZeroMaskNum = 0;
             uint UnmaskedNum = 0;
             int firstNum = 0;
             do

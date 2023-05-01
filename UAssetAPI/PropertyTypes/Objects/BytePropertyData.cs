@@ -67,7 +67,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
 
             bool useFailsafe = true;
-            if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapPropertyData propDat))
+            if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapPropertyData propDat))
             {
                 useFailsafe = false;
                 ByteType = propDat is UsmapEnumData ? BytePropertyType.FName : BytePropertyType.Byte;

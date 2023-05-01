@@ -67,7 +67,7 @@ namespace UAssetAPI.Unversioned
             FFragment Fragment = new FFragment();
             Fragment.SkipNum = FirstNum - LastNumBefore - 1;
             Fragment.ValueNum = LastNum - FirstNum + 1;
-            Fragment.bHasAnyZeroes = hasAnyZeros; // temp
+            Fragment.bHasAnyZeroes = hasAnyZeros;
             Fragment.bIsLast = isLast;
 
             Fragment.FirstNum = FirstNum;

@@ -64,7 +64,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 case "StructProperty":
                     FName strucType = null;
 
-                    if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapMapData mapDat))
+                    if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapMapData mapDat))
                     {
                         if (isKey && mapDat.InnerType is UsmapStructData strucDat1)
                         {

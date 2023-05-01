@@ -147,7 +147,7 @@ namespace UAssetAPI
             Dictionary<int, bool> zeroProps = new Dictionary<int, bool>();
             foreach (PropertyData entry in data)
             {
-                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
+                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
                 zeroProps[idx] = entry.IsZero;
 
@@ -208,7 +208,9 @@ namespace UAssetAPI
             {
                 // add "blank" fragment
                 // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
-                allFrags.Add(new FFragment(Math.Min(asset.Mappings.GetAllProperties(parentName?.Value?.Value).Count, FFragment.SkipMax), 0, true, false));
+                string highestSchema = parentName?.Value?.Value;
+                int numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                allFrags.Add(new FFragment(numSkip, 0, true, false));
             }
 
             // generate zero mask
@@ -356,6 +358,7 @@ namespace UAssetAPI
             FName type = null;
             int leng = 0;
             int duplicationIndex = 0;
+            string structType = null;
             bool isZero = false;
 
             if (reader.Asset.HasUnversionedProperties)
@@ -365,7 +368,7 @@ namespace UAssetAPI
                     throw new InvalidMappingsException();
                 }
 
-                UsmapSchema relevantSchema = reader.Asset.Mappings.Schemas[parentName.Value.Value];
+                UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName.Value.Value, reader.Asset);
                 while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
                     if (header.CurrentFragment.Value.bIsLast) return null;
@@ -387,6 +390,7 @@ namespace UAssetAPI
                 type = FName.DefineDummy(reader.Asset, relevantProperty.PropertyData.Type.ToString());
                 leng = 1; // not serialized
                 duplicationIndex = relevantProperty.ArrayIndex;
+                if (relevantProperty.PropertyData is UsmapStructData usmapStruc) structType = usmapStruc.StructType;
 
                 // check if property is zero
                 if (header.CurrentFragment.Value.bHasAnyZeroes)
@@ -408,6 +412,7 @@ namespace UAssetAPI
             }
 
             PropertyData result = TypeToClass(type, name, ancestry, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
+            if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             return result;
         }

@@ -47,7 +47,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
 
             FName arrayStructType = null;
-            if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapArrayData strucDat1))
+            if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapArrayData strucDat1))
             {
                 ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
                 if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(reader.Asset, strucDat2.StructType);
