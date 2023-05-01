@@ -15,3 +15,9 @@ UAssetAPI is a .NET library for reading and writing Unreal Engine 4 game assets.
 ## Usage
 To get started using UAssetAPI, first build the API using the [Build Instructions guide](guide/build.md) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](guide/basic.md).
 
+UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly view and modify game assets by hand, is also available and can be downloaded for free on GitHub at [https://github.com/atenfyr/UAssetGUI/releases](https://github.com/atenfyr/UAssetGUI/releases).
+
+## Support
+The source code of UAssetAPI is publicly available on GitHub at [https://github.com/atenfyr/UAssetAPI](https://github.com/atenfyr/UAssetAPI), and all contributions are greatly appreciated.
+
+Any bugs or feature requests that you may have can be submitted on the GitHub page as an issue. I am also active on the Unreal Engine Modding Discord server and will often answer questions about UAssetAPI usage and functionality, which you can join with this invite link: [https://discord.gg/zVvsE9mEEa](https://discord.gg/zVvsE9mEEa).
