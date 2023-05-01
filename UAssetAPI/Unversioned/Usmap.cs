@@ -356,6 +356,7 @@ namespace UAssetAPI.Unversioned
 
         public static UsmapSchema GetSchemaFromStructExport(string exportName, UnrealPackage asset)
         {
+            if (asset == null) throw new InvalidOperationException("Cannot evaluate struct export without package reference");
             foreach (var exp in asset.Exports)
             {
                 if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp);
@@ -380,15 +381,17 @@ namespace UAssetAPI.Unversioned
         /// Retrieve all the properties that a particular schema can reference.
         /// </summary>
         /// <param name="schemaName">The name of the schema of interest.</param>
+        /// <param name="asset">An asset to also search for schemas within.</param>
         /// <returns>All the properties that the schema can reference.</returns>
-        public IList<UsmapProperty> GetAllProperties(string schemaName)
+        public IList<UsmapProperty> GetAllProperties(string schemaName, UnrealPackage asset = null)
         {
             List<UsmapProperty> res = new List<UsmapProperty>();
-            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            while (schemaName != null && relevantSchema != null)
             {
-                var relevantSchema = this.Schemas[schemaName];
                 res.AddRange(relevantSchema.Properties.Values);
                 schemaName = relevantSchema.SuperType;
+                relevantSchema = this.GetSchemaFromName(schemaName, asset);
             }
             return res;
         }
@@ -397,20 +400,21 @@ namespace UAssetAPI.Unversioned
         /// Retrieve all the properties that a particular schema can reference as an annotated, human-readable text file.
         /// </summary>
         /// <param name="schemaName">The name of the schema of interest.</param>
+        /// <param name="asset">An asset to also search for schemas within.</param>
         /// <param name="customAnnotations">A map of strings to give custom annotations.</param>
         /// <param name="recursive">Whether or not to dump data for parent schemas as well.</param>
         /// <param name="headerPrefix">The prefix of the subheader for each relevant schema.</param>
         /// <param name="headerSuffix">The suffix of the subheader for each relevant schema.</param>
         /// <returns>An annotated, human-readable text file containing the properties that the schema can reference.</returns>
-        public string GetAllPropertiesAnnotated(string schemaName, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
+        public string GetAllPropertiesAnnotated(string schemaName, UnrealPackage asset, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
         {
             List<string> res = new List<string>();
             bool hasDoneFirst = false;
-            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            while (schemaName != null && relevantSchema != null)
             {
                 res.Add(headerPrefix + schemaName + headerSuffix);
 
-                var relevantSchema = this.Schemas[schemaName];
                 if (recursive || !hasDoneFirst)
                 {
                     foreach (UsmapProperty prop in relevantSchema.Properties.Values)
@@ -423,19 +427,22 @@ namespace UAssetAPI.Unversioned
                 }
 
                 schemaName = relevantSchema.SuperType;
+                relevantSchema = this.GetSchemaFromName(schemaName, asset);
                 hasDoneFirst = true;
             }
             return string.Join("\n", res.ToArray());
         }
 
-        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset)
+        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null)
         {
-            UsmapSchema relevantSchema;
+            if (string.IsNullOrWhiteSpace(nm)) return null;
+
+            UsmapSchema relevantSchema = null;
             if (asset.Mappings.Schemas.ContainsKey(nm))
             {
-                relevantSchema = asset.Mappings.Schemas[nm];
+                relevantSchema = this.Schemas[nm];
             }
-            else
+            else if (asset != null)
             {
                 relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
             }
