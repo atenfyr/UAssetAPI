@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using UAssetAPI.ExportTypes;
+using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -317,6 +318,64 @@ namespace UAssetAPI.Unversioned
             CityHash64Map.Add(hsh, val);
         }
 
+        private static UsmapPropertyData ConvertFPropertyToUsmapPropertyData(StructExport exp, FProperty entry)
+        {
+            var typ = entry.GetUsmapPropertyType();
+            UsmapPropertyData converted1;
+            switch (typ)
+            {
+                case EPropertyType.EnumProperty:
+                    var exp2 = ((entry as FEnumProperty).Enum.ToExport(exp.Asset) as EnumExport);
+                    var allNames = new List<string>();
+                    foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
+                    converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
+                    break;
+                case EPropertyType.StructProperty:
+                    var strucstr = Export.GetClassTypeForAncestry((entry as FStructProperty).Struct, exp.Asset);
+                    converted1 = new UsmapStructData(strucstr.ToString());
+                    break;
+                case EPropertyType.SetProperty:
+                    converted1 = new UsmapArrayData(typ);
+                    (converted1 as UsmapArrayData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FSetProperty).ElementProp);
+                    break;
+                case EPropertyType.ArrayProperty:
+                    converted1 = new UsmapArrayData(typ);
+                    (converted1 as UsmapArrayData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FArrayProperty).Inner);
+                    break;
+                case EPropertyType.MapProperty:
+                    converted1 = new UsmapMapData();
+                    (converted1 as UsmapMapData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).KeyProp);
+                    (converted1 as UsmapMapData).ValueType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).ValueProp);
+                    break;
+                default:
+                    converted1 = new UsmapPropertyData(typ);
+                    break;
+            }
+            return converted1;
+        }
+
+        public static UsmapSchema GetSchemaFromStructExport(string exportName, UnrealPackage asset)
+        {
+            foreach (var exp in asset.Exports)
+            {
+                if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp);
+            }
+            return null;
+        }
+
+        public static UsmapSchema GetSchemaFromStructExport(StructExport exp)
+        {
+            var res = new Dictionary<int, UsmapProperty>();
+            int idx = 0;
+            foreach (FProperty entry in exp.LoadedProperties)
+            {
+                UsmapProperty converted = new UsmapProperty(entry.Name.ToString(), (ushort)idx, 0, 1, ConvertFPropertyToUsmapPropertyData(exp, entry));
+                res.Add(idx, converted);
+                idx++;
+            }
+            return new UsmapSchema(exp.ObjectName.ToString(), exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null, (ushort)res.Count, res);
+        }
+
         /// <summary>
         /// Retrieve all the properties that a particular schema can reference.
         /// </summary>
@@ -369,6 +428,21 @@ namespace UAssetAPI.Unversioned
             return string.Join("\n", res.ToArray());
         }
 
+        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset)
+        {
+            UsmapSchema relevantSchema;
+            if (asset.Mappings.Schemas.ContainsKey(nm))
+            {
+                relevantSchema = asset.Mappings.Schemas[nm];
+            }
+            else
+            {
+                relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
+            }
+            if (relevantSchema == null) throw new FormatException("Failed to find a valid schema for parent name " + nm);
+            return relevantSchema;
+        }
+
         /// <summary>
         /// Attempts to retrieve the corresponding .usmap property, given its ancestry.
         /// </summary>
@@ -376,18 +450,19 @@ namespace UAssetAPI.Unversioned
         /// <param name="propertyName">The name of the property to search for.</param>
         /// <param name="ancestry">The ancestry of the property to search for.</param>
         /// <param name="dupIndex">The duplication index of the property to search for. If unknown, set to 0.</param>
+        /// <param name="asset">An asset to also search for schemas within.</param>
         /// <param name="propDat">The property.</param>
         /// <param name="idx">The index of the property.</param>
         /// <returns>Whether or not the property was successfully found.</returns>
-        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, out T propDat, out int idx) where T : UsmapProperty
+        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, UnrealPackage asset, out T propDat, out int idx) where T : UsmapProperty
         {
             propDat = null;
 
             idx = 0;
             var schemaName = ancestry.Parent.Value.Value;
-            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            while (schemaName != null && relevantSchema != null)
             {
-                var relevantSchema = this.Schemas[schemaName];
                 propDat = relevantSchema.GetProperty(propertyName.Value.Value, dupIndex) as T;
                 if (propDat != null)
                 {
@@ -397,6 +472,7 @@ namespace UAssetAPI.Unversioned
 
                 idx += relevantSchema.PropCount;
                 schemaName = relevantSchema.SuperType;
+                relevantSchema = this.GetSchemaFromName(schemaName, asset);
             }
 
             return false;
@@ -408,25 +484,27 @@ namespace UAssetAPI.Unversioned
         /// <typeparam name="T">The type of property data to output.</typeparam>
         /// <param name="propertyName">The name of the property to search for.</param>
         /// <param name="ancestry">The ancestry of the property to search for.</param>
+        /// <param name="asset">An asset to also search for schemas within.</param>
         /// <param name="propDat">The property data.</param>
         /// <returns>Whether or not the property data was successfully found.</returns>
-        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, out T propDat) where T : UsmapPropertyData
+        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, UnrealPackage asset, out T propDat) where T : UsmapPropertyData
         {
             propDat = null;
 
             var schemaName = ancestry.Parent.Value.Value;
-            while (schemaName != null && this.Schemas.ContainsKey(schemaName))
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            while (schemaName != null && relevantSchema != null)
             {
-                var relevantSchema = this.Schemas[schemaName];
                 propDat = relevantSchema.GetProperty(propertyName.Value.Value, 0)?.PropertyData as T;
                 if (propDat != null) return true;
                 schemaName = relevantSchema.SuperType;
+                relevantSchema = this.GetSchemaFromName(schemaName, asset);
             }
 
             if (propertyName.IsDummy && int.TryParse(propertyName.Value.Value, out _))
             {
                 // this is actually an array member; try to find its parent array
-                if (this.TryGetPropertyData(ancestry.Parent, ancestry.CloneWithoutParent(), out UsmapArrayData arrDat))
+                if (this.TryGetPropertyData(ancestry.Parent, ancestry.CloneWithoutParent(), asset, out UsmapArrayData arrDat))
                 {
                     propDat = arrDat.InnerType as T;
                     if (propDat != null) return true;
@@ -524,7 +602,7 @@ namespace UAssetAPI.Unversioned
                 case EPropertyType.ArrayProperty:
                     return new UsmapArrayData(typ);
                 case EPropertyType.MapProperty:
-                    return new UsmapMapData();                    
+                    return new UsmapMapData();
             }
 
             return new UsmapPropertyData(typ);

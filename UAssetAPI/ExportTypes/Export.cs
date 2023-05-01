@@ -442,7 +442,14 @@ namespace UAssetAPI.ExportTypes
         public FName GetClassTypeForAncestry(UnrealPackage asset = null)
         {
             if (asset == null) asset = Asset;
-            return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(asset).ObjectName : asset.GetParentClassExportName();
+            return GetClassTypeForAncestry(this.ClassIndex, asset);
+        }
+
+        public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset = null)
+        {
+            if (classIndex.IsNull()) return null;
+            if (classIndex.IsImport()) return classIndex.ToImport(asset).ObjectName;
+            return classIndex.ToExport(asset).ObjectName;
         }
 
         public override string ToString()

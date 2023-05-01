@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using System;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.FieldTypes
 {
@@ -53,6 +53,12 @@ namespace UAssetAPI.FieldTypes
         public T GetObject<T>()
         {
             return (T)RawValue;
+        }
+
+        public EPropertyType GetUsmapPropertyType()
+        {
+            if (Enum.TryParse(SerializedType.Value.Value, out EPropertyType res)) return res;
+            return EPropertyType.Unknown;
         }
 
         public override void Read(AssetBinaryReader reader)

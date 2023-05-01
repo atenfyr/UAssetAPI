@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (reader.Asset.HasUnversionedProperties)
             {
-                if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapEnumData enumDat1))
+                if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
                 {
                     EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
                     InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
@@ -46,7 +46,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 if (InnerType?.Value.Value == "ByteProperty")
                 {
                     int enumIndice = reader.ReadByte();
-                    Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value][enumIndice]);
+                    Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value][enumIndice]);
                     return;
                 }
             }
@@ -65,7 +65,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             {
                 if (InnerType?.Value?.Value == "ByteProperty")
                 {
-                    int enumIndice = writer.Asset.Mappings.EnumMap[EnumType.Value.Value].FindIndex(a => a == Value.Value.Value); // wow this code is stupid
+                    int enumIndice = Value == null ? 255 : writer.Asset.Mappings.EnumMap[EnumType.Value.Value].FindIndex(a => a == Value.Value.Value); // wow this code is stupid
                     writer.Write((byte)enumIndice);
                     return sizeof(byte);
                 }

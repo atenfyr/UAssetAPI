@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -69,12 +68,12 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, out UsmapStructData strucDat1))
+            if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapStructData strucDat1))
             {
                 StructType = FName.DefineDummy(reader.Asset, strucDat1.StructType);
             }
 
-            if (reader.Asset.HasUnversionedProperties && StructType == null)
+            if (reader.Asset.HasUnversionedProperties && StructType?.Value?.Value == null)
             {
                 throw new InvalidOperationException("Unable to determine struct type for struct " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
             }
