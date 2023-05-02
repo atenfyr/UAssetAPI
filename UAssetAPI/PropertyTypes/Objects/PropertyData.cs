@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
@@ -75,11 +76,6 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// An optional property GUID. Nearly always null.
         /// </summary>
         public Guid? PropertyGuid = null;
-
-        /// <summary>
-        /// Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
-        /// </summary>
-        public bool IsZero = false;
 
         /// <summary>
         /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -157,6 +153,21 @@ namespace UAssetAPI.PropertyTypes.Objects
         public virtual int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             return 0;
+        }
+
+        /// <summary>
+        /// Does the body of this property entirely consist of null bytes? If so, the body will not be serialized in unversioned properties.
+        /// </summary>
+        /// <param name="asset">The asset to test serialization within.</param>
+        /// <returns>Whether or not the property is zero.</returns>
+        public virtual bool IsZero(UnrealPackage asset)
+        {
+            MemoryStream testStrm = new MemoryStream(32); this.Write(new AssetBinaryWriter(testStrm, asset), false); byte[] testByteArray = testStrm.ToArray();
+            foreach (byte entry in testByteArray)
+            {
+                if (entry != 0) return false;
+            }
+            return true;
         }
 
         /// <summary>

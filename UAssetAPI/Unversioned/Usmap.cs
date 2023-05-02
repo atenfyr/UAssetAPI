@@ -438,7 +438,7 @@ namespace UAssetAPI.Unversioned
             if (string.IsNullOrWhiteSpace(nm)) return null;
 
             UsmapSchema relevantSchema = null;
-            if (asset.Mappings.Schemas.ContainsKey(nm))
+            if (this.Schemas.ContainsKey(nm))
             {
                 relevantSchema = this.Schemas[nm];
             }

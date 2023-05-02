@@ -149,7 +149,7 @@ namespace UAssetAPI
             {
                 if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
-                zeroProps[idx] = entry.IsZero;
+                zeroProps[idx] = entry.IsZero(asset);
 
                 if (idx < firstNumAll) firstNumAll = idx;
                 if (idx > lastNumAll) lastNumAll = idx;
@@ -313,7 +313,6 @@ namespace UAssetAPI
             lastType = data;
 #endif
 
-            data.IsZero = isZero;
             data.Ancestry.Initialize(ancestry, parentName);
             data.DuplicationIndex = duplicationIndex;
             if (reader != null && !isZero)
@@ -508,7 +507,7 @@ namespace UAssetAPI
 
             if (writer.Asset.HasUnversionedProperties)
             {
-                if (!property.IsZero) property.Write(writer, includeHeader);
+                if (!property.IsZero(writer.Asset)) property.Write(writer, includeHeader);
                 return -1; // length is not serialized
             }
             else
@@ -529,7 +528,7 @@ namespace UAssetAPI
                 int oldLoc = (int)writer.BaseStream.Position;
                 writer.Write((int)0); // initial length
                 writer.Write(property.DuplicationIndex);
-                int realLength = property.IsZero ? 0 : property.Write(writer, includeHeader);
+                int realLength = property.Write(writer, includeHeader);
                 int newLoc = (int)writer.BaseStream.Position;
 
                 writer.Seek(oldLoc, SeekOrigin.Begin);
