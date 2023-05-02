@@ -10,7 +10,7 @@ namespace UAssetAPI.UnrealTypes
     /// All rotation values are stored in degrees.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class FRotator
+    public struct FRotator
     {
         private float? _pitch1;
         private double _pitch2;
@@ -78,6 +78,7 @@ namespace UAssetAPI.UnrealTypes
 
         public FRotator(double pitch, double yaw, double roll)
         {
+            _pitch1 = null; _yaw1 = null; _roll1 = null;
             _pitch2 = pitch;
             _yaw2 = yaw;
             _roll2 = roll;
@@ -85,14 +86,10 @@ namespace UAssetAPI.UnrealTypes
 
         public FRotator(float pitch, float yaw, float roll)
         {
+            _pitch2 = 0; _yaw2 = 0; _roll2 = 0;
             _pitch1 = pitch;
             _yaw1 = yaw;
             _roll1 = roll;
-        }
-
-        public FRotator()
-        {
-
         }
     }
 }

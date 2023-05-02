@@ -21,6 +21,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private static readonly FString CurrentPropertyType = new FString("BoolProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
+        public override object DefaultValue { get { return false; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

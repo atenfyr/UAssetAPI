@@ -7,12 +7,15 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_VectorConst"/> instruction.
     /// </summary>
-    public class EX_VectorConst : KismetExpression<FVector>
+    public class EX_VectorConst : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_VectorConst; } }
+
+        [JsonProperty]
+        public FVector Value;
 
         public EX_VectorConst()
         {

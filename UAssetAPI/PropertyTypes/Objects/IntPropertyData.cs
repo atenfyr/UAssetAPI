@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -22,6 +20,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private static readonly FString CurrentPropertyType = new FString("IntProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
+        public override object DefaultValue { get { return (int)0; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

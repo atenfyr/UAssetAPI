@@ -23,6 +23,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private static readonly FString CurrentPropertyType = new FString("ObjectProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
+        public override object DefaultValue { get { return FPackageIndex.FromRawIndex(0); } }
 
         /// <summary>
         /// Returns true if this ObjectProperty represents an import.

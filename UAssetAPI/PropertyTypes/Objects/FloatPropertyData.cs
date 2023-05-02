@@ -30,6 +30,8 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private static readonly FString CurrentPropertyType = new FString("FloatProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
+        public override object DefaultValue { get { return (float)0; } }
+
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {

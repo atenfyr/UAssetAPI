@@ -1,14 +1,12 @@
 ﻿using Newtonsoft.Json;
 using UAssetAPI.JSON;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.UnrealTypes
 {
     /// <summary>
     /// A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
     /// </summary>
-    public class FVector
+    public struct FVector
     {
         private float? _x1;
         private double _x2;
@@ -76,6 +74,7 @@ namespace UAssetAPI.UnrealTypes
 
         public FVector(double x, double y, double z)
         {
+            _x1 = null; _y1 = null; _z1 = null;
             _x2 = x;
             _y2 = y;
             _z2 = z;
@@ -83,14 +82,10 @@ namespace UAssetAPI.UnrealTypes
 
         public FVector(float x, float y, float z)
         {
+            _x2 = 0; _y2 = 0; _z2 = 0;
             _x1 = x;
             _y1 = y;
             _z1 = z;
-        }
-
-        public FVector()
-        {
-
         }
     }
 }

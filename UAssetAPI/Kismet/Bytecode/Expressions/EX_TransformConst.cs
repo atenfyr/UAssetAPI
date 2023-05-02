@@ -1,17 +1,21 @@
 ﻿using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using Newtonsoft.Json;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TransformConst"/> instruction.
     /// </summary>
-    public class EX_TransformConst : KismetExpression<FTransform>
+    public class EX_TransformConst : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_TransformConst; } }
+
+        [JsonProperty]
+        public FTransform Value;
 
         public EX_TransformConst()
         {

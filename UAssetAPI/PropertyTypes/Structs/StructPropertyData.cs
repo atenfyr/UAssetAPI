@@ -127,7 +127,15 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         private int WriteOnce(AssetBinaryWriter writer)
         {
-            if (Value.Count != 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " must have exactly one entry");
+            if (Value.Count > 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
+
+            if (Value.Count == 0)
+            {
+                // populate fallback zero entry 
+                if (Value == null) Value = new List<PropertyData>();
+                Value.Clear();
+                Value.Add(MainSerializer.TypeToClass(StructType, Name, Ancestry, Name, writer.Asset, null, 0, 0, false));
+            }
             Value[0].Offset = writer.BaseStream.Position;
             return Value[0].Write(writer, false);
         }

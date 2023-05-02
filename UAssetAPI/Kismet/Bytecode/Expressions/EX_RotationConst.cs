@@ -7,12 +7,15 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_RotationConst"/> instruction.
     /// </summary>
-    public class EX_RotationConst : KismetExpression<FRotator>
+    public class EX_RotationConst : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
         /// </summary>
         public override EExprToken Token { get { return EExprToken.EX_RotationConst; } }
+
+        [JsonProperty]
+        public FRotator Value;
 
         public EX_RotationConst()
         {

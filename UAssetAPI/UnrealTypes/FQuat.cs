@@ -8,7 +8,7 @@ namespace UAssetAPI.UnrealTypes
     /// The X, Y, Z, W components also double as the Axis/Angle format.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class FQuat
+    public struct FQuat
     {
         private float? _x1;
         private double _x2;
@@ -97,6 +97,7 @@ namespace UAssetAPI.UnrealTypes
 
         public FQuat(double x, double y, double z, double w)
         {
+            _x1 = null; _y1 = null; _z1 = null; _w1 = null;
             _x2 = x;
             _y2 = y;
             _z2 = z;
@@ -105,15 +106,11 @@ namespace UAssetAPI.UnrealTypes
 
         public FQuat(float x, float y, float z, float w)
         {
+            _x2 = 0; _y2 = 0; _z2 = 0; _w2 = 0;
             _x1 = x;
             _y1 = y;
             _z1 = z;
             _w1 = w;
-        }
-
-        public FQuat()
-        {
-
         }
     }
 }

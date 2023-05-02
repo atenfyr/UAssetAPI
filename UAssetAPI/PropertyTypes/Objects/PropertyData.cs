@@ -87,7 +87,19 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         public object Tag;
 
-        public object RawValue;
+        protected object _rawValue;
+        public virtual object RawValue
+        {
+            get
+            {
+                if (_rawValue == null && DefaultValue != null) _rawValue = DefaultValue;
+                return _rawValue;
+            }
+            set
+            {
+                _rawValue = value;
+            }
+        }
 
         public void SetObject(object value)
         {
@@ -96,7 +108,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public T GetObject<T>()
         {
-            if (RawValue is null) return default(T);
+            if (RawValue is null) return default;
             return (T)RawValue;
         }
 
@@ -123,6 +135,10 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// The type of this property as an FString.
         /// </summary>
         public virtual FString PropertyType { get { return FallbackPropertyType; } }
+        /// <summary>
+        /// The default value of this property, used as a fallback when no value is defined. Null by default.
+        /// </summary>
+        public virtual object DefaultValue { get { return null; } }
 
         /// <summary>
         /// Reads out a property from a BinaryReader.
@@ -203,7 +219,7 @@ namespace UAssetAPI.PropertyTypes.Objects
     public abstract class PropertyData<T> : PropertyData
     {
         /// <summary>
-        /// The main value of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+        /// The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
         /// </summary>
         [JsonProperty]
         public T Value
