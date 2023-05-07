@@ -1259,6 +1259,7 @@ namespace UAssetAPI
                 else
                 {
                     entry.Key.DummyValue = FString.FromString(entry.Value);
+                    entry.Key.Number = 0;
                 }
             }
             toBeFilled.Clear();
@@ -1304,6 +1305,7 @@ namespace UAssetAPI
                 else
                 {
                     entry.Key.DummyValue = FString.FromString(entry.Value);
+                    entry.Key.Number = 0;
                 }
             }
             toBeFilled.Clear();
@@ -1362,6 +1364,7 @@ namespace UAssetAPI
                 else
                 {
                     entry.Key.DummyValue = FString.FromString(entry.Value);
+                    entry.Key.Number = 0;
                 }
             }
             toBeFilled.Clear();
