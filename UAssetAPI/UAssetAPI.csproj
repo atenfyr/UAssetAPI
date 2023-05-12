@@ -23,7 +23,13 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <Target Name="BeforeBuildMigrated" BeforeTargets="PreBuildEvent">
-    <Exec ContinueOnError="true" Command="git rev-parse --short HEAD &gt; &quot;$(ProjectDir)git_commit.txt&quot;" />
+    <Exec ContinueOnError="true" ConsoleToMsBuild="true" Command="git rev-parse --short HEAD">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCommit" />
+    </Exec>
+    <WriteLinesToFile File="$(ProjectDir)git_commit.txt" Overwrite="true" Lines="$(GitCommit)" />
+  </Target>
+  <Target Name="AfterBuildMigrated" AfterTargets="Build">
+    <Delete Files="$(ProjectDir)git_commit.txt" />
   </Target>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
