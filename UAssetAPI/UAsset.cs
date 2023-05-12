@@ -665,7 +665,14 @@ namespace UAssetAPI
             for (int i = 0; i < NameCount; i++)
             {
                 FString nameInMap = reader.ReadNameMapString(null, out uint hashes);
-                if (hashes == 0) OverrideNameMapHashes[nameInMap] = 0;
+                if (hashes == 0)
+                {
+                    OverrideNameMapHashes[nameInMap] = 0;
+                }
+                else if (hashes >> 16 == 0 && nameInMap.Value == nameInMap.Value.ToLowerInvariant()) // WITH_CASE_PRESERVING_NAME = 0; if pre-4.23, do not serialize CasePreservingHash 
+                {
+                    nameInMap.IsCasePreserving = false;
+                }
                 AddNameReference(nameInMap, true);
             }
 
@@ -978,7 +985,7 @@ namespace UAssetAPI
                         }
                         else
                         {
-                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i]));
+                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], !nameMapIndexList[i].IsCasePreserving && this.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.PropertiesSerializeRepCondition)); // this is not really the right custom version, i don't think the change was documented, but it was in 4.23
                         }
                     }
                 }

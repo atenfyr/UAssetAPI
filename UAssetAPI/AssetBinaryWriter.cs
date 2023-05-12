@@ -153,12 +153,22 @@ namespace UAssetAPI
                     throw new NotImplementedException("Custom version serialization format Enums is currently unimplemented");
                 case ECustomVersionSerializationFormat.Guids:
                 case ECustomVersionSerializationFormat.Optimized:
-                    Write(num);
+                    long numLoc = this.BaseStream.Position;
+                    Write((int)0);
+
+                    int realNum = 0;
                     for (int i = 0; i < num; i++)
                     {
+                        if (CustomVersionContainer[i].Version <= 0 || !CustomVersionContainer[i].IsSerialized) continue;
+                        realNum++;
                         Write(CustomVersionContainer[i].Key.ToByteArray());
                         Write(CustomVersionContainer[i].Version);
                     }
+
+                    long endLoc = this.BaseStream.Position;
+                    this.Seek((int)numLoc, SeekOrigin.Begin);
+                    Write(realNum);
+                    this.Seek((int)endLoc, SeekOrigin.Begin);
                     break;
             }
         }

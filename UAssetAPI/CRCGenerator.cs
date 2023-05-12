@@ -46,20 +46,20 @@ namespace UAssetAPI
             }
         }
 
-        public static uint GenerateHash(FString text)
+        public static uint GenerateHash(FString text, bool disableCasePreservingHash)
         {
-            return GenerateHash(text?.Value, text?.Encoding);
+            return GenerateHash(text?.Value, text?.Encoding, disableCasePreservingHash);
         }
 
-        public static uint GenerateHash(string text)
+        public static uint GenerateHash(string text, bool disableCasePreservingHash)
         {
-            return GenerateHash(text, Encoding.ASCII);
+            return GenerateHash(text, Encoding.ASCII, disableCasePreservingHash);
         }
 
-        public static uint GenerateHash(string text, Encoding encoding)
+        public static uint GenerateHash(string text, Encoding encoding, bool disableCasePreservingHash)
         {
             uint algor1 = Strihash_DEPRECATED(text, encoding);
-            uint algor2 = StrCrc32(text);
+            uint algor2 = disableCasePreservingHash ? 0 : StrCrc32(text);
             return (algor1 & 0xFFFF) | ((algor2 & 0xFFFF) << 16);
         }
 

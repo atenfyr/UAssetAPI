@@ -92,6 +92,13 @@ namespace UAssetAPI
         public Guid Key;
         public string FriendlyName = null;
         public int Version;
+        public bool IsSerialized = true;
+
+        public CustomVersion SetIsSerialized(bool val)
+        {
+            this.IsSerialized = val;
+            return this;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomVersion"/> class given an object or enum name and a version number.

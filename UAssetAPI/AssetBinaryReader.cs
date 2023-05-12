@@ -197,7 +197,7 @@ namespace UAssetAPI
             {
                 foreach (CustomVersion entry in Mappings.CustomVersionContainer)
                 {
-                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry.SetIsSerialized(false));
                 }
             }
 
@@ -205,7 +205,7 @@ namespace UAssetAPI
             {
                 foreach (CustomVersion entry in oldCustomVersionContainer)
                 {
-                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry);
+                    if (!existingCustomVersions.Contains(entry.Key)) newCustomVersionContainer.Add(entry.SetIsSerialized(false));
                 }
             }
 

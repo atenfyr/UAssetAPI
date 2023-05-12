@@ -17,6 +17,11 @@ namespace UAssetAPI.UnrealTypes
         public Encoding Encoding;
         public static readonly string NullCase = "null";
 
+        /// <summary>
+        /// Is this FString case preserving?
+        /// </summary>
+        public bool IsCasePreserving = true;
+
         public override string ToString()
         {
             if (this == null || Value == null) return NullCase;
