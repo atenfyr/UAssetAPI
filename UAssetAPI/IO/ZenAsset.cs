@@ -418,7 +418,6 @@ namespace UAssetAPI.IO
                 // i dont know if pre-5.0 io store assets are just equivalent to regular uassets or not... investigate further
                 throw new NotImplementedException("Pre-UE5 IO store parsing is not implemented");
             }
-            return null;
         }
 
         /// <summary>
