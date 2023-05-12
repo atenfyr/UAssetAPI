@@ -975,7 +975,9 @@ namespace UAssetAPI
                 this.NameCount = this.nameMapIndexList.Count;
                 for (int i = 0; i < this.nameMapIndexList.Count; i++)
                 {
-                    writer.Write(nameMapIndexList[i]);
+                    // this is not really the right custom version, i don't think the change was documented but it was in 4.23
+                    bool disableCasePreservingHash = !nameMapIndexList[i].IsCasePreserving && this.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.PropertiesSerializeRepCondition;
+                    writer.Write(disableCasePreservingHash ? CRCGenerator.ToLower(nameMapIndexList[i], false) : nameMapIndexList[i]);
 
                     if (ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED)
                     {
@@ -985,7 +987,7 @@ namespace UAssetAPI
                         }
                         else
                         {
-                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], !nameMapIndexList[i].IsCasePreserving && this.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.PropertiesSerializeRepCondition)); // this is not really the right custom version, i don't think the change was documented, but it was in 4.23
+                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], disableCasePreservingHash));
                         }
                     }
                 }

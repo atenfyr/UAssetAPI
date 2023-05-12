@@ -92,6 +92,13 @@ namespace UAssetAPI
             return res;
         }
 
+        public static FString ToLower(FString input, bool coalesceToSlash = false)
+        {
+            FString output = (FString)input.Clone();
+            output.Value = ToLower(output.Value, coalesceToSlash);
+            return output;
+        }
+
         public static uint Strihash_DEPRECATED(string text, Encoding encoding)
         {
             uint hash = 0;
