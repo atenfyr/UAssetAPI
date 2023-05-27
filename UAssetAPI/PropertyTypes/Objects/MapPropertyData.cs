@@ -122,11 +122,17 @@ namespace UAssetAPI.PropertyTypes.Objects
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             FName type1 = null, type2 = null;
-            if (includeHeader)
+            if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 type1 = reader.ReadFName();
                 type2 = reader.ReadFName();
                 PropertyGuid = reader.ReadPropertyGuid();
+            }
+
+            if (reader.Asset.Mappings != null && type1 == null && type2 == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapMapData strucDat1))
+            {
+                type1 = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
+                type2 = FName.DefineDummy(reader.Asset, strucDat1.ValueType.Type.ToString());
             }
 
             int numKeysToRemove = reader.ReadInt32();
@@ -175,7 +181,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 if (Value.Count > 0)
                 {
