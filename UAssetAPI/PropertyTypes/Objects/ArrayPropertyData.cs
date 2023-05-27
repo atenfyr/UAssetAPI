@@ -153,7 +153,10 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (Value.Length > 0) ArrayType = FName.DefineDummy(writer.Asset, Value[0].PropertyType);
+            if (Value.Length > 0)
+            {
+                ArrayType = writer.Asset.HasUnversionedProperties ? FName.DefineDummy(writer.Asset, Value[0].PropertyType) : new FName(writer.Asset, Value[0].PropertyType);
+            }
 
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
