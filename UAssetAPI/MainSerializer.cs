@@ -412,6 +412,7 @@ namespace UAssetAPI
             PropertyData result = TypeToClass(type, name, ancestry, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
+            //Debug.WriteLine(type);
             return result;
         }
 

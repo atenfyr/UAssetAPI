@@ -1,6 +1,4 @@
-﻿using System.IO;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
+﻿using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -41,6 +39,11 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             writer.Write(Value);
             return sizeof(int) * 2;
+        }
+
+        public override bool IsZero(UnrealPackage asset)
+        {
+            return false; // even if the index is 0, we always serialize it anyways
         }
 
         public override string ToString()
