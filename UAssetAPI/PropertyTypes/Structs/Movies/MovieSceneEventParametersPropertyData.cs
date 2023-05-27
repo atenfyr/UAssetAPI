@@ -48,7 +48,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            FSoftObjectPath structref = new FSoftObjectPath(reader.ReadFName(), reader.ReadFString());
+            FSoftObjectPath structref = new FSoftObjectPath(reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES ? reader.ReadFName() : null, reader.ReadFName(), reader.ReadFString());
             int length = reader.ReadInt32();
             byte[] bytes = reader.ReadBytes(length);
 
@@ -65,7 +65,8 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             int here = (int)writer.BaseStream.Position;
 
-            writer.Write(Value.StructType.AssetPathName);
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES) writer.Write(Value.StructType.AssetPath.PackageName);
+            writer.Write(Value.StructType.AssetPath.AssetName);
             writer.Write(Value.StructType.SubPathString);
             writer.Write(Value.StructBytes.Length);
             writer.Write(Value.StructBytes);

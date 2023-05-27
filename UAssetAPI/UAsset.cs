@@ -381,6 +381,12 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the name data</summary>
         internal int NameOffset;
 
+        /// <summary>Number of names used in this package</summary>
+        internal int SoftObjectPathsCount = 0;
+
+        /// <summary>Location into the file on disk for the name data</summary>
+        internal int SoftObjectPathsOffset = 0;
+
         /// <summary>Number of gatherable text data items in this package</summary>
         [JsonProperty]
         internal int GatherableTextDataCount;
@@ -440,6 +446,13 @@ namespace UAssetAPI
 
         /// <summary>Location into the file on disk for the preload dependency data</summary>
         internal int PreloadDependencyOffset;
+
+        [JsonProperty]
+        internal int NamesReferencedFromExportDataCount;
+        [JsonProperty]
+        internal int PayloadTocOffset;
+        [JsonProperty]
+        internal int DataResourceOffset;
 
         [JsonProperty]
         internal bool doWeHaveDependsMap = true;
@@ -532,6 +545,11 @@ namespace UAssetAPI
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
+            if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
+            {
+                SoftObjectPathsCount = reader.ReadInt32();
+                SoftObjectPathsOffset = reader.ReadInt32();
+            }
             if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {
                 GatherableTextDataCount = reader.ReadInt32();
@@ -639,6 +657,26 @@ namespace UAssetAPI
                 PreloadDependencyCount = reader.ReadInt32();
                 PreloadDependencyOffset = reader.ReadInt32();
             }
+
+            // ue5 stuff
+            if (ObjectVersionUE5 >= ObjectVersionUE5.NAMES_REFERENCED_FROM_EXPORT_DATA)
+            {
+                NamesReferencedFromExportDataCount = reader.ReadInt32();
+            }
+            else
+            {
+                NamesReferencedFromExportDataCount = NameCount;
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PAYLOAD_TOC)
+            {
+                PayloadTocOffset = reader.ReadInt32();
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+            {
+                DataResourceOffset = reader.ReadInt32();
+            }
         }
 
         /// <summary>
@@ -704,6 +742,7 @@ namespace UAssetAPI
             DependsMap = new List<int[]>();
             if (DependsOffset > 0 || (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)) // 4.14-4.15 the depends offset wasnt updated so always serialized as 0
             {
+                if (DependsOffset > 0) reader.BaseStream.Seek(DependsOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ExportCount; i++)
                 {
                     int size = reader.ReadInt32();
@@ -841,6 +880,18 @@ namespace UAssetAPI
                 writer.Write((int)ObjectVersion);
             }
 
+            if (LegacyFileVersion <= -8)
+            {
+                if (IsUnversioned)
+                {
+                    writer.Write(0);
+                }
+                else
+                {
+                    writer.Write((int)ObjectVersionUE5);
+                }
+            }
+
             writer.Write(FileVersionLicenseeUE);
             if (LegacyFileVersion <= -2)
             {
@@ -859,6 +910,11 @@ namespace UAssetAPI
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
+            if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
+            {
+                writer.Write(SoftObjectPathsCount);
+                writer.Write(SoftObjectPathsOffset);
+            }
             if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {
                 writer.Write(GatherableTextDataCount);
@@ -947,6 +1003,22 @@ namespace UAssetAPI
                 writer.Write(PreloadDependencyOffset);
             }
 
+            // ue5 stuff
+            if (ObjectVersionUE5 >= ObjectVersionUE5.NAMES_REFERENCED_FROM_EXPORT_DATA)
+            {
+                writer.Write(NamesReferencedFromExportDataCount);
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PAYLOAD_TOC)
+            {
+                writer.Write(PayloadTocOffset);
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+            {
+                writer.Write(DataResourceOffset);
+            }
+
             return stre.ToArray();
         }
 
@@ -1003,6 +1075,7 @@ namespace UAssetAPI
                         writer.Write(this.Imports[i].ClassName);
                         writer.Write(this.Imports[i].OuterIndex.Index);
                         writer.Write(this.Imports[i].ObjectName);
+                        if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) writer.Write(this.Imports[i].bImportOptional ? 1 : 0);
                     }
                 }
                 else

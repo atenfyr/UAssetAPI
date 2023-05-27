@@ -248,7 +248,19 @@ namespace UAssetAPI.ExportTypes
         {
 
         }
-        
+
+        // https://github.com/EpicGames/UnrealEngine/commit/1952a8b65290bc5b492f87d57fce87c809e231a0
+        // this commit doesn't seem to actually make any changes to how bools are serialized
+        private bool ReadBit(AssetBinaryReader reader)
+        {
+            return reader.ReadInt32() == 1;
+        }
+
+        private void WriteBit(AssetBinaryWriter writer, bool b)
+        {
+            writer.Write(b ? 1 : 0);
+        }
+
         public void ReadExportMapEntry(AssetBinaryReader reader)
         {
             Asset = reader.Asset;
@@ -290,23 +302,23 @@ namespace UAssetAPI.ExportTypes
                     this.SerialSize = reader.ReadInt64();
                     this.SerialOffset = reader.ReadInt64();
                 }
-                this.bForcedExport = reader.ReadInt32() == 1;
-                this.bNotForClient = reader.ReadInt32() == 1;
-                this.bNotForServer = reader.ReadInt32() == 1;
-                this.PackageGuid = new Guid(reader.ReadBytes(16));
-                if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) this.IsInheritedInstance = reader.ReadInt32() == 1;
+                this.bForcedExport = ReadBit(reader);
+                this.bNotForClient = ReadBit(reader);
+                this.bNotForServer = ReadBit(reader);
+                if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) this.PackageGuid = new Guid(reader.ReadBytes(16));
+                if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) this.IsInheritedInstance = ReadBit(reader);
                 this.PackageFlags = (EPackageFlags)reader.ReadUInt32();
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                 {
-                    this.bNotAlwaysLoadedForEditorGame = reader.ReadInt32() == 1;
+                    this.bNotAlwaysLoadedForEditorGame = ReadBit(reader);
                 }
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                 {
-                    this.bIsAsset = reader.ReadInt32() == 1;
+                    this.bIsAsset = ReadBit(reader);
                 }
                 if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
                 {
-                    this.GeneratePublicHash = reader.ReadInt32() == 1;
+                    this.GeneratePublicHash = ReadBit(reader);
                 }
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                 {
@@ -368,23 +380,23 @@ namespace UAssetAPI.ExportTypes
                     writer.Write(SerialSize);
                     writer.Write(SerialOffset);
                 }
-                writer.Write(bForcedExport ? 1 : 0);
-                writer.Write(bNotForClient ? 1 : 0);
-                writer.Write(bNotForServer ? 1 : 0);
-                writer.Write(PackageGuid.ToByteArray());
-                if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) writer.Write(IsInheritedInstance ? 1 : 0);
+                WriteBit(writer, bForcedExport);
+                WriteBit(writer, bNotForClient);
+                WriteBit(writer, bNotForServer);
+                if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) writer.Write(PackageGuid.ToByteArray());
+                if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) WriteBit(writer, IsInheritedInstance);
                 writer.Write((uint)PackageFlags);
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
                 {
-                    writer.Write(bNotAlwaysLoadedForEditorGame ? 1 : 0);
+                    WriteBit(writer, bNotAlwaysLoadedForEditorGame);
                 }
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
                 {
-                    writer.Write(bIsAsset ? 1 : 0);
+                    WriteBit(writer, bIsAsset);
                 }
                 if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES)
                 {
-                    writer.Write(GeneratePublicHash ? 1 : 0);
+                    WriteBit(writer, GeneratePublicHash);
                 }
                 if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
                 {

@@ -13,32 +13,33 @@ namespace UAssetAPI
         public FPackageIndex OuterIndex;
         public FName ClassPackage;
         public FName ClassName;
+        public bool bImportOptional;
 
-        public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, UAsset asset)
+        public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, bool importOptional, UAsset asset)
         {
             ObjectName = new FName(asset, objectName);
             OuterIndex = outerIndex;
             ClassPackage = new FName(asset, classPackage);
             ClassName = new FName(asset, className);
+            bImportOptional = importOptional;
         }
 
-        public Import(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName)
+        public Import(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName, bool importOptional)
         {
             ObjectName = objectName;
             OuterIndex = outerIndex;
             ClassPackage = classPackage;
             ClassName = className;
+            bImportOptional = importOptional;
         }
 
         public Import(AssetBinaryReader reader)
         {
-            if (reader?.Asset is UAsset)
-            {
-                ClassPackage = reader.ReadFName();
-                ClassName = reader.ReadFName();
-                OuterIndex = new FPackageIndex(reader.ReadInt32());
-                ObjectName = reader.ReadFName();
-            }
+            ClassPackage = reader.ReadFName();
+            ClassName = reader.ReadFName();
+            OuterIndex = new FPackageIndex(reader.ReadInt32());
+            ObjectName = reader.ReadFName();
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) bImportOptional = reader.ReadInt32() == 1;
         }
 
         public Import()

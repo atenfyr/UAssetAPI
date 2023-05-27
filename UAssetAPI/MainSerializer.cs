@@ -394,7 +394,6 @@ namespace UAssetAPI
                 // check if property is zero
                 if (header.CurrentFragment.Value.bHasAnyZeroes)
                 {
-                    // TODO: test more thoroughly
                     isZero = header.ZeroMaskIndex >= header.ZeroMask.Count ? false : header.ZeroMask.Get(header.ZeroMaskIndex);
                     header.ZeroMaskIndex++;
                 }

@@ -153,7 +153,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
-            if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
+            if (Value.Length > 0) ArrayType = FName.DefineDummy(writer.Asset, Value[0].PropertyType);
 
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
@@ -163,7 +163,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             int here = (int)writer.BaseStream.Position;
             writer.Write(Value.Length);
-            if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
+            if (ArrayType?.Value?.Value == "StructProperty" && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
             {
                 if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
                 if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
