@@ -10,16 +10,8 @@ namespace UAssetAPI.PropertyTypes.Structs
     /// This can be used to make soft references to assets that are loaded on demand.
     /// This is stored internally as an FName pointing to the top level asset (/package/path.assetname) and an option a string subobject path.
     /// </summary>
-    public class SoftObjectPathPropertyData : PropertyData
+    public class SoftObjectPathPropertyData : PropertyData<FSoftObjectPath>
     {
-        /// <summary>Asset path, patch to a top level object in a package. This is /package/path.assetname</summary>
-        [JsonProperty]
-        public FName AssetPathName;
-
-        /// <summary>Optional FString for subobject within an asset. This is the sub path after the :</summary>
-        [JsonProperty]
-        public FString SubPathString;
-
         /// <summary>Used in older versions of the Unreal Engine.</summary>
         [JsonProperty]
         public FString Path;
@@ -51,8 +43,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
             else
             {
-                AssetPathName = reader.ReadFName();
-                SubPathString = reader.ReadFString();
+                Value = FSoftObjectPath.Read(reader);
             }
         }
 
@@ -71,8 +62,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
             else
             {
-                writer.Write(AssetPathName);
-                writer.Write(SubPathString);
+                Value.Write(writer);
             }
 
             return (int)writer.BaseStream.Position - here;
@@ -80,7 +70,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override string ToString()
         {
-            return "(" + AssetPathName.ToString() + ", " + SubPathString.ToString() + ")";
+            return "(" + Value.AssetPath.PackageName.ToString() + ", " + Value.AssetPath.AssetName.ToString() + ", " + Value.SubPathString.ToString() + ")";
         }
 
         public override void FromString(string[] d, UAsset asset)
@@ -91,14 +81,11 @@ namespace UAssetAPI.PropertyTypes.Structs
             }
             else
             {
-                FName output = FName.FromString(asset, d[0]);
-                asset.AddNameReference(output.Value);
-                AssetPathName = output;
+                FName one = FName.FromString(asset, d[0]);
+                FName two = FName.FromString(asset, d[1]);
+                FString three = string.IsNullOrEmpty(d[2]) ? null : FString.FromString(d[2]);
 
-                if (d.Length > 1)
-                {
-                    SubPathString = FString.FromString(d[1]);
-                }
+                Value = new FSoftObjectPath(one, two, three);
             }
         }
     }
