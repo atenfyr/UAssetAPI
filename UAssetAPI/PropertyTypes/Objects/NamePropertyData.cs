@@ -43,7 +43,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override bool IsZero(UnrealPackage asset)
         {
-            return false; // even if the index is 0, we always serialize it anyways
+            return Value?.Value?.Value == null; // if the index is 0, we need to serialize it anyways
         }
 
         public override string ToString()

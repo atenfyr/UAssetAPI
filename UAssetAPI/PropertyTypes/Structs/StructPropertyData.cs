@@ -180,6 +180,11 @@ namespace UAssetAPI.PropertyTypes.Structs
             return WriteNTPL(writer);
         }
 
+        public override bool IsZero(UnrealPackage asset)
+        {
+            return false;
+        }
+
         public override void FromString(string[] d, UAsset asset)
         {
             if (d[4] != null && d[4] != "Generic") StructType = FName.FromString(asset, d[4]);
