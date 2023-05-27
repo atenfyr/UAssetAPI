@@ -287,13 +287,13 @@ namespace UAssetAPI.Tests
             }
         }
 
-        private void TestManyAssetsSubsection(string game, EngineVersion version)
+        private void TestManyAssetsSubsection(string game, EngineVersion version, Usmap mappings = null)
         {
             string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestManyAssets", game));
             foreach (string assetPath in allTestingAssets)
             {
                 Console.WriteLine(assetPath);
-                var tester = new UAsset(assetPath, version);
+                var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
                 Console.WriteLine(tester.GetEngineVersion());
@@ -313,74 +313,19 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        [TestMethod]
-        [DeploymentItem(@"TestAssets/TestUnversionedProperties/Harvestella.usmap", "TestUnversionedProperties")]
-        [DeploymentItem(@"TestAssets/TestUnversionedProperties/Grounded.usmap", "TestUnversionedProperties")]
-        [DeploymentItem(@"TestAssets/TestUnversionedProperties/FSD.usmap", "TestUnversionedProperties")]
-        public void TestUnversionedProperties()
-        {
-            var tester1 = new Usmap(Path.Combine("TestUnversionedProperties", "Harvestella.usmap"));
-            var tester2 = new Usmap(Path.Combine("TestUnversionedProperties", "Grounded.usmap"));
-            var tester3 = new Usmap(Path.Combine("TestUnversionedProperties", "FSD.usmap"));
-
-            foreach (var schema in tester3.Schemas)
-            {
-                Console.WriteLine(schema.Value.Name.ToString());
-                foreach (var prop in schema.Value.Properties)
-                {
-                    Console.WriteLine(prop.ToString());
-                }
-                Console.WriteLine("");
-            }
-            Console.WriteLine("Done");
-
-            /*var tester = new UAsset(Path.Combine("TestUnversionedProperties", "PC0000_00_Cloud_Standard.uasset"), UE4Version.VER_UE4_26);
-            AssetBinaryReader test = new AssetBinaryReader(new MemoryStream((tester.Exports[3] as RawExport).Data), tester);
-
-            FUnversionedHeader test2 = new FUnversionedHeader();
-            test2.Read(test);
-
-            foreach (FFragment entry in test2.Fragments)
-            {
-                Console.WriteLine(entry.SkipNum + ", " + entry.bHasAnyZeroes + ", " + entry.ValueNum + ", " + entry.bIsLast);
-            }*/
-        }
-
-        /// <summary>
         /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/DebugMenu.uasset", "TestManyAssets/Astroneer")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestManyAssets/Astroneer")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/LargeResourceCanister_IT.uasset", "TestManyAssets/Astroneer")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/ResourceProgressCurve.uasset", "TestManyAssets/Astroneer")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_BG.umap", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m01SIP_000_Gimmick.umap", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_ItemMaster.uasset", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestManyAssets/Bloodstained")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/MISC_426/MainChar_BellySlice_BR.uasset", "TestManyAssets/MISC_426")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/MISC_426/MainChar_BellySlice_BR.uexp", "TestManyAssets/MISC_426")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/MISC_426/RaceSimDataAsset.uasset", "TestManyAssets/MISC_426")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/MISC_426/RaceSimDataAsset.uexp", "TestManyAssets/MISC_426")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uasset", "TestManyAssets/CodeVein")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/CodeVein/SK_Inner_Female1.uexp", "TestManyAssets/CodeVein")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uasset", "TestManyAssets/StarlitSeason")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/StarlitSeason/CharacterCostume_chr0001_DataTable.uexp", "TestManyAssets/StarlitSeason")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Tekken/BP_TekkenPlayer_Modular.uasset", "TestManyAssets/Tekken")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/VERSIONED/Assault_M1A1Thompson_WW2_DrumSuppressor.uasset", "TestManyAssets/VERSIONED")]
+        [DeploymentItem(@"TestAssets/TestManyAssets", "TestManyAssets")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
+            TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_2, new Usmap(Path.Combine("TestManyAssets", "Palia", "Palia.usmap"))); // traditional, NOT zen/io store
             TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
-            TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
             TestManyAssetsSubsection("VERSIONED", EngineVersion.UNKNOWN);
         }
 
