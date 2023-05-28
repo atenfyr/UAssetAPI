@@ -113,7 +113,7 @@ namespace UAssetAPI.ExportTypes
 
             if (Data != null)
             {
-                for (int i = 0; i < Data.Count; i++) Data[i].ResolveAncestries(asset, ancestryNew);
+                for (int i = 0; i < Data.Count; i++) Data[i]?.ResolveAncestries(asset, ancestryNew);
             }
             base.ResolveAncestries(asset, ancestrySoFar);
         }

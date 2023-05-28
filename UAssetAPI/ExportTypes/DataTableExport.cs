@@ -88,11 +88,11 @@ namespace UAssetAPI.ExportTypes
 
             if (Data != null)
             {
-                for (int i = 0; i < Data.Count; i++) Data[i].ResolveAncestries(asset, ancestryNew);
+                for (int i = 0; i < Data.Count; i++) Data[i]?.ResolveAncestries(asset, ancestryNew);
             }
             if (Table?.Data != null)
             {
-                for (int i = 0; i < Table.Data.Count; i++) Table.Data[i].ResolveAncestries(asset, ancestryNew);
+                for (int i = 0; i < Table.Data.Count; i++) Table.Data[i]?.ResolveAncestries(asset, ancestryNew);
             }
             base.ResolveAncestries(asset, ancestrySoFar);
         }

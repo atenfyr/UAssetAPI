@@ -120,7 +120,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             if (Value != null)
             {
-                foreach (var entry in Value) entry.ResolveAncestries(asset, ancestryNew);
+                foreach (var entry in Value) entry?.ResolveAncestries(asset, ancestryNew);
             }
             base.ResolveAncestries(asset, ancestrySoFar);
         }
