@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Drawing;
-using System.IO;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
@@ -28,7 +26,7 @@ namespace UAssetAPI.PropertyTypes.Structs
     /// <summary>
     /// A linear, 32-bit/component floating point RGBA color.
     /// </summary>
-    public class LinearColor : ICloneable
+    public struct LinearColor : ICloneable
     {
         [JsonProperty]
         public float R;
@@ -38,11 +36,6 @@ namespace UAssetAPI.PropertyTypes.Structs
         public float B;
         [JsonProperty]
         public float A;
-
-        public LinearColor()
-        {
-
-        }
 
         public LinearColor(float R, float G, float B, float A)
         {
