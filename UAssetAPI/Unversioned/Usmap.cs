@@ -325,10 +325,26 @@ namespace UAssetAPI.Unversioned
             switch (typ)
             {
                 case EPropertyType.EnumProperty:
-                    var exp2 = ((entry as FEnumProperty).Enum.ToExport(exp.Asset) as EnumExport);
-                    var allNames = new List<string>();
-                    foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
-                    converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
+                    FPackageIndex enumIndex = (entry as FEnumProperty).Enum;
+                    if (enumIndex.IsExport())
+                    {
+                        var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
+                        var allNames = new List<string>();
+                        foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
+                        converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
+                    }
+                    else if (enumIndex.IsImport())
+                    {
+                        string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
+                        if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                        var allNames = new List<string>();
+                        foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName]) allNames.Add(cosa.ToString());
+                        converted1 = new UsmapEnumData(enumName, allNames);
+                    }
+                    else
+                    {
+                        converted1 = null;
+                    }
                     break;
                 case EPropertyType.StructProperty:
                     var strucstr = Export.GetClassTypeForAncestry((entry as FStructProperty).Struct, exp.Asset);
@@ -433,9 +449,9 @@ namespace UAssetAPI.Unversioned
             return string.Join("\n", res.ToArray());
         }
 
-        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null)
+        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, bool throwExceptions = true)
         {
-            if (string.IsNullOrWhiteSpace(nm)) return null;
+            if (string.IsNullOrEmpty(nm)) return null;
 
             UsmapSchema relevantSchema = null;
             if (this.Schemas.ContainsKey(nm))
@@ -446,7 +462,7 @@ namespace UAssetAPI.Unversioned
             {
                 relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
             }
-            if (relevantSchema == null) throw new FormatException("Failed to find a valid schema for parent name " + nm);
+            if (throwExceptions && relevantSchema == null) throw new FormatException("Failed to find a valid schema for parent name " + nm);
             return relevantSchema;
         }
 
@@ -498,16 +514,6 @@ namespace UAssetAPI.Unversioned
         {
             propDat = null;
 
-            var schemaName = ancestry.Parent.Value.Value;
-            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
-            while (schemaName != null && relevantSchema != null)
-            {
-                propDat = relevantSchema.GetProperty(propertyName.Value.Value, 0)?.PropertyData as T;
-                if (propDat != null) return true;
-                schemaName = relevantSchema.SuperType;
-                relevantSchema = this.GetSchemaFromName(schemaName, asset);
-            }
-
             if (propertyName.IsDummy && int.TryParse(propertyName.Value.Value, out _))
             {
                 // this is actually an array member; try to find its parent array
@@ -516,6 +522,16 @@ namespace UAssetAPI.Unversioned
                     propDat = arrDat.InnerType as T;
                     if (propDat != null) return true;
                 }
+            }
+
+            var schemaName = ancestry.Parent.Value.Value;
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            while (schemaName != null && relevantSchema != null)
+            {
+                propDat = relevantSchema.GetProperty(propertyName.Value.Value, 0)?.PropertyData as T;
+                if (propDat != null) return true;
+                schemaName = relevantSchema.SuperType;
+                relevantSchema = this.GetSchemaFromName(schemaName, asset);
             }
 
             return false;

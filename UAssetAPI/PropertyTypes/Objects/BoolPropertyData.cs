@@ -42,6 +42,11 @@ namespace UAssetAPI.PropertyTypes.Objects
             return 0;
         }
 
+        /*public override bool IsZero(UnrealPackage asset)
+        {
+            return false;
+        }*/
+
         public override string ToString()
         {
             return Convert.ToString(Value);

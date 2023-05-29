@@ -37,39 +37,21 @@ namespace UAssetAPI.UnrealTypes
         }
 
         private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
-        public override bool HasCustomStructSerialization { get { return true; } }
+        //public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
         {
             VariableName = reader.ReadFName();
-            List<PropertyData> resultingList = new List<PropertyData>();
-            PropertyData data = null;
-            var unversionedHeader = new FUnversionedHeader(reader);
-            while ((data = MainSerializer.Read(reader, Ancestry, Name, unversionedHeader, true)) != null)
-            {
-                resultingList.Add(data);
-            }
-
-            Value = resultingList;
-
+            base.Read(reader, false, leng1, leng2);
             VariableOffset = reader.ReadInt32();
         }
-
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             int here = (int)writer.BaseStream.Position;
-            writer.XFERNAME(VariableName);
-            
-            if (Value != null) {
-                var dat = Value;
-                MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
-                foreach (var t in dat) {
-                    MainSerializer.Write(t, writer, true);
-                }
-            }
-            if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
+            writer.Write(VariableName);
+            base.Write(writer, false);
             writer.Write(VariableOffset);
             return (int)writer.BaseStream.Position - here;
         }

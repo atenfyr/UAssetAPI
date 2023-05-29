@@ -156,6 +156,20 @@ namespace UAssetAPI.PropertyTypes.Structs
             return (int)writer.BaseStream.Position - here;
         }
 
+        internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, out RegistryEntry targetEntry)
+        {
+            targetEntry = null;
+            string structTypeVal = StructType?.Value?.Value;
+            if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
+            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
+
+            if (structTypeVal == "FloatRange") hasCustomStructSerialization = Value.Count == 1 && Value[0] is FloatRangePropertyData;
+            if (structTypeVal == "RichCurveKey" && Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneTrackIdentifier" && Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
+            if (structTypeVal == "MovieSceneFloatChannel" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
+            return hasCustomStructSerialization;
+        }
+
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
         {
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
@@ -165,16 +179,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            RegistryEntry targetEntry = null;
-            string structTypeVal = StructType?.Value?.Value;
-            if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
-            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
-
-            if (structTypeVal == "FloatRange") hasCustomStructSerialization = Value.Count == 1 && Value[0] is FloatRangePropertyData;
-            if (structTypeVal == "RichCurveKey" && writer.Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
-            if (structTypeVal == "MovieSceneTrackIdentifier" && writer.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
-            if (structTypeVal == "MovieSceneFloatChannel" && writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
-
+            bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, out RegistryEntry targetEntry);
             if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
             if (Value.Count == 0 && !SerializeNone) return 0;
             return WriteNTPL(writer);
@@ -182,7 +187,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override bool IsZero(UnrealPackage asset)
         {
-            return false;
+            return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.IsZero(asset);
         }
 
         public override void FromString(string[] d, UAsset asset)
