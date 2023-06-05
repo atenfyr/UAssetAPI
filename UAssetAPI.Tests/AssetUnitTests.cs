@@ -80,10 +80,9 @@ namespace UAssetAPI.Tests
         /// Tests <see cref="FName.ToString"/> and <see cref="FName.FromString"/>.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
         public void TestNameConstruction()
         {
-            var dummyAsset = new UAsset(Path.Combine("TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
+            var dummyAsset = new UAsset(Path.Combine("TestAssets", "TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
 
             FName test = FName.FromString(dummyAsset, "HelloWorld_0");
             Assert.IsTrue(test.Value.Value == "HelloWorld" && test.Number == 1);
@@ -125,10 +124,9 @@ namespace UAssetAPI.Tests
         /// Binary equality is expected.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Augment_BroadBrush.uasset", "TestManyAssets/Astroneer")]
         public void TestCDOModification()
         {
-            var tester = new UAsset(Path.Combine("TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
             Assert.IsTrue(tester.VerifyBinaryEquality());
 
             NormalExport cdoExport = null;
@@ -155,11 +153,9 @@ namespace UAssetAPI.Tests
         /// Binary equality is expected.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestCustomSerializationStructsInMap/wtf.uasset", "TestCustomSerializationStructsInMap")]
-        [DeploymentItem(@"TestAssets/TestCustomSerializationStructsInMap/wtf.uexp", "TestCustomSerializationStructsInMap")]
         public void TestCustomSerializationStructsInMap()
         {
-            var tester = new UAsset(Path.Combine("TestCustomSerializationStructsInMap", "wtf.uasset"), EngineVersion.VER_UE4_25);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestCustomSerializationStructsInMap", "wtf.uasset"), EngineVersion.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
 
             // Get the map property in export 2
@@ -190,11 +186,9 @@ namespace UAssetAPI.Tests
         /// Binary equality is expected. Expected behavior is for UAssetAPI to detect this and override its normal hash algorithm.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestImproperNameMapHashes/OC_Gatling_DamageB_B.uasset", "TestImproperNameMapHashes")]
-        [DeploymentItem(@"TestAssets/TestImproperNameMapHashes/OC_Gatling_DamageB_B.uexp", "TestImproperNameMapHashes")]
         public void TestImproperNameMapHashes()
         {
-            var tester = new UAsset(Path.Combine("TestImproperNameMapHashes", "OC_Gatling_DamageB_B.uasset"), EngineVersion.VER_UE4_25);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestImproperNameMapHashes", "OC_Gatling_DamageB_B.uasset"), EngineVersion.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
 
             Dictionary<string, bool> testingEntries = new Dictionary<string, bool>();
@@ -222,11 +216,9 @@ namespace UAssetAPI.Tests
         /// Binary equality is not expected, but the asset must successfully parse anyways.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestDuplicateNameMapEntries/BIOME_AzureWeald.uasset", "TestDuplicateNameMapEntries")]
-        [DeploymentItem(@"TestAssets/TestDuplicateNameMapEntries/BIOME_AzureWeald.uexp", "TestDuplicateNameMapEntries")]
         public void TestDuplicateNameMapEntries()
         {
-            var tester = new UAsset(Path.Combine("TestDuplicateNameMapEntries", "BIOME_AzureWeald.uasset"), EngineVersion.VER_UE4_25);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestDuplicateNameMapEntries", "BIOME_AzureWeald.uasset"), EngineVersion.VER_UE4_25);
 
             // Make sure a duplicate entry actually exists
             bool duplicatesExist = false;
@@ -251,11 +243,9 @@ namespace UAssetAPI.Tests
         /// UAssetAPI must fallback to UnknownPropertyType to parse the asset correctly and maintain binary equality.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestUnknownProperties/BP_DetPack_Charge.uasset", "TestUnknownProperties")]
-        [DeploymentItem(@"TestAssets/TestUnknownProperties/BP_DetPack_Charge.uexp", "TestUnknownProperties")]
         public void TestUnknownProperties()
         {
-            var tester = new UAsset(Path.Combine("TestUnknownProperties", "BP_DetPack_Charge.uasset"), EngineVersion.VER_UE4_25);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestUnknownProperties", "BP_DetPack_Charge.uasset"), EngineVersion.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
@@ -289,7 +279,7 @@ namespace UAssetAPI.Tests
 
         private void TestManyAssetsSubsection(string game, EngineVersion version, Usmap mappings = null)
         {
-            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestManyAssets", game));
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestManyAssets", game));
             foreach (string assetPath in allTestingAssets)
             {
                 Console.WriteLine(assetPath);
@@ -316,13 +306,12 @@ namespace UAssetAPI.Tests
         /// In this test, we examine a variety of assets from different games and ensure that they parse correctly and maintain binary equality.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets", "TestManyAssets")]
         public void TestManyAssets()
         {
             TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
-            TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_2, new Usmap(Path.Combine("TestManyAssets", "Palia", "Palia.usmap"))); // traditional, NOT zen/io store
+            TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_2, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palia", "Palia.usmap"))); // traditional, NOT zen/io store
             TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
@@ -333,10 +322,10 @@ namespace UAssetAPI.Tests
         /// In this test, we examine and modify a DataTable to ensure that it parses correctly and maintains binary equality.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestDataTables")]
         public void TestDataTables()
         {
-            var tester = new UAsset(Path.Combine("TestDatatables", "PB_DT_RandomizerRoomCheck.uasset"), EngineVersion.VER_UE4_18);
+            var assetPath = Path.Combine("TestAssets", "TestManyAssets", "Bloodstained", "PB_DT_RandomizerRoomCheck.uasset");
+            var tester = new UAsset(assetPath, EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
             Assert.IsTrue(tester.Exports.Count == 1);
@@ -359,10 +348,10 @@ namespace UAssetAPI.Tests
             Assert.IsTrue(didFindTestName);
 
             // Save the modified table
-            tester.Write(Path.Combine("TestDatatables", "MODIFIED.uasset"));
+            tester.Write(Path.Combine("TestAssets", "MODIFIED.uasset"));
 
             // Load the modified table back in and make sure we're good
-            var tester2 = new UAsset(Path.Combine("TestDatatables", "MODIFIED.uasset"), EngineVersion.VER_UE4_18);
+            var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester2.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
             Assert.IsTrue(tester2.Exports.Count == 1);
@@ -377,61 +366,44 @@ namespace UAssetAPI.Tests
 
             // Save and check that it's binary equal to what we originally had
             tester2.Write(tester2.FilePath);
-            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestDatatables", "PB_DT_RandomizerRoomCheck.uasset")).SequenceEqual(File.ReadAllBytes(Path.Combine("TestDatatables", "MODIFIED.uasset"))));
+            Assert.IsTrue(File.ReadAllBytes(assetPath).SequenceEqual(File.ReadAllBytes(Path.Combine("TestAssets", "MODIFIED.uasset"))));
         }
 
-        private void TestJsonOnFile(string file, EngineVersion version, string mappingsFile = null)
+        private void TestJsonOnFile(string file, EngineVersion version, string subFolder = "TestJson", string mappingsFile = null)
         {
-            Usmap mappings = string.IsNullOrEmpty(mappingsFile) ? null : new Usmap(Path.Combine("TestJson", mappingsFile));
+            Usmap mappings = string.IsNullOrEmpty(mappingsFile) ? null : new Usmap(Path.Combine("TestAssets", subFolder, mappingsFile));
 
             Console.WriteLine(file);
-            var tester = new UAsset(Path.Combine("TestJson", file), version, mappings);
+            var tester = new UAsset(Path.Combine("TestAssets", subFolder, file), version, mappings);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
             string jsonSerializedAsset = tester.SerializeJson();
-            File.WriteAllText(Path.Combine("TestJson", "raw.json"), jsonSerializedAsset);
+            File.WriteAllText(Path.Combine("TestAssets", subFolder, "raw.json"), jsonSerializedAsset);
 
-            var tester2 = UAsset.DeserializeJson(File.ReadAllText(Path.Combine("TestJson", "raw.json")));
+            var tester2 = UAsset.DeserializeJson(File.ReadAllText(Path.Combine("TestAssets", subFolder, "raw.json")));
             tester2.Mappings = mappings;
-            tester2.Write(Path.Combine("TestJson", "MODIFIED.uasset"));
+            tester2.Write(Path.Combine("TestAssets", subFolder, "MODIFIED.uasset"));
 
             // For the assets we're testing binary equality is maintained and can be used as a metric of success, but binary equality is not guaranteed for all assets
-            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestJson", file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestJson", "MODIFIED.uasset"))));
+            Assert.IsTrue(File.ReadAllBytes(Path.Combine("TestAssets", subFolder, file)).SequenceEqual(File.ReadAllBytes(Path.Combine("TestAssets", subFolder, "MODIFIED.uasset"))));
         }
 
         /// <summary>
         /// In this test, we serialize some assets to JSON and back to test if the JSON serialization system is functional.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.umap", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Items.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Items.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Map_FrontEnd_Hotel_LS_Night.umap", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Map_FrontEnd_Hotel_LS_Night.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/AssetDatabase_AutoGenerated.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/AssetDatabase_AutoGenerated.uexp", "TestJson")]
-        //[DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uasset", "TestJson")]
-        //[DeploymentItem(@"TestAssets/TestJson/ABP_SMG_A.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/WPN_LockOnRifle.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/MGA_HeavyWeapon_Parent.uasset", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/MGA_HeavyWeapon_Parent.uexp", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestJson/Outriders.usmap", "TestJson")]
         public void TestJson()
         {
-            TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", EngineVersion.VER_UE4_18);
-            TestJsonOnFile("m02VIL_004_Gimmick.umap", EngineVersion.VER_UE4_18);
-            TestJsonOnFile("Staging_T2.umap", EngineVersion.VER_UE4_23);
+            TestJsonOnFile("PB_DT_RandomizerRoomCheck.uasset", EngineVersion.VER_UE4_18, Path.Combine("TestManyAssets", "Bloodstained"));
+            TestJsonOnFile("m02VIL_004_Gimmick.umap", EngineVersion.VER_UE4_18, Path.Combine("TestManyAssets", "Bloodstained"));
+            TestJsonOnFile("Staging_T2.umap", EngineVersion.VER_UE4_23, Path.Combine("TestManyAssets", "Astroneer"));
             TestJsonOnFile("Items.uasset", EngineVersion.VER_UE4_23); // string table
             //TestJsonOnFile("ABP_SMG_A.uasset", UE4Version.VER_UE4_25);
             TestJsonOnFile("WPN_LockOnRifle.uasset", EngineVersion.VER_UE4_25);
             TestJsonOnFile("Map_FrontEnd_Hotel_LS_Night.umap", EngineVersion.VER_UE4_27);
             TestJsonOnFile("AssetDatabase_AutoGenerated.uasset", EngineVersion.VER_UE4_27);
-            TestJsonOnFile("MGA_HeavyWeapon_Parent.uasset", EngineVersion.VER_UE4_25, "Outriders.usmap");
+            TestJsonOnFile("MGA_HeavyWeapon_Parent.uasset", EngineVersion.VER_UE4_25, "TestJson", "Outriders.usmap");
         }
 
         /// <summary>
@@ -439,10 +411,9 @@ namespace UAssetAPI.Tests
         /// </summary>
         /// <see cref="CoolPropertyData"/>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestCustomProperty/AlternateStartActor.uasset", "TestCustomProperty")]
         public void TestCustomProperty()
         {
-            var tester = new UAsset(Path.Combine("TestCustomProperty", "AlternateStartActor.uasset"), EngineVersion.VER_UE4_23);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestCustomProperty", "AlternateStartActor.uasset"), EngineVersion.VER_UE4_23);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
@@ -471,38 +442,34 @@ namespace UAssetAPI.Tests
         /// Binary equality is expected.
         /// </summary>
         [TestMethod]
-        [DeploymentItem(@"TestAssets/TestACE7/plwp_6aam_a0.uasset", "TestACE7")]
-        [DeploymentItem(@"TestAssets/TestACE7/plwp_6aam_a0.uexp", "TestACE7")]
-        [DeploymentItem(@"TestAssets/TestACE7/ex02_IGC_03_Subtitle.uasset", "TestACE7")]
-        [DeploymentItem(@"TestAssets/TestACE7/ex02_IGC_03_Subtitle.uexp", "TestACE7")]
         public void TestACE7()
         {
             // Create copies of original files
-            foreach (var path in Directory.GetFiles("TestACE7", "*.*"))
+            foreach (var path in Directory.GetFiles(Path.Combine("TestAssets", "TestACE7"), "*.*"))
             {
                 File.Copy(path, path + ".bak", true);
             }
 
             // Decrypt them
             var decrypter = new AC7Decrypt();
-            decrypter.Decrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0.uasset"));
-            decrypter.Decrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"));
+            decrypter.Decrypt(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"));
+            decrypter.Decrypt(Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"));
 
             // Verify the files can be parsed
-            var tester = new UAsset(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), EngineVersion.VER_UE4_18);
+            var tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
-            tester = new UAsset(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), EngineVersion.VER_UE4_18);
+            tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
 
             // Encrypt them
-            decrypter.Encrypt(Path.Combine("TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestACE7", "plwp_6aam_a0.uasset"));
-            decrypter.Encrypt(Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestACE7", "ex02_IGC_03_Subtitle.uasset"));
+            decrypter.Encrypt(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"));
+            decrypter.Encrypt(Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"), Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"));
 
             // Verify binary equality
-            foreach (var path in Directory.GetFiles("TestACE7", "*.bak"))
+            foreach (var path in Directory.GetFiles(Path.Combine("TestAssets", "TestACE7"), "*.bak"))
             {
                 VerifyBinaryEquality(path, path.Substring(0, path.Length - 4));
             }
