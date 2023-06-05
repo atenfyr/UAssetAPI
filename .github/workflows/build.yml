@@ -17,8 +17,8 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       - name: Install dependencies
-        run: dotnet restore UAssetAPI/UAssetAPI.csproj
+        run: dotnet restore
       - name: Build
-        run: dotnet build UAssetAPI/UAssetAPI.csproj --configuration Release --no-restore
-      - name: Test (NOT unit tests)
-        run: dotnet test UAssetAPI/UAssetAPI.csproj --no-restore --verbosity normal
+        run: dotnet build --configuration Release --no-restore
+      - name: Unit tests
+        run: dotnet test --no-restore --verbosity normal

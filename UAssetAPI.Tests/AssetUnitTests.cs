@@ -406,7 +406,7 @@ namespace UAssetAPI.Tests
         [TestMethod]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/PB_DT_RandomizerRoomCheck.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m02VIL_004_Gimmick.umap", "TestJson")]
-        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.uasset", "TestJson")]
+        [DeploymentItem(@"TestAssets/TestManyAssets/Bloodstained/m05SAN_000_Gimmick.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestManyAssets/Astroneer/Staging_T2.umap", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/Items.uasset", "TestJson")]
         [DeploymentItem(@"TestAssets/TestJson/Items.uexp", "TestJson")]
@@ -480,7 +480,7 @@ namespace UAssetAPI.Tests
             // Create copies of original files
             foreach (var path in Directory.GetFiles("TestACE7", "*.*"))
             {
-                File.Copy(path, path + ".bak");
+                File.Copy(path, path + ".bak", true);
             }
 
             // Decrypt them
@@ -505,6 +505,20 @@ namespace UAssetAPI.Tests
             foreach (var path in Directory.GetFiles("TestACE7", "*.bak"))
             {
                 VerifyBinaryEquality(path, path.Substring(0, path.Length - 4));
+            }
+        }
+
+        [AssemblyCleanup()]
+        public static void AssemblyCleanup()
+        {
+            foreach (var path in Directory.GetDirectories("."))
+            {
+                if (Path.GetFileName(path).Length < 4 || Path.GetFileName(path).Substring(0, 4).ToLowerInvariant() != "test") continue;
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch { }
             }
         }
     }
