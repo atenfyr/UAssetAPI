@@ -1,21 +1,22 @@
-# FQuat
+# FPlane
 
 Namespace: UAssetAPI.UnrealTypes
 
-Floating point quaternion that can represent a rotation about an axis in 3-D space.
- The X, Y, Z, W components also double as the Axis/Angle format.
+Structure for three dimensional planes.
+ Stores the coeffecients as Xx+Yy+Zz=W.
+ This is different from many other Plane classes that use Xx+Yy+Zz+W=0.
 
 ```csharp
-public struct FQuat
+public struct FPlane
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FQuat](./uassetapi.unrealtypes.fquat.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FPlane](./uassetapi.unrealtypes.fplane.md)
 
 ## Properties
 
 ### **X**
 
-The quaternion's X-component.
+The plane's X-component.
 
 ```csharp
 public double X { get; set; }
@@ -37,7 +38,7 @@ public float XFloat { get; }
 
 ### **Y**
 
-The quaternion's Y-component.
+The plane's Y-component.
 
 ```csharp
 public double Y { get; set; }
@@ -59,7 +60,7 @@ public float YFloat { get; }
 
 ### **Z**
 
-The quaternion's Z-component.
+The plane's Z-component.
 
 ```csharp
 public double Z { get; set; }
@@ -81,7 +82,7 @@ public float ZFloat { get; }
 
 ### **W**
 
-The quaternion's W-component.
+The plane's W-component.
 
 ```csharp
 public double W { get; set; }
@@ -103,10 +104,10 @@ public float WFloat { get; }
 
 ## Constructors
 
-### **FQuat(Double, Double, Double, Double)**
+### **FPlane(Double, Double, Double, Double)**
 
 ```csharp
-FQuat(double x, double y, double z, double w)
+FPlane(double x, double y, double z, double w)
 ```
 
 #### Parameters
@@ -119,10 +120,10 @@ FQuat(double x, double y, double z, double w)
 
 `w` [Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
 
-### **FQuat(Single, Single, Single, Single)**
+### **FPlane(Single, Single, Single, Single)**
 
 ```csharp
-FQuat(float x, float y, float z, float w)
+FPlane(float x, float y, float z, float w)
 ```
 
 #### Parameters

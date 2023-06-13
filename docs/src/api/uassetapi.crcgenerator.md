@@ -126,38 +126,42 @@ public static ulong CityHash64(Byte[] data)
 
 [UInt64](https://docs.microsoft.com/en-us/dotnet/api/system.uint64)<br>
 
-### **GenerateHash(FString)**
+### **GenerateHash(FString, Boolean)**
 
 ```csharp
-public static uint GenerateHash(FString text)
+public static uint GenerateHash(FString text, bool disableCasePreservingHash)
 ```
 
 #### Parameters
 
 `text` [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+`disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
-### **GenerateHash(String)**
+### **GenerateHash(String, Boolean)**
 
 ```csharp
-public static uint GenerateHash(string text)
+public static uint GenerateHash(string text, bool disableCasePreservingHash)
 ```
 
 #### Parameters
 
 `text` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+`disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
-### **GenerateHash(String, Encoding)**
+### **GenerateHash(String, Encoding, Boolean)**
 
 ```csharp
-public static uint GenerateHash(string text, Encoding encoding)
+public static uint GenerateHash(string text, Encoding encoding, bool disableCasePreservingHash)
 ```
 
 #### Parameters
@@ -165,6 +169,8 @@ public static uint GenerateHash(string text, Encoding encoding)
 `text` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `encoding` [Encoding](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding)<br>
+
+`disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 #### Returns
 
@@ -227,6 +233,22 @@ public static string ToLower(string input, bool coalesceToSlash)
 #### Returns
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **ToLower(FString, Boolean)**
+
+```csharp
+public static FString ToLower(FString input, bool coalesceToSlash)
+```
+
+#### Parameters
+
+`input` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+`coalesceToSlash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+#### Returns
+
+[FString](./uassetapi.unrealtypes.fstring.md)<br>
 
 ### **Strihash_DEPRECATED(String, Encoding)**
 

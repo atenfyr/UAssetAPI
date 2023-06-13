@@ -5,12 +5,18 @@ Namespace: UAssetAPI.Kismet.Bytecode.Expressions
 A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_VectorConst](./uassetapi.kismet.bytecode.eexprtoken.md#ex_vectorconst) instruction.
 
 ```csharp
-public class EX_VectorConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[UAssetAPI.UnrealTypes.FVector, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]
+public class EX_VectorConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;FVector&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_VectorConst](./uassetapi.kismet.bytecode.expressions.ex_vectorconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VectorConst](./uassetapi.kismet.bytecode.expressions.ex_vectorconst.md)
 
 ## Fields
+
+### **Value**
+
+```csharp
+public FVector Value;
+```
 
 ### **Tag**
 
@@ -39,18 +45,6 @@ public EExprToken Token { get; }
 #### Property Value
 
 [EExprToken](./uassetapi.kismet.bytecode.eexprtoken.md)<br>
-
-### **Value**
-
-The value of this expression if it is a constant.
-
-```csharp
-public FVector Value { get; set; }
-```
-
-#### Property Value
-
-[FVector](./uassetapi.unrealtypes.fvector.md)<br>
 
 ### **Inst**
 

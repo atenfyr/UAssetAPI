@@ -37,6 +37,12 @@ public int UnversionedPropertyIndex;
 public int ZeroMaskIndex;
 ```
 
+### **ZeroMaskNum**
+
+```csharp
+public uint ZeroMaskNum;
+```
+
 ### **ZeroMask**
 
 ```csharp

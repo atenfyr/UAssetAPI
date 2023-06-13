@@ -1,14 +1,14 @@
-# DelegatePropertyData
+# PlanePropertyData
 
-Namespace: UAssetAPI.PropertyTypes.Objects
+Namespace: UAssetAPI.PropertyTypes.Structs
 
-Describes a function bound to an Object.
+A plane in 3-D space stores the coeffecients as Xx+Yy+Zz=W.
 
 ```csharp
-public class DelegatePropertyData : PropertyData`1, System.ICloneable
+public class PlanePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FPlane, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FDelegate&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [DelegatePropertyData](./uassetapi.propertytypes.objects.delegatepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FPlane&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [PlanePropertyData](./uassetapi.propertytypes.structs.planepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -63,6 +63,16 @@ public object Tag;
 
 ## Properties
 
+### **HasCustomStructSerialization**
+
+```csharp
+public bool HasCustomStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **PropertyType**
 
 ```csharp
@@ -78,12 +88,12 @@ public FString PropertyType { get; }
 The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
-public FDelegate Value { get; set; }
+public FPlane Value { get; set; }
 ```
 
 #### Property Value
 
-[FDelegate](./uassetapi.propertytypes.objects.fdelegate.md)<br>
+[FPlane](./uassetapi.unrealtypes.fplane.md)<br>
 
 ### **RawValue**
 
@@ -107,18 +117,6 @@ public bool ShouldBeRegistered { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **HasCustomStructSerialization**
-
-Determines whether or not this particular property has custom serialization within a StructProperty.
-
-```csharp
-public bool HasCustomStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **DefaultValue**
 
 The default value of this property, used as a fallback when no value is defined. Null by default.
@@ -133,20 +131,20 @@ public object DefaultValue { get; }
 
 ## Constructors
 
-### **DelegatePropertyData(FName)**
+### **PlanePropertyData(FName)**
 
 ```csharp
-public DelegatePropertyData(FName name)
+public PlanePropertyData(FName name)
 ```
 
 #### Parameters
 
 `name` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **DelegatePropertyData()**
+### **PlanePropertyData()**
 
 ```csharp
-public DelegatePropertyData()
+public PlanePropertyData()
 ```
 
 ## Methods
@@ -183,16 +181,6 @@ public int Write(AssetBinaryWriter writer, bool includeHeader)
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-### **ToString()**
-
-```csharp
-public string ToString()
-```
-
-#### Returns
-
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
 ### **FromString(String[], UAsset)**
 
 ```csharp
@@ -205,12 +193,12 @@ public void FromString(String[] d, UAsset asset)
 
 `asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **HandleCloned(PropertyData)**
+### **ToString()**
 
 ```csharp
-protected void HandleCloned(PropertyData res)
+public string ToString()
 ```
 
-#### Parameters
+#### Returns
 
-`res` [PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

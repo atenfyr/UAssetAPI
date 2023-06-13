@@ -677,6 +677,24 @@ The path on disk to write the asset to.
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
 Thrown when  is unspecified.
 
+### **SerializeJson(Boolean)**
+
+Serializes this asset as JSON.
+
+```csharp
+public string SerializeJson(bool isFormatted)
+```
+
+#### Parameters
+
+`isFormatted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not the returned JSON string should be indented.
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+A serialized JSON string that represents the asset.
+
 ### **SerializeJson(Formatting)**
 
 Serializes this asset as JSON.
@@ -694,6 +712,27 @@ The formatting to use for the returned JSON string.
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 A serialized JSON string that represents the asset.
+
+### **SerializeJsonObject(Object, Boolean)**
+
+Serializes an object as JSON.
+
+```csharp
+public string SerializeJsonObject(object value, bool isFormatted)
+```
+
+#### Parameters
+
+`value` [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+The object to serialize as JSON.
+
+`isFormatted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not the returned JSON string should be indented.
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+A serialized JSON string that represents the object.
 
 ### **SerializeJsonObject(Object, Formatting)**
 

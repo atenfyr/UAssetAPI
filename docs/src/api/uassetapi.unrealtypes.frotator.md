@@ -6,10 +6,10 @@ Implements a container for rotation information.
  All rotation values are stored in degrees.
 
 ```csharp
-public class FRotator
+public struct FRotator
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FRotator](./uassetapi.unrealtypes.frotator.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FRotator](./uassetapi.unrealtypes.frotator.md)
 
 ## Properties
 
@@ -84,7 +84,7 @@ public float RollFloat { get; }
 ### **FRotator(Double, Double, Double)**
 
 ```csharp
-public FRotator(double pitch, double yaw, double roll)
+FRotator(double pitch, double yaw, double roll)
 ```
 
 #### Parameters
@@ -98,7 +98,7 @@ public FRotator(double pitch, double yaw, double roll)
 ### **FRotator(Single, Single, Single)**
 
 ```csharp
-public FRotator(float pitch, float yaw, float roll)
+FRotator(float pitch, float yaw, float roll)
 ```
 
 #### Parameters
@@ -108,9 +108,3 @@ public FRotator(float pitch, float yaw, float roll)
 `yaw` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
 
 `roll` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
-
-### **FRotator()**
-
-```csharp
-public FRotator()
-```

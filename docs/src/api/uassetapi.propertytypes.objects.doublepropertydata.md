@@ -53,14 +53,6 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
-### **IsZero**
-
-Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
-
-```csharp
-public bool IsZero;
-```
-
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -77,12 +69,6 @@ An optional tag which can be set on any property in memory. This is for the user
 public object Tag;
 ```
 
-### **RawValue**
-
-```csharp
-public object RawValue;
-```
-
 ## Properties
 
 ### **PropertyType**
@@ -94,6 +80,26 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **DefaultValue**
+
+```csharp
+public object DefaultValue { get; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+
+### **RawValue**
+
+```csharp
+public object RawValue { get; set; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ### **ShouldBeRegistered**
 

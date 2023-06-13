@@ -63,14 +63,6 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
-### **IsZero**
-
-Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
-
-```csharp
-public bool IsZero;
-```
-
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -87,12 +79,6 @@ An optional tag which can be set on any property in memory. This is for the user
 public object Tag;
 ```
 
-### **RawValue**
-
-```csharp
-public object RawValue;
-```
-
 ## Properties
 
 ### **PropertyType**
@@ -107,7 +93,7 @@ public FString PropertyType { get; }
 
 ### **Value**
 
-The main value of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
 public PropertyData[] Value { get; set; }
@@ -116,6 +102,16 @@ public PropertyData[] Value { get; set; }
 #### Property Value
 
 [PropertyData[]](./uassetapi.propertytypes.objects.propertydata.md)<br>
+
+### **RawValue**
+
+```csharp
+public object RawValue { get; set; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ### **ShouldBeRegistered**
 
@@ -140,6 +136,18 @@ public bool HasCustomStructSerialization { get; }
 #### Property Value
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **DefaultValue**
+
+The default value of this property, used as a fallback when no value is defined. Null by default.
+
+```csharp
+public object DefaultValue { get; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
 

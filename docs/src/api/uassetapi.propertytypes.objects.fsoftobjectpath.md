@@ -12,13 +12,17 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Fields
 
-### **AssetPathName**
+### **AssetPath**
+
+Asset path, patch to a top level object in a package. This is /package/path.assetname/
 
 ```csharp
-public FName AssetPathName;
+public FTopLevelAssetPath AssetPath;
 ```
 
 ### **SubPathString**
+
+Optional FString for subobject within an asset. This is the sub path after the :
 
 ```csharp
 public FString SubPathString;
@@ -26,14 +30,58 @@ public FString SubPathString;
 
 ## Constructors
 
-### **FSoftObjectPath(FName, FString)**
+### **FSoftObjectPath(FName, FName, FString)**
 
 ```csharp
-FSoftObjectPath(FName assetPathName, FString subPathString)
+FSoftObjectPath(FName packageName, FName assetName, FString subPathString)
 ```
 
 #### Parameters
 
-`assetPathName` [FName](./uassetapi.unrealtypes.fname.md)<br>
+`packageName` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`assetName` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 `subPathString` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **FSoftObjectPath(FTopLevelAssetPath, FString)**
+
+```csharp
+FSoftObjectPath(FTopLevelAssetPath assetPath, FString subPathString)
+```
+
+#### Parameters
+
+`assetPath` [FTopLevelAssetPath](./uassetapi.propertytypes.objects.ftoplevelassetpath.md)<br>
+
+`subPathString` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+## Methods
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FSoftObjectPath Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FSoftObjectPath](./uassetapi.propertytypes.objects.fsoftobjectpath.md)<br>
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

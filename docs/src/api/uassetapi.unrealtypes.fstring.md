@@ -25,6 +25,14 @@ public string Value;
 public Encoding Encoding;
 ```
 
+### **IsCasePreserving**
+
+Is this FString case preserving?
+
+```csharp
+public bool IsCasePreserving;
+```
+
 ### **NullCase**
 
 ```csharp

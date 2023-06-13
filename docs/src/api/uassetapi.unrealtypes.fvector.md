@@ -5,10 +5,10 @@ Namespace: UAssetAPI.UnrealTypes
 A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
 
 ```csharp
-public class FVector
+public struct FVector
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FVector](./uassetapi.unrealtypes.fvector.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector](./uassetapi.unrealtypes.fvector.md)
 
 ## Properties
 
@@ -83,7 +83,7 @@ public float ZFloat { get; }
 ### **FVector(Double, Double, Double)**
 
 ```csharp
-public FVector(double x, double y, double z)
+FVector(double x, double y, double z)
 ```
 
 #### Parameters
@@ -97,7 +97,7 @@ public FVector(double x, double y, double z)
 ### **FVector(Single, Single, Single)**
 
 ```csharp
-public FVector(float x, float y, float z)
+FVector(float x, float y, float z)
 ```
 
 #### Parameters
@@ -107,9 +107,3 @@ public FVector(float x, float y, float z)
 `y` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
 
 `z` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
-
-### **FVector()**
-
-```csharp
-public FVector()
-```

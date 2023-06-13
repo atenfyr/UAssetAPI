@@ -18,17 +18,17 @@ public static string CurrentCommit;
 
 ## Methods
 
-### **SerializeJson(Object, Formatting)**
+### **SerializeJson(Object, Boolean)**
 
 ```csharp
-public static string SerializeJson(object obj, Formatting jsonFormatting)
+public static string SerializeJson(object obj, bool isFormatted)
 ```
 
 #### Parameters
 
 `obj` [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
-`jsonFormatting` Formatting<br>
+`isFormatted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 #### Returns
 

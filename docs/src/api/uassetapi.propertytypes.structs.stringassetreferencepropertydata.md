@@ -8,26 +8,10 @@ A struct that contains a string reference to a class. Can be used to make soft r
 public class StringAssetReferencePropertyData : SoftObjectPathPropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [SoftObjectPathPropertyData](./uassetapi.propertytypes.structs.softobjectpathpropertydata.md) → [StringAssetReferencePropertyData](./uassetapi.propertytypes.structs.stringassetreferencepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSoftObjectPath&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [SoftObjectPathPropertyData](./uassetapi.propertytypes.structs.softobjectpathpropertydata.md) → [StringAssetReferencePropertyData](./uassetapi.propertytypes.structs.stringassetreferencepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
-
-### **AssetPathName**
-
-Asset path, patch to a top level object in a package. This is /package/path.assetname
-
-```csharp
-public FName AssetPathName;
-```
-
-### **SubPathString**
-
-Optional FString for subobject within an asset. This is the sub path after the :
-
-```csharp
-public FString SubPathString;
-```
 
 ### **Path**
 
@@ -69,14 +53,6 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
-### **IsZero**
-
-Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
-
-```csharp
-public bool IsZero;
-```
-
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -91,12 +67,6 @@ An optional tag which can be set on any property in memory. This is for the user
 
 ```csharp
 public object Tag;
-```
-
-### **RawValue**
-
-```csharp
-public object RawValue;
 ```
 
 ## Properties
@@ -121,6 +91,28 @@ public FString PropertyType { get; }
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+### **Value**
+
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+
+```csharp
+public FSoftObjectPath Value { get; set; }
+```
+
+#### Property Value
+
+[FSoftObjectPath](./uassetapi.propertytypes.objects.fsoftobjectpath.md)<br>
+
+### **RawValue**
+
+```csharp
+public object RawValue { get; set; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+
 ### **ShouldBeRegistered**
 
 Determines whether or not this particular property should be registered in the property registry and automatically used when parsing assets.
@@ -132,6 +124,18 @@ public bool ShouldBeRegistered { get; }
 #### Property Value
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **DefaultValue**
+
+The default value of this property, used as a fallback when no value is defined. Null by default.
+
+```csharp
+public object DefaultValue { get; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
 

@@ -5,12 +5,18 @@ Namespace: UAssetAPI.Kismet.Bytecode.Expressions
 A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_RotationConst](./uassetapi.kismet.bytecode.eexprtoken.md#ex_rotationconst) instruction.
 
 ```csharp
-public class EX_RotationConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[UAssetAPI.UnrealTypes.FRotator, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]
+public class EX_RotationConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;FRotator&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_RotationConst](./uassetapi.kismet.bytecode.expressions.ex_rotationconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_RotationConst](./uassetapi.kismet.bytecode.expressions.ex_rotationconst.md)
 
 ## Fields
+
+### **Value**
+
+```csharp
+public FRotator Value;
+```
 
 ### **Tag**
 
@@ -39,18 +45,6 @@ public EExprToken Token { get; }
 #### Property Value
 
 [EExprToken](./uassetapi.kismet.bytecode.eexprtoken.md)<br>
-
-### **Value**
-
-The value of this expression if it is a constant.
-
-```csharp
-public FRotator Value { get; set; }
-```
-
-#### Property Value
-
-[FRotator](./uassetapi.unrealtypes.frotator.md)<br>
 
 ### **Inst**
 

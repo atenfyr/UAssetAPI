@@ -17,10 +17,10 @@ namespace UAssetAPI
     public static class UAPUtils
     {
         public static string CurrentCommit = string.Empty;
-        
-        public static string SerializeJson(object obj, Formatting jsonFormatting = Formatting.None)
+
+        public static string SerializeJson(object obj, bool isFormatted)
         {
-            return JsonConvert.SerializeObject(obj, jsonFormatting, UAsset.jsonSettings);
+            return JsonConvert.SerializeObject(obj, isFormatted ? Formatting.Indented : Formatting.None, UAsset.jsonSettings);
         }
 
         public static List<T> FindAllInstances<T>(object parent) where T : class

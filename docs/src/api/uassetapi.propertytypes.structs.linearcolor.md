@@ -5,10 +5,10 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 A linear, 32-bit/component floating point RGBA color.
 
 ```csharp
-public class LinearColor : System.ICloneable
+public struct LinearColor
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [LinearColor](./uassetapi.propertytypes.structs.linearcolor.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [LinearColor](./uassetapi.propertytypes.structs.linearcolor.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -39,16 +39,10 @@ public float A;
 
 ## Constructors
 
-### **LinearColor()**
-
-```csharp
-public LinearColor()
-```
-
 ### **LinearColor(Single, Single, Single, Single)**
 
 ```csharp
-public LinearColor(float R, float G, float B, float A)
+LinearColor(float R, float G, float B, float A)
 ```
 
 #### Parameters
@@ -66,7 +60,7 @@ public LinearColor(float R, float G, float B, float A)
 ### **Clone()**
 
 ```csharp
-public object Clone()
+object Clone()
 ```
 
 #### Returns

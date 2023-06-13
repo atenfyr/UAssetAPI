@@ -40,12 +40,18 @@ public FName ClassPackage;
 public FName ClassName;
 ```
 
-## Constructors
-
-### **Import(String, String, FPackageIndex, String, UAsset)**
+### **bImportOptional**
 
 ```csharp
-public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, UAsset asset)
+public bool bImportOptional;
+```
+
+## Constructors
+
+### **Import(String, String, FPackageIndex, String, Boolean, UAsset)**
+
+```csharp
+public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, bool importOptional, UAsset asset)
 ```
 
 #### Parameters
@@ -58,12 +64,14 @@ public Import(string classPackage, string className, FPackageIndex outerIndex, s
 
 `objectName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+`importOptional` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 `asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **Import(FName, FName, FPackageIndex, FName)**
+### **Import(FName, FName, FPackageIndex, FName, Boolean)**
 
 ```csharp
-public Import(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName)
+public Import(FName classPackage, FName className, FPackageIndex outerIndex, FName objectName, bool importOptional)
 ```
 
 #### Parameters
@@ -75,6 +83,8 @@ public Import(FName classPackage, FName className, FPackageIndex outerIndex, FNa
 `outerIndex` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
 `objectName` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`importOptional` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Import(AssetBinaryReader)**
 

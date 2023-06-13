@@ -30,6 +30,12 @@ public string FriendlyName;
 public int Version;
 ```
 
+### **IsSerialized**
+
+```csharp
+public bool IsSerialized;
+```
+
 ### **GuidToCustomVersionStringMap**
 
 Static map of custom version GUIDs to the object or enum that they represent in the Unreal Engine. This list is not necessarily exhaustive, so feel free to add to it if need be.
@@ -125,3 +131,17 @@ The name of a custom version object or enum.
 
 [Guid](https://docs.microsoft.com/en-us/dotnet/api/system.guid)<br>
 A GUID that represents the custom version
+
+### **SetIsSerialized(Boolean)**
+
+```csharp
+public CustomVersion SetIsSerialized(bool val)
+```
+
+#### Parameters
+
+`val` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+#### Returns
+
+[CustomVersion](./uassetapi.customversion.md)<br>

@@ -1284,9 +1284,19 @@ namespace UAssetAPI
         /// <summary>
         /// Serializes this asset as JSON.
         /// </summary>
+        /// <param name="isFormatted">Whether or not the returned JSON string should be indented.</param>
+        /// <returns>A serialized JSON string that represents the asset.</returns>
+        public string SerializeJson(bool isFormatted = false)
+        {
+            return SerializeJson(isFormatted ? Formatting.Indented : Formatting.None);
+        }
+
+        /// <summary>
+        /// Serializes this asset as JSON.
+        /// </summary>
         /// <param name="jsonFormatting">The formatting to use for the returned JSON string.</param>
         /// <returns>A serialized JSON string that represents the asset.</returns>
-        public string SerializeJson(Formatting jsonFormatting = Formatting.None)
+        public string SerializeJson(Formatting jsonFormatting)
         {
             Info = "Serialized with UAssetAPI " + typeof(PropertyData).Assembly.GetName().Version + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? "" : (" (" + UAPUtils.CurrentCommit + ")"));
             return JsonConvert.SerializeObject(this, jsonFormatting, jsonSettings);
@@ -1296,9 +1306,20 @@ namespace UAssetAPI
         /// Serializes an object as JSON.
         /// </summary>
         /// <param name="value">The object to serialize as JSON.</param>
+        /// <param name="isFormatted">Whether or not the returned JSON string should be indented.</param>
+        /// <returns>A serialized JSON string that represents the object.</returns>
+        public string SerializeJsonObject(object value, bool isFormatted = false)
+        {
+            return SerializeJsonObject(value, isFormatted ? Formatting.Indented : Formatting.None);
+        }
+
+        /// <summary>
+        /// Serializes an object as JSON.
+        /// </summary>
+        /// <param name="value">The object to serialize as JSON.</param>
         /// <param name="jsonFormatting">The formatting to use for the returned JSON string.</param>
         /// <returns>A serialized JSON string that represents the object.</returns>
-        public string SerializeJsonObject(object value, Formatting jsonFormatting = Formatting.None)
+        public string SerializeJsonObject(object value, Formatting jsonFormatting)
         {
             return JsonConvert.SerializeObject(value, jsonFormatting, jsonSettings);
         }

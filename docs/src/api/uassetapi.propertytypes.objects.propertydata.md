@@ -45,14 +45,6 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
-### **IsZero**
-
-Whether or not this property is empty. If true, the body of this property will not be serialized in unversioned assets.
-
-```csharp
-public bool IsZero;
-```
-
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -69,13 +61,17 @@ An optional tag which can be set on any property in memory. This is for the user
 public object Tag;
 ```
 
+## Properties
+
 ### **RawValue**
 
 ```csharp
-public object RawValue;
+public object RawValue { get; set; }
 ```
 
-## Properties
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ### **ShouldBeRegistered**
 
@@ -112,6 +108,18 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **DefaultValue**
+
+The default value of this property, used as a fallback when no value is defined. Null by default.
+
+```csharp
+public object DefaultValue { get; }
+```
+
+#### Property Value
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
 
@@ -213,6 +221,24 @@ Whether or not to also write the "header" of the property, which is data conside
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length in bytes of the data that was written.
+
+### **IsZero(UnrealPackage)**
+
+Does the body of this property entirely consist of null bytes? If so, the body will not be serialized in unversioned properties.
+
+```csharp
+public bool IsZero(UnrealPackage asset)
+```
+
+#### Parameters
+
+`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+The asset to test serialization within.
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not the property is zero.
 
 ### **FromString(String[], UAsset)**
 

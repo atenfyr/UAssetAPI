@@ -469,6 +469,22 @@ public FName GetClassTypeForAncestry(UnrealPackage asset)
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
+### **GetClassTypeForAncestry(FPackageIndex, UnrealPackage)**
+
+```csharp
+public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset)
+```
+
+#### Parameters
+
+`classIndex` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
+
+`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+
+#### Returns
+
+[FName](./uassetapi.unrealtypes.fname.md)<br>
+
 ### **ToString()**
 
 ```csharp

@@ -106,6 +106,16 @@ public T GetObject<T>()
 
 T<br>
 
+### **GetUsmapPropertyType()**
+
+```csharp
+public EPropertyType GetUsmapPropertyType()
+```
+
+#### Returns
+
+[EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>
+
 ### **Read(AssetBinaryReader)**
 
 ```csharp
