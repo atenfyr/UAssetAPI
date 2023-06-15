@@ -25,21 +25,12 @@ namespace UAssetAPI.Unversioned
         Latest = LatestPlusOne - 1
     }
 
-    /// <summary>
-    /// List of valid usmap extensions, which describe optional information of value. Serialized in order of least to greatest.
-    /// </summary>
-    [Flags]
-    public enum UsmapExtensionVersion : uint
+    public enum UsmapExtensionLayoutVersion
     {
         /// <summary>
-        /// No extension data is present.
+        /// Initial format.
         /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Module path information is present.
-        /// </summary>
-        Paths = 1
+        Initial
     }
 
     public enum ECompressionMethod
@@ -264,11 +255,6 @@ namespace UAssetAPI.Unversioned
         /// .usmap file version
         /// </summary>
         internal UsmapVersion Version;
-
-        /// <summary>
-        /// .usmap extension file version
-        /// </summary>
-        internal UsmapExtensionVersion ExtensionVersion;
 
         /// <summary>
         /// Game UE4 object version
@@ -722,20 +708,52 @@ namespace UAssetAPI.Unversioned
                 Schemas[schemaName] = newSchema;
             }
 
+            void ReadExtension(string extId, uint extLeng)
+            {
+                switch(extId)
+                {
+                    case "MODL":
+                        ushort numModulePaths = reader.ReadUInt16();
+                        string[] modulePaths = new string[numModulePaths];
+                        for (int i = 0; i < numModulePaths; i++) modulePaths[i] = reader.ReadString();
+                        for (int i = 0; i < schemaIndexMap.Length; i++)
+                        {
+                            schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
+                            AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
+                        }
+                        break;
+                    default:
+                        // unknown extension, just ignore
+                        reader.BaseStream.Position += extLeng;
+                        break;
+                }
+            }
+
             // read extension data if it's present
             if (reader.BaseStream.Length > reader.BaseStream.Position)
             {
-                ExtensionVersion = (UsmapExtensionVersion)reader.ReadUInt32();
-                if (ExtensionVersion.HasFlag(UsmapExtensionVersion.Paths))
+                uint usmapExtensionsMagic = reader.ReadUInt32();
+                if (usmapExtensionsMagic == 0x54584543) // "CEXT"
                 {
-                    ushort numModulePaths = reader.ReadUInt16();
-                    string[] modulePaths = new string[numModulePaths];
-                    for (int i = 0; i < numModulePaths; i++) modulePaths[i] = reader.ReadString();
-                    for (int i = 0; i < schemaIndexMap.Length; i++)
+                    UsmapExtensionLayoutVersion layoutVer = (UsmapExtensionLayoutVersion)reader.ReadByte();
+                    switch(layoutVer)
                     {
-                        schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
-                        AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
+                        case UsmapExtensionLayoutVersion.Initial:
+                            int numExtensions = reader.ReadInt32();
+                            for (int i = 0; i < numExtensions; i++)
+                            {
+                                string extId = reader.ReadString(4);
+                                uint extLeng = reader.ReadUInt32();
+                                ReadExtension(extId, extLeng);
+                            }
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown extension layout version " + layoutVer);
                     }
+                }
+                else if (usmapExtensionsMagic == 1) // legacy
+                {
+                    ReadExtension("MODL", 0);
                 }
             }
         }

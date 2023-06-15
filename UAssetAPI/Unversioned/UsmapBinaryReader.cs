@@ -69,7 +69,12 @@ namespace UAssetAPI
 
         public override string ReadString()
         {
-            int length = this.ReadByte();
+            return ReadString(-1);
+        }
+
+        public string ReadString(int fixedLength = -1)
+        {
+            int length = fixedLength > 0 ? fixedLength : this.ReadByte();
             switch (length)
             {
                 case 0:
