@@ -68,7 +68,13 @@ namespace UAssetAPI.PropertyTypes.Objects
                 FName fullType = FName.DefineDummy(reader.Asset, "Generic");
                 Guid structGUID = new Guid();
 
-                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
+                bool isSpecialCase = false;
+                if (reader.Asset is UAsset)
+                {
+                    isSpecialCase = reader.Asset.ObjectVersion == ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && ((UAsset)reader.Asset).WillSerializeNameHashes == true;
+                }
+
+                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
                 {
                     name = reader.ReadFName();
                     if (name.Value.Value.Equals("None"))
@@ -93,8 +99,15 @@ namespace UAssetAPI.PropertyTypes.Objects
                 }
                 else
                 {
-                    // override using ArrayStructTypeOverride if applicable
-                    if (reader.Asset.ArrayStructTypeOverride.ContainsKey(this.Name.Value.Value)) fullType = FName.DefineDummy(reader.Asset, reader.Asset.ArrayStructTypeOverride[this.Name.Value.Value]);
+                    // override using mappings or ArrayStructTypeOverride if applicable
+                    if (arrayStructType != null)
+                    {
+                        fullType = arrayStructType;
+                    }
+                    else if (reader.Asset.ArrayStructTypeOverride.ContainsKey(this.Name.Value.Value))
+                    {
+                        fullType = FName.DefineDummy(reader.Asset, reader.Asset.ArrayStructTypeOverride[this.Name.Value.Value]);
+                    }
                 }
 
                 if (numEntries == 0)
@@ -174,7 +187,14 @@ namespace UAssetAPI.PropertyTypes.Objects
                 FName fullType = DummyStruct.StructType;
 
                 int lengthLoc = -1;
-                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
+
+                bool isSpecialCase = false;
+                if (writer.Asset is UAsset)
+                {
+                    isSpecialCase = writer.Asset.ObjectVersion == ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && ((UAsset)writer.Asset).WillSerializeNameHashes == true;
+                }
+
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
                 {
                     writer.Write(DummyStruct.Name);
                     writer.Write(new FName(writer.Asset, "StructProperty"));
@@ -192,7 +212,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     Value[i].Write(writer, false);
                 }
 
-                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO)
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
                 {
                     int fullLen = (int)writer.BaseStream.Position - lengthLoc;
                     int newLoc = (int)writer.BaseStream.Position;

@@ -113,7 +113,20 @@ namespace UAssetAPI
             FString str = this.ReadFString(nameHeader);
             if (this is AssetBinaryReader abr)
             {
-                if (abr.Asset is UAsset && abr.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED && !string.IsNullOrEmpty(str.Value)) hashes = this.ReadUInt32();
+                if (abr.Asset is UAsset abrUa && abrUa.WillSerializeNameHashes != false && !string.IsNullOrEmpty(str.Value))
+                {
+                    hashes = this.ReadUInt32();
+                    if (hashes < (1 << 10) && abrUa.ObjectVersion < ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED) // "i lied, there's actually no hashes"
+                    {
+                        abrUa.WillSerializeNameHashes = false;
+                        hashes = 0;
+                        this.BaseStream.Position -= sizeof(uint);
+                    }
+                    else
+                    {
+                        abrUa.WillSerializeNameHashes = true;
+                    }
+                }
             }
             return str;
         }

@@ -306,6 +306,12 @@ namespace UAssetAPI
         public bool UsesEventDrivenLoader;
 
         /// <summary>
+        /// Whether or not this asset serializes hashes in the name map.
+        /// If null, this will be automatically determined.
+        /// </summary>
+        public bool? WillSerializeNameHashes = null;
+
+        /// <summary>
         /// Map of object imports. UAssetAPI used to call these "links."
         /// </summary>
         public List<Import> Imports;
@@ -1051,7 +1057,7 @@ namespace UAssetAPI
                     bool disableCasePreservingHash = !nameMapIndexList[i].IsCasePreserving && this.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.PropertiesSerializeRepCondition;
                     writer.Write(disableCasePreservingHash ? CRCGenerator.ToLower(nameMapIndexList[i], false) : nameMapIndexList[i]);
 
-                    if (ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED)
+                    if (WillSerializeNameHashes == true || (WillSerializeNameHashes == null && ObjectVersion >= ObjectVersion.VER_UE4_NAME_HASHES_SERIALIZED))
                     {
                         if (OverrideNameMapHashes != null && OverrideNameMapHashes.ContainsKey(nameMapIndexList[i]))
                         {
