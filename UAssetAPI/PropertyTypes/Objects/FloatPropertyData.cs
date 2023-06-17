@@ -56,7 +56,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override string ToString()
         {
-            return Convert.ToString(Value);
+            return Convert.ToString(Value); // maybe: , System.Globalization.CultureInfo.InvariantCulture
         }
 
         public override void FromString(string[] d, UAsset asset)

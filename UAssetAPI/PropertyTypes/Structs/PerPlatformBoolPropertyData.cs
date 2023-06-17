@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = new bool[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                Value[i] = reader.ReadBoolean();
+                Value[i] = reader.ReadInt32() == 1;
             }
         }
 
@@ -51,9 +51,9 @@ namespace UAssetAPI.PropertyTypes.Structs
             writer.Write(Value.Length);
             for (int i = 0; i < Value.Length; i++)
             {
-                writer.Write(Value[i]);
+                writer.Write(Value[i] ? 1 : 0);
             }
-            return sizeof(int) + sizeof(bool) * Value.Length;
+            return sizeof(int) + sizeof(int) * Value.Length;
         }
 
         public override void FromString(string[] d, UAsset asset)
