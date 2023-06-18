@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System.IO;
+using System.Linq;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
-using System.Diagnostics;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -46,7 +44,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 if (InnerType?.Value.Value == "ByteProperty")
                 {
                     int enumIndice = reader.ReadByte();
-                    Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value][enumIndice]);
+                    Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
                     return;
                 }
             }
@@ -65,7 +63,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             {
                 if (InnerType?.Value?.Value == "ByteProperty")
                 {
-                    int enumIndice = Value == null ? 255 : writer.Asset.Mappings.EnumMap[EnumType.Value.Value].FindIndex(a => a == Value.Value.Value); // wow this code is stupid
+                    int enumIndice = Value == null ? byte.MaxValue : (byte)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault(); // wow this code is stupid
                     writer.Write((byte)enumIndice);
                     return sizeof(byte);
                 }

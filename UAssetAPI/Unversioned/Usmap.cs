@@ -9,7 +9,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
-    public enum UsmapVersion
+    public enum UsmapVersion : byte
     {
         /// <summary>
         /// Initial format.
@@ -25,7 +25,7 @@ namespace UAssetAPI.Unversioned
         Latest = LatestPlusOne - 1
     }
 
-    public enum UsmapExtensionLayoutVersion
+    public enum UsmapExtensionLayoutVersion : byte
     {
         /// <summary>
         /// Initial format.
@@ -33,7 +33,14 @@ namespace UAssetAPI.Unversioned
         Initial
     }
 
-    public enum ECompressionMethod
+    public enum UsmapStructKind : byte
+    {
+        UScriptStruct = 1,
+        UClass = 2,
+        Unknown = 255
+    }
+
+    public enum ECompressionMethod : byte
     {
         None,
         Oodle,
@@ -179,6 +186,7 @@ namespace UAssetAPI.Unversioned
         public ushort SchemaIndex;
         public ushort ArrayIndex; // not serialized
         public byte ArraySize;
+        public EPropertyFlags PropertyFlags;
         public UsmapPropertyData PropertyData;
 
         public UsmapProperty(string name, ushort schemaIndex, ushort arrayIndex, byte arraySize, UsmapPropertyData propertyData)
@@ -212,6 +220,9 @@ namespace UAssetAPI.Unversioned
         private Dictionary<int, UsmapProperty> properties;
         private Dictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
 
+        public UsmapStructKind StructKind;
+        public int StructOrClassFlags;
+
         public UsmapProperty GetProperty(string key, int dupIndex)
         {
             var keyTuple = new Tuple<string, int>(key, dupIndex);
@@ -233,6 +244,25 @@ namespace UAssetAPI.Unversioned
         }
 
         public UsmapSchema()
+        {
+
+        }
+    }
+
+    public class UsmapEnum
+    {
+        public string Name;
+        public string ModulePath;
+        public int EnumFlags;
+        public Dictionary<long, string> Values;
+
+        public UsmapEnum(string name, Dictionary<long, string> values)
+        {
+            Name = name;
+            Values = values;
+        }
+
+        public UsmapEnum()
         {
 
         }
@@ -281,7 +311,7 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// .usmap enum map
         /// </summary>
-        public Dictionary<string, List<string>> EnumMap;
+        public Dictionary<string, UsmapEnum> EnumMap;
 
         /// <summary>
         /// .usmap schema map
@@ -324,7 +354,7 @@ namespace UAssetAPI.Unversioned
                         string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
                         if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
                         var allNames = new List<string>();
-                        foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName]) allNames.Add(cosa.ToString());
+                        foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
                         converted1 = new UsmapEnumData(enumName, allNames);
                     }
                     else
@@ -660,18 +690,22 @@ namespace UAssetAPI.Unversioned
 
             // part 2: enums
             //Console.WriteLine(reader.BaseStream.Position);
-            EnumMap = new Dictionary<string, List<string>>();
+            EnumMap = new Dictionary<string, UsmapEnum>();
             int numEnums = reader.ReadInt32();
+            UsmapEnum[] enumIndexMap = new UsmapEnum[numEnums];
             for (int i = 0; i < numEnums; i++)
             {
                 string enumName = reader.ReadName();
-                EnumMap[enumName] = new List<string>();
 
+                var newEnum = new UsmapEnum(enumName, new Dictionary<long, string>());
                 byte numEnumEntries = reader.ReadByte();
                 for (int j = 0; j < numEnumEntries; j++)
                 {
-                    EnumMap[enumName].Add(reader.ReadName());
+                    newEnum.Values.Add(j, reader.ReadName());
                 }
+
+                enumIndexMap[i] = newEnum;
+                EnumMap[enumName] = newEnum;
             }
 
             // part 3: schema
@@ -710,8 +744,71 @@ namespace UAssetAPI.Unversioned
 
             void ReadExtension(string extId, uint extLeng)
             {
+                long endPos = reader.BaseStream.Position + extLeng;
+
                 switch(extId)
                 {
+                    case "PPTH":
+                        byte ppthVer = reader.ReadByte();
+                        if (ppthVer > 0) break;
+
+                        int ppthNumEnums = reader.ReadInt32();
+                        for (int i = 0; i < ppthNumEnums; i++)
+                        {
+                            enumIndexMap[i].ModulePath = reader.ReadName();
+                            AddCityHash64MapEntry(enumIndexMap[i].ModulePath + "." + enumIndexMap[i].Name);
+                        }
+                        int ppthNumSchemas = reader.ReadInt32();
+                        for (int i = 0; i < ppthNumSchemas; i++)
+                        {
+                            schemaIndexMap[i].ModulePath = reader.ReadName();
+                            AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
+                        }
+
+                        if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
+                        break;
+                    case "EATR":
+                        byte eatrVer = reader.ReadByte();
+                        if (eatrVer > 0) break;
+
+                        int eatrNumEnums = reader.ReadInt32();
+                        for (int i = 0; i < eatrNumEnums; i++)
+                        {
+                            enumIndexMap[i].EnumFlags = reader.ReadInt32();
+                        }
+                        int eatrNumSchemas = reader.ReadInt32();
+                        for (int i = 0; i < eatrNumSchemas; i++)
+                        {
+                            schemaIndexMap[i].StructKind = (UsmapStructKind)reader.ReadByte();
+                            schemaIndexMap[i].StructOrClassFlags = reader.ReadInt32();
+                            int eatrNumProps = reader.ReadInt32();
+                            for (int j = 0; j < eatrNumProps; j++)
+                            {
+                                schemaIndexMap[i].Properties[j].PropertyFlags = (EPropertyFlags)reader.ReadUInt64();
+                            }
+                        }
+
+                        if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
+                        break;
+                    case "ENVP":
+                        byte envpVer = reader.ReadByte();
+                        if (envpVer > 0) break;
+
+                        int envpNumEnums = reader.ReadInt32();
+                        for (int i = 0; i < envpNumEnums; i++)
+                        {
+                            enumIndexMap[i].Values.Clear();
+                            int envpNumEnumEntries = reader.ReadInt32(); // not a byte this time!!!
+                            for (int j = 0; j < envpNumEnumEntries; j++)
+                            {
+                                string envpEntryVal = reader.ReadName();
+                                long envpEntryKey = reader.ReadInt64();
+                                enumIndexMap[i].Values[envpEntryKey] = envpEntryVal;
+                            }
+                        }
+
+                        if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
+                        break;
                     case "MODL":
                         ushort numModulePaths = reader.ReadUInt16();
                         string[] modulePaths = new string[numModulePaths];
@@ -721,12 +818,14 @@ namespace UAssetAPI.Unversioned
                             schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
                             AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
                         }
+
+                        if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
                         break;
                     default:
-                        // unknown extension, just ignore
-                        reader.BaseStream.Position += extLeng;
                         break;
                 }
+
+                reader.BaseStream.Position = endPos;
             }
 
             // read extension data if it's present
