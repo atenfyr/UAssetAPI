@@ -70,6 +70,18 @@
     <None Update="TestAssets\TestJson\Outriders.usmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestJson\RaceSimDataAsset.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestJson\RaceSimDataAsset.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestJson\TurboAcres_Environment.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestJson\TurboAcres_Environment.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestJson\WPN_LockOnRifle.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
