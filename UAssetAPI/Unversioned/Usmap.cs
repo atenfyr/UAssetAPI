@@ -852,7 +852,7 @@ namespace UAssetAPI.Unversioned
                 }
                 else if (usmapExtensionsMagic == 1) // legacy
                 {
-                    ReadExtension("MODL", 0);
+                    ReadExtension("MODL", (uint)(reader.BaseStream.Length - reader.BaseStream.Position));
                 }
             }
         }
