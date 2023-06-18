@@ -35,9 +35,9 @@ namespace UAssetAPI.Unversioned
 
     public enum UsmapStructKind : byte
     {
+        None = 0,
         UScriptStruct = 1,
         UClass = 2,
-        Unknown = 255
     }
 
     public enum ECompressionMethod : byte
