@@ -1,1 +1,0 @@
-# MaterialInputPropertyData&lt;T&gt;

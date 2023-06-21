@@ -1,6 +1,5 @@
 .vs
 docs/book
-docs/gen.*
 packages
 TestResults
 UAssetAPI/git_commit.txt
