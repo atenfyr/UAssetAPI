@@ -540,7 +540,7 @@ namespace UAssetAPI
             List<CustomVersion> res = new List<CustomVersion>();
             foreach (KeyValuePair<Guid, string> entry in CustomVersion.GuidToCustomVersionStringMap)
             {
-                Type customVersionType = Type.GetType("UAssetAPI." + entry.Value);
+                Type customVersionType = Type.GetType("UAssetAPI.CustomVersions." + entry.Value);
                 if (customVersionType == null) continue;
                 int guessedCustomVersion = GuessCustomVersionFromTypeAndEngineVersion(chosenVersion, customVersionType);
                 if (guessedCustomVersion < 0) continue;
