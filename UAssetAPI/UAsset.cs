@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
@@ -290,7 +291,7 @@ namespace UAssetAPI
         /// </remarks>
         public int LegacyFileVersion;
 
-        public ECustomVersionSerializationFormat CustomVersionSerializationFormat
+        internal ECustomVersionSerializationFormat CustomVersionSerializationFormat
         {
             get
             {
@@ -307,7 +308,7 @@ namespace UAssetAPI
 
         /// <summary>
         /// Whether or not this asset serializes hashes in the name map.
-        /// If null, this will be automatically determined.
+        /// If null, this will be automatically determined based on the object version.
         /// </summary>
         public bool? WillSerializeNameHashes = null;
 
@@ -1031,7 +1032,7 @@ namespace UAssetAPI
         /// <summary>
         /// Serializes an asset from memory.
         /// </summary>
-        /// <returns>A stream that the asset has been serialized to.</returns>
+        /// <returns>A new MemoryStream containing the full binary data of the serialized asset.</returns>
         public override MemoryStream WriteData()
         {
             isSerializationTime = true;
@@ -1502,7 +1503,7 @@ namespace UAssetAPI
         /// <summary>
         /// Reads an asset from a BinaryReader and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
-        /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
+        /// <param name="reader">The asset's BinaryReader that this instance will read from. If a .uexp file exists, the .uexp file's data should be appended to the end of the .uasset file's data.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
@@ -1531,17 +1532,19 @@ namespace UAssetAPI
         /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
-        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="objectVersion">The UE4 object version of the Unreal Engine that will be used to parse this asset.</param>
+        /// <param name="objectVersionUE5">The UE5 object version of the Unreal Engine that will be used to parse this asset.</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null)
+        public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null)
         {
             this.FilePath = path;
             this.Mappings = mappings;
             ObjectVersion = objectVersion;
-            CustomVersionContainer = customVersionContainer;
+            ObjectVersionUE5 = objectVersionUE5;
+            if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;
 
             Read(PathToReader(path));
         }
@@ -1550,32 +1553,37 @@ namespace UAssetAPI
         /// Reads an asset from a BinaryReader and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
         /// <param name="reader">The asset's BinaryReader that this instance will read from.</param>
-        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="objectVersion">The UE4 object version of the Unreal Engine that will be used to parse this asset.</param>
+        /// <param name="objectVersionUE5">The UE5 object version of the Unreal Engine that will be used to parse this asset.</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
         {
             this.Mappings = mappings;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             ObjectVersion = objectVersion;
-            CustomVersionContainer = customVersionContainer;
+            ObjectVersionUE5 = objectVersionUE5;
+            if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;
+
             Read(reader);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UAsset"/> class. This instance will store no asset data and does not represent any asset in particular until the <see cref="Read"/> method is manually called.
         /// </summary>
-        /// <param name="objectVersion">The object version of the Unreal Engine that will be used to parse this asset</param>
+        /// <param name="objectVersion">The UE4 object version of the Unreal Engine that will be used to parse this asset.</param>
+        /// <param name="objectVersionUE5">The UE5 object version of the Unreal Engine that will be used to parse this asset.</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
-        public UAsset(ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings = null)
+        public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null)
         {
             this.Mappings = mappings;
             ObjectVersion = objectVersion;
-            CustomVersionContainer = customVersionContainer;
+            ObjectVersionUE5 = objectVersionUE5;
+            if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;
         }
 
         /// <summary>

@@ -1,0 +1,19 @@
+# TextureAddress
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum TextureAddress
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [TextureAddress](./uassetapi.unrealtypes.engineenums.textureaddress.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| TA_Wrap | 0 |  |
+| TA_Clamp | 1 |  |
+| TA_Mirror | 2 |  |
+| TA_MAX | 3 |  |

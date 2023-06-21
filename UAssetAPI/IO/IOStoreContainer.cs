@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.IO
 {

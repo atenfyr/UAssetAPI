@@ -1,0 +1,20 @@
+# EGBufferFormat
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum EGBufferFormat
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EGBufferFormat](./uassetapi.unrealtypes.engineenums.egbufferformat.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| Force8BitsPerChannel | 0 |  |
+| Default | 1 |  |
+| HighPrecisionNormals | 3 |  |
+| Force16BitsPerChannel | 5 |  |
+| EGBufferFormat_MAX | 6 |  |

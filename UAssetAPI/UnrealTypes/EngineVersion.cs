@@ -1,7 +1,7 @@
 ﻿namespace UAssetAPI.UnrealTypes
 {
     /// <summary>
-    /// An enum used to represent all retail versions of the Unreal Engine. Each version entry both a particular <see cref="ObjectVersion"/> and the default set of all applicable <see cref="CustomVersion"/> enum values.
+    /// An enum used to represent all retail versions of the Unreal Engine. Each version entry represents a particular <see cref="ObjectVersion"/>, a particular <see cref="ObjectVersionUE5"/>, and the default set of all applicable <see cref="CustomVersion"/> enum values.
     /// </summary>
     public enum EngineVersion
     {

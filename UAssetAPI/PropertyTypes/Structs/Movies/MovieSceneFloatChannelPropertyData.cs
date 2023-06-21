@@ -1,5 +1,6 @@
 ﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.EngineEnums;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {

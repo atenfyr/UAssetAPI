@@ -34,6 +34,15 @@ Whether or not this asset is loaded with the Event Driven Loader.
 public bool UsesEventDrivenLoader;
 ```
 
+### **WillSerializeNameHashes**
+
+Whether or not this asset serializes hashes in the name map.
+ If null, this will be automatically determined based on the object version.
+
+```csharp
+public Nullable<bool> WillSerializeNameHashes;
+```
+
 ### **Imports**
 
 Map of object imports. UAssetAPI used to call these "links."
@@ -270,16 +279,6 @@ public Dictionary<string, FString> ArrayStructTypeOverride;
 
 ## Properties
 
-### **CustomVersionSerializationFormat**
-
-```csharp
-public ECustomVersionSerializationFormat CustomVersionSerializationFormat { get; }
-```
-
-#### Property Value
-
-[ECustomVersionSerializationFormat](./uassetapi.unversioned.ecustomversionserializationformat.md)<br>
-
 ### **PackageFlags**
 
 The flags for this package.
@@ -344,7 +343,7 @@ public UAsset(AssetBinaryReader reader, EngineVersion engineVersion, Usmap mappi
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-The asset's BinaryReader that this instance will read from.
+The asset's BinaryReader that this instance will read from. If a .uexp file exists, the .uexp file's data should be appended to the end of the .uasset file's data.
 
 `engineVersion` [EngineVersion](./uassetapi.unrealtypes.engineversion.md)<br>
 The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.
@@ -379,12 +378,12 @@ The version of the Unreal Engine that will be used to parse this asset. If the a
 `mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
 A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
 
-### **UAsset(String, ObjectVersion, List&lt;CustomVersion&gt;, Usmap)**
+### **UAsset(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings)
+public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings)
 ```
 
 #### Parameters
@@ -393,7 +392,10 @@ public UAsset(string path, ObjectVersion objectVersion, List<CustomVersion> cust
 The path of the asset file on disk that this instance will read from.
 
 `objectVersion` [ObjectVersion](./uassetapi.unrealtypes.objectversion.md)<br>
-The object version of the Unreal Engine that will be used to parse this asset
+The UE4 object version of the Unreal Engine that will be used to parse this asset.
+
+`objectVersionUE5` [ObjectVersionUE5](./uassetapi.unrealtypes.objectversionue5.md)<br>
+The UE5 object version of the Unreal Engine that will be used to parse this asset.
 
 `customVersionContainer` [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 A list of custom versions to parse this asset with.
@@ -409,12 +411,12 @@ Thrown when this is an unversioned asset and  is unspecified.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(AssetBinaryReader, ObjectVersion, List&lt;CustomVersion&gt;, Usmap, Boolean)**
+### **UAsset(AssetBinaryReader, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, Boolean)**
 
 Reads an asset from a BinaryReader and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles)
+public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles)
 ```
 
 #### Parameters
@@ -423,7 +425,10 @@ public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, List<Custom
 The asset's BinaryReader that this instance will read from.
 
 `objectVersion` [ObjectVersion](./uassetapi.unrealtypes.objectversion.md)<br>
-The object version of the Unreal Engine that will be used to parse this asset
+The UE4 object version of the Unreal Engine that will be used to parse this asset.
+
+`objectVersionUE5` [ObjectVersionUE5](./uassetapi.unrealtypes.objectversionue5.md)<br>
+The UE5 object version of the Unreal Engine that will be used to parse this asset.
 
 `customVersionContainer` [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 A list of custom versions to parse this asset with.
@@ -442,18 +447,21 @@ Thrown when this is an unversioned asset and  is unspecified.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(ObjectVersion, List&lt;CustomVersion&gt;, Usmap)**
+### **UAsset(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap)**
 
 Initializes a new instance of the [UAsset](./uassetapi.uasset.md) class. This instance will store no asset data and does not represent any asset in particular until the [UAsset.Read(AssetBinaryReader, Int32[], Int32[])](./uassetapi.uasset.md#readassetbinaryreader-int32-int32) method is manually called.
 
 ```csharp
-public UAsset(ObjectVersion objectVersion, List<CustomVersion> customVersionContainer, Usmap mappings)
+public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings)
 ```
 
 #### Parameters
 
 `objectVersion` [ObjectVersion](./uassetapi.unrealtypes.objectversion.md)<br>
-The object version of the Unreal Engine that will be used to parse this asset
+The UE4 object version of the Unreal Engine that will be used to parse this asset.
+
+`objectVersionUE5` [ObjectVersionUE5](./uassetapi.unrealtypes.objectversionue5.md)<br>
+The UE5 object version of the Unreal Engine that will be used to parse this asset.
 
 `customVersionContainer` [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 A list of custom versions to parse this asset with.
@@ -657,7 +665,7 @@ public MemoryStream WriteData()
 #### Returns
 
 [MemoryStream](https://docs.microsoft.com/en-us/dotnet/api/system.io.memorystream)<br>
-A stream that the asset has been serialized to.
+A new MemoryStream containing the full binary data of the serialized asset.
 
 ### **Write(String)**
 

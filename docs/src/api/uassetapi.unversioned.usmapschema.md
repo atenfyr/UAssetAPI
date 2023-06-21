@@ -34,6 +34,18 @@ public ushort PropCount;
 public string ModulePath;
 ```
 
+### **StructKind**
+
+```csharp
+public UsmapStructKind StructKind;
+```
+
+### **StructOrClassFlags**
+
+```csharp
+public int StructOrClassFlags;
+```
+
 ## Properties
 
 ### **Properties**

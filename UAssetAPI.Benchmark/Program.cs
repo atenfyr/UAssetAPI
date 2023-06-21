@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.IO;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;

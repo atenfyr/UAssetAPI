@@ -1,0 +1,21 @@
+# EAnimGroupRole
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum EAnimGroupRole
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EAnimGroupRole](./uassetapi.unrealtypes.engineenums.eanimgrouprole.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| CanBeLeader | 0 |  |
+| AlwaysFollower | 1 |  |
+| AlwaysLeader | 2 |  |
+| TransitionLeader | 3 |  |
+| TransitionFollower | 4 |  |
+| EAnimGroupRole_MAX | 5 |  |

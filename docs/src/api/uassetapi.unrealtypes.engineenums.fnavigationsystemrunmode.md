@@ -1,0 +1,21 @@
+# FNavigationSystemRunMode
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum FNavigationSystemRunMode
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FNavigationSystemRunMode](./uassetapi.unrealtypes.engineenums.fnavigationsystemrunmode.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| InvalidMode | 0 |  |
+| GameMode | 1 |  |
+| EditorMode | 2 |  |
+| SimulationMode | 3 |  |
+| PIEMode | 4 |  |
+| FNavigationSystemRunMode_MAX | 5 |  |

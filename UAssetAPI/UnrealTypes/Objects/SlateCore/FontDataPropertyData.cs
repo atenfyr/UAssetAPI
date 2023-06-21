@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.PropertyTypes;
 using UAssetAPI.PropertyTypes.Objects;
 

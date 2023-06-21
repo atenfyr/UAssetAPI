@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using UAssetAPI.PropertyTypes;
 
-namespace UAssetAPI.UnrealTypes
+namespace UAssetAPI.UnrealTypes.EngineEnums
 {
 
 	// Enum Engine.ETextGender

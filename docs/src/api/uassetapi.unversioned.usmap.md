@@ -61,7 +61,7 @@ public List<string> NameMap;
 .usmap enum map
 
 ```csharp
-public Dictionary<string, List<string>> EnumMap;
+public Dictionary<string, UsmapEnum> EnumMap;
 ```
 
 ### **Schemas**

@@ -2,7 +2,7 @@
 
 Namespace: UAssetAPI.UnrealTypes
 
-An enum used to represent all retail versions of the Unreal Engine. Each version entry both a particular [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) and the default set of all applicable [CustomVersion](./uassetapi.customversion.md) enum values.
+An enum used to represent all retail versions of the Unreal Engine. Each version entry represents a particular [ObjectVersion](./uassetapi.unrealtypes.objectversion.md), a particular [ObjectVersionUE5](./uassetapi.unrealtypes.objectversionue5.md), and the default set of all applicable [CustomVersion](./uassetapi.customversion.md) enum values.
 
 ```csharp
 public enum EngineVersion

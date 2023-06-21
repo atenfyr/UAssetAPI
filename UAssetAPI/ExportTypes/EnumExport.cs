@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.ExportTypes

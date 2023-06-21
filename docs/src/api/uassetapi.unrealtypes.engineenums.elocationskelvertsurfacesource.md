@@ -1,0 +1,18 @@
+# ELocationSkelVertSurfaceSource
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum ELocationSkelVertSurfaceSource
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [ELocationSkelVertSurfaceSource](./uassetapi.unrealtypes.engineenums.elocationskelvertsurfacesource.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| VERTSURFACESOURCE_Vert | 0 |  |
+| VERTSURFACESOURCE_Surface | 1 |  |
+| VERTSURFACESOURCE_MAX | 2 |  |

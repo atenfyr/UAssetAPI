@@ -137,6 +137,20 @@ public string ReadString()
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+### **ReadString(Int32)**
+
+```csharp
+public string ReadString(int fixedLength)
+```
+
+#### Parameters
+
+`fixedLength` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ### **ReadName()**
 
 ```csharp

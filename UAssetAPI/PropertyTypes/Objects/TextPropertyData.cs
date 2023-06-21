@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {

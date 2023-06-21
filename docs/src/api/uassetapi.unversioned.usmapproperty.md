@@ -35,6 +35,12 @@ public ushort ArrayIndex;
 public byte ArraySize;
 ```
 
+### **PropertyFlags**
+
+```csharp
+public EPropertyFlags PropertyFlags;
+```
+
 ### **PropertyData**
 
 ```csharp

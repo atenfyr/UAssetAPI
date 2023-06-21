@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace UAssetAPI
+namespace UAssetAPI.Unversioned
 {
     public class Oodle
     {

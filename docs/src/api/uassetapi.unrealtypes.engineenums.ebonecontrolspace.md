@@ -1,0 +1,20 @@
+# EBoneControlSpace
+
+Namespace: UAssetAPI.UnrealTypes.EngineEnums
+
+```csharp
+public enum EBoneControlSpace
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EBoneControlSpace](./uassetapi.unrealtypes.engineenums.ebonecontrolspace.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+
+## Fields
+
+| Name | Value | Description |
+| --- | --: | --- |
+| BCS_WorldSpace | 0 |  |
+| BCS_ComponentSpace | 1 |  |
+| BCS_ParentBoneSpace | 2 |  |
+| BCS_BoneSpace | 3 |  |
+| BCS_MAX | 4 |  |

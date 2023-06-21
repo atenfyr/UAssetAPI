@@ -3,6 +3,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using static System.Net.Mime.MediaTypeNames;
+using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {

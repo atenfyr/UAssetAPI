@@ -1,5 +1,6 @@
 ﻿using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.FieldTypes
 {

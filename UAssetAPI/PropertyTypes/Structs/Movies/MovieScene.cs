@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.EngineEnums;
 using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Structs
