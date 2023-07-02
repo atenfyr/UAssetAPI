@@ -15,7 +15,6 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine 4 ga
 - Reading capability for the unofficial .usmap format to parse ambiguous and unversioned properties
 - Robust fail-safes for many properties and exports that fail serialization
 - Automatic reflection for new property types in other loaded assemblies
-- Continual updates to support games with custom or obfuscated serialization
 
 ## Usage
 To get started using UAssetAPI, first build the API using the [Build Instructions guide](https://atenfyr.github.io/UAssetAPI/guide/build.html) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html).
