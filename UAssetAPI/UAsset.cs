@@ -457,7 +457,7 @@ namespace UAssetAPI
         [JsonProperty]
         internal int NamesReferencedFromExportDataCount;
         [JsonProperty]
-        internal int PayloadTocOffset;
+        internal long PayloadTocOffset;
         [JsonProperty]
         internal int DataResourceOffset;
 
@@ -666,24 +666,9 @@ namespace UAssetAPI
             }
 
             // ue5 stuff
-            if (ObjectVersionUE5 >= ObjectVersionUE5.NAMES_REFERENCED_FROM_EXPORT_DATA)
-            {
-                NamesReferencedFromExportDataCount = reader.ReadInt32();
-            }
-            else
-            {
-                NamesReferencedFromExportDataCount = NameCount;
-            }
-
-            if (ObjectVersionUE5 >= ObjectVersionUE5.PAYLOAD_TOC)
-            {
-                PayloadTocOffset = reader.ReadInt32();
-            }
-
-            if (ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
-            {
-                DataResourceOffset = reader.ReadInt32();
-            }
+            NamesReferencedFromExportDataCount = ObjectVersionUE5 >= ObjectVersionUE5.NAMES_REFERENCED_FROM_EXPORT_DATA ? reader.ReadInt32() : NameCount;
+            PayloadTocOffset = ObjectVersionUE5 >= ObjectVersionUE5.PAYLOAD_TOC ? reader.ReadInt64() : -1;
+            DataResourceOffset = ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES ? reader.ReadInt32() : -1;
         }
 
         /// <summary>
@@ -840,6 +825,8 @@ namespace UAssetAPI
                 Exports[i].CreateBeforeCreateDependencies = new List<FPackageIndex>(Exports[i].CreateBeforeCreateDependenciesSize);
                 for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) Exports[i].CreateBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
             }
+
+            // TODO: read DataResources for 5.3+
 
             // Export data
             if (SectionSixOffset > 0 && Exports.Count > 0)
