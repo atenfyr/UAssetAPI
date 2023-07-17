@@ -89,6 +89,7 @@ namespace UAssetAPI
             return UnusedCustomVersionKey;
         }
 
+        public FString Name = null;
         public Guid Key;
         public string FriendlyName = null;
         public int Version;

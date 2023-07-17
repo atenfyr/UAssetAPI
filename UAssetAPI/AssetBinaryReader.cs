@@ -193,13 +193,22 @@ namespace UAssetAPI
                 case ECustomVersionSerializationFormat.Enums:
                     throw new NotImplementedException("Custom version serialization format Enums is currently unimplemented");
                 case ECustomVersionSerializationFormat.Guids:
-                case ECustomVersionSerializationFormat.Optimized:
                     int numCustomVersions = ReadInt32();
                     for (int i = 0; i < numCustomVersions; i++)
                     {
                         var customVersionID = new Guid(ReadBytes(16));
                         var customVersionNumber = ReadInt32();
-                        newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
+                        newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber) { Name = ReadFString() });
+                        existingCustomVersions.Add(customVersionID);
+                    }
+                    break;
+                case ECustomVersionSerializationFormat.Optimized:
+                    numCustomVersions = ReadInt32();
+                    for (int i = 0; i < numCustomVersions; i++)
+                    {
+                        var customVersionID = new Guid(ReadBytes(16));
+                        var customVersionNumber = ReadInt32();
+                        newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));                      
                         existingCustomVersions.Add(customVersionID);
                     }
                     break;

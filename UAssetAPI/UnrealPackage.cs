@@ -103,6 +103,11 @@ namespace UAssetAPI
             }
         }
 
+        /// <summary>
+        /// Whether or not this asset has PKG_FilterEditorOnly flag.
+        /// </summary>
+        public bool IsFilterEditorOnly => PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly);
+
         [JsonIgnore]
         internal bool isSerializationTime = false;
 
@@ -403,7 +408,8 @@ namespace UAssetAPI
             EngineVersion maxIntroduced = EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE;
             foreach (CustomVersion entry in customVersionContainer)
             {
-                Type customVersionType = Type.GetType("UAssetAPI." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
+                if (entry.FriendlyName is null) continue;
+                Type customVersionType = Type.GetType("UAssetAPI.CustomVersions." + MainSerializer.allNonLetters.Replace(entry.FriendlyName, string.Empty));
                 if (customVersionType == null) continue;
                 EngineVersion minIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version); // inclusive
                 EngineVersion maxIntroducedThis = GetIntroducedFromCustomVersionValue(customVersionType, entry.Version + 1); // exclusive
@@ -634,7 +640,7 @@ namespace UAssetAPI
             catch (Exception ex)
             {
 #if DEBUG_VERBOSE
-                        Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
+                Debug.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
                 reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
                 Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
