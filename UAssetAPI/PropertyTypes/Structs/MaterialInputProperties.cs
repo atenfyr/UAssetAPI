@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using static System.Net.Mime.MediaTypeNames;
 using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.PropertyTypes.Structs
@@ -10,9 +8,21 @@ namespace UAssetAPI.PropertyTypes.Structs
     public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
         [JsonProperty]
+        public FPackageIndex Expression;
+        [JsonProperty]
         public int OutputIndex;
         [JsonProperty]
         public FString InputName;
+        [JsonProperty]
+        public int Mask;
+        [JsonProperty]
+        public int MaskR;
+        [JsonProperty]
+        public int MaskG;
+        [JsonProperty]
+        public int MaskB;
+        [JsonProperty]
+        public int MaskA;
         [JsonProperty]
         public FName ExpressionName;
 
@@ -30,17 +40,16 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             if (reader.Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.MaterialInputNativeSerialize)
             {
+                if ((reader.Asset.GetEngineVersion() <= EngineVersion.VER_UE5_1 && !reader.Asset.IsFilterEditorOnly) || reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE5_1)
+                   Expression = reader.XFERPTR();
                 OutputIndex = reader.ReadInt32();
-                if (reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName)
-                {
-                    InputName = reader.ReadFName().Value;
-                }
-                else
-                {
-                    InputName = reader.ReadFString();
-                }
-                reader.ReadBytes(20); // editor only data placeholder
-                ExpressionName = reader.ReadFName();
+                InputName = reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName ? reader.ReadFName().Value : reader.ReadFString();
+                Mask = reader.ReadInt32();
+                MaskR = reader.ReadInt32();
+                MaskG = reader.ReadInt32();
+                MaskB = reader.ReadInt32();
+                MaskA = reader.ReadInt32();
+                ExpressionName = reader.Asset.GetEngineVersion() <= EngineVersion.VER_UE5_1 && reader.Asset.IsFilterEditorOnly ? reader.ReadFName() : null;
             }
         }
 
@@ -49,6 +58,12 @@ namespace UAssetAPI.PropertyTypes.Structs
             int totalSize = 0;
             if (writer.Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.MaterialInputNativeSerialize)
             {
+                if ((writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE5_1 && !writer.Asset.IsFilterEditorOnly) || writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE5_1)
+                {
+                    writer.XFERPTR(Expression);
+                    totalSize += sizeof(int);
+                }
+
                 writer.Write(OutputIndex); totalSize += sizeof(int);
                 if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName)
                 {
@@ -58,8 +73,18 @@ namespace UAssetAPI.PropertyTypes.Structs
                 {
                     totalSize += writer.Write(InputName);
                 }
-                writer.Write(new byte[20]); totalSize += 20;
-                writer.Write(ExpressionName); totalSize += sizeof(int) * 2;
+                writer.Write(Mask);
+                writer.Write(MaskR);
+                writer.Write(MaskG);
+                writer.Write(MaskB);
+                writer.Write(MaskA);
+                totalSize += sizeof(int) * 5;
+                if (writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE5_1 && writer.Asset.IsFilterEditorOnly)
+                {
+                    writer.Write(ExpressionName);
+                    totalSize += sizeof(int) * 2;
+                }
+                
             }
             return totalSize;
         }
