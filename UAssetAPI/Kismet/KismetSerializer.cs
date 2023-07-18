@@ -933,6 +933,13 @@ namespace UAssetAPI.Kismet
                         jexp.Add("Value", exp.Value);
                         break;
                     }
+                case EX_DoubleConst exp:
+                    {
+                        index += 8;
+                        jexp.Add("Inst", exp.Inst);
+                        jexp.Add("Value", exp.Value);
+                        break;
+                    }
                 case EX_StringConst exp:
                     {
                         jexp.Add("Inst", exp.Inst);

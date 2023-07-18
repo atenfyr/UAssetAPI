@@ -96,6 +96,8 @@
 		EX_Int64Const = 0x35,
 		/// <summary>64-bit unsigned integer constant.</summary>
 		EX_UInt64Const = 0x36,
+		/// <summary>Double-precision floating point constant.</summary>
+		EX_DoubleConst = 0x37,
 		/// <summary>A casting operator for primitives which reads the type as the subsequent byte</summary>
 		EX_PrimitiveCast = 0x38,
 		EX_SetSet = 0x39,

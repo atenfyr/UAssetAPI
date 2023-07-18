@@ -79,6 +79,9 @@ namespace UAssetAPI.Kismet.Bytecode
                 case EExprToken.EX_FloatConst:
                     res = new EX_FloatConst();
                     break;
+                case EExprToken.EX_DoubleConst:
+                    res = new EX_DoubleConst();
+                    break;
                 case EExprToken.EX_StringConst:
                     res = new EX_StringConst();
                     break;
