@@ -51,7 +51,8 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         {
             int offset = 0;
             offset += ExpressionSerializer.WriteExpression(MapProperty, writer);
-            writer.Write(Elements.Length); offset += sizeof(int);
+            // count is number if pairs so is half the number of elements
+            writer.Write(Elements.Length / 2); offset += sizeof(int);
             for (int i = 0; i < Elements.Length; i++)
             {
                 offset += ExpressionSerializer.WriteExpression(Elements[i], writer);
