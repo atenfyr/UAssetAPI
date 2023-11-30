@@ -547,6 +547,49 @@ namespace UAssetAPI.Tests
             TestUE5_3Subsection("Engine", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "Engine", "Engine.usmap")));
         }
 
+        public static MemoryStream PathToStream(string p)
+        {
+            using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
+            {
+                MemoryStream completeStream = new MemoryStream();
+                origStream.CopyTo(completeStream);
+
+                try
+                {
+                    var targetFile = Path.ChangeExtension(p, "uexp");
+                    if (File.Exists(targetFile))
+                    {
+                        using (FileStream newStream = File.Open(targetFile, FileMode.Open))
+                        {
+                            completeStream.Seek(0, SeekOrigin.End);
+                            newStream.CopyTo(completeStream);
+                        }
+                    }
+                }
+                catch (FileNotFoundException) { }
+
+                completeStream.Seek(0, SeekOrigin.Begin);
+                return completeStream;
+            }
+        }
+
+        [TestMethod]
+        public void TestTracing()
+        {
+            Console.WriteLine("asdf");
+
+            var stream = new UAssetAPI.Trace.TraceStream(PathToStream(Path.Combine("TestAssets", "TestMaterials", "M_COM_DetailMaster_B.uasset")));
+
+            // Verify the files can be parsed
+
+            Trace.LoggingAspect.Start(stream);
+            var tester = new UAsset(new AssetBinaryReader(stream), EngineVersion.VER_UE4_18);
+            Trace.LoggingAspect.Stop();
+
+            //Assert.IsTrue(tester.VerifyBinaryEquality());
+            //Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+        }
+
         [AssemblyCleanup()]
         public static void AssemblyCleanup()
         {

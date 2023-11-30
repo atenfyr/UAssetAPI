@@ -41,6 +41,7 @@
   <ItemGroup>
     <PackageReference Include="ZstdSharp.Port" Version="0.8.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="2023.0.6" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="git_commit.txt">
