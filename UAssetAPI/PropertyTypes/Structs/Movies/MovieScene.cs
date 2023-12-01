@@ -137,7 +137,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
     #endregion
 
-    public struct FMovieSceneFloatValue
+    public class FMovieSceneFloatValue
     {
         public float Value; // 0x00(0x04)
         public FMovieSceneTangentData Tangent; // 0x04(0x14)
@@ -149,15 +149,18 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             Value = reader.ReadSingle();
             Tangent = new FMovieSceneTangentData();
-            Tangent.ArriveTangent = reader.ReadSingle();
-            Tangent.LeaveTangent = reader.ReadSingle();
-            Tangent.ArriveTangentWeight = reader.ReadSingle();
-            Tangent.LeaveTangentWeight = reader.ReadSingle();
-            Tangent.TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-            Tangent.padding = reader.ReadBytes(3);
+            Tangent.Read(reader);
             InterpMode = (ERichCurveInterpMode)reader.ReadSByte();
             TangentMode = (ERichCurveTangentMode)reader.ReadSByte();
-            padding = reader.ReadBytes(2);
+
+            if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25)
+            {
+                padding = reader.ReadBytes(3);
+            }
+            else
+            {
+                padding = new byte[0];
+            }
         }
 
         public void Write(AssetBinaryWriter writer)
@@ -170,7 +173,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         }
     }
 
-    public struct FMovieSceneTangentData
+    public class FMovieSceneTangentData
     {
         public float ArriveTangent; // 0x00(0x04)
         public float LeaveTangent; // 0x04(0x04)
@@ -178,7 +181,25 @@ namespace UAssetAPI.PropertyTypes.Structs
         public float LeaveTangentWeight; // 0x0c(0x04)
         public ERichCurveTangentWeightMode TangentWeightMode; // 0x10(0x01)
         public byte[] padding;
-        //char pad_11[0x3]; // 0x11(0x03)
+
+        public void Read(AssetBinaryReader reader)
+        {
+            ArriveTangent = reader.ReadSingle();
+            LeaveTangent = reader.ReadSingle();
+            ArriveTangentWeight = reader.ReadSingle();
+            LeaveTangentWeight = reader.ReadSingle();
+            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
+
+            // guessing this happens when `PaddingByte` gets added to FMovieSceneFloatValue but requires a lot more testing
+            if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25)
+            {
+                padding = reader.ReadBytes(2);
+            }
+            else
+            {
+                padding = new byte[0];
+            }
+        }
 
         public void Write(AssetBinaryWriter writer)
         {
@@ -445,7 +466,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public TEvaluationTreeEntryContainer<T> Data;
     }
 
-    public struct FMovieSceneEvaluationTreeNode
+    public class FMovieSceneEvaluationTreeNode
     {
         /// <summary>
         /// The time-range that this node represents
