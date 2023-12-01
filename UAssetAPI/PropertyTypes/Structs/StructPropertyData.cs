@@ -188,6 +188,10 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override bool IsZero(UnrealPackage asset)
         {
+            if (StructType?.Value?.Value == "Guid")
+            {
+                return base.IsZero(asset);
+            }
             return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.IsZero(asset);
         }
 
