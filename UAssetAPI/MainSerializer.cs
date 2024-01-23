@@ -323,7 +323,9 @@ namespace UAssetAPI
                 }
                 catch (Exception ex)
                 {
-                    if (data is StructPropertyData)
+                    // if asset is unversioned, bubble the error up to make the whole export fail
+                    // because unversioned headers aren't properly reconstructed currently
+                    if (data is StructPropertyData && !reader.Asset.HasUnversionedProperties)
                     {
                         data = new RawStructPropertyData(name);
                         data.Ancestry.Initialize(ancestry, parentName);
