@@ -41,7 +41,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             removedItemsDummy.Read(reader, false, leng1, leng2);
             ElementsToRemove = removedItemsDummy.Value;
 
-            base.Read(reader, false, leng1, leng2);
+            base.Read(reader, false, leng1-4, leng2);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader)
