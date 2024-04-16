@@ -500,6 +500,17 @@ namespace UAssetAPI.Tests
             Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
         }
 
+        /// <summary>
+        /// In this test, we are trying to read a source asset.
+        /// </summary>
+        [TestMethod]
+        public void TestEditorAssets()
+        {
+            var tester = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+        }
+
         [AssemblyCleanup()]
         public static void AssemblyCleanup()
         {
