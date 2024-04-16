@@ -13,6 +13,11 @@ namespace UAssetAPI
         public FPackageIndex OuterIndex;
         public FName ClassPackage;
         public FName ClassName;
+        /// <summary>
+        /// Package Name this import belongs to. Can be none, in that case follow the outer chain
+        /// until a set PackageName is found or until OuterIndex is null
+        /// </summary>
+        public FName PackageName;
         public bool bImportOptional;
 
         public Import(string classPackage, string className, FPackageIndex outerIndex, string objectName, bool importOptional, UAsset asset)
@@ -39,6 +44,11 @@ namespace UAssetAPI
             ClassName = reader.ReadFName();
             OuterIndex = new FPackageIndex(reader.ReadInt32());
             ObjectName = reader.ReadFName();
+
+            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
+                && !reader.Asset.IsFilterEditorOnly)
+                PackageName = reader.ReadFName();
+
             if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) bImportOptional = reader.ReadInt32() == 1;
         }
 
