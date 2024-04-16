@@ -245,6 +245,15 @@ namespace UAssetAPI
             }
         }
 
+        public virtual void Write(FObjectThumbnail thumbnail)
+        {
+            Write(thumbnail.Width);
+            Write(thumbnail.Height);
+            Write(thumbnail.CompressedImageData.Length);
+            if (thumbnail.CompressedImageData.Length > 0)
+                Write(thumbnail.CompressedImageData);
+        }
+
         /*
         !!!!!
 

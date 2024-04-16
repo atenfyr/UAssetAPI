@@ -128,6 +128,11 @@ namespace UAssetAPI
         public List<Export> Exports;
 
         /// <summary>
+        /// Map of object full names to the thumbnails
+        /// </summary>
+        public Dictionary<string, FObjectThumbnail> Thumbnails;
+
+        /// <summary>
         /// Tile information used by WorldComposition.
         /// Defines properties necessary for tile positioning in the world.
         /// </summary>

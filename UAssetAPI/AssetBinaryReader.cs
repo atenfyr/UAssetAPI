@@ -233,6 +233,18 @@ namespace UAssetAPI
 
             return newCustomVersionContainer;
         }
+
+        public FObjectThumbnail ReadObjectThumbnail()
+        {
+            var thumb = new FObjectThumbnail();
+
+            thumb.Width = ReadInt32();
+            thumb.Height = ReadInt32();
+            var imageBytesCount = ReadInt32();
+            thumb.CompressedImageData = imageBytesCount > 0 ? ReadBytes(imageBytesCount) : Array.Empty<byte>();
+
+            return thumb;
+        }
     }
 
     /// <summary>

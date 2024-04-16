@@ -348,6 +348,11 @@ namespace UAssetAPI
         public Guid PackageGuid;
 
         /// <summary>
+        /// Current persistent ID for this package.
+        /// </summary>
+        public Guid PersistentGuid;
+
+        /// <summary>
         /// Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
         /// </summary>
         public FEngineVersion RecordedEngineVersion;
@@ -387,6 +392,9 @@ namespace UAssetAPI
 
         /// <summary>Location into the file on disk for the name data</summary>
         internal int NameOffset;
+
+        /// <summary>Localization ID of this package</summary>
+        public FString LocalizationId;
 
         /// <summary>Number of names used in this package</summary>
         internal int SoftObjectPathsCount = 0;
@@ -552,6 +560,12 @@ namespace UAssetAPI
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
+
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                LocalizationId = reader.ReadFString();
+            }
+
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 SoftObjectPathsCount = reader.ReadInt32();
@@ -582,6 +596,17 @@ namespace UAssetAPI
             // valorant garbage data is here
 
             PackageGuid = new Guid(reader.ReadBytes(16));
+
+            if (!IsFilterEditorOnly)
+            {
+                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER 
+                    ? new Guid(reader.ReadBytes(16))
+                    : PackageGuid;
+
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
+                    ObjectVersion < ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT)
+                    reader.ReadBytes(16);
+            }
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
@@ -847,6 +872,34 @@ namespace UAssetAPI
                     ConvertExportToChildExportAndRead(reader, i);
                 }
             }
+
+            // Thumbnails
+            if (ThumbnailTableOffset > 0)
+            {
+                reader.BaseStream.Seek(ThumbnailTableOffset, SeekOrigin.Begin);
+                var thumbnailCount = reader.ReadInt32();
+                var thumbnailOffsets = new Dictionary<string, int>();
+                for (int i = 0; i < thumbnailCount; i++)
+                {
+                    var objectShortClassName = reader.ReadFString();
+                    var objectPathWithoutPackageName = reader.ReadFString();
+                    // TODO: handle UPackage thumbnails differently from usual assets
+
+                    // TODO: FPackageName::FilenameToLongPackageName(InPackageFileName)
+                    var objectName = $"{objectShortClassName} {objectPathWithoutPackageName}";
+
+                    var fileOffset = reader.ReadInt32();
+
+                    thumbnailOffsets[objectName] = fileOffset;
+                }
+
+                Thumbnails = new Dictionary<string, FObjectThumbnail>();
+                foreach (var kv in thumbnailOffsets)
+                {
+                    reader.BaseStream.Seek(kv.Value, SeekOrigin.Begin);
+                    Thumbnails[kv.Key] = reader.ReadObjectThumbnail();
+                }
+            }
         }
 
         /// <summary>
@@ -904,6 +957,10 @@ namespace UAssetAPI
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                writer.Write(LocalizationId);
+            }
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 writer.Write(SoftObjectPathsCount);
@@ -933,6 +990,18 @@ namespace UAssetAPI
             if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
             writer.Write(PackageGuid.ToByteArray());
+            if (!IsFilterEditorOnly)
+            {
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER)
+                    writer.Write(PersistentGuid.ToByteArray());
+
+                // The owner persistent guid was added in VER_UE4_ADDED_PACKAGE_OWNER but removed in the next version VER_UE4_NON_OUTER_PACKAGE_IMPORT
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
+                    ObjectVersion < ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT)
+                {
+                    writer.Write(new byte[16]);
+                }
+            }
             writer.Write(Generations.Count);
             for (int i = 0; i < Generations.Count; i++)
             {
@@ -1128,6 +1197,40 @@ namespace UAssetAPI
                 else
                 {
                     this.SoftPackageReferencesOffset = 0;
+                }
+
+                if (!IsFilterEditorOnly && Thumbnails != null)
+                {
+                    var thumbnailOffsets = new List<(string ObjectFullName, int FileOffset)>();
+                    foreach (var kv in Thumbnails)
+                    {
+                        var offset = (int)writer.BaseStream.Position;
+                        writer.Write(kv.Value);
+                        thumbnailOffsets.Add((kv.Key, offset));
+                    }
+
+                    ThumbnailTableOffset = (int)writer.BaseStream.Position;
+
+                    writer.Write(Thumbnails.Count);
+                    foreach (var thumbnail in thumbnailOffsets)
+                    {
+                        var firstSpaceIdx = thumbnail.ObjectFullName.IndexOf(' ');
+                        if (firstSpaceIdx == -1 || firstSpaceIdx == 0)
+                            throw new Exception($"Invalid thumbnail object name: \"{thumbnail.ObjectFullName}\"");
+
+                        var objectClassName = new FString(thumbnail.ObjectFullName.Substring(0, firstSpaceIdx));
+                        var objectPath = thumbnail.ObjectFullName.Substring(firstSpaceIdx + 1);
+
+                        var objectPathWithoutPackageName = new FString(objectPath.Substring(objectPath.IndexOf('.') + 1));
+
+                        writer.Write(objectClassName);
+                        writer.Write(objectPathWithoutPackageName);
+                        writer.Write(thumbnail.FileOffset);
+                    }
+                }
+                else
+                {
+                    ThumbnailTableOffset = 0;
                 }
 
                 // AssetRegistryData
