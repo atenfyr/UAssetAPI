@@ -127,6 +127,12 @@ namespace UAssetAPI
         /// </summary>
         public List<Export> Exports;
 
+        // TODO: sort in lexical order
+        /// <summary>
+        /// List of Searchable Names, by object containing them. Sorted to keep order consistent.
+        /// </summary>
+        public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+
         /// <summary>
         /// Map of object full names to the thumbnails
         /// </summary>

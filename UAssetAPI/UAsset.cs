@@ -873,6 +873,15 @@ namespace UAssetAPI
                 }
             }
 
+            // Searchable names
+            if (SearchableNamesOffset > 0)
+            {
+                SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
+
+                var searchableNamesCount = reader.ReadInt32();
+                // TODO: read the searchable names
+            }
+
             // Thumbnails
             if (ThumbnailTableOffset > 0)
             {
@@ -1200,6 +1209,18 @@ namespace UAssetAPI
                 else
                 {
                     this.SoftPackageReferencesOffset = 0;
+                }
+
+                if (!IsFilterEditorOnly && SearchableNames != null)
+                {
+                    SearchableNamesOffset = (int)writer.BaseStream.Position;
+
+                    writer.Write(SearchableNames.Count);
+                    // TODO: write the pairs of searchable names
+                }
+                else
+                {
+                    SearchableNamesOffset = 0;
                 }
 
                 if (!IsFilterEditorOnly && Thumbnails != null)
