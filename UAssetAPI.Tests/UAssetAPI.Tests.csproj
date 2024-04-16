@@ -250,5 +250,8 @@
     <None Update="TestAssets\TestEditorAssets\TestSoundClass.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestEditorAssets\TestMaterial.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

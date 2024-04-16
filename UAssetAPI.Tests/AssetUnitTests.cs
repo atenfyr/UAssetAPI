@@ -506,9 +506,13 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestEditorAssets()
         {
-            var tester = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
-            Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            var soundClass = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(soundClass.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(soundClass));
+
+            var material = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestMaterial.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(material.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(material));
         }
 
         [AssemblyCleanup()]
