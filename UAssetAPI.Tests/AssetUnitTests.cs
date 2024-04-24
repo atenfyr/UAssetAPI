@@ -513,6 +513,10 @@ namespace UAssetAPI.Tests
             var material = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestMaterial.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(material.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(material));
+
+            var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(blueprint.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
         }
 
         [AssemblyCleanup()]
