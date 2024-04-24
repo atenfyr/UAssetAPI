@@ -233,18 +233,6 @@ namespace UAssetAPI
 
             return newCustomVersionContainer;
         }
-
-        public FObjectThumbnail ReadObjectThumbnail()
-        {
-            var thumb = new FObjectThumbnail();
-
-            thumb.Width = ReadInt32();
-            thumb.Height = ReadInt32();
-            var imageBytesCount = ReadInt32();
-            thumb.CompressedImageData = imageBytesCount > 0 ? ReadBytes(imageBytesCount) : Array.Empty<byte>();
-
-            return thumb;
-        }
     }
 
     /// <summary>
@@ -287,6 +275,29 @@ namespace UAssetAPI
                 int number = this.ReadInt32();
                 return new FName(Asset, nameMapPointer, number);
             }
+        }
+
+        public FObjectThumbnail ReadObjectThumbnail()
+        {
+            var thumb = new FObjectThumbnail();
+
+            thumb.Width = ReadInt32();
+            thumb.Height = ReadInt32();
+            var imageBytesCount = ReadInt32();
+            thumb.CompressedImageData = imageBytesCount > 0 ? ReadBytes(imageBytesCount) : Array.Empty<byte>();
+
+            return thumb;
+        }
+
+        public FLocMetadataObject ReadLocMetadataObject()
+        {
+            var locMetadataObject = new FLocMetadataObject();
+
+            var valueCount = ReadInt32();
+            if (valueCount > 0)
+                throw new NotImplementedException("TODO: implement ReadLocMetadataObject");
+
+            return locMetadataObject;
         }
 
         public string XFERSTRING()

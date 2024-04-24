@@ -254,6 +254,13 @@ namespace UAssetAPI
                 Write(thumbnail.CompressedImageData);
         }
 
+        public virtual void Write(FLocMetadataObject metadataObject)
+        {
+            Write(metadataObject.Values.Count);
+            if (metadataObject.Values.Count > 0)
+                throw new NotImplementedException("TODO: implement Write(FLocMetadataObject)");
+        }
+
         /*
         !!!!!
 

@@ -403,11 +403,9 @@ namespace UAssetAPI
         internal int SoftObjectPathsOffset = 0;
 
         /// <summary>Number of gatherable text data items in this package</summary>
-        [JsonProperty]
         internal int GatherableTextDataCount;
 
         /// <summary>Location into the file on disk for the gatherable text data items</summary>
-        [JsonProperty]
         internal int GatherableTextDataOffset;
 
         /// <summary>Number of exports contained in this package</summary>
@@ -729,6 +727,47 @@ namespace UAssetAPI
                     nameInMap.IsCasePreserving = false;
                 }
                 AddNameReference(nameInMap, true);
+            }
+
+            // Gatherable text
+            if (GatherableTextDataOffset > 0 && GatherableTextDataCount > 0)
+            {
+                reader.BaseStream.Seek(GatherableTextDataOffset, SeekOrigin.Begin);
+
+                GatherableTextData = new List<FGatherableTextData>();
+                for (var i = 0; i < GatherableTextDataCount; i++)
+                {
+                    var namespaceName = reader.ReadFString();
+
+                    var sourceString = reader.ReadFString();
+                    var sourceStringMetaData = reader.ReadLocMetadataObject();
+                    var sourceData = new FTextSourceData {SourceString = sourceString, SourceStringMetaData = sourceStringMetaData};
+
+                    var contexts = new List<FTextSourceSiteContext>();
+                    var contextsCount = reader.ReadInt32();
+                    for (var j = 0; j < contextsCount; j++)
+                    {
+                        var keyName = reader.ReadFString();
+                        var siteDescription = reader.ReadFString();
+                        var isEditorOnly = reader.ReadInt32() > 0;
+                        var isOptional = reader.ReadInt32() > 0;
+                        var infoMetaData = reader.ReadLocMetadataObject();
+                        var keyMetaData = reader.ReadLocMetadataObject();
+                        var context = new FTextSourceSiteContext
+                        {
+                            KeyName = keyName,
+                            SiteDescription = siteDescription,
+                            IsEditorOnly = isEditorOnly,
+                            IsOptional = isOptional,
+                            InfoMetaData = infoMetaData,
+                            KeyMetaData = keyMetaData
+                        };
+                        contexts.Add(context);
+                    }
+
+                    var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts};
+                    GatherableTextData.Add(textData);
+                }
             }
 
             // Imports
@@ -1132,6 +1171,32 @@ namespace UAssetAPI
                         else
                         {
                             writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], disableCasePreservingHash));
+                        }
+                    }
+                }
+
+                // Gatherable text
+                if (!IsFilterEditorOnly && GatherableTextData != null)
+                {
+                    GatherableTextDataOffset = (int)writer.BaseStream.Position;
+                    GatherableTextDataCount = GatherableTextData.Count;
+
+                    foreach (var gatherableTextData in GatherableTextData)
+                    {
+                        writer.Write(gatherableTextData.NamespaceName);
+
+                        writer.Write(gatherableTextData.SourceData.SourceString);
+                        writer.Write(gatherableTextData.SourceData.SourceStringMetaData);
+
+                        writer.Write(gatherableTextData.SourceSiteContexts.Count);
+                        foreach (var context in gatherableTextData.SourceSiteContexts)
+                        {
+                            writer.Write(context.KeyName);
+                            writer.Write(context.SiteDescription);
+                            writer.Write(context.IsEditorOnly ? 1 : 0);
+                            writer.Write(context.IsOptional ? 1 : 0);
+                            writer.Write(context.InfoMetaData);
+                            writer.Write(context.KeyMetaData);
                         }
                     }
                 }

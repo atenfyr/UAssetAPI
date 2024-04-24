@@ -123,6 +123,11 @@ namespace UAssetAPI
         internal Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
+        /// Map of the gatherable text data.
+        /// </summary>
+        public List<FGatherableTextData> GatherableTextData;
+
+        /// <summary>
         /// Map of object exports. UAssetAPI used to call these "categories."
         /// </summary>
         public List<Export> Exports;
