@@ -918,7 +918,8 @@ namespace UAssetAPI
                 SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
 
                 var searchableNamesCount = reader.ReadInt32();
-                // TODO: read the searchable names
+                if (searchableNamesCount > 0)
+                    throw new NotImplementedException("TODO: read the searchable names");
             }
 
             // Thumbnails
