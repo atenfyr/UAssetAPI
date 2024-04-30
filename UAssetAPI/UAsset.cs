@@ -1954,10 +1954,18 @@ namespace UAssetAPI.Trace {
     public class TraceStream : Stream
     {
         Stream BaseStream;
+        public byte[] Data;
         public LoggingAspect.LogContext Context;
 
         public TraceStream(Stream BaseStream)
         {
+            var start = BaseStream.Position;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BaseStream.CopyTo(ms);
+                this.Data = ms.ToArray();
+            }
+            BaseStream.Position = start;
             this.BaseStream = BaseStream;
         }
         public override bool CanRead { get => BaseStream.CanRead; }
@@ -2019,6 +2027,14 @@ namespace UAssetAPI.Trace {
             public IList<IAction> Actions;
         }
 
+        public class Trace
+        {
+            [JsonProperty("data")]
+            public byte[] Data;
+            [JsonProperty("root")]
+            public Span Root;
+        }
+
         public class VersionConverter : JsonConverter<IAction>
         {
             public override void WriteJson(JsonWriter writer, IAction value, JsonSerializer serializer)
@@ -2058,8 +2074,10 @@ namespace UAssetAPI.Trace {
             public uint SpanId = 0;
             public Span Root;
             public Span Current;
+            TraceStream UnderlyingStream;
 
             public LogContext(TraceStream stream) {
+                UnderlyingStream = stream;
                 stream.Context = this;
                 Root = Current = new Span() {
                     Parent = null,
@@ -2070,7 +2088,11 @@ namespace UAssetAPI.Trace {
 
             public void Stop() {
                 using (StreamWriter writer = File.CreateText("trace.json")) {
-                    writer.Write(JsonConvert.SerializeObject(Root, Formatting.None, new VersionConverter()));
+                    var trace = new Trace {
+                        Data = UnderlyingStream.Data,
+                        Root = Root,
+                    };
+                    writer.Write(JsonConvert.SerializeObject(trace, Formatting.None, new VersionConverter()));
                 }
             }
             public void OnEntry(MethodExecutionArgs args) {
