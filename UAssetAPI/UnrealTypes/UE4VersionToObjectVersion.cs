@@ -33,7 +33,8 @@
         VER_UE5_0 = 522,
         VER_UE5_1 = 522,
         VER_UE5_2 = 522,
-        VER_UE5_3 = 522
+        VER_UE5_3 = 522,
+        VER_UE5_4 = 522
     }
 
     public enum UE5VersionToObjectVersion
@@ -41,6 +42,7 @@
         VER_UE5_0 = 1004,
         VER_UE5_1 = 1008,
         VER_UE5_2 = 1009,
-        VER_UE5_3 = 1009
+        VER_UE5_3 = 1009,
+        VER_UE5_4 = 1012
     }
 }
