@@ -822,7 +822,9 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(SoftPackageReferencesOffset, SeekOrigin.Begin);
                 for (int i = 0; i < SoftPackageReferencesCount; i++)
                 {
-                    SoftPackageReferenceList.Add(reader.ReadFString());
+                    SoftPackageReferenceList.Add(ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH
+                        ? FString.FromString(reader.ReadFName().ToString())
+                        : reader.ReadFString());
                 }
             }
             else
@@ -1269,7 +1271,10 @@ namespace UAssetAPI
                     this.SoftPackageReferencesCount = this.SoftPackageReferenceList.Count;
                     for (int i = 0; i < this.SoftPackageReferenceList.Count; i++)
                     {
-                        writer.Write(this.SoftPackageReferenceList[i]);
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+                            writer.Write(FName.FromString(this, SoftPackageReferenceList[i].Value));
+                        else
+                            writer.Write(this.SoftPackageReferenceList[i]);
                     }
                 }
                 else
@@ -1282,7 +1287,8 @@ namespace UAssetAPI
                     SearchableNamesOffset = (int)writer.BaseStream.Position;
 
                     writer.Write(SearchableNames.Count);
-                    // TODO: write the pairs of searchable names
+                    if (SearchableNames.Count > 0)
+                        throw new NotImplementedException("TODO: write the searchable names");
                 }
                 else
                 {
