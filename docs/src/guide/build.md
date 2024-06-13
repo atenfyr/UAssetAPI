@@ -1,7 +1,7 @@
 # Build Instructions
 
 ### Prerequisites
-* Visual Studio 2017 or later
+* Visual Studio 2022 or later
 * Git
 
 ### Initial Setup
