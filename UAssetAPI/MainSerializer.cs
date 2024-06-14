@@ -209,7 +209,17 @@ namespace UAssetAPI
                 // add "blank" fragment
                 // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
                 string highestSchema = parentName?.Value?.Value;
-                int numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+
+                // i doubt that this is true, empirically tested; need more data
+                int numSkip = 0;
+                if (asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+                {
+                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                }
+                else
+                {
+                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                }
                 allFrags.Add(new FFragment(numSkip, 0, true, false));
             }
 

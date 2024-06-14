@@ -146,32 +146,48 @@ namespace UAssetAPI.ExportTypes
         ///<summary>The location (into the FLinker's underlying file reader archive) of the beginning of the data for this export's UObject. Used for verification only.</summary>
         [DisplayIndexOrder(7, true)]
         public long SerialOffset;
-        ///<summary>Was this export forced into the export table via OBJECTMARK_ForceTagExp?</summary>
+
+        /// <summary>
+        /// The location (relative to SerialOffset) of the beginning of the portion of this export's data that is serialized using tagged property serialization.
+        /// Serialized into versioned packages as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4). <para />
+        /// Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+        /// </summary>
         [DisplayIndexOrder(8)]
+        public long ScriptSerializationStartOffset;
+        /// <summary>
+        /// The location (relative to SerialOffset) of the end of the portion of this export's data that is serialized using tagged property serialization.
+        /// Serialized into versioned packages as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4) <para />
+        /// Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+        /// </summary>
+        [DisplayIndexOrder(9)]
+        public long ScriptSerializationEndOffset;
+
+        ///<summary>Was this export forced into the export table via OBJECTMARK_ForceTagExp?</summary>
+        [DisplayIndexOrder(10)]
         public bool bForcedExport;
         ///<summary>Should this export not be loaded on clients?</summary>
-        [DisplayIndexOrder(9, true)]
+        [DisplayIndexOrder(11, true)]
         public bool bNotForClient;
         ///<summary>Should this export not be loaded on servers?</summary>
-        [DisplayIndexOrder(10, true)]
+        [DisplayIndexOrder(12, true)]
         public bool bNotForServer;
         ///<summary>If this object is a top level package (which must have been forced into the export table via OBJECTMARK_ForceTagExp), this is the GUID for the original package file. Deprecated</summary>
-        [DisplayIndexOrder(11)]
+        [DisplayIndexOrder(13)]
         public Guid PackageGuid;
         ///<summary></summary>
-        [DisplayIndexOrder(12)]
+        [DisplayIndexOrder(14)]
         public bool IsInheritedInstance;
         ///<summary>If this export is a top-level package, this is the flags for the original package</summary>
-        [DisplayIndexOrder(13)]
+        [DisplayIndexOrder(15)]
         public EPackageFlags PackageFlags;
         ///<summary>Should this export be always loaded in editor game?</summary>
-        [DisplayIndexOrder(14)]
+        [DisplayIndexOrder(16)]
         public bool bNotAlwaysLoadedForEditorGame;
         ///<summary>Is this export an asset?</summary>
-        [DisplayIndexOrder(15)]
+        [DisplayIndexOrder(17)]
         public bool bIsAsset;
         ///<summary></summary>
-        [DisplayIndexOrder(16)]
+        [DisplayIndexOrder(18)]
         public bool GeneratePublicHash;
 
         /// <summary>
@@ -183,13 +199,13 @@ namespace UAssetAPI.ExportTypes
         internal int SerializationBeforeCreateDependenciesSize;
         internal int CreateBeforeCreateDependenciesSize;
 
-        [DisplayIndexOrder(17)]
-        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
-        [DisplayIndexOrder(18)]
-        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(19)]
-        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        public List<FPackageIndex> SerializationBeforeSerializationDependencies = new List<FPackageIndex>();
         [DisplayIndexOrder(20)]
+        public List<FPackageIndex> CreateBeforeSerializationDependencies = new List<FPackageIndex>();
+        [DisplayIndexOrder(21)]
+        public List<FPackageIndex> SerializationBeforeCreateDependencies = new List<FPackageIndex>();
+        [DisplayIndexOrder(22)]
         public List<FPackageIndex> CreateBeforeCreateDependencies = new List<FPackageIndex>();
 
         // zen-specific info
@@ -301,6 +317,11 @@ namespace UAssetAPI.ExportTypes
                 {
                     this.SerialSize = reader.ReadInt64();
                     this.SerialOffset = reader.ReadInt64();
+                    if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                    {
+                        this.ScriptSerializationStartOffset = reader.ReadInt64();
+                        this.ScriptSerializationEndOffset = reader.ReadInt64();
+                    }
                 }
                 this.bForcedExport = ReadBit(reader);
                 this.bNotForClient = ReadBit(reader);
@@ -379,6 +400,11 @@ namespace UAssetAPI.ExportTypes
                 {
                     writer.Write(SerialSize);
                     writer.Write(SerialOffset);
+                    if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                    {
+                        writer.Write(ScriptSerializationStartOffset);
+                        writer.Write(ScriptSerializationEndOffset);
+                    }
                 }
                 WriteBit(writer, bForcedExport);
                 WriteBit(writer, bNotForClient);
