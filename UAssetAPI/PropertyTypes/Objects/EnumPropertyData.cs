@@ -87,7 +87,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (d[0] != "null" && d[0] != null)
             {
-                EnumType = FName.FromString(asset, d[0]);
+                EnumType = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[0]) : FName.FromString(asset, d[0]);
             }
             else
             {
@@ -96,7 +96,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (d[1] != "null" && d[1] != null)
             {
-                Value = FName.FromString(asset, d[1]);
+                Value = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
             }
             else
             {

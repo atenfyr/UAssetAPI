@@ -197,7 +197,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (d[4] != null && d[4] != "Generic") StructType = FName.FromString(asset, d[4]);
+            if (d[4] != null && d[4] != "Generic") StructType = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[4]) : FName.FromString(asset, d[4]);
             if (StructType == null) StructType = FName.DefineDummy(asset, "Generic");
         }
 
