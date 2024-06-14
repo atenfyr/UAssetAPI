@@ -35,7 +35,10 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// <param name="reader">The BinaryReader to read from.</param>
         public override void Read(AssetBinaryReader reader)
         {
-            Value = reader.XFER_PROP_POINTER();
+            if (reader.Asset.ObjectVersion > ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+            {
+                Value = reader.XFER_PROP_POINTER();
+            }
             Variable = ExpressionSerializer.ReadExpression(reader);
             Expression = ExpressionSerializer.ReadExpression(reader);
         }
@@ -48,7 +51,10 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override int Write(AssetBinaryWriter writer)
         {
             int offset = 0;
-            offset += writer.XFER_PROP_POINTER(Value);
+            if (writer.Asset.ObjectVersion > ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+            {
+                offset += writer.XFER_PROP_POINTER(Value);
+            }
             offset += ExpressionSerializer.WriteExpression(Variable, writer);
             offset += ExpressionSerializer.WriteExpression(Expression, writer);
             return offset;

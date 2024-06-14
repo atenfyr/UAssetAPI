@@ -27,6 +27,12 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public uint Offset;
 
         /// <summary>
+        /// Old property type.
+        /// </summary>
+        [JsonProperty]
+        public byte PropertyType;
+
+        /// <summary>
         /// Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*
         /// </summary>
         [JsonProperty]
@@ -52,6 +58,10 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             ObjectExpression = ExpressionSerializer.ReadExpression(reader);
             Offset = reader.ReadUInt32();
             RValuePointer = reader.XFER_PROP_POINTER();
+            if (reader.Asset.ObjectVersion <= ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+            {
+                PropertyType = reader.ReadByte();
+            }
             ContextExpression = ExpressionSerializer.ReadExpression(reader);
         }
 
@@ -66,6 +76,11 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             offset += ExpressionSerializer.WriteExpression(ObjectExpression, writer);
             writer.Write(Offset); offset += sizeof(uint);
             offset += writer.XFER_PROP_POINTER(RValuePointer);
+            if (writer.Asset.ObjectVersion <= ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+            {
+                writer.Write(PropertyType);
+                offset += sizeof(byte);
+            }
             offset += ExpressionSerializer.WriteExpression(ContextExpression, writer);
             return offset;
         }

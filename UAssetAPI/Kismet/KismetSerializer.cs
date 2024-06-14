@@ -57,6 +57,7 @@ namespace UAssetAPI.Kismet
         const string PC_Int = "Int";
         const string PC_Int64 = "Int64";
         const string PC_Float = "Float";
+        const string PC_Double = "Double";
         const string PC_Name = "Name";
         const string PC_Delegate = "Delegate";
         const string PC_MCDelegate = "mcdelegate";
@@ -280,6 +281,11 @@ namespace UAssetAPI.Kismet
                             case "FloatProperty":
                                 {
                                     pin.PinCategory = PC_Float;
+                                    break;
+                                }
+                            case "DoubleProperty":
+                                {
+                                    pin.PinCategory = PC_Double;
                                     break;
                                 }
                             case "Int64Property":
