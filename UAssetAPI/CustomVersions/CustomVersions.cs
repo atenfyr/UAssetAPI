@@ -213,55 +213,356 @@ namespace UAssetAPI.CustomVersions
         // CHANGES BEYOND HERE ARE UE5 ONLY //
 
         /// <summary>Added the weighted value property type to store the cloths weight maps' low/high ranges</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         ChaosClothAddWeightedValue,
 
         /// <summary>Added the Long Range Attachment stiffness weight map</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         ChaosClothAddTetherStiffnessWeightMap,
 
         /// <summary>Fix corrupted LOD transition maps</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         ChaosClothFixLODTransitionMaps,
 
         /// <summary>Enable a few more weight maps to better art direct the cloth simulation</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         ChaosClothAddTetherScaleAndDragLiftWeightMaps,
 
         /// <summary>Enable material (edge, bending, and area stiffness) weight maps</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         ChaosClothAddMaterialWeightMaps,
 
         /// <summary>Added bShowCurve for movie scene float channel serialization</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         SerializeFloatChannelShowCurve,
 
         /// <summary>Minimize slack waste by using a single array for grass data</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         LandscapeGrassSingleArray,
 
         /// <summary>Add loop counters to sequencer's compiled sub-sequence data</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         AddedSubSequenceEntryWarpCounter,
 
         /// <summary>Water plugin is now component-based rather than actor based</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         WaterBodyComponentRefactor,
 
         /// <summary>Cooked BPGC storing editor-only asset tags</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        [Introduced(EngineVersion.VER_UE5_0)]
         BPGCCookedEditorTags,
 
         /// <summary>Terrain layer weights are no longer considered material parameters</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
-        TerrainLayerWeightsAreNotParameters,
+        [Introduced(EngineVersion.VER_UE5_0)]
+        TTerrainLayerWeightsAreNotParameters,
 
-        /// <summary>
-        /// Anim Dynamics Node Gravity Override vector is now defined in world space, not simulation space. 
-        /// Legacy behavior can be maintained with a flag, which is set false by default for new nodes, 
-        /// true for nodes predating this change.
-        /// </summary>
+        // Anim Dynamics Node Gravity Override vector is now defined in world space, not simulation space. 
+        // Legacy behavior can be maintained with a flag, which is set false by default for new nodes, 
+        // true for nodes predating this change.
+        [Introduced(EngineVersion.VER_UE5_0)]
         GravityOverrideDefinedInWorldSpace,
+
+        // Anim Dynamics Node Physics parameters for each body in a chain are now stored in an array and can be edited.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        AnimDynamicsEditableChainParameters,
+
+        // Decoupled the generation of the water texture from the Water Brush and the landscape
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WaterZonesRefactor,
+
+        // Add faster damping calculations to the cloth simulation and rename previous Damping parameter to LocalDamping.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        ChaosClothFasterDamping,
+
+        // Migrated function handlers to the CDO/archetype data
+        [Introduced(EngineVersion.VER_UE5_1)]
+        MigratedFunctionHandlersToDefaults,
+
+        // Storing inertia tensor as vec3 instead of matrix.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        ChaosInertiaConvertedToVec3,
+
+        // Migrated event definitions to the CDO/archetype data
+        [Introduced(EngineVersion.VER_UE5_1)]
+        MigratedEventDefinitionToDefaults,
+
+        // Serialize LevelInstanceActorGuid on new ILevelInstanceInterface implementation
+        [Introduced(EngineVersion.VER_UE5_1)]
+        LevelInstanceActorGuidSerialize,
+
+        // Single-frame/key AnimDataModel patch-up
+        [Introduced(EngineVersion.VER_UE5_1)]
+        SingleFrameAndKeyAnimModel,
+
+        // Remapped bEvaluateWorldPositionOffset to bEvaluateWorldPositionOffsetInRayTracing
+        [Introduced(EngineVersion.VER_UE5_1)]
+        RemappedEvaluateWorldPositionOffsetInRayTracing,
+
+        // Water body collision settings are now those of the base UPrimitiveComponent, rather than duplicated in UWaterBodyComponent
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WaterBodyComponentCollisionSettingsRefactor,
+
+        // Introducing widget inherited named slots.  This wouldn't have required a version bump, except in the previous
+        // version, users could make NamedSlots and then Seed them with any random widgets, as a sorta 'default' setup.
+        // In order to preserve that, we're bumping the version so that we can set a new field on UNamedSlot to control
+        // if a widget exposes its named slot to everyone (even if it has content), which by default they wont any longer.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WidgetInheritedNamedSlots,
+
+        // Added water HLOD material
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WaterHLODSupportAdded,
+
+        // Moved parameters affecting Skeleton pose rendering from the PoseWatch class to the PoseWatchPoseElement class.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        PoseWatchMigrateSkeletonDrawParametersToPoseElement,
+
+        // Reset default value for Water exclusion volumes to make them more intuitive and support the "it just works" philosophy.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WaterExclusionVolumeExcludeAllDefault,
+
+        // Added water non-tessellated LOD
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WaterNontessellatedLODSupportAdded,
+
+        // Added FHierarchicalSimplification::SimplificationMethod
+        [Introduced(EngineVersion.VER_UE5_1)]
+        HierarchicalSimplificationMethodEnumAdded,
+
+        // Changed how world partition streaming cells are named
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WorldPartitionStreamingCellsNamingShortened,
+
+        // Serialize ContentBundleGuid in WorldPartitionActorDesc
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WorldPartitionActorDescSerializeContentBundleGuid,
+
+        // Serialize IsActorRuntimeOnly in WorldPartitionActorDesc
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WorldPartitionActorDescSerializeActorIsRuntimeOnly,
+
+        // Add Nanite Material Override option to materials and material instances.
+        [Introduced(EngineVersion.VER_UE5_1)]
+        NaniteMaterialOverride,
+
+        // Serialize HLOD stats in HLODActorDesc
+        [Introduced(EngineVersion.VER_UE5_1)]
+        WorldPartitionHLODActorDescSerializeStats,
+
+        // WorldPartitionStreamingSourceComponent property deprecation
+        [Introduced(EngineVersion.VER_UE5_2)]
+        WorldPartitionStreamingSourceComponentTargetDeprecation,
+
+        // Fixed localization gathering for external actor packages
+        [Introduced(EngineVersion.VER_UE5_2)]
+        FixedLocalizationGatherForExternalActorPackage,
+
+        // Change HLODActors to RuntimeCells mapping to use a GUID instead of the cell name
+        [Introduced(EngineVersion.VER_UE5_2)]
+        WorldPartitionHLODActorUseSourceCellGuid,
+
+        // Add an attribute to geometry collection to track internal faces, rather than relying on material ID numbering
+        [Introduced(EngineVersion.VER_UE5_3)]
+        ChaosGeometryCollectionInternalFacesAttribute,
+
+        // Dynamic cast nodes use an enumerated pure node state to include a value for the default setting
+        [Introduced(EngineVersion.VER_UE5_3)]
+        DynamicCastNodesUsePureStateEnum,
+
+        // Add FWorldPartitionActorFilter to FLevelInstanceActorDesc/FDataLayerInstanceDesc
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorFilter,
+
+        // Change the non-spatialized radius to blend to a pure 2D spatialized sound vs omnidirectional
+        [Introduced(EngineVersion.VER_UE5_3)]
+        AudioAttenuationNonSpatializedRadiusBlend,
+
+        // Serialize actor class descriptors
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorClassDescSerialize,
+
+        // FActorContainerID is now an FGuid instead of a uint64
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionFActorContainerIDu64ToGuid,
+
+        // FDataLayerInstanceDesc support for private data layers
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionPrivateDataLayers,
+
+        // Reduce size and improve behaviour of Chaos::FImplicitObjectUnion
+        [Introduced(EngineVersion.VER_UE5_3)]
+        ChaosImplicitObjectUnionBVHRefactor,
+
+        // FLevelInstanceActorDesc DeltaSerialize Filter
+        [Introduced(EngineVersion.VER_UE5_3)]
+        LevelInstanceActorDescDeltaSerializeFilter,
+
+        // Fix the Nanite landscape mesh non-deterministic DDC keys
+        [Introduced(EngineVersion.VER_UE5_3)]
+        FixNaniteLandscapeMeshDDCKey,
+
+        // Change how connection graphs are stored on Geometry Collections to an edge-array representation
+        [Introduced(EngineVersion.VER_UE5_3)]
+        ChaosGeometryCollectionConnectionEdgeGroup,
+
+        // Moved the water info mesh data and static water body meshes into new static mesh components for water bodies.
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WaterBodyStaticMeshComponents,
+
+        // Serialize invalid bounds in world partition actor descriptors
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorDescSerializeInvalidBounds,
+
+        // Upgrade Navigation Links to use 64 bits for the ID
+        [Introduced(EngineVersion.VER_UE5_3)]
+        NavigationLinkID32To64,
+
+        // Serialize editor only references in world partition actor descriptors
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorDescSerializeEditorOnlyReferences,
+
+        // Add support for soft object paths in actor descriptors
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorDescSerializeSoftObjectPathSupport,
+
+        // Don't serialize class descriptor GUIDs
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionClasDescGuidTransient,
+
+        // Serialize ActorDesc bIsMainWorldOnly
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorDescIsMainWorldOnly,
+
+        // FWorldPartitionActorFilter go back to FString serialize of AssetPaths to avoid FArchiveReplaceOrClearExternalReferences clearing CDO references on BP Compile
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorFilterStringAssetPath,
+
+        // Add FPackedLevelActorDesc for APackedLevelActor and support for APackedLevelActor Filters
+        [Introduced(EngineVersion.VER_UE5_3)]
+        PackedLevelActorDesc,
+
+        // Add customizable values for several UWorldPartitionRuntimeSpatialHash cvars
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionRuntimeSpatialHashCVarOverrides,
+
+        // WorldPartition HLOD now contains a source actors object
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionHLODSourceActorsRefactor,
+
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WaterBodyStaticMeshRename,
+
+        // Geometry Collection now by-default converts vertex colors to sRGB when creating render data
+        [Introduced(EngineVersion.VER_UE5_3)]
+        GeometryCollectionConvertVertexColorToSRGB,
+
+        // Water bodies before this version need to update their water zone on load since they won't have been serialized yet.
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WaterOwningZonePointerFixup,
+
+        // Set flags on water static meshes to duplicate transient to avoid underlying static mesh duplication issue
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WaterBodyStaticMeshDuplicateTransient,
+
+        // Update paths to use the SkeletalClass
+        [Introduced(EngineVersion.VER_UE5_3)]
+        MVVMConvertPropertyPathToSkeletalClass,
+
+        // Fixup all flags/outering on static meshes on water bodies by rebuilding them completely
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WaterBodyStaticMeshFixup,
+
+        // Binding extensions for anim graph nodes
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AnimGraphNodeBindingExtensions,
+
+        // Function data stores a map from work to debug operands
+        [Introduced(EngineVersion.VER_UE5_4)]
+        RigVMSaveDebugMapInGraphFunctionData,
+
+        // Fix missing binding extensions for some anim graph nodes
+        [Introduced(EngineVersion.VER_UE5_4)]
+        FixMissingAnimGraphNodeBindingExtensions,
+
+        // EditableWhenInherited: Skip custom serialization on non Archetypes
+        [Introduced(EngineVersion.VER_UE5_4)]
+        ISMComponentEditableWhenInheritedSkipSerialization,
+
+        // GrassTypes are now per-component, rather than per-landscape proxy :
+        [Introduced(EngineVersion.VER_UE5_4)]
+        LandscapeSupportPerComponentGrassTypes,
+
+        // World partition actor data layers activation logic operator support defaults for old maps
+        [Introduced(EngineVersion.VER_UE5_4)]
+        WorldPartitionDataLayersLogicOperatorAdded,
+
+        // Started sorting Possessables, Spawnables, and MovieSceneBindings for better search performance.
+        [Introduced(EngineVersion.VER_UE5_4)]
+        MovieSceneSortedBindings,
+
+        // Remove the UAnimCurveCompressionCodec::InstanceGuid which causes cook determinism issues
+        [Introduced(EngineVersion.VER_UE5_4)]
+        RemoveAnimCurveCompressionCodecInstanceGuid,
+
+        // Serialize the source HLOD Layer for HLOD actor descriptors.
+        [Introduced(EngineVersion.VER_UE5_4)]
+        WorldPartitionHLODActorDescSerializeSourceHLODLayer,
+
+        // Serialize custom editor bounds for HLOD actor descriptors.
+        [Introduced(EngineVersion.VER_UE5_4)]
+        WorldPartitionHLODActorDescSerializeEditorBounds,
+
+        // Changed default Local Exposure Contrast from 1.0 to 0.8 (reverted)
+        [Introduced(EngineVersion.VER_UE5_4)]
+        LocalExposureDefaultChangeFrom1_Reverted,
+
+        // Added support of external packaging of Data Layer Instances
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AddDataLayerInstanceExternalPackage,
+
+        // Update paths to keep a flag if they are the widget BP
+        [Introduced(EngineVersion.VER_UE5_4)]
+        MVVMPropertyPathSelf,
+
+        // Enabled ObjectPtr property serialization for Dataflow nodes
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AddDataflowObjectSerialization,
+
+        // Add anim notify rate scaling, defaults to on for new content, off for old content
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AnimNotifyAddRateScale,
+
+        // Fix tangents for non-uniform build scales, and add a flag to optionally match the previous (incorrect) tangents
+        [Introduced(EngineVersion.VER_UE5_4)]
+        FixedTangentTransformForNonuniformBuildScale,
+
+        // AnimNode Layers will now start in a Shared Group, instead of being each one on a different group at runtime
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AnimNodeRootDefaultGroupChange,
+
+        // Move AnimNext graphs to sub-entries of assets
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AnimNextMoveGraphsToEntries,
+
+        // Removed debug information containing compressed data author, time etc. from animation DDC data as it introduces indeterminism
+        [Introduced(EngineVersion.VER_UE5_4)]
+        AnimationSequenceCompressedDataRemoveDebugData,
+
+        // Changes to Orthographic Camera default settings
+        [Introduced(EngineVersion.VER_UE5_4)]
+        OrthographicCameraDefaultSettings,
+
+        // Added settings to Landscape HLODs
+        [Introduced(EngineVersion.VER_UE5_4)]
+        LandscapeAddedHLODSettings,
+
+        // Skeletal Mesh uses Mesh Description to store mesh bulk data.
+        [Introduced(EngineVersion.VER_UE5_4)]
+        MeshDescriptionForSkeletalMesh,
+
+        // Skeletal Mesh optionally cooks half edge data per lod
+        [Introduced(EngineVersion.VER_UE5_4)]
+        SkeletalHalfEdgeData,
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
@@ -898,6 +1199,10 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE4_27)]
         LonglatTextureCubeDefaultMaxResolution,
 
+        // bake center of mass into chaos cache
+        [Introduced(EngineVersion.VER_UE5_0)]
+        GeometryCollectionCacheRemovesMassToLocal,
+
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
@@ -960,6 +1265,26 @@ namespace UAssetAPI.CustomVersions
         /// <summary>Change to linker export/import resource serializationn</summary>
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
         ObjectResourceOptionalVersionChange,
+
+        /// <summary>Added FIoHash for each FIoChunkId in the package to the AssetPackageData.</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        AddedChunkHashes,
+
+        /// <summary>Classes are serialized as path names rather than short object names, e.g. /Script/Engine.StaticMesh</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        ClassPaths,
+
+        /// <summary>Asset bundles are serialized as FTopLevelAssetPath instead of FSoftObjectPath, deprecated FAssetData::ObjectPath</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        RemoveAssetPathFNames,
+
+        /// <summary>Added header with bFilterEditorOnlyData flag</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        AddedHeader,
+
+        /// <summary>Added Extension to AssetPackageData.</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        AssetPackageDataHasExtension,		
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
