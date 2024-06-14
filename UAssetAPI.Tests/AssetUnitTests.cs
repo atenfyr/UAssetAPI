@@ -1,14 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.Tests
 {
@@ -530,7 +529,7 @@ namespace UAssetAPI.Tests
 
             var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(blueprint.VerifyBinaryEquality());
-            //Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
         }
       
         /// <summary>

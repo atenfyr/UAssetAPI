@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.FieldTypes;
@@ -85,7 +84,6 @@ namespace UAssetAPI.ExportTypes
                 }
             }
 
-            // TODO: unsure why an FString is present here when not FilterEditorOnly
             if (Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
             {
                 int numProps = reader.ReadInt32();

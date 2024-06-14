@@ -12,17 +12,50 @@ namespace UAssetAPI.FieldTypes
         public FName SerializedType;
         public FName Name;
         public EObjectFlags Flags;
+        public TMap<FName, FString> MetaDataMap;
 
         public virtual void Read(AssetBinaryReader reader)
         {
             Name = reader.ReadFName();
             Flags = (EObjectFlags)reader.ReadUInt32();
+            MetaDataMap = new TMap<FName, FString>();
+
+            if (!reader.Asset.IsFilterEditorOnly && !reader.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+            {
+                bool bHasMetaData = reader.ReadInt32() == 1;
+                if (bHasMetaData)
+                {
+                    int leng = reader.ReadInt32();
+                    for (int i = 0; i < leng; i++)
+                    {
+                        FName key = reader.ReadFName();
+                        FString val = reader.ReadFString();
+                        MetaDataMap.Add(key, val);
+                    }
+                }
+            }
         }
 
         public virtual void Write(AssetBinaryWriter writer)
         {
             writer.Write(Name);
             writer.Write((uint)Flags);
+
+            if (!writer.Asset.IsFilterEditorOnly && !writer.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+            {
+                writer.Write(MetaDataMap.Count > 0 ? 1 : 0); // int32
+                if (MetaDataMap.Count > 0)
+                {
+                    writer.Write(MetaDataMap.Count); // int32
+                    for (int i = 0; i < MetaDataMap.Count; i++)
+                    {
+                        var pair = MetaDataMap.GetItem(i);
+                        writer.Write(pair.Key);
+                        writer.Write(pair.Value);
+                    }
+                }
+
+            }
         }
 
         public FField()
