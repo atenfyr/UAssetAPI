@@ -149,7 +149,7 @@ namespace UAssetAPI
             {
                 if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
-                zeroProps[idx] = entry.IsZero(asset);
+                zeroProps[idx] = entry.CanBeZero(asset) && entry.IsZero;
 
                 if (idx < firstNumAll) firstNumAll = idx;
                 if (idx > lastNumAll) lastNumAll = idx;
@@ -323,6 +323,7 @@ namespace UAssetAPI
             lastType = data;
 #endif
 
+            data.IsZero = isZero;
             data.Ancestry.Initialize(ancestry, parentName);
             data.DuplicationIndex = duplicationIndex;
             if (reader != null && !isZero)
@@ -519,7 +520,7 @@ namespace UAssetAPI
 
             if (writer.Asset.HasUnversionedProperties)
             {
-                if (!property.IsZero(writer.Asset)) property.Write(writer, includeHeader);
+                if (!property.IsZero || !property.CanBeZero(writer.Asset)) property.Write(writer, includeHeader);
                 return -1; // length is not serialized
             }
             else

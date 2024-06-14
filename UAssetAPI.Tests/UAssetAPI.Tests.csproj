@@ -190,6 +190,12 @@
     <None Update="TestAssets\TestUE5_3\Engine\Engine.usmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_3\Engine\Entry.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\Engine\Entry.umap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
