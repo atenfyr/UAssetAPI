@@ -170,6 +170,11 @@ namespace UAssetAPI.FieldTypes
 
     }
 
+    public class FWeakObjectProperty : FObjectProperty
+    {
+
+    }
+
     public class FClassProperty : FObjectProperty
     {
         // UClass*
