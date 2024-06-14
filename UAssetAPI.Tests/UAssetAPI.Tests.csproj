@@ -181,6 +181,21 @@
     <None Update="TestAssets\TestManyAssets\VERSIONED\Assault_M1A1Thompson_WW2_DrumSuppressor.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_3\Engine\DefaultRecorderBoneCompression.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\Engine\DefaultRecorderBoneCompression.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\Engine\Engine.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\Engine\Entry.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\Engine\Entry.umap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

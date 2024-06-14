@@ -149,7 +149,7 @@ namespace UAssetAPI
             {
                 if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
-                zeroProps[idx] = entry.IsZero(asset);
+                zeroProps[idx] = entry.CanBeZero(asset) && entry.IsZero;
 
                 if (idx < firstNumAll) firstNumAll = idx;
                 if (idx > lastNumAll) lastNumAll = idx;
@@ -209,7 +209,17 @@ namespace UAssetAPI
                 // add "blank" fragment
                 // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
                 string highestSchema = parentName?.Value?.Value;
-                int numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+
+                // i doubt that this is true, empirically tested; need more data
+                int numSkip = 0;
+                if (asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+                {
+                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                }
+                else
+                {
+                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                }
                 allFrags.Add(new FFragment(numSkip, 0, true, false));
             }
 
@@ -313,6 +323,7 @@ namespace UAssetAPI
             lastType = data;
 #endif
 
+            data.IsZero = isZero;
             data.Ancestry.Initialize(ancestry, parentName);
             data.DuplicationIndex = duplicationIndex;
             if (reader != null && !isZero)
@@ -509,7 +520,7 @@ namespace UAssetAPI
 
             if (writer.Asset.HasUnversionedProperties)
             {
-                if (!property.IsZero(writer.Asset)) property.Write(writer, includeHeader);
+                if (!property.IsZero || !property.CanBeZero(writer.Asset)) property.Write(writer, includeHeader);
                 return -1; // length is not serialized
             }
             else

@@ -52,6 +52,11 @@ namespace UAssetAPI.Unversioned
             return (ushort)((byte)SkipNum | (bHasAnyZeroes ? HasZeroMask : 0) | (ushort)((byte)ValueNum << ValueNumShift) | (bIsLast ? IsLastMask : 0));
         }
 
+        /// <summary>
+        /// Used for debugging
+        /// </summary>
+        internal string PackedForm => BitConverter.ToString(BitConverter.GetBytes(Pack()));
+
         public static FFragment Unpack(ushort Int)
         {
             FFragment Fragment = new FFragment();

@@ -29,5 +29,33 @@ namespace UAssetAPI.UnrealTypes
         {
 
         }
+
+        public FFieldPath(AssetBinaryReader reader)
+        {
+            int pathNum = reader.ReadInt32();
+            Path = new FName[pathNum];
+            for (int i = 0; i < pathNum; i++)
+            {
+                Path[i] = reader.ReadFName();
+            }
+
+            ResolvedOwner = new FPackageIndex(reader.ReadInt32());
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            if (Path == null && ResolvedOwner == null)
+            {
+                return 0;
+            }
+            writer.Write(Path.Length);
+            foreach (FName name in Path)
+            {
+                writer.Write(name);
+            }
+
+            writer.Write(ResolvedOwner.Index);
+            return sizeof(int) * (2 + Path.Length * 2);
+        }
     }
 }

@@ -104,8 +104,18 @@ namespace UAssetAPI
             uint hash = 0;
             for (int i = 0; i < text.Length; i++)
             {
-                char B = ToUpper(text[i]);
-                byte[] rawDataForCharacter = encoding.GetBytes(new char[1] { B });
+                byte[] rawDataForCharacter;
+                var next = Math.Min(i + 1, text.Length - 1);
+                if (char.IsHighSurrogate(text[i]) && next != i && char.IsLowSurrogate(text[next]))
+                {
+                    rawDataForCharacter = encoding.GetBytes(new char[2] { text[i], text[++i] });
+                }
+                else
+                {
+                    char B = ToUpper(text[i]);
+                    rawDataForCharacter = encoding.GetBytes(new char[1] { B });
+                }
+
                 foreach (byte rawByte in rawDataForCharacter)
                 {
                     hash = ((hash >> 8) & 0x00FFFFFF) ^ CRCTable_DEPRECATED[(hash ^ rawByte) & 0x000000FF];

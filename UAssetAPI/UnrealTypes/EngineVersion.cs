@@ -65,6 +65,8 @@
         /// <summary>4.27</summary>
         VER_UE4_27,
 
+        /// <summary>5.0EA</summary>
+        VER_UE5_0EA,
         /// <summary>5.0</summary>
         VER_UE5_0,
         /// <summary>5.1</summary>

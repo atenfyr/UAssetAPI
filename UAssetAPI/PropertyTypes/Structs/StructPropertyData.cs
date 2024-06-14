@@ -186,18 +186,18 @@ namespace UAssetAPI.PropertyTypes.Structs
             return WriteNTPL(writer);
         }
 
-        public override bool IsZero(UnrealPackage asset)
+        public override bool CanBeZero(UnrealPackage asset)
         {
             if (StructType?.Value?.Value == "Guid")
             {
-                return base.IsZero(asset);
+                return base.CanBeZero(asset);
             }
-            return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.IsZero(asset);
+            return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.CanBeZero(asset);
         }
 
         public override void FromString(string[] d, UAsset asset)
         {
-            if (d[4] != null && d[4] != "Generic") StructType = FName.FromString(asset, d[4]);
+            if (d[4] != null && d[4] != "Generic") StructType = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[4]) : FName.FromString(asset, d[4]);
             if (StructType == null) StructType = FName.DefineDummy(asset, "Generic");
         }
 

@@ -47,6 +47,13 @@ namespace UAssetAPI.PropertyTypes.Objects
                     Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
                     return;
                 }
+
+                if (InnerType?.Value.Value == "IntProperty")
+                {
+                    int enumIndice = reader.ReadInt32();
+                    Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
+                    return;
+                }
             }
 
             if (includeHeader)
@@ -66,6 +73,13 @@ namespace UAssetAPI.PropertyTypes.Objects
                     int enumIndice = Value == null ? byte.MaxValue : (byte)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault(); // wow this code is stupid
                     writer.Write((byte)enumIndice);
                     return sizeof(byte);
+                }
+
+                if (InnerType?.Value?.Value == "IntProperty")
+                {
+                    int enumIndice = (int)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault();
+                    writer.Write(enumIndice);
+                    return sizeof(int);
                 }
             }
 
@@ -87,7 +101,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (d[0] != "null" && d[0] != null)
             {
-                EnumType = FName.FromString(asset, d[0]);
+                EnumType = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[0]) : FName.FromString(asset, d[0]);
             }
             else
             {
@@ -96,7 +110,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (d[1] != "null" && d[1] != null)
             {
-                Value = FName.FromString(asset, d[1]);
+                Value = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
             }
             else
             {

@@ -302,6 +302,17 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// The version to use for serializing data resources.
+        /// </summary>
+
+        public EObjectDataResourceVersion DataResourceVersion;
+
+        /// <summary>
+        /// List of serialized UObject binary/bulk data resources.
+        /// </summary>
+        public List<FObjectDataResource> DataResources;
+
+        /// <summary>
         /// Whether or not this asset is loaded with the Event Driven Loader.
         /// </summary>
         public bool UsesEventDrivenLoader;
@@ -475,6 +486,8 @@ namespace UAssetAPI
         internal bool doWeHaveAssetRegistryData = true;
         [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
+        [JsonProperty]
+        internal bool doWeHaveDataResources = true;
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
@@ -892,7 +905,31 @@ namespace UAssetAPI
                 for (int j = 0; j < Exports[i].CreateBeforeCreateDependenciesSize; j++) Exports[i].CreateBeforeCreateDependencies.Add(FPackageIndex.FromRawIndex(reader.ReadInt32()));
             }
 
-            // TODO: read DataResources for 5.3+
+            // DataResources (5.3+)
+            DataResources = new List<FObjectDataResource>();
+            if (DataResourceOffset > 0)
+            {
+                reader.BaseStream.Seek(DataResourceOffset, SeekOrigin.Begin);
+                DataResourceVersion = (EObjectDataResourceVersion)reader.ReadUInt32();
+
+                int count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    EObjectDataResourceFlags Flags = (EObjectDataResourceFlags)reader.ReadUInt32();
+                    long SerialOffset = reader.ReadInt64();
+                    long DuplicateSerialOffset = reader.ReadInt64();
+                    long SerialSize = reader.ReadInt64();
+                    long RawSize = reader.ReadInt64();
+                    FPackageIndex OuterIndex = FPackageIndex.FromRawIndex(reader.ReadInt32());
+                    uint LegacyBulkDataFlags = reader.ReadUInt32();
+
+                    DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags));
+                }
+            }
+            else
+            {
+                doWeHaveDataResources = false;
+            }
 
             // Export data
             if (SectionSixOffset > 0 && Exports.Count > 0)
@@ -1393,6 +1430,31 @@ namespace UAssetAPI
                     for (int i = 0; i < this.Exports.Count; i++) Exports[i].FirstExportDependencyOffset = -1;
                 }
 
+                // DataResources
+                // DataResources (5.3+)
+                if (this.doWeHaveDataResources)
+                {
+                    this.DataResourceOffset = (int)writer.BaseStream.Position;
+                    writer.Write((uint)DataResourceVersion);
+                    writer.Write(DataResources.Count);
+
+                    for (int i = 0; i < DataResources.Count; i++)
+                    {
+                        FObjectDataResource dataResource = DataResources[i];
+                        writer.Write((uint)dataResource.Flags);
+                        writer.Write(dataResource.SerialOffset);
+                        writer.Write(dataResource.DuplicateSerialOffset);
+                        writer.Write(dataResource.SerialSize);
+                        writer.Write(dataResource.RawSize);
+                        writer.Write(dataResource.OuterIndex?.Index ?? 0);
+                        writer.Write(dataResource.LegacyBulkDataFlags);
+                    }
+                }
+                else
+                {
+                    doWeHaveDataResources = false;
+                }
+
                 // Export data
                 int oldOffset = this.SectionSixOffset;
                 this.SectionSixOffset = (int)writer.BaseStream.Position;
@@ -1428,7 +1490,7 @@ namespace UAssetAPI
                     }
                 }
 
-                // Rewrite Header
+                // Rewrite header
                 writer.Seek(0, SeekOrigin.Begin);
                 writer.Write(MakeHeader());
 

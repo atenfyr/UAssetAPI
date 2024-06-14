@@ -290,6 +290,19 @@ namespace UAssetAPI.Tests
             }
         }
 
+        private void TestUE5_3Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_3", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
+
         /// <summary>
         /// Tests the GUID/string conversion operations to ensure that they match the Unreal implementation.
         /// </summary>
@@ -502,6 +515,7 @@ namespace UAssetAPI.Tests
 
         /// <summary>
         /// In this test, we are trying to read a source asset.
+        /// Binary equality is expected.
         /// </summary>
         [TestMethod]
         public void TestEditorAssets()
@@ -517,6 +531,16 @@ namespace UAssetAPI.Tests
             var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(blueprint.VerifyBinaryEquality());
             Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
+        }
+      
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_3()
+        {
+            TestUE5_3Subsection("Engine", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "Engine", "Engine.usmap")));
         }
 
         [AssemblyCleanup()]
