@@ -186,14 +186,16 @@ namespace UAssetAPI.PropertyTypes.Structs
             return WriteNTPL(writer);
         }
 
-        public override bool CanBeZero(UnrealPackage asset)
+        // removed; we'll actually just use default PropertyData alg
+
+        /*public override bool CanBeZero(UnrealPackage asset)
         {
             if (StructType?.Value?.Value == "Guid")
             {
                 return base.CanBeZero(asset);
             }
             return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.CanBeZero(asset);
-        }
+        }*/
 
         public override void FromString(string[] d, UAsset asset)
         {
