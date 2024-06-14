@@ -1215,75 +1215,75 @@ namespace UAssetAPI.CustomVersions
     public enum FAssetRegistryVersion
     {
         /// <summary>From before file versioning was implemented</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         PreVersioning = 0,
 
         /// <summary>The first version of the runtime asset registry to include file versioning.</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         HardSoftDependencies,
 
         /// <summary>Added FAssetRegistryState and support for piecemeal serialization</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddAssetRegistryState,
 
         /// <summary>AssetData serialization format changed, versions before this are not readable</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         ChangedAssetData,
 
         /// <summary>Removed MD5 hash from package data</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         RemovedMD5Hash,
 
         /// <summary>Added hard/soft manage references</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddedHardManage,
 
         /// <summary>Added MD5 hash of cooked package to package data</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddedCookedMD5Hash,
 
         /// <summary>Added UE::AssetRegistry::EDependencyProperty to each dependency</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddedDependencyFlags,
 
         /// <summary>Major tag format change that replaces USE_COMPACT_ASSET_REGISTRY:</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         FixedTags,
 
         /// <summary>Added Version information to AssetPackageData</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         WorkspaceDomain,
 
         /// <summary>Added ImportedClasses to AssetPackageData</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         PackageImportedClasses,
 
         /// <summary>A new version number of UE5 was added to FPackageFileSummary</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         PackageFileSummaryVersionChange,
 
         /// <summary>Change to linker export/import resource serializationn</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         ObjectResourceOptionalVersionChange,
 
         /// <summary>Added FIoHash for each FIoChunkId in the package to the AssetPackageData.</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddedChunkHashes,
 
         /// <summary>Classes are serialized as path names rather than short object names, e.g. /Script/Engine.StaticMesh</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         ClassPaths,
 
         /// <summary>Asset bundles are serialized as FTopLevelAssetPath instead of FSoftObjectPath, deprecated FAssetData::ObjectPath</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         RemoveAssetPathFNames,
 
         /// <summary>Added header with bFilterEditorOnlyData flag</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AddedHeader,
 
         /// <summary>Added Extension to AssetPackageData.</summary>
-        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
         AssetPackageDataHasExtension,		
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]

@@ -513,7 +513,20 @@ namespace UAssetAPI
         public static int GuessCustomVersionFromTypeAndEngineVersion(EngineVersion chosenVersion, Type typ)
         {
             string typeString = typ.ToString();
-            string[] allVals = Enum.GetNames(typ);
+            string[] allValsRaw = Enum.GetNames(typ);
+
+            // remove VersionPlusOne and LatestVersion entries, which are redundant
+            // we absolutely need to remove LatestVersion because it's a duplicate of another entry, so the order of the two is not guaranteed; LatestVersion might come first
+            string[] allVals = new string[allValsRaw.Length - 2];
+            int j = 0;
+            for (int i = 0; i < allValsRaw.Length; i++)
+            {
+                if (allValsRaw[i] != "VersionPlusOne" && allValsRaw[i] != "LatestVersion")
+                {
+                    allVals[j++] = allValsRaw[i];
+                }
+            }
+
             for (int i = allVals.Length - 1; i >= 0; i--)
             {
                 string val = allVals[i];
