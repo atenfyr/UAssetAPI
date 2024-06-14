@@ -47,6 +47,13 @@ namespace UAssetAPI.PropertyTypes.Objects
                     Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
                     return;
                 }
+
+                if (InnerType?.Value.Value == "IntProperty")
+                {
+                    int enumIndice = reader.ReadInt32();
+                    Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
+                    return;
+                }
             }
 
             if (includeHeader)
@@ -66,6 +73,13 @@ namespace UAssetAPI.PropertyTypes.Objects
                     int enumIndice = Value == null ? byte.MaxValue : (byte)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault(); // wow this code is stupid
                     writer.Write((byte)enumIndice);
                     return sizeof(byte);
+                }
+
+                if (InnerType?.Value?.Value == "IntProperty")
+                {
+                    int enumIndice = (int)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault();
+                    writer.Write(enumIndice);
+                    return sizeof(int);
                 }
             }
 
