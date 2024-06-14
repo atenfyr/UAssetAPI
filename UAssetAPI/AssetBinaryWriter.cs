@@ -245,6 +245,22 @@ namespace UAssetAPI
             }
         }
 
+        public virtual void Write(FObjectThumbnail thumbnail)
+        {
+            Write(thumbnail.Width);
+            Write(thumbnail.Height);
+            Write(thumbnail.CompressedImageData.Length);
+            if (thumbnail.CompressedImageData.Length > 0)
+                Write(thumbnail.CompressedImageData);
+        }
+
+        public virtual void Write(FLocMetadataObject metadataObject)
+        {
+            Write(metadataObject.Values.Count);
+            if (metadataObject.Values.Count > 0)
+                throw new NotImplementedException("TODO: implement Write(FLocMetadataObject)");
+        }
+
         /*
         !!!!!
 

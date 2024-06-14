@@ -359,6 +359,11 @@ namespace UAssetAPI
         public Guid PackageGuid;
 
         /// <summary>
+        /// Current persistent ID for this package.
+        /// </summary>
+        public Guid PersistentGuid;
+
+        /// <summary>
         /// Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
         /// </summary>
         public FEngineVersion RecordedEngineVersion;
@@ -399,6 +404,9 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the name data</summary>
         internal int NameOffset;
 
+        /// <summary>Localization ID of this package</summary>
+        public FString LocalizationId;
+
         /// <summary>Number of names used in this package</summary>
         internal int SoftObjectPathsCount = 0;
 
@@ -406,11 +414,9 @@ namespace UAssetAPI
         internal int SoftObjectPathsOffset = 0;
 
         /// <summary>Number of gatherable text data items in this package</summary>
-        [JsonProperty]
         internal int GatherableTextDataCount;
 
         /// <summary>Location into the file on disk for the gatherable text data items</summary>
-        [JsonProperty]
         internal int GatherableTextDataOffset;
 
         /// <summary>Number of exports contained in this package</summary>
@@ -565,6 +571,12 @@ namespace UAssetAPI
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
+
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                LocalizationId = reader.ReadFString();
+            }
+
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 SoftObjectPathsCount = reader.ReadInt32();
@@ -595,6 +607,17 @@ namespace UAssetAPI
             // valorant garbage data is here
 
             PackageGuid = new Guid(reader.ReadBytes(16));
+
+            if (!IsFilterEditorOnly)
+            {
+                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER 
+                    ? new Guid(reader.ReadBytes(16))
+                    : PackageGuid;
+
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
+                    ObjectVersion < ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT)
+                    reader.ReadBytes(16);
+            }
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
@@ -719,6 +742,47 @@ namespace UAssetAPI
                 AddNameReference(nameInMap, true);
             }
 
+            // Gatherable text
+            if (GatherableTextDataOffset > 0 && GatherableTextDataCount > 0)
+            {
+                reader.BaseStream.Seek(GatherableTextDataOffset, SeekOrigin.Begin);
+
+                GatherableTextData = new List<FGatherableTextData>();
+                for (var i = 0; i < GatherableTextDataCount; i++)
+                {
+                    var namespaceName = reader.ReadFString();
+
+                    var sourceString = reader.ReadFString();
+                    var sourceStringMetaData = reader.ReadLocMetadataObject();
+                    var sourceData = new FTextSourceData {SourceString = sourceString, SourceStringMetaData = sourceStringMetaData};
+
+                    var contexts = new List<FTextSourceSiteContext>();
+                    var contextsCount = reader.ReadInt32();
+                    for (var j = 0; j < contextsCount; j++)
+                    {
+                        var keyName = reader.ReadFString();
+                        var siteDescription = reader.ReadFString();
+                        var isEditorOnly = reader.ReadInt32() > 0;
+                        var isOptional = reader.ReadInt32() > 0;
+                        var infoMetaData = reader.ReadLocMetadataObject();
+                        var keyMetaData = reader.ReadLocMetadataObject();
+                        var context = new FTextSourceSiteContext
+                        {
+                            KeyName = keyName,
+                            SiteDescription = siteDescription,
+                            IsEditorOnly = isEditorOnly,
+                            IsOptional = isOptional,
+                            InfoMetaData = infoMetaData,
+                            KeyMetaData = keyMetaData
+                        };
+                        contexts.Add(context);
+                    }
+
+                    var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts};
+                    GatherableTextData.Add(textData);
+                }
+            }
+
             // Imports
             Imports = new List<Import>();
             if (ImportOffset > 0)
@@ -771,7 +835,9 @@ namespace UAssetAPI
                 reader.BaseStream.Seek(SoftPackageReferencesOffset, SeekOrigin.Begin);
                 for (int i = 0; i < SoftPackageReferencesCount; i++)
                 {
-                    SoftPackageReferenceList.Add(reader.ReadFString());
+                    SoftPackageReferenceList.Add(ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH
+                        ? FString.FromString(reader.ReadFName().ToString())
+                        : reader.ReadFString());
                 }
             }
             else
@@ -884,6 +950,44 @@ namespace UAssetAPI
                     ConvertExportToChildExportAndRead(reader, i);
                 }
             }
+
+            // Searchable names
+            if (SearchableNamesOffset > 0)
+            {
+                SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
+
+                var searchableNamesCount = reader.ReadInt32();
+                if (searchableNamesCount > 0)
+                    throw new NotImplementedException("TODO: read the searchable names");
+            }
+
+            // Thumbnails
+            if (ThumbnailTableOffset > 0)
+            {
+                reader.BaseStream.Seek(ThumbnailTableOffset, SeekOrigin.Begin);
+                var thumbnailCount = reader.ReadInt32();
+                var thumbnailOffsets = new Dictionary<string, int>();
+                for (int i = 0; i < thumbnailCount; i++)
+                {
+                    var objectShortClassName = reader.ReadFString();
+                    var objectPathWithoutPackageName = reader.ReadFString();
+                    // TODO: handle UPackage thumbnails differently from usual assets
+
+                    // TODO: FPackageName::FilenameToLongPackageName(InPackageFileName)
+                    var objectName = $"{objectShortClassName} {objectPathWithoutPackageName}";
+
+                    var fileOffset = reader.ReadInt32();
+
+                    thumbnailOffsets[objectName] = fileOffset;
+                }
+
+                Thumbnails = new Dictionary<string, FObjectThumbnail>();
+                foreach (var kv in thumbnailOffsets)
+                {
+                    reader.BaseStream.Seek(kv.Value, SeekOrigin.Begin);
+                    Thumbnails[kv.Key] = reader.ReadObjectThumbnail();
+                }
+            }
         }
 
         /// <summary>
@@ -941,6 +1045,10 @@ namespace UAssetAPI
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                writer.Write(LocalizationId);
+            }
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 writer.Write(SoftObjectPathsCount);
@@ -970,6 +1078,18 @@ namespace UAssetAPI
             if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
             writer.Write(PackageGuid.ToByteArray());
+            if (!IsFilterEditorOnly)
+            {
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER)
+                    writer.Write(PersistentGuid.ToByteArray());
+
+                // The owner persistent guid was added in VER_UE4_ADDED_PACKAGE_OWNER but removed in the next version VER_UE4_NON_OUTER_PACKAGE_IMPORT
+                if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
+                    ObjectVersion < ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT)
+                {
+                    writer.Write(new byte[16]);
+                }
+            }
             writer.Write(Generations.Count);
             for (int i = 0; i < Generations.Count; i++)
             {
@@ -1095,6 +1215,32 @@ namespace UAssetAPI
                     }
                 }
 
+                // Gatherable text
+                if (!IsFilterEditorOnly && GatherableTextData != null)
+                {
+                    GatherableTextDataOffset = (int)writer.BaseStream.Position;
+                    GatherableTextDataCount = GatherableTextData.Count;
+
+                    foreach (var gatherableTextData in GatherableTextData)
+                    {
+                        writer.Write(gatherableTextData.NamespaceName);
+
+                        writer.Write(gatherableTextData.SourceData.SourceString);
+                        writer.Write(gatherableTextData.SourceData.SourceStringMetaData);
+
+                        writer.Write(gatherableTextData.SourceSiteContexts.Count);
+                        foreach (var context in gatherableTextData.SourceSiteContexts)
+                        {
+                            writer.Write(context.KeyName);
+                            writer.Write(context.SiteDescription);
+                            writer.Write(context.IsEditorOnly ? 1 : 0);
+                            writer.Write(context.IsOptional ? 1 : 0);
+                            writer.Write(context.InfoMetaData);
+                            writer.Write(context.KeyMetaData);
+                        }
+                    }
+                }
+
                 // Imports
                 if (this.Imports.Count > 0)
                 {
@@ -1106,6 +1252,9 @@ namespace UAssetAPI
                         writer.Write(this.Imports[i].ClassName);
                         writer.Write(this.Imports[i].OuterIndex.Index);
                         writer.Write(this.Imports[i].ObjectName);
+                        if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
+                            && !writer.Asset.IsFilterEditorOnly)
+                            writer.Write(this.Imports[i].PackageName);
                         if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) writer.Write(this.Imports[i].bImportOptional ? 1 : 0);
                     }
                 }
@@ -1159,12 +1308,62 @@ namespace UAssetAPI
                     this.SoftPackageReferencesCount = this.SoftPackageReferenceList.Count;
                     for (int i = 0; i < this.SoftPackageReferenceList.Count; i++)
                     {
-                        writer.Write(this.SoftPackageReferenceList[i]);
+                        if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+                            writer.Write(FName.FromString(this, SoftPackageReferenceList[i].Value));
+                        else
+                            writer.Write(this.SoftPackageReferenceList[i]);
                     }
                 }
                 else
                 {
                     this.SoftPackageReferencesOffset = 0;
+                }
+
+                if (!IsFilterEditorOnly && SearchableNames != null)
+                {
+                    SearchableNamesOffset = (int)writer.BaseStream.Position;
+
+                    writer.Write(SearchableNames.Count);
+                    if (SearchableNames.Count > 0)
+                        throw new NotImplementedException("TODO: write the searchable names");
+                }
+                else
+                {
+                    SearchableNamesOffset = 0;
+                }
+
+                if (!IsFilterEditorOnly && Thumbnails != null)
+                {
+                    var thumbnailOffsets = new List<(string ObjectFullName, int FileOffset)>();
+                    foreach (var kv in Thumbnails)
+                    {
+                        var offset = (int)writer.BaseStream.Position;
+                        writer.Write(kv.Value);
+                        thumbnailOffsets.Add((kv.Key, offset));
+                    }
+
+                    ThumbnailTableOffset = (int)writer.BaseStream.Position;
+
+                    writer.Write(Thumbnails.Count);
+                    foreach (var thumbnail in thumbnailOffsets)
+                    {
+                        var firstSpaceIdx = thumbnail.ObjectFullName.IndexOf(' ');
+                        if (firstSpaceIdx == -1 || firstSpaceIdx == 0)
+                            throw new Exception($"Invalid thumbnail object name: \"{thumbnail.ObjectFullName}\"");
+
+                        var objectClassName = new FString(thumbnail.ObjectFullName.Substring(0, firstSpaceIdx));
+                        var objectPath = thumbnail.ObjectFullName.Substring(firstSpaceIdx + 1);
+
+                        var objectPathWithoutPackageName = new FString(objectPath.Substring(objectPath.IndexOf('.') + 1));
+
+                        writer.Write(objectClassName);
+                        writer.Write(objectPathWithoutPackageName);
+                        writer.Write(thumbnail.FileOffset);
+                    }
+                }
+                else
+                {
+                    ThumbnailTableOffset = 0;
                 }
 
                 // AssetRegistryData

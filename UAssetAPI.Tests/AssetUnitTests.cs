@@ -514,6 +514,26 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// In this test, we are trying to read a source asset.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestEditorAssets()
+        {
+            var soundClass = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(soundClass.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(soundClass));
+
+            var material = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestMaterial.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(material.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(material));
+
+            var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
+            Assert.IsTrue(blueprint.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
+        }
+      
+        /// <summary>
         /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
         /// Binary equality is expected.
         /// </summary>

@@ -123,9 +123,25 @@ namespace UAssetAPI
         internal Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
+        /// Map of the gatherable text data.
+        /// </summary>
+        public List<FGatherableTextData> GatherableTextData;
+
+        /// <summary>
         /// Map of object exports. UAssetAPI used to call these "categories."
         /// </summary>
         public List<Export> Exports;
+
+        // TODO: sort in lexical order
+        /// <summary>
+        /// List of Searchable Names, by object containing them. Sorted to keep order consistent.
+        /// </summary>
+        public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+
+        /// <summary>
+        /// Map of object full names to the thumbnails
+        /// </summary>
+        public Dictionary<string, FObjectThumbnail> Thumbnails;
 
         /// <summary>
         /// Tile information used by WorldComposition.
