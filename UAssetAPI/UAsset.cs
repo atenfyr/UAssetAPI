@@ -253,7 +253,7 @@ namespace UAssetAPI
 
         public override bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
         {
-            if (Mappings == null) return false;
+            if (Mappings?.Schemas == null) return false;
             if (path?.Value?.Value == null) return false;
             if (!path.Value.Value.StartsWith("/Game/")) return false;
 
@@ -264,9 +264,16 @@ namespace UAssetAPI
                 return false;
             }
 
+            // basic circular referencing guard, todo: improve
+            if (Mappings.PathsAlreadyProcessedForSchemas.Contains(path.Value.Value))
+            {
+                return false;
+            }
+
             bool success = false;
             try
             {
+                Mappings.PathsAlreadyProcessedForSchemas.Add(path.Value.Value);
                 UAsset otherAsset = new UAsset(pathOnDisk, this.GetEngineVersion(), this.Mappings);
                 for (int i = 0; i < otherAsset.Exports.Count; i++)
                 {

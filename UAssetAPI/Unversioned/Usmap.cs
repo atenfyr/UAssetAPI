@@ -465,6 +465,7 @@ namespace UAssetAPI.Unversioned
             return string.Join("\n", res.ToArray());
         }
 
+        public ISet<string> PathsAlreadyProcessedForSchemas = new HashSet<string>();
         public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, bool throwExceptions = true)
         {
             if (string.IsNullOrEmpty(nm)) return null;
