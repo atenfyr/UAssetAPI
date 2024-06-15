@@ -19,8 +19,6 @@ namespace UAssetAPI.PropertyTypes.Objects
         [JsonProperty]
         public FName InnerType;
 
-        public byte[] ExtraData;
-
         public EnumPropertyData(FName name) : base(name)
         {
 
@@ -39,7 +37,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             bool skipEndingFName = false;
-            if (reader.Asset.HasUnversionedProperties)
+            if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
                 if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
                 {
@@ -64,7 +62,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                         // fallback
                         Value = FName.DefineDummy(reader.Asset, InvalidEnumIndexFallbackPrefix + enumIndice.ToString());
                     }
-                    skipEndingFName = true;
+                    return;
                 }
 
                 if (InnerType?.Value.Value == "IntProperty")
@@ -80,7 +78,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                         // fallback
                         Value = FName.DefineDummy(reader.Asset, InvalidEnumIndexFallbackPrefix + enumIndice.ToString());
                     }
-                    skipEndingFName = true;
+                    return;
                 }
             }
 
@@ -90,23 +88,12 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            if (skipEndingFName)
-            {
-                // TODO: figure out exactly where this weird extra data is coming from...
-                if (serializationContext == PropertySerializationContext.Array)
-                {
-                    ExtraData = reader.ReadBytes(7);
-                }
-            }
-            else
-            {
-                Value = reader.ReadFName();
-            }
+            Value = reader.ReadFName();
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            if (writer.Asset.HasUnversionedProperties)
+            if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
                 if (InnerType?.Value?.Value == "ByteProperty" || InnerType?.Value?.Value == "IntProperty")
                 {
@@ -135,31 +122,15 @@ namespace UAssetAPI.PropertyTypes.Objects
                         enumIndice = validIndices.FirstOrDefault();
                     }
 
-                    int sz = 0;
                     switch (InnerType?.Value?.Value)
                     {
                         case "ByteProperty":
                             writer.Write((byte)enumIndice);
-                            sz += sizeof(byte);
-
-                            if (serializationContext == PropertySerializationContext.Array)
-                            {
-                                writer.Write(ExtraData);
-                                sz += ExtraData.Length;
-                            }
-                            break;
+                            return sizeof(byte);
                         case "IntProperty":
                             writer.Write((int)enumIndice);
-                            sz += sizeof(int);
-
-                            if (serializationContext == PropertySerializationContext.Array)
-                            {
-                                writer.Write(ExtraData);
-                                sz += ExtraData.Length;
-                            }
-                            break;
+                            return sizeof(int);
                     }
-                    return sz;
                 }
             }
 
@@ -195,15 +166,6 @@ namespace UAssetAPI.PropertyTypes.Objects
             else
             {
                 Value = null;
-            }
-
-            if (!string.IsNullOrEmpty(d[2]))
-            {
-                ExtraData = UAPUtils.ConvertHexStringToByteArray(d[2]);
-            }
-            else
-            {
-                ExtraData = Array.Empty<byte>();
             }
         }
 
