@@ -486,7 +486,17 @@ namespace UAssetAPI.ExportTypes
         public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset = null)
         {
             if (classIndex.IsNull()) return null;
-            if (classIndex.IsImport()) return classIndex.ToImport(asset).ObjectName;
+            if (classIndex.IsImport())
+            {
+                var imp = classIndex.ToImport(asset);
+                if (imp.OuterIndex.IsImport())
+                {
+                    var sourcePath = imp.OuterIndex.ToImport(asset).ObjectName;
+                    asset.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                }
+
+                return imp.ObjectName;
+            }
             return classIndex.ToExport(asset).ObjectName;
         }
 

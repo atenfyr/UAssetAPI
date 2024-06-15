@@ -249,6 +249,46 @@ namespace UAssetAPI
             return 0;
         }
 
+        public ISet<FName> OtherAssetsFailedToAccess = new HashSet<FName>();
+
+        public override bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
+        {
+            if (Mappings == null) return false;
+            if (path?.Value?.Value == null) return false;
+            if (!path.Value.Value.StartsWith("/Game/")) return false;
+
+            string pathOnDisk = FindAssetOnDiskFromPath(path.Value.Value);
+            if (pathOnDisk == string.Empty)
+            {
+                OtherAssetsFailedToAccess.Add(path);
+                return false;
+            }
+
+            bool success = false;
+            try
+            {
+                UAsset otherAsset = new UAsset(pathOnDisk, this.GetEngineVersion(), this.Mappings);
+                for (int i = 0; i < otherAsset.Exports.Count; i++)
+                {
+                    var exp = otherAsset.Exports[i];
+                    if (exp is StructExport structExp)
+                    {
+                        if (structExp.ObjectName?.Value?.Value == null) continue;
+                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(structExp);
+                        Mappings.Schemas[structExp.ObjectName.Value.Value] = newSchema;
+                        success = true;
+                    }
+                }
+            }
+            catch
+            {
+                // if we fail to parse the other asset, that's perfectly fine; just move on
+                success = false;
+            }
+
+            return success;
+        }
+
         /// <summary>
         /// The package file version number when this package was saved.
         /// </summary>

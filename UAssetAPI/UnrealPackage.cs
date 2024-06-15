@@ -384,10 +384,59 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Attempt to find another asset on disk given an asset path (i.e. one starting with /Game/).
+        /// </summary>
+        /// <param name="path">The asset path.</param>
+        /// <returns>The path to the file on disk, or string.Empty if none could be found.</returns>
+        public virtual string FindAssetOnDiskFromPath(string path)
+        {
+            if (!path.StartsWith("/Game/")) return string.Empty;
+            path = path.Substring(6) + ".uasset";
+
+            string mappedPathOnDisk = string.Empty;
+            bool foundMappedPath = false;
+
+            var contentPart = Path.DirectorySeparatorChar + "Content";
+            var fixedFilePath = FilePath.FixDirectorySeparatorsForDisk();
+            var contentIndex = fixedFilePath.IndexOf(contentPart);
+            if (!string.IsNullOrEmpty(FilePath))
+            {
+                // let's see if the current path has Content in it, then we can re-orient ourselves
+                if (!foundMappedPath && contentIndex > 0)
+                {
+                    var contentDir = fixedFilePath.Substring(0, contentIndex + contentPart.Length);
+                    mappedPathOnDisk = Path.Combine(contentDir, path.FixDirectorySeparatorsForDisk());
+                    foundMappedPath = File.Exists(mappedPathOnDisk); // not worrying too much about race condition, we'll put a try catch later
+                }
+
+                if (!foundMappedPath)
+                {
+                    // let's see if it exists in the same directory
+                    var rawFileName = Path.GetFileName(path);
+                    mappedPathOnDisk = Path.Combine(Directory.GetParent(FilePath).FullName, Path.GetFileName(path));
+                    foundMappedPath = File.Exists(mappedPathOnDisk);
+                }
+            }
+
+            return foundMappedPath ? mappedPathOnDisk : string.Empty;
+        }
+
+        /// <summary>
+        /// Pull necessary schemas from another asset on disk by examining its StructExports. Updates the mappings in-situ.
+        /// </summary>
+        /// <param name="path">The relative path or name to the other asset.</param>
+        /// <param name="desiredObject">The object that this asset is being accessed for. Optional.</param>
+        /// <returns>Whether or not the operation was completed successfully.</returns>
+        public virtual bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Sets the version of the Unreal Engine to use in serialization.
         /// </summary>
         /// <param name="newVersion">The new version of the Unreal Engine to use in serialization.</param>
-        /// <exception cref="InvalidOperationException">Thrown when an invalid UE4Version is specified.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when an invalid EngineVersion is specified.</exception>
         public void SetEngineVersion(EngineVersion newVersion)
         {
             if (newVersion == EngineVersion.UNKNOWN) return;
