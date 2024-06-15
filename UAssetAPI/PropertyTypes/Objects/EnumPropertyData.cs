@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -31,8 +32,11 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("EnumProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public static readonly string InvalidEnumIndexFallbackPrefix = "UASSETAPI_INVALID_ENUM_IDX_";
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
+            bool skipEndingFName = false;
             if (reader.Asset.HasUnversionedProperties)
             {
                 if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
@@ -43,43 +47,96 @@ namespace UAssetAPI.PropertyTypes.Objects
 
                 if (InnerType?.Value.Value == "ByteProperty")
                 {
-                    int enumIndice = reader.ReadByte();
-                    Value = enumIndice == byte.MaxValue ? null : FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
-                    return;
+                    long enumIndice = reader.ReadByte();
+                    var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
+                    if (enumIndice == byte.MaxValue)
+                    {
+                        Value = null;
+                    }
+                    else if (enumIndice < listOfValues.Count)
+                    {
+                        Value = FName.DefineDummy(reader.Asset, listOfValues[enumIndice]);
+                    }
+                    else
+                    {
+                        // fallback
+                        Value = FName.DefineDummy(reader.Asset, InvalidEnumIndexFallbackPrefix + enumIndice.ToString());
+                    }
+                    skipEndingFName = true;
                 }
 
                 if (InnerType?.Value.Value == "IntProperty")
                 {
-                    int enumIndice = reader.ReadInt32();
-                    Value = FName.DefineDummy(reader.Asset, reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values[enumIndice]);
-                    return;
+                    long enumIndice = reader.ReadInt32();
+                    var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
+                    if (enumIndice < listOfValues.Count)
+                    {
+                        Value = FName.DefineDummy(reader.Asset, listOfValues[enumIndice]);
+                    }
+                    else
+                    {
+                        // fallback
+                        Value = FName.DefineDummy(reader.Asset, InvalidEnumIndexFallbackPrefix + enumIndice.ToString());
+                    }
+                    skipEndingFName = true;
                 }
             }
 
-            if (includeHeader)
+            if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 EnumType = reader.ReadFName();
                 PropertyGuid = reader.ReadPropertyGuid();
             }
-            Value = reader.ReadFName();
+
+            if (skipEndingFName)
+            {
+            }
+            else
+            {
+                Value = reader.ReadFName();
+            }
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (writer.Asset.HasUnversionedProperties)
             {
-                if (InnerType?.Value?.Value == "ByteProperty")
+                if (InnerType?.Value?.Value == "ByteProperty" || InnerType?.Value?.Value == "IntProperty")
                 {
-                    int enumIndice = Value == null ? byte.MaxValue : (byte)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault(); // wow this code is stupid
-                    writer.Write((byte)enumIndice);
-                    return sizeof(byte);
-                }
+                    long enumIndice = 0;
+                    var listOfEnums = writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
+                    var validIndices = listOfEnums.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key);
+                    if (Value == null)
+                    {
+                        enumIndice = -1;
+                    }
+                    else if (validIndices.Count() == 0)
+                    {
+                        bool success = false;
+                        if (Value.Value.Value.StartsWith(InvalidEnumIndexFallbackPrefix))
+                        {
+                            success = long.TryParse(Value.Value.Value.Substring(InvalidEnumIndexFallbackPrefix.Length), out enumIndice);
+                        }
 
-                if (InnerType?.Value?.Value == "IntProperty")
-                {
-                    int enumIndice = (int)writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values.Where(pair => pair.Value == Value.Value.Value).Select(pair => pair.Key).FirstOrDefault();
-                    writer.Write(enumIndice);
-                    return sizeof(int);
+                        if (!success)
+                        {
+                            throw new FormatException("Could not serialize EnumProperty value " + Value.Value.Value + " as " + InnerType?.Value?.Value);
+                        }
+                    }
+                    else
+                    {
+                        enumIndice = validIndices.FirstOrDefault();
+                    }
+
+                    switch (InnerType?.Value?.Value)
+                    {
+                        case "ByteProperty":
+                            writer.Write((byte)enumIndice);
+                            return sizeof(byte);
+                        case "IntProperty":
+                            writer.Write((int)enumIndice);
+                            return sizeof(int);
+                    }
                 }
             }
 

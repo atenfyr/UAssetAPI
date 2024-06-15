@@ -317,7 +317,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     this.SerialSize = reader.ReadInt64();
                     this.SerialOffset = reader.ReadInt64();
-                    if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                    if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
                     {
                         this.ScriptSerializationStartOffset = reader.ReadInt64();
                         this.ScriptSerializationEndOffset = reader.ReadInt64();
@@ -400,7 +400,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     writer.Write(SerialSize);
                     writer.Write(SerialOffset);
-                    if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                    if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
                     {
                         writer.Write(ScriptSerializationStartOffset);
                         writer.Write(ScriptSerializationEndOffset);

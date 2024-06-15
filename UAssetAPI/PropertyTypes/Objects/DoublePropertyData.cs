@@ -32,7 +32,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         public override FString PropertyType { get { return CurrentPropertyType; } }
         public override object DefaultValue { get { return (double)0; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
@@ -42,7 +42,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             Value = reader.ReadDouble();
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {

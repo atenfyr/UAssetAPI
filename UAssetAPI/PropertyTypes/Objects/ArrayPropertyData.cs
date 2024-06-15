@@ -38,7 +38,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("ArrayProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
@@ -145,7 +145,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                         results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, reader.Asset);
                         results[i].Offset = reader.BaseStream.Position;
                         if (results[i] is StructPropertyData) ((StructPropertyData)results[i]).StructType = arrayStructType == null ? FName.DefineDummy(reader.Asset, "Generic") : arrayStructType;
-                        results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2);
+                        results[i].Read(reader, false, averageSizeEstimate1, averageSizeEstimate2, PropertySerializationContext.Array);
                     }
                 }
                 Value = results;
@@ -164,7 +164,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             base.ResolveAncestries(asset, ancestrySoFar);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (Value.Length > 0)
             {
@@ -226,7 +226,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 for (int i = 0; i < Value.Length; i++)
                 {
                     Value[i].Offset = writer.BaseStream.Position;
-                    Value[i].Write(writer, false);
+                    Value[i].Write(writer, false, PropertySerializationContext.Array);
                 }
             }
 

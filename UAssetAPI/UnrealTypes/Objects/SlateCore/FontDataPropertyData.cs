@@ -104,7 +104,7 @@ namespace UAssetAPI.UnrealTypes
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
@@ -114,7 +114,7 @@ namespace UAssetAPI.UnrealTypes
             Value = new FFontData(reader);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {

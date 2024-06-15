@@ -6,6 +6,13 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
+    public enum PropertySerializationContext
+    {
+        Normal,
+        Array,
+        Map
+    }
+
     public class AncestryInfo : ICloneable
     {
         public List<FName> Ancestors = new List<FName>(5);
@@ -154,7 +161,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <param name="includeHeader">Whether or not to also read the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
         /// <param name="leng1">An estimate for the length of the data being read out.</param>
         /// <param name="leng2">A second estimate for the length of the data being read out.</param>
-        public virtual void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        /// <param name="serializationContext">The context in which this property is being read.</param>
+        public virtual void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
 
         }
@@ -172,8 +180,9 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
         /// <param name="includeHeader">Whether or not to also write the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.</param>
+        /// <param name="serializationContext">The context in which this property is being written.</param>
         /// <returns>The length in bytes of the data that was written.</returns>
-        public virtual int Write(AssetBinaryWriter writer, bool includeHeader)
+        public virtual int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             return 0;
         }

@@ -24,7 +24,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         private static readonly FString CurrentPropertyType = new FString("SetProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             this.ShouldSerializeStructsDifferently = false;
 
@@ -44,7 +44,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             base.Read(reader, false, leng1-4, leng2);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             this.ShouldSerializeStructsDifferently = false;
 

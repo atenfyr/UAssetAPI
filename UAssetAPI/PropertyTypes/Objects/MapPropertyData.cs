@@ -92,12 +92,12 @@ namespace UAssetAPI.PropertyTypes.Objects
                     StructPropertyData data = new StructPropertyData(name, strucType);
                     data.Ancestry.Initialize(Ancestry, Name);
                     data.Offset = reader.BaseStream.Position;
-                    data.Read(reader, false, 1);
+                    data.Read(reader, false, 1, 0, PropertySerializationContext.Map);
                     return data;
                 default:
                     var res = MainSerializer.TypeToClass(type, name, Ancestry, Name, reader.Asset, null, leng);
                     res.Ancestry.Initialize(Ancestry, Name);
-                    res.Read(reader, includeHeader, leng);
+                    res.Read(reader, includeHeader, leng, 0, PropertySerializationContext.Map);
                     return res;
             }
         }
@@ -119,7 +119,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             return resultingDict;
         }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             FName type1 = null, type2 = null;
             if (includeHeader && !reader.Asset.HasUnversionedProperties)
@@ -173,13 +173,13 @@ namespace UAssetAPI.PropertyTypes.Objects
             foreach (var entry in map)
             {
                 entry.Key.Offset = writer.BaseStream.Position;
-                entry.Key.Write(writer, false);
+                entry.Key.Write(writer, false, PropertySerializationContext.Map);
                 entry.Value.Offset = writer.BaseStream.Position;
-                entry.Value.Write(writer, false);
+                entry.Value.Write(writer, false, PropertySerializationContext.Map);
             }
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
@@ -204,7 +204,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 {
                     var entry = KeysToRemove[i];
                     entry.Offset = writer.BaseStream.Position;
-                    entry.Write(writer, false);
+                    entry.Write(writer, false, PropertySerializationContext.Array);
                 }
             }
 

@@ -27,7 +27,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
@@ -62,7 +62,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             //}
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
@@ -108,7 +108,7 @@ namespace UAssetAPI.PropertyTypes.Structs
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0)
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
@@ -118,7 +118,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = new FMovieSceneSegmentIdentifier(reader.ReadInt32());
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader)
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
             if (includeHeader)
             {
