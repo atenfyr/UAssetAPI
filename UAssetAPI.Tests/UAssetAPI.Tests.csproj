@@ -127,6 +127,21 @@
     <None Update="TestAssets\TestManyAssets\LiesOfP\SkillInfo.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestManyAssets\Palworld\BP_BuildObject_BaseCampWorkHard.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Palworld\BP_BuildObject_BaseCampWorkHard.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Palworld\BP_InteractableBox.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Palworld\BP_InteractableBox.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Palworld\Palworld.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestManyAssets\Tekken\BP_TekkenPlayer_Modular.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

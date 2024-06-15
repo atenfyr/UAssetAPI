@@ -397,10 +397,11 @@ namespace UAssetAPI
             bool foundMappedPath = false;
 
             var contentPart = Path.DirectorySeparatorChar + "Content";
-            var fixedFilePath = FilePath.FixDirectorySeparatorsForDisk();
-            var contentIndex = fixedFilePath.IndexOf(contentPart);
             if (!string.IsNullOrEmpty(FilePath))
             {
+                var fixedFilePath = FilePath.FixDirectorySeparatorsForDisk();
+                var contentIndex = fixedFilePath.IndexOf(contentPart);
+
                 // let's see if the current path has Content in it, then we can re-orient ourselves
                 if (!foundMappedPath && contentIndex > 0)
                 {

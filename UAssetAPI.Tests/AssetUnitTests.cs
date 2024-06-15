@@ -320,15 +320,18 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestManyAssets()
         {
-            TestManyAssetsSubsection("LiesOfP", EngineVersion.VER_UE4_27, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "LiesOfP", "LiesOfP.usmap"))); // unversioned properties
             TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
-            TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palia", "Palia.usmap"))); // traditional, NOT zen/io store
             TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
             TestManyAssetsSubsection("VERSIONED", EngineVersion.UNKNOWN);
+
+            // traditional, NOT zen/io store
+            TestManyAssetsSubsection("LiesOfP", EngineVersion.VER_UE4_27, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "LiesOfP", "LiesOfP.usmap"))); // unversioned properties
+            TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palia", "Palia.usmap")));
+            TestManyAssetsSubsection("Palworld", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palworld", "Palworld.usmap")));
         }
 
         /// <summary>

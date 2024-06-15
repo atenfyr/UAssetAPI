@@ -211,7 +211,7 @@ namespace UAssetAPI
 
                 // i doubt that this is true, empirically tested; need more data
                 int numSkip = 0;
-                if (asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES)
+                if (asset.ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
                 {
                     numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
                 }
