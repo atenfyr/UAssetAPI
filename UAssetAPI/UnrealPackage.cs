@@ -672,26 +672,8 @@ namespace UAssetAPI
                         }
                         else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
                         {
-                            var bgc = Exports[i].ConvertToChildExport<ClassExport>();
-                            Exports[i] = bgc;
+                            Exports[i] = Exports[i].ConvertToChildExport<ClassExport>();
                             Exports[i].Read(reader, (int)nextStarting);
-
-                            // Check to see if we can add some new map type overrides
-                            if (bgc.LoadedProperties != null)
-                            {
-                                foreach (FProperty entry in bgc.LoadedProperties)
-                                {
-                                    if (entry is FMapProperty fMapEntry)
-                                    {
-                                        FString keyOverride = null;
-                                        FString valueOverride = null;
-                                        if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName.Value;
-                                        if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName.Value;
-
-                                        MapStructTypeOverride[fMapEntry.Name.Value.Value] = new Tuple<FString, FString>(keyOverride, valueOverride);
-                                    }
-                                }
-                            }
                         }
                         else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || exportClassType == "ClassProperty")
                         {
@@ -704,6 +686,34 @@ namespace UAssetAPI
                             Exports[i].Read(reader, (int)nextStarting);
                         }
                         break;
+                }
+
+                // if we got a StructExport, let's modify mappings/MapStructTypeOverride if we can
+                if (Exports[i] is StructExport fetchedStructExp)
+                {
+                    // check to see if we can add some new map type overrides
+                    if (fetchedStructExp.LoadedProperties != null)
+                    {
+                        foreach (FProperty entry in fetchedStructExp.LoadedProperties)
+                        {
+                            if (entry is FMapProperty fMapEntry)
+                            {
+                                FString keyOverride = null;
+                                FString valueOverride = null;
+                                if (fMapEntry.KeyProp is FStructProperty keyPropStruc && keyPropStruc.Struct.IsImport()) keyOverride = keyPropStruc.Struct.ToImport(this).ObjectName.Value;
+                                if (fMapEntry.ValueProp is FStructProperty valuePropStruc && valuePropStruc.Struct.IsImport()) valueOverride = valuePropStruc.Struct.ToImport(this).ObjectName.Value;
+
+                                MapStructTypeOverride[fMapEntry.Name.Value.Value] = new Tuple<FString, FString>(keyOverride, valueOverride);
+                            }
+                        }
+                    }
+
+                    // add schema if possible (!!!)
+                    if (Mappings?.Schemas != null && fetchedStructExp.ObjectName?.Value?.Value != null)
+                    {
+                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp);
+                        Mappings.Schemas[fetchedStructExp.ObjectName.Value.Value] = newSchema;
+                    }
                 }
 
                 long extrasLen = nextStarting - reader.BaseStream.Position;

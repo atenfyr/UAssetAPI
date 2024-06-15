@@ -264,7 +264,7 @@ namespace UAssetAPI
                 return false;
             }
 
-            // basic circular referencing guard, todo: improve
+            // basic circular referencing guard
             if (Mappings.PathsAlreadyProcessedForSchemas.Contains(path.Value.Value))
             {
                 return false;
@@ -274,18 +274,8 @@ namespace UAssetAPI
             try
             {
                 Mappings.PathsAlreadyProcessedForSchemas.Add(path.Value.Value);
-                UAsset otherAsset = new UAsset(pathOnDisk, this.GetEngineVersion(), this.Mappings);
-                for (int i = 0; i < otherAsset.Exports.Count; i++)
-                {
-                    var exp = otherAsset.Exports[i];
-                    if (exp is StructExport structExp)
-                    {
-                        if (structExp.ObjectName?.Value?.Value == null) continue;
-                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(structExp);
-                        Mappings.Schemas[structExp.ObjectName.Value.Value] = newSchema;
-                        success = true;
-                    }
-                }
+                UAsset otherAsset = new UAsset(pathOnDisk, this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
+                // loading the asset will automatically add any new schemas to the mappings in-situ
             }
             catch
             {
