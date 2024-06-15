@@ -11,6 +11,12 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 
 ## Fields
 
+### **Expression**
+
+```csharp
+public FPackageIndex Expression;
+```
+
 ### **OutputIndex**
 
 ```csharp
@@ -21,6 +27,36 @@ public int OutputIndex;
 
 ```csharp
 public FString InputName;
+```
+
+### **Mask**
+
+```csharp
+public int Mask;
+```
+
+### **MaskR**
+
+```csharp
+public int MaskR;
+```
+
+### **MaskG**
+
+```csharp
+public int MaskG;
+```
+
+### **MaskB**
+
+```csharp
+public int MaskB;
+```
+
+### **MaskA**
+
+```csharp
+public int MaskA;
 ```
 
 ### **ExpressionName**
@@ -59,6 +95,18 @@ An optional property GUID. Nearly always null.
 
 ```csharp
 public Nullable<Guid> PropertyGuid;
+```
+
+### **IsZero**
+
+Whether or not this property is "zero," meaning that its body can be skipped during unversioned property serialization because it consists solely of null bytes.
+
+
+
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+
+```csharp
+public bool IsZero;
 ```
 
 ### **Offset**
@@ -165,10 +213,10 @@ public Vector2MaterialInputPropertyData()
 
 ## Methods
 
-### **Read(AssetBinaryReader, Boolean, Int64, Int64)**
+### **Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)**
 
 ```csharp
-public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2)
+public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, PropertySerializationContext serializationContext)
 ```
 
 #### Parameters
@@ -180,6 +228,8 @@ public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long 
 `leng1` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
 
 `leng2` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
+
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
 
 ### **ResolveAncestries(UnrealPackage, AncestryInfo)**
 
@@ -193,10 +243,10 @@ public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
-### **Write(AssetBinaryWriter, Boolean)**
+### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
 
 ```csharp
-public int Write(AssetBinaryWriter writer, bool includeHeader)
+public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext)
 ```
 
 #### Parameters
@@ -204,6 +254,8 @@ public int Write(AssetBinaryWriter writer, bool includeHeader)
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
 
 `includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
 
 #### Returns
 

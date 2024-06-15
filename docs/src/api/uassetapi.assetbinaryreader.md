@@ -67,6 +67,26 @@ public FName ReadFName()
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
+### **ReadObjectThumbnail()**
+
+```csharp
+public FObjectThumbnail ReadObjectThumbnail()
+```
+
+#### Returns
+
+[FObjectThumbnail](./uassetapi.unrealtypes.fobjectthumbnail.md)<br>
+
+### **ReadLocMetadataObject()**
+
+```csharp
+public FLocMetadataObject ReadLocMetadataObject()
+```
+
+#### Returns
+
+[FLocMetadataObject](./uassetapi.unrealtypes.flocmetadataobject.md)<br>
+
 ### **XFERSTRING()**
 
 ```csharp

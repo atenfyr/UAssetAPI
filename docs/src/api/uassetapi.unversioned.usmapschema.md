@@ -34,6 +34,14 @@ public ushort PropCount;
 public string ModulePath;
 ```
 
+### **FromAsset**
+
+Whether or not this schema was retrieved from a .uasset file.
+
+```csharp
+public bool FromAsset;
+```
+
 ### **StructKind**
 
 ```csharp
@@ -60,10 +68,10 @@ public IReadOnlyDictionary<int, UsmapProperty> Properties { get; }
 
 ## Constructors
 
-### **UsmapSchema(String, String, UInt16, Dictionary&lt;Int32, UsmapProperty&gt;)**
+### **UsmapSchema(String, String, UInt16, Dictionary&lt;Int32, UsmapProperty&gt;, Boolean)**
 
 ```csharp
-public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props)
+public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool fromAsset)
 ```
 
 #### Parameters
@@ -75,6 +83,8 @@ public UsmapSchema(string name, string superType, ushort propCount, Dictionary<i
 `propCount` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
 
 `props` [Dictionary&lt;Int32, UsmapProperty&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
+
+`fromAsset` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **UsmapSchema()**
 

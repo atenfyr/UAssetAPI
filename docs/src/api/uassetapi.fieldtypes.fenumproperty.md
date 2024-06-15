@@ -86,6 +86,12 @@ public FName Name;
 public EObjectFlags Flags;
 ```
 
+### **MetaDataMap**
+
+```csharp
+public TMap<FName, FString> MetaDataMap;
+```
+
 ## Constructors
 
 ### **FEnumProperty()**

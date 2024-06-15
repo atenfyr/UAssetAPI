@@ -12,6 +12,12 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Fields
 
+### **Name**
+
+```csharp
+public FString Name;
+```
+
 ### **Key**
 
 ```csharp

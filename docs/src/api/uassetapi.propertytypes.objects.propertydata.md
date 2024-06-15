@@ -45,6 +45,18 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
+### **IsZero**
+
+Whether or not this property is "zero," meaning that its body can be skipped during unversioned property serialization because it consists solely of null bytes.
+
+
+
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+
+```csharp
+public bool IsZero;
+```
+
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -165,12 +177,12 @@ public T GetObject<T>()
 
 T<br>
 
-### **Read(AssetBinaryReader, Boolean, Int64, Int64)**
+### **Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)**
 
 Reads out a property from a BinaryReader.
 
 ```csharp
-public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2)
+public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, PropertySerializationContext serializationContext)
 ```
 
 #### Parameters
@@ -187,6 +199,9 @@ An estimate for the length of the data being read out.
 `leng2` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
 A second estimate for the length of the data being read out.
 
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
+The context in which this property is being read.
+
 ### **ResolveAncestries(UnrealPackage, AncestryInfo)**
 
 Resolves the ancestry of all child properties of this property.
@@ -201,12 +216,12 @@ public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
-### **Write(AssetBinaryWriter, Boolean)**
+### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
 
 Writes a property to a BinaryWriter.
 
 ```csharp
-public int Write(AssetBinaryWriter writer, bool includeHeader)
+public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext)
 ```
 
 #### Parameters
@@ -217,17 +232,20 @@ The BinaryWriter to write from.
 `includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Whether or not to also write the "header" of the property, which is data considered by the Unreal Engine to be data that is part of the PropertyData base class rather than any particular child class.
 
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
+The context in which this property is being written.
+
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length in bytes of the data that was written.
 
-### **IsZero(UnrealPackage)**
+### **CanBeZero(UnrealPackage)**
 
-Does the body of this property entirely consist of null bytes? If so, the body will not be serialized in unversioned properties.
+Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.
 
 ```csharp
-public bool IsZero(UnrealPackage asset)
+public bool CanBeZero(UnrealPackage asset)
 ```
 
 #### Parameters
@@ -238,7 +256,7 @@ The asset to test serialization within.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-Whether or not the property is zero.
+Whether or not the property can be serialized as zero.
 
 ### **FromString(String[], UAsset)**
 

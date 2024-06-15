@@ -83,12 +83,36 @@ All the custom versions stored in the archive.
 public List<CustomVersion> CustomVersionContainer;
 ```
 
+### **GatherableTextData**
+
+Map of the gatherable text data.
+
+```csharp
+public List<FGatherableTextData> GatherableTextData;
+```
+
 ### **Exports**
 
 Map of object exports. UAssetAPI used to call these "categories."
 
 ```csharp
 public List<Export> Exports;
+```
+
+### **SearchableNames**
+
+List of Searchable Names, by object containing them. Sorted to keep order consistent.
+
+```csharp
+public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+```
+
+### **Thumbnails**
+
+Map of object full names to the thumbnails
+
+```csharp
+public Dictionary<string, FObjectThumbnail> Thumbnails;
 ```
 
 ### **WorldTileInfo**
@@ -144,6 +168,18 @@ Whether or not this asset uses unversioned properties.
 
 ```csharp
 public bool HasUnversionedProperties { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **IsFilterEditorOnly**
+
+Whether or not this asset has PKG_FilterEditorOnly flag.
+
+```csharp
+public bool IsFilterEditorOnly { get; }
 ```
 
 #### Property Value
@@ -381,6 +417,45 @@ Resolves the ancestry of all properties present in this asset.
 public void ResolveAncestries()
 ```
 
+### **FindAssetOnDiskFromPath(String)**
+
+Attempt to find another asset on disk given an asset path (i.e. one starting with /Game/).
+
+```csharp
+public string FindAssetOnDiskFromPath(string path)
+```
+
+#### Parameters
+
+`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The asset path.
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The path to the file on disk, or string.Empty if none could be found.
+
+### **PullSchemasFromAnotherAsset(FName, FName)**
+
+Pull necessary schemas from another asset on disk by examining its StructExports. Updates the mappings in-situ.
+
+```csharp
+public bool PullSchemasFromAnotherAsset(FName path, FName desiredObject)
+```
+
+#### Parameters
+
+`path` [FName](./uassetapi.unrealtypes.fname.md)<br>
+The relative path or name to the other asset.
+
+`desiredObject` [FName](./uassetapi.unrealtypes.fname.md)<br>
+The object that this asset is being accessed for. Optional.
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not the operation was completed successfully.
+
 ### **SetEngineVersion(EngineVersion)**
 
 Sets the version of the Unreal Engine to use in serialization.
@@ -397,7 +472,7 @@ The new version of the Unreal Engine to use in serialization.
 #### Exceptions
 
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
-Thrown when an invalid UE4Version is specified.
+Thrown when an invalid EngineVersion is specified.
 
 ### **GetEngineVersion(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;)**
 

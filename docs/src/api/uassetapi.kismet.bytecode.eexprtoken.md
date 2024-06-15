@@ -61,6 +61,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_UnicodeStringConst | 52 | Unicode string constant. |
 | EX_Int64Const | 53 | 64-bit integer constant. |
 | EX_UInt64Const | 54 | 64-bit unsigned integer constant. |
+| EX_DoubleConst | 55 | Double-precision floating point constant. |
 | EX_PrimitiveCast | 56 | A casting operator for primitives which reads the type as the subsequent byte |
 | EX_SetSet | 57 |  |
 | EX_EndSet | 58 |  |

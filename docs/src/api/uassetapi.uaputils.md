@@ -313,3 +313,17 @@ public static int DivideAndRoundUp(int a, int b)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **FixDirectorySeparatorsForDisk(String)**
+
+```csharp
+public static string FixDirectorySeparatorsForDisk(string path)
+```
+
+#### Parameters
+
+`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

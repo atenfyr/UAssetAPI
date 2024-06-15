@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public struct FMovieSceneTangentData
+public class FMovieSceneTangentData
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FMovieSceneTangentData](./uassetapi.propertytypes.structs.fmoviescenetangentdata.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FMovieSceneTangentData](./uassetapi.propertytypes.structs.fmoviescenetangentdata.md)
 
 ## Fields
 
@@ -46,12 +46,30 @@ public ERichCurveTangentWeightMode TangentWeightMode;
 public Byte[] padding;
 ```
 
+## Constructors
+
+### **FMovieSceneTangentData()**
+
+```csharp
+public FMovieSceneTangentData()
+```
+
 ## Methods
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+public void Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+public void Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters

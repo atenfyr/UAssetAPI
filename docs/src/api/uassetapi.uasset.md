@@ -13,6 +13,12 @@ Implements [INameMap](./uassetapi.io.inamemap.md)
 
 ## Fields
 
+### **OtherAssetsFailedToAccess**
+
+```csharp
+public ISet<FName> OtherAssetsFailedToAccess;
+```
+
 ### **LegacyFileVersion**
 
 The package file version number when this package was saved.
@@ -25,6 +31,22 @@ public int LegacyFileVersion;
 
 The lower 16 bits stores the UE3 engine version, while the upper 16 bits stores the UE4/licensee version. For newer packages this is -7.
  VersionDescription-2indicates presence of enum-based custom versions-3indicates guid-based custom versions-4indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions-5indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages-6indicates optimizations to how custom versions are being serialized-7indicates the texture allocation info has been removed from the summary-8indicates that the UE5 version has been added to the summary
+
+### **DataResourceVersion**
+
+The version to use for serializing data resources.
+
+```csharp
+public EObjectDataResourceVersion DataResourceVersion;
+```
+
+### **DataResources**
+
+List of serialized UObject binary/bulk data resources.
+
+```csharp
+public List<FObjectDataResource> DataResources;
+```
 
 ### **UsesEventDrivenLoader**
 
@@ -99,6 +121,14 @@ Current ID for this package. Effectively unused.
 public Guid PackageGuid;
 ```
 
+### **PersistentGuid**
+
+Current persistent ID for this package.
+
+```csharp
+public Guid PersistentGuid;
+```
+
 ### **RecordedEngineVersion**
 
 Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
@@ -146,6 +176,14 @@ A map of name map entries to hashes to use when serializing instead of the defau
 
 ```csharp
 public Dictionary<FString, uint> OverrideNameMapHashes;
+```
+
+### **LocalizationId**
+
+Localization ID of this package
+
+```csharp
+public FString LocalizationId;
 ```
 
 ### **UASSET_MAGIC**
@@ -236,12 +274,36 @@ All the custom versions stored in the archive.
 public List<CustomVersion> CustomVersionContainer;
 ```
 
+### **GatherableTextData**
+
+Map of the gatherable text data.
+
+```csharp
+public List<FGatherableTextData> GatherableTextData;
+```
+
 ### **Exports**
 
 Map of object exports. UAssetAPI used to call these "categories."
 
 ```csharp
 public List<Export> Exports;
+```
+
+### **SearchableNames**
+
+List of Searchable Names, by object containing them. Sorted to keep order consistent.
+
+```csharp
+public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+```
+
+### **Thumbnails**
+
+Map of object full names to the thumbnails
+
+```csharp
+public Dictionary<string, FObjectThumbnail> Thumbnails;
 ```
 
 ### **WorldTileInfo**
@@ -297,6 +359,18 @@ Whether or not this asset uses unversioned properties.
 
 ```csharp
 public bool HasUnversionedProperties { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **IsFilterEditorOnly**
+
+Whether or not this asset has PKG_FilterEditorOnly flag.
+
+```csharp
+public bool IsFilterEditorOnly { get; }
 ```
 
 #### Property Value
@@ -604,6 +678,22 @@ The ObjectName that the requested import will have.
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The index of the requested import in the name map, or zero if one could not be found.
+
+### **PullSchemasFromAnotherAsset(FName, FName)**
+
+```csharp
+public bool PullSchemasFromAnotherAsset(FName path, FName desiredObject)
+```
+
+#### Parameters
+
+`path` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`desiredObject` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **CopySplitUp(Stream, Stream, Int32, Int32)**
 

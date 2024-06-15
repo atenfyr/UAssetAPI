@@ -45,3 +45,29 @@ public FFieldPath(FName[] path, FPackageIndex resolvedOwner)
 ```csharp
 public FFieldPath()
 ```
+
+### **FFieldPath(AssetBinaryReader)**
+
+```csharp
+public FFieldPath(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

@@ -2,7 +2,7 @@
 
 ### Prerequisites
 * Basic C# knowledge
-* Visual Studio 2017 or later
+* Visual Studio 2022 or later
 * [A copy of UAssetAPI](./build.md)
 
 ### Basic Project Setup

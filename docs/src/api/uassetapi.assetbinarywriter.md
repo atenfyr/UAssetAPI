@@ -107,6 +107,26 @@ public void WritePropertyGuid(Nullable<Guid> guid)
 
 `guid` [Nullable&lt;Guid&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.nullable-1)<br>
 
+### **Write(FObjectThumbnail)**
+
+```csharp
+public void Write(FObjectThumbnail thumbnail)
+```
+
+#### Parameters
+
+`thumbnail` [FObjectThumbnail](./uassetapi.unrealtypes.fobjectthumbnail.md)<br>
+
+### **Write(FLocMetadataObject)**
+
+```csharp
+public void Write(FLocMetadataObject metadataObject)
+```
+
+#### Parameters
+
+`metadataObject` [FLocMetadataObject](./uassetapi.unrealtypes.flocmetadataobject.md)<br>
+
 ### **XFERSTRING(String)**
 
 This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!

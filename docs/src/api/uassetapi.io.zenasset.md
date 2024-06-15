@@ -143,12 +143,36 @@ All the custom versions stored in the archive.
 public List<CustomVersion> CustomVersionContainer;
 ```
 
+### **GatherableTextData**
+
+Map of the gatherable text data.
+
+```csharp
+public List<FGatherableTextData> GatherableTextData;
+```
+
 ### **Exports**
 
 Map of object exports. UAssetAPI used to call these "categories."
 
 ```csharp
 public List<Export> Exports;
+```
+
+### **SearchableNames**
+
+List of Searchable Names, by object containing them. Sorted to keep order consistent.
+
+```csharp
+public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+```
+
+### **Thumbnails**
+
+Map of object full names to the thumbnails
+
+```csharp
+public Dictionary<string, FObjectThumbnail> Thumbnails;
 ```
 
 ### **WorldTileInfo**
@@ -204,6 +228,18 @@ Whether or not this asset uses unversioned properties.
 
 ```csharp
 public bool HasUnversionedProperties { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **IsFilterEditorOnly**
+
+Whether or not this asset has PKG_FilterEditorOnly flag.
+
+```csharp
+public bool IsFilterEditorOnly { get; }
 ```
 
 #### Property Value

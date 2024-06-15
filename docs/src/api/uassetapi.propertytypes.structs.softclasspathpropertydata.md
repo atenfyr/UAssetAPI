@@ -53,6 +53,18 @@ An optional property GUID. Nearly always null.
 public Nullable<Guid> PropertyGuid;
 ```
 
+### **IsZero**
+
+Whether or not this property is "zero," meaning that its body can be skipped during unversioned property serialization because it consists solely of null bytes.
+
+
+
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+
+```csharp
+public bool IsZero;
+```
+
 ### **Offset**
 
 The offset of this property on disk. This is for the user only, and has no bearing in the API itself.

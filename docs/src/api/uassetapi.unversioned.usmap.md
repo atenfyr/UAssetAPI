@@ -80,6 +80,12 @@ Pre-computed CityHash64 map for all relevant strings
 public Dictionary<ulong, string> CityHash64Map;
 ```
 
+### **PathsAlreadyProcessedForSchemas**
+
+```csharp
+public ISet<string> PathsAlreadyProcessedForSchemas;
+```
+
 ### **USMAP_MAGIC**
 
 Magic number for the .usmap format

@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public struct FMovieSceneEvaluationTreeNode
+public class FMovieSceneEvaluationTreeNode
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FMovieSceneEvaluationTreeNode](./uassetapi.propertytypes.structs.fmoviesceneevaluationtreenode.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FMovieSceneEvaluationTreeNode](./uassetapi.propertytypes.structs.fmoviesceneevaluationtreenode.md)
 
 ## Fields
 
@@ -40,12 +40,20 @@ Identifier for externally stored data entries associated with this node
 public FEvaluationTreeEntryHandle DataID;
 ```
 
+## Constructors
+
+### **FMovieSceneEvaluationTreeNode()**
+
+```csharp
+public FMovieSceneEvaluationTreeNode()
+```
+
 ## Methods
 
 ### **Read(AssetBinaryReader)**
 
 ```csharp
-void Read(AssetBinaryReader reader)
+public void Read(AssetBinaryReader reader)
 ```
 
 #### Parameters
@@ -55,7 +63,7 @@ void Read(AssetBinaryReader reader)
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+public void Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters

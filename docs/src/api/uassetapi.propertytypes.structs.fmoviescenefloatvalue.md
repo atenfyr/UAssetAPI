@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public struct FMovieSceneFloatValue
+public class FMovieSceneFloatValue
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FMovieSceneFloatValue](./uassetapi.propertytypes.structs.fmoviescenefloatvalue.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FMovieSceneFloatValue](./uassetapi.propertytypes.structs.fmoviescenefloatvalue.md)
 
 ## Fields
 
@@ -34,12 +34,26 @@ public ERichCurveInterpMode InterpMode;
 public ERichCurveTangentMode TangentMode;
 ```
 
+### **padding**
+
+```csharp
+public Byte[] padding;
+```
+
+## Constructors
+
+### **FMovieSceneFloatValue()**
+
+```csharp
+public FMovieSceneFloatValue()
+```
+
 ## Methods
 
 ### **Read(AssetBinaryReader)**
 
 ```csharp
-void Read(AssetBinaryReader reader)
+public void Read(AssetBinaryReader reader)
 ```
 
 #### Parameters
@@ -49,7 +63,7 @@ void Read(AssetBinaryReader reader)
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+public void Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters

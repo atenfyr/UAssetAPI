@@ -28,6 +28,14 @@ Code offset for NULL expressions.
 public uint Offset;
 ```
 
+### **PropertyType**
+
+Old property type.
+
+```csharp
+public byte PropertyType;
+```
+
 ### **RValuePointer**
 
 Property corresponding to the r-value data, in case the l-value needs to be mem-zero'd. FField*

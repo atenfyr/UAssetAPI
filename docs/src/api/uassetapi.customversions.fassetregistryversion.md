@@ -28,5 +28,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | PackageImportedClasses | 10 | Added ImportedClasses to AssetPackageData |
 | PackageFileSummaryVersionChange | 11 | A new version number of UE5 was added to FPackageFileSummary |
 | ObjectResourceOptionalVersionChange | 12 | Change to linker export/import resource serializationn |
-| VersionPlusOne | 13 |  |
-| LatestVersion | 12 |  |
+| AddedChunkHashes | 13 | Added FIoHash for each FIoChunkId in the package to the AssetPackageData. |
+| ClassPaths | 14 | Classes are serialized as path names rather than short object names, e.g. /Script/Engine.StaticMesh |
+| RemoveAssetPathFNames | 15 | Asset bundles are serialized as FTopLevelAssetPath instead of FSoftObjectPath, deprecated FAssetData::ObjectPath |
+| AddedHeader | 16 | Added header with bFilterEditorOnlyData flag |
+| AssetPackageDataHasExtension | 17 | Added Extension to AssetPackageData. |
+| VersionPlusOne | 18 |  |
+| LatestVersion | 17 |  |

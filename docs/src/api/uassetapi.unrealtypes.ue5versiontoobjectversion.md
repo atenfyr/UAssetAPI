@@ -13,6 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| VER_UE5_0_EA | 1002 |  |
 | VER_UE5_0 | 1004 |  |
 | VER_UE5_1 | 1008 |  |
 | VER_UE5_2 | 1009 |  |
+| VER_UE5_3 | 1009 |  |
+| VER_UE5_4 | 1012 |  |

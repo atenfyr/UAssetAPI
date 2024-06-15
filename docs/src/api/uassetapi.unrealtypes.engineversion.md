@@ -45,8 +45,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_25 | 27 | 4.25 |
 | VER_UE4_26 | 28 | 4.26 |
 | VER_UE4_27 | 29 | 4.27 |
-| VER_UE5_0 | 30 | 5.0 |
-| VER_UE5_1 | 31 | 5.1 |
-| VER_UE5_2 | 32 | 5.2 |
-| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 33 |  |
-| VER_UE4_AUTOMATIC_VERSION | 32 | The newest specified version of the Unreal Engine. |
+| VER_UE5_0EA | 30 | 5.0EA |
+| VER_UE5_0 | 31 | 5.0 |
+| VER_UE5_1 | 32 | 5.1 |
+| VER_UE5_2 | 33 | 5.2 |
+| VER_UE5_3 | 34 | 5.3 |
+| VER_UE5_4 | 35 | 5.4 |
+| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 36 |  |
+| VER_UE4_AUTOMATIC_VERSION | 35 | The newest specified version of the Unreal Engine. |

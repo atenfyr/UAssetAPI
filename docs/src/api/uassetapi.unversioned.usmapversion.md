@@ -14,6 +14,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | Name | Value | Description |
 | --- | --: | --- |
 | Initial | 0 | Initial format. |
-| PackageVersioning | 1 | Adds package versioning to aid with compatibility |
-| LatestPlusOne | 2 |  |
-| Latest | 1 |  |
+| PackageVersioning | 1 | Adds optional asset package versioning |
+| LongFName | 2 | 16-bit wide names in name map |
+| LargeEnums | 3 | 16-bit enum entry count |
+| LatestPlusOne | 4 |  |
+| Latest | 3 |  |

@@ -59,5 +59,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | RemoteControlSerializeFunctionArgumentsSize | 41 | Serialize the number of bytes written when serializing function arguments |
 | AddedSubSequenceEntryWarpCounter | 42 | Add loop counters to sequencer's compiled sub-sequence data |
 | LonglatTextureCubeDefaultMaxResolution | 43 | Remove default resolution limit of 512 pixels for cubemaps generated from long-lat sources |
-| VersionPlusOne | 44 |  |
-| LatestVersion | 43 |  |
+| GeometryCollectionCacheRemovesMassToLocal | 44 |  |
+| VersionPlusOne | 45 |  |
+| LatestVersion | 44 |  |

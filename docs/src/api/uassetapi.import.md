@@ -40,6 +40,15 @@ public FName ClassPackage;
 public FName ClassName;
 ```
 
+### **PackageName**
+
+Package Name this import belongs to. Can be none, in that case follow the outer chain
+ until a set PackageName is found or until OuterIndex is null
+
+```csharp
+public FName PackageName;
+```
+
 ### **bImportOptional**
 
 ```csharp
