@@ -17,9 +17,19 @@ namespace UAssetAPI.Unversioned
         Initial,
 
         /// <summary>
-        /// Adds package versioning to aid with compatibility
+        /// Adds optional asset package versioning
         /// </summary>
         PackageVersioning,
+
+        /// <summary>
+        /// 16-bit wide names in name map
+        /// </summary>
+        LongFName,
+
+        /// <summary>
+        /// 16-bit enum entry count
+        /// </summary>
+        LargeEnums,
 
         LatestPlusOne,
         Latest = LatestPlusOne - 1
@@ -685,7 +695,8 @@ namespace UAssetAPI.Unversioned
             int numNames = reader.ReadInt32();
             for (int i = 0; i < numNames; i++)
             {
-                var str = reader.ReadString();
+                int fixedLength = Version >= UsmapVersion.LongFName ? (int)reader.ReadInt16() : (int)reader.ReadByte();
+                var str = reader.ReadString(fixedLength);
                 NameMap.Add(str);
             }
 
@@ -699,14 +710,17 @@ namespace UAssetAPI.Unversioned
                 string enumName = reader.ReadName();
 
                 var newEnum = new UsmapEnum(enumName, new Dictionary<long, string>());
-                byte numEnumEntries = reader.ReadByte();
+                int numEnumEntries = Version >= UsmapVersion.LargeEnums ? (int)reader.ReadInt16() : (int)reader.ReadByte();
                 for (int j = 0; j < numEnumEntries; j++)
                 {
                     newEnum.Values.Add(j, reader.ReadName());
                 }
 
-                enumIndexMap[i] = newEnum;
-                EnumMap[enumName] = newEnum;
+                if (!EnumMap.ContainsKey(enumName))
+                {
+                    enumIndexMap[i] = newEnum;
+                    EnumMap[enumName] = newEnum;
+                }
             }
 
             // part 3: schema
@@ -749,7 +763,7 @@ namespace UAssetAPI.Unversioned
 
                 switch(extId)
                 {
-                    case "PPTH":
+                    case "PPTH": // Replaces MODL, reuses name map and added full names for Enums
                         byte ppthVer = reader.ReadByte();
                         if (ppthVer > 0) break;
 
@@ -768,7 +782,7 @@ namespace UAssetAPI.Unversioned
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
                         break;
-                    case "EATR":
+                    case "EATR": // Extended Attributes
                         byte eatrVer = reader.ReadByte();
                         if (eatrVer > 0) break;
 
@@ -791,7 +805,7 @@ namespace UAssetAPI.Unversioned
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
                         break;
-                    case "ENVP":
+                    case "ENVP": // Enum Name Value Pairs (historically
                         byte envpVer = reader.ReadByte();
                         if (envpVer > 0) break;
 
@@ -810,7 +824,7 @@ namespace UAssetAPI.Unversioned
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
                         break;
-                    case "MODL":
+                    case "MODL": // traditional list of module paths
                         ushort numModulePaths = reader.ReadUInt16();
                         string[] modulePaths = new string[numModulePaths];
                         for (int i = 0; i < numModulePaths; i++) modulePaths[i] = reader.ReadString();
