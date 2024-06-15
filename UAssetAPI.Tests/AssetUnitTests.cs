@@ -320,6 +320,7 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestManyAssets()
         {
+            TestManyAssetsSubsection("LiesOfP", EngineVersion.VER_UE4_27, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "LiesOfP", "LiesOfP.usmap"))); // unversioned properties
             TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
             TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
             TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);

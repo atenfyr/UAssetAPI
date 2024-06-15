@@ -19,6 +19,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         [JsonProperty]
         public FName InnerType;
 
+        public byte[] ExtraData;
+
         public EnumPropertyData(FName name) : base(name)
         {
 
@@ -90,6 +92,11 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (skipEndingFName)
             {
+                // TODO: figure out exactly where this weird extra data is coming from...
+                if (serializationContext == PropertySerializationContext.Array)
+                {
+                    ExtraData = reader.ReadBytes(7);
+                }
             }
             else
             {
@@ -128,19 +135,35 @@ namespace UAssetAPI.PropertyTypes.Objects
                         enumIndice = validIndices.FirstOrDefault();
                     }
 
+                    int sz = 0;
                     switch (InnerType?.Value?.Value)
                     {
                         case "ByteProperty":
                             writer.Write((byte)enumIndice);
-                            return sizeof(byte);
+                            sz += sizeof(byte);
+
+                            if (serializationContext == PropertySerializationContext.Array)
+                            {
+                                writer.Write(ExtraData);
+                                sz += ExtraData.Length;
+                            }
+                            break;
                         case "IntProperty":
                             writer.Write((int)enumIndice);
-                            return sizeof(int);
+                            sz += sizeof(int);
+
+                            if (serializationContext == PropertySerializationContext.Array)
+                            {
+                                writer.Write(ExtraData);
+                                sz += ExtraData.Length;
+                            }
+                            break;
                     }
+                    return sz;
                 }
             }
 
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(EnumType);
                 writer.WritePropertyGuid(PropertyGuid);
@@ -172,6 +195,15 @@ namespace UAssetAPI.PropertyTypes.Objects
             else
             {
                 Value = null;
+            }
+
+            if (!string.IsNullOrEmpty(d[2]))
+            {
+                ExtraData = UAPUtils.ConvertHexStringToByteArray(d[2]);
+            }
+            else
+            {
+                ExtraData = Array.Empty<byte>();
             }
         }
 

@@ -106,6 +106,27 @@
     <None Update="TestAssets\TestACE7\plwp_6aam_a0.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\ItemInfo.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\ItemInfo.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\LiesOfP.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\SkillHitInfo.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\SkillHitInfo.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\SkillInfo.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\LiesOfP\SkillInfo.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestManyAssets\Tekken\BP_TekkenPlayer_Modular.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

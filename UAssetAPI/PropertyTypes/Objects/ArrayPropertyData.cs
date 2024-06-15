@@ -124,7 +124,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                         var data = new StructPropertyData(name, fullType);
                         data.Offset = reader.BaseStream.Position;
                         data.Ancestry.Initialize(Ancestry, Name);
-                        data.Read(reader, false, structLength);
+                        data.Read(reader, false, structLength, 0, PropertySerializationContext.Array);
                         data.StructGUID = structGUID;
                         results[i] = data;
                     }
