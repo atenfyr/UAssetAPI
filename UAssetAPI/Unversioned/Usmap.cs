@@ -225,6 +225,11 @@ namespace UAssetAPI.Unversioned
         public string SuperType;
         public ushort PropCount;
         public string ModulePath;
+        /// <summary>
+        /// Whether or not this schema was retrieved from a .uasset file.
+        /// </summary>
+        public bool FromAsset = false;
+
         public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
         private Dictionary<int, UsmapProperty> properties;
@@ -239,12 +244,13 @@ namespace UAssetAPI.Unversioned
             return propertiesMap.ContainsKey(keyTuple) ? propertiesMap[keyTuple] : null;
         }
 
-        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props)
+        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool fromAsset = false)
         {
             Name = name;
             SuperType = superType;
             PropCount = propCount;
             properties = props;
+            FromAsset = fromAsset;
 
             propertiesMap = new Dictionary<Tuple<string, int>, UsmapProperty>();
             foreach (KeyValuePair<int, UsmapProperty> entry in props)
@@ -416,7 +422,7 @@ namespace UAssetAPI.Unversioned
                 res.Add(idx, converted);
                 idx++;
             }
-            return new UsmapSchema(exp.ObjectName.ToString(), exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null, (ushort)res.Count, res);
+            return new UsmapSchema(exp.ObjectName.ToString(), exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null, (ushort)res.Count, res, true);
         }
 
         /// <summary>
@@ -455,14 +461,17 @@ namespace UAssetAPI.Unversioned
             UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
             while (schemaName != null && relevantSchema != null)
             {
-                res.Add(headerPrefix + schemaName + headerSuffix);
+                string schemaAnnotation = relevantSchema.FromAsset ? " (blueprint)" : string.Empty;
+                res.Add(headerPrefix + schemaName + schemaAnnotation + headerSuffix);
 
                 if (recursive || !hasDoneFirst)
                 {
                     foreach (UsmapProperty prop in relevantSchema.Properties.Values)
                     {
                         if (prop.ArrayIndex > 0) continue;
-                        res.Add(prop.Name + (customAnnotations != null && customAnnotations.ContainsKey(prop.Name) ? (" (" + customAnnotations[prop.Name] + ")") : string.Empty));
+                        string propAnnotation = customAnnotations != null && customAnnotations.ContainsKey(prop.Name) ? (" (" + customAnnotations[prop.Name] + ")") : string.Empty;
+                        res.Add(prop.Name + propAnnotation);
+                        res.Add("\t" + (prop.PropertyData?.Type.ToString() ?? "Unknown type"));
                     }
                     if (relevantSchema.Properties.Values.Count() == 0) res.Add("N/A");
                     res.Add(string.Empty);
@@ -487,6 +496,7 @@ namespace UAssetAPI.Unversioned
             }
             else if (asset != null)
             {
+                // note: this is probably not needed anymore since we now collate schemas on asset load
                 relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
             }
             if (throwExceptions && relevantSchema == null) throw new FormatException("Failed to find a valid schema for parent name " + nm);
