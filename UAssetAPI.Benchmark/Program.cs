@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UAssetAPI.CustomVersions;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.IO;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -25,12 +26,30 @@ namespace UAssetAPI.Benchmark
             return timer.Elapsed.TotalMilliseconds;
         }
 
+        private static string NumberToTwoDecimalPlaces(double num)
+        {
+            // avoid any other formatting (e.g. commas), just round decimal places
+            return (int)num + "." + (int)(num * 100 % 100);
+        }
+
+        /// <summary>
+        /// Determines whether or not all exports in an asset have parsed correctly.
+        /// </summary>
+        /// <param name="tester">The asset to test.</param>
+        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
+        private static bool CheckAllExportsParsedCorrectly(UAsset tester)
+        {
+            foreach (Export testExport in tester.Exports)
+            {
+                if (testExport is RawExport) return false;
+            }
+            return true;
+        }
 
         private static HashSet<string> allowedExtensions = new HashSet<string>()
         {
             ".umap",
-            ".uasset",
-            ".usmap"
+            ".uasset"
         };
 
         public static void Run(string[] args)
@@ -58,25 +77,68 @@ namespace UAssetAPI.Benchmark
                         totalTime += BenchmarkAsset(assetPath, (EngineVersion)Enum.Parse(typeof(EngineVersion), allTestAssetVersions[Path.GetFileNameWithoutExtension(assetPath)]));
                         num1 += 1;
                     }
-                    Console.WriteLine("\n" + num1 + " assets parsed in " + totalTime + " ms");
+                    Console.WriteLine("\n" + num1 + " assets parsed in " + NumberToTwoDecimalPlaces(totalTime) + " ms");
                     break;
                 case "testall":
                     string[] allRelevantArgs = args.Skip(1).Take(args.Length - 2).ToArray();
                     string[] allTestingAssets2 = Directory.GetFiles(string.Join(" ", allRelevantArgs), "*.*", SearchOption.AllDirectories);
                     EngineVersion ver = (EngineVersion)Enum.Parse(typeof(EngineVersion), args[args.Length - 1]);
 
-                    int num = 0;
+                    // load mappings
+                    Usmap mappings = null;
                     timer.Restart();
-                    timer.Start();
-                    Console.WriteLine("Timer started");
+                    foreach (string assetPath in allTestingAssets2)
+                    {
+                        if (Path.GetExtension(assetPath) == ".usmap")
+                        {
+                            timer.Start();
+                            mappings = new Usmap(assetPath);
+                            timer.Stop();
+                            Console.WriteLine("Mappings parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms");
+                            break;
+                        }
+                    }
+
+                    // get num assets in total for status update
+                    int numTotal = 0;
                     foreach (string assetPath in allTestingAssets2)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
-                        new UAsset(assetPath, ver);
+                        numTotal += 1;
+                    }
+
+                    int num = 0;
+                    int numPassedBinaryEq = 0;
+                    int numPassedAllExports = 0;
+                    int numExportsTotal = 0;
+                    timer.Restart();
+                    double lastMsGaveStatusUpdate = double.MinValue;
+                    foreach (string assetPath in allTestingAssets2)
+                    {
+                        if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
+
+                        // give status update every once in a while
+                        if (timer.Elapsed.TotalMilliseconds - lastMsGaveStatusUpdate >= 500)
+                        {
+                            lastMsGaveStatusUpdate = timer.Elapsed.TotalMilliseconds;
+                            Console.WriteLine("[" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms] " + num + "/" + numTotal + " assets parsed");
+                        }
+
+                        timer.Start();
+                        var loaded = new UAsset(assetPath, ver, mappings);
+                        timer.Stop();
+
+                        if (loaded.VerifyBinaryEquality()) numPassedBinaryEq += 1;
+                        if (CheckAllExportsParsedCorrectly(loaded)) numPassedAllExports += 1;
+                        numExportsTotal += loaded.Exports.Count;
                         num += 1;
                     }
-                    timer.Stop();
-                    Console.WriteLine(num + " assets parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+
+                    Console.WriteLine();
+                    Console.WriteLine(num + " assets parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms combined (" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / num) + " ms/asset, on average)");
+                    Console.WriteLine(numExportsTotal + " exports were parsed (" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / numExportsTotal * 100) + " ms per 100 exports, on average)");
+                    Console.WriteLine(numPassedBinaryEq + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedBinaryEq / (double)num * 100) + "%) passed binary equality");
+                    Console.WriteLine(numPassedAllExports + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedAllExports / (double)num * 100) + "%) passed on all exports");
                     break;
                 case "testcpu":
                     int numCpuTrials = 5;
@@ -155,7 +217,7 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            Run(new string[] { "zen" });
+            Run(new string[] { "testall", "C:\\Users\\Alexandros\\Downloads\\Engine\\Content", "VER_UE5_3" });
 
             while (true)
             {
