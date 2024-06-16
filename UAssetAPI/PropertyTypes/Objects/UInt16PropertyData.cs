@@ -31,7 +31,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = reader.ReadUInt16();
+            Value = (reader.Asset.HasUnversionedProperties && serializationContext != PropertySerializationContext.Normal) ? (ushort)reader.ReadInt64() : reader.ReadUInt16();
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -41,6 +41,11 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
+            if (writer.Asset.HasUnversionedProperties && serializationContext != PropertySerializationContext.Normal)
+            {
+                writer.Write((long)Value);
+                return sizeof(long);
+            }
             writer.Write(Value);
             return sizeof(ushort);
         }

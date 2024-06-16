@@ -19,4 +19,4 @@ UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly vie
 ## Support
 The source code of UAssetAPI is publicly available on GitHub at [https://github.com/atenfyr/UAssetAPI](https://github.com/atenfyr/UAssetAPI), and all contributions are greatly appreciated.
 
-Any bugs or feature requests that you may have can be submitted on the GitHub page as an issue. I am also active on the Unreal Engine Modding Discord server and will often answer questions about UAssetAPI usage and functionality, which you can join with this invite link: [https://discord.gg/zVvsE9mEEa](https://discord.gg/zVvsE9mEEa).
+Any bugs or feature requests that you may have can be submitted on the GitHub page as an issue. You can also direct any questions you may have to the folks on the Unreal Engine Modding Discord server, which you can join with this invite link: [https://discord.gg/zVvsE9mEEa](https://discord.gg/zVvsE9mEEa).

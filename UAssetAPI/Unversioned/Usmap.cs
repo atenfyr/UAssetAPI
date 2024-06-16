@@ -815,7 +815,7 @@ namespace UAssetAPI.Unversioned
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
                         break;
-                    case "ENVP": // Enum Name Value Pairs (historically
+                    case "ENVP": // Enum Name Value Pairs
                         byte envpVer = reader.ReadByte();
                         if (envpVer > 0) break;
 

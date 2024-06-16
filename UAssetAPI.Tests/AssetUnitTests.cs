@@ -328,9 +328,10 @@ namespace UAssetAPI.Tests
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
             TestManyAssetsSubsection("VERSIONED", EngineVersion.UNKNOWN);
 
-            // traditional, NOT zen/io store
-            TestManyAssetsSubsection("LiesOfP", EngineVersion.VER_UE4_27, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "LiesOfP", "LiesOfP.usmap"))); // unversioned properties
+            // traditional, NOT zen/io store. includes unversioned properties
+            TestManyAssetsSubsection("LiesOfP", EngineVersion.VER_UE4_27, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "LiesOfP", "LiesOfP.usmap")));
             TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palia", "Palia.usmap")));
+            TestManyAssetsSubsection("F1Manager2023", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "F1Manager2023", "F1Manager2023.usmap")));
             TestManyAssetsSubsection("Palworld", EngineVersion.VER_UE5_1, new Usmap(Path.Combine("TestAssets", "TestManyAssets", "Palworld", "Palworld.usmap")));
         }
 

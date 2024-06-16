@@ -883,7 +883,7 @@ namespace UAssetAPI
             }
 
             // AssetRegistryData
-            AssetRegistryData = new byte[0];
+            AssetRegistryData = Array.Empty<byte>();
             if (AssetRegistryDataOffset > 0)
             {
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);

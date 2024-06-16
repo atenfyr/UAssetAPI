@@ -106,6 +106,27 @@
     <None Update="TestAssets\TestACE7\plwp_6aam_a0.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\F1Manager2023.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\FixedStaff.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\FixedStaff.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\MI_F1_Driver_LoganSargeant_Visor.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\MI_F1_Driver_LoganSargeant_Visor.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\StaffPhotoData.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\F1Manager2023\StaffPhotoData.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestManyAssets\LiesOfP\ItemInfo.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
