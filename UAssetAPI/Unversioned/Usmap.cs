@@ -339,6 +339,11 @@ namespace UAssetAPI.Unversioned
         /// </summary>
         public Dictionary<ulong, string> CityHash64Map;
 
+        /// <summary>
+        /// List of extensions that failed to parse.
+        /// </summary>
+        public List<string> FailedExtensions;
+
         private void AddCityHash64MapEntry(string val)
         {
             ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
@@ -854,6 +859,7 @@ namespace UAssetAPI.Unversioned
             }
 
             // read extension data if it's present
+            FailedExtensions = new List<string>();
             if (reader.BaseStream.Length > reader.BaseStream.Position)
             {
                 uint usmapExtensionsMagic = reader.ReadUInt32();
@@ -868,7 +874,14 @@ namespace UAssetAPI.Unversioned
                             {
                                 string extId = reader.ReadString(4);
                                 uint extLeng = reader.ReadUInt32();
-                                ReadExtension(extId, extLeng);
+                                try
+                                {
+                                    ReadExtension(extId, extLeng);
+                                }
+                                catch
+                                {
+                                    FailedExtensions.Add(extId);
+                                }
                             }
                             break;
                         default:
