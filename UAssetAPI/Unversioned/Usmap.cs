@@ -647,9 +647,16 @@ namespace UAssetAPI.Unversioned
                 case ECompressionMethod.None:
                     if (compressedSize != decompressedSize) throw new FormatException(".usmap: Compressed size must be equal to decompressed size");
                     return reader;
+                case ECompressionMethod.ZStandard:
+                    {
+                        byte[] dat = new ZstdSharp.Decompressor().Unwrap(reader.ReadBytes((int)compressedSize), (int)decompressedSize).ToArray();
+                        return new UsmapBinaryReader(new MemoryStream(dat), this);
+                    }
                 case ECompressionMethod.Oodle:
-                    var dat = Oodle.Decompress(reader.ReadBytes((int)compressedSize), (int)compressedSize, (int)decompressedSize);
-                    return new UsmapBinaryReader(new MemoryStream(dat), this);
+                    {
+                        byte[] dat = Oodle.Decompress(reader.ReadBytes((int)compressedSize), (int)compressedSize, (int)decompressedSize);
+                        return new UsmapBinaryReader(new MemoryStream(dat), this);
+                    }
                 default:
                     throw new NotImplementedException(".usmap: Compression method " + compressionMethod + " is unimplemented");
             }
