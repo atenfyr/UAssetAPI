@@ -112,15 +112,19 @@ namespace UAssetAPI.Benchmark
                     int numPassedAllExports = 0;
                     int numExportsTotal = 0;
                     timer.Restart();
+
+                    int thresholdToForceStatusUpdate = numTotal / 4;
+                    int numAtLastStatusUpdate = 0;
                     double lastMsGaveStatusUpdate = double.MinValue;
                     foreach (string assetPath in allTestingAssets2)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
 
                         // give status update every once in a while
-                        if (timer.Elapsed.TotalMilliseconds - lastMsGaveStatusUpdate >= 500)
+                        if (timer.Elapsed.TotalMilliseconds - lastMsGaveStatusUpdate >= 3000 || (timer.Elapsed.TotalMilliseconds - lastMsGaveStatusUpdate >= 500 && (num - numAtLastStatusUpdate) > thresholdToForceStatusUpdate))
                         {
                             lastMsGaveStatusUpdate = timer.Elapsed.TotalMilliseconds;
+                            numAtLastStatusUpdate = num;
                             Console.WriteLine("[" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms] " + num + "/" + numTotal + " assets parsed");
                         }
 
