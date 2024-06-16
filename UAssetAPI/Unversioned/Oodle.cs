@@ -10,6 +10,7 @@ namespace UAssetAPI.Unversioned
 {
     public class Oodle
     {
+        // oodle download link is broken
         public const string OODLE_DOWNLOAD_LINK = "https://cdn.discordapp.com/attachments/817251677086285848/992648087371792404/oo2core_9_win64.dll";
         public const string OODLE_DLL_NAME = @"oo2core_9_win64.dll";
         private static Regex RemoveFilePrefixRegex = new Regex(@"^file:?[\\\/]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -19,7 +20,9 @@ namespace UAssetAPI.Unversioned
 
         public static byte[] Decompress(byte[] buffer, int size, int uncompressedSize)
         {
-            var targetPath = Path.Combine(Path.GetDirectoryName(RemoveFilePrefixRegex.Replace(Assembly.GetAssembly(typeof(Oodle)).CodeBase, string.Empty)), OODLE_DLL_NAME);
+            throw new NotImplementedException("Oodle decompression is no longer supported");
+
+            /*var targetPath = Path.Combine(Path.GetDirectoryName(RemoveFilePrefixRegex.Replace(Assembly.GetAssembly(typeof(Oodle)).CodeBase, string.Empty)), OODLE_DLL_NAME);
             if (!File.Exists(targetPath))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
@@ -41,7 +44,7 @@ namespace UAssetAPI.Unversioned
                 return decompressedBuffer.Take(decompressedCount).ToArray();
             }
 
-            return new byte[0];
+            return new byte[0];*/
         }
     }
 }

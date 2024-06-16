@@ -217,8 +217,6 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            Run(new string[] { "testall", "C:\\Users\\Alexandros\\Downloads\\Engine\\Content", "VER_UE5_3" });
-
             while (true)
             {
                 Console.Write("Input: ");
