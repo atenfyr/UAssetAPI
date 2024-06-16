@@ -814,7 +814,8 @@ namespace UAssetAPI.Unversioned
                             int eatrNumProps = reader.ReadInt32();
                             for (int j = 0; j < eatrNumProps; j++)
                             {
-                                schemaIndexMap[i].Properties[j].PropertyFlags = (EPropertyFlags)reader.ReadUInt64();
+                                var flgs = (EPropertyFlags)reader.ReadUInt64();
+                                if (j < schemaIndexMap[i].Properties.Count) schemaIndexMap[i].Properties[j].PropertyFlags = flgs;
                             }
                         }
 
