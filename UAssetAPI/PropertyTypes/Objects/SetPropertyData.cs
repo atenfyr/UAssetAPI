@@ -1,4 +1,6 @@
-﻿using UAssetAPI.UnrealTypes;
+﻿using System;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -28,10 +30,20 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             this.ShouldSerializeStructsDifferently = false;
 
-            if (includeHeader)
+            if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 ArrayType = reader.ReadFName();
                 PropertyGuid = reader.ReadPropertyGuid();
+            }
+
+            if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapArrayData strucDat1))
+            {
+                ArrayType = FName.DefineDummy(reader.Asset, strucDat1.InnerType.Type.ToString());
+            }
+
+            if (reader.Asset.HasUnversionedProperties && ArrayType == null)
+            {
+                throw new InvalidOperationException("Unable to determine array type for array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
             }
 
             var removedItemsDummy = new ArrayPropertyData(FName.DefineDummy(reader.Asset, "ElementsToRemove"));
@@ -48,9 +60,9 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             this.ShouldSerializeStructsDifferently = false;
 
-            if (Value.Length > 0) ArrayType = new FName(writer.Asset, Value[0].PropertyType);
+            if (Value.Length > 0) ArrayType = writer.Asset.HasUnversionedProperties ? FName.DefineDummy(writer.Asset, Value[0].PropertyType) : new FName(writer.Asset, Value[0].PropertyType);
 
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(ArrayType);
                 writer.WritePropertyGuid(PropertyGuid);

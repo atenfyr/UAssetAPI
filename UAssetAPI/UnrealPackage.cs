@@ -703,8 +703,8 @@ namespace UAssetAPI
                         break;
                 }
 
-                // if we got a StructExport, let's modify mappings/MapStructTypeOverride if we can
-                if (Exports[i] is StructExport fetchedStructExp)
+                // if we got a ClassExport, let's modify mappings/MapStructTypeOverride if we can
+                if (Exports[i] is ClassExport fetchedStructExp)
                 {
                     // check to see if we can add some new map type overrides
                     if (fetchedStructExp.LoadedProperties != null)
@@ -740,6 +740,8 @@ namespace UAssetAPI
                 {
                     Exports[i].Extras = reader.ReadBytes((int)extrasLen);
                 }
+
+                Exports[i].alreadySerialized = true;
             }
             catch (Exception ex)
             {

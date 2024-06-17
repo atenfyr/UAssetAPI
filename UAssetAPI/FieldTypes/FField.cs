@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -88,10 +89,19 @@ namespace UAssetAPI.FieldTypes
             return (T)RawValue;
         }
 
+        public IDictionary<string, EPropertyType> UsmapPropertyTypeOverrides = new Dictionary<string, EPropertyType>()
+        {
+            { "MulticastInlineDelegateProperty", EPropertyType.MulticastDelegateProperty },
+            { "ClassProperty", EPropertyType.ObjectProperty },
+            { "SoftClassProperty", EPropertyType.SoftObjectProperty }
+        };
+
         public EPropertyType GetUsmapPropertyType()
         {
-            if (Enum.TryParse(SerializedType.Value.Value, out EPropertyType res)) return res;
-            return EPropertyType.Unknown;
+            EPropertyType res = EPropertyType.Unknown;
+            if (UsmapPropertyTypeOverrides.TryGetValue(SerializedType.Value.Value, out res)) return res;
+            if (Enum.TryParse(SerializedType.Value.Value, out res)) return res;
+            return res;
         }
 
         public override void Read(AssetBinaryReader reader)

@@ -766,8 +766,8 @@ namespace UAssetAPI
         /// Reads an asset into memory.
         /// </summary>
         /// <param name="reader">The input reader.</param>
-        /// <param name="manualSkips">An array of export indexes to skip parsing. For most applications, this should be left blank.</param>
-        /// <param name="forceReads">An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
+        /// <param name="manualSkips">An array of export indices to skip parsing. For most applications, this should be left blank.</param>
+        /// <param name="forceReads">An array of export indices that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public override void Read(AssetBinaryReader reader, int[] manualSkips = null, int[] forceReads = null)
@@ -851,14 +851,40 @@ namespace UAssetAPI
 
             // Export details
             Exports = new List<Export>();
+            List<int> prioritizedExports = new List<int>();
             if (ExportOffset > 0)
             {
                 reader.BaseStream.Seek(ExportOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ExportCount; i++)
                 {
-                    var newExport = new Export(this, new byte[0]);
+                    var newExport = new Export(this, Array.Empty<byte>());
                     newExport.ReadExportMapEntry(reader);
                     Exports.Add(newExport);
+
+                    if (newExport.GetExportClassType().Value.Value.EndsWith("BlueprintGeneratedClass"))
+                    {
+                        prioritizedExports.Add(i);
+                    }
+
+                    // import other assets if needed
+                    if (newExport.ClassIndex.IsImport())
+                    {
+                        Import imp = newExport.ClassIndex.ToImport(this);
+                        if (imp.OuterIndex.IsImport())
+                        {
+                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
+                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                        }
+                    }
+                    if (newExport.SuperIndex.IsImport())
+                    {
+                        Import imp = newExport.SuperIndex.ToImport(this);
+                        if (imp.OuterIndex.IsImport())
+                        {
+                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
+                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                        }
+                    }   
                 }
             }
 
@@ -989,17 +1015,22 @@ namespace UAssetAPI
             // Export data
             if (SectionSixOffset > 0 && Exports.Count > 0)
             {
+                foreach (int prioritizedExportIndex in prioritizedExports)
+                {
+                    reader.BaseStream.Seek(Exports[prioritizedExportIndex].SerialOffset, SeekOrigin.Begin);
+                    ConvertExportToChildExportAndRead(reader, prioritizedExportIndex);
+                }
+
                 for (int i = 0; i < Exports.Count; i++)
                 {
+                    if (Exports[i].alreadySerialized) continue;
+
                     reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                    if (manualSkips != null && manualSkips.Contains(i))
+                    if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
                     {
-                        if (forceReads == null || !forceReads.Contains(i))
-                        {
-                            Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
-                            continue;
-                        }
+                        Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
+                        ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                        continue;
                     }
 
                     ConvertExportToChildExportAndRead(reader, i);
