@@ -101,7 +101,7 @@ namespace UAssetAPI.ExportTypes
 #pragma warning disable CS0168 // Variable is declared but never used
             try
             {
-                if (Asset.CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingBytecode))
+                if (!Asset.CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingBytecode))
                 {
                     var tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)

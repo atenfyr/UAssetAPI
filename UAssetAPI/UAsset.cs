@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
-using UAssetAPI.FieldTypes;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
@@ -24,7 +22,7 @@ namespace UAssetAPI
         None = 0,
 
         /// <summary>
-        /// Serialize all dummy FNames in the name map.
+        /// Serialize all dummy FNames to the name map.
         /// </summary>
         NoDummies = 1,
 
