@@ -38,6 +38,11 @@ namespace UAssetAPI
         public Usmap Mappings;
 
         /// <summary>
+        /// List of custom serialization flags, used to override certain optional behavior in how UAssetAPI serializes assets.
+        /// </summary>
+        public CustomSerializationFlags CustomSerializationFlags;
+
+        /// <summary>
         /// Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
         /// </summary>
         public bool UseSeparateBulkDataFiles = false;
@@ -298,6 +303,15 @@ namespace UAssetAPI
             nameMapIndexList.Add(name);
             nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
+        }
+
+        /// <summary>
+        /// Whether or not we can create dummies in this name map. If false, attempting to define a dummy will append to the name map instead.
+        /// </summary>
+        /// <returns>A boolean.</returns>
+        public bool CanCreateDummies()
+        {
+            return (CustomSerializationFlags & CustomSerializationFlags.NoDummies) == 0;
         }
 
         /// <summary>

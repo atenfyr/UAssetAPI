@@ -15,6 +15,26 @@ using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
+    [Flags]
+    public enum CustomSerializationFlags : int
+    {
+        /// <summary>
+        /// No flags.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Serialize all dummy FNames in the name map.
+        /// </summary>
+        NoDummies = 1,
+
+        /// <summary>
+        /// Skip Kismet bytecode serialization.
+        /// </summary>
+        SkipParsingBytecode = 2
+    }
+
+
     public class NameMapOutOfRangeException : FormatException
     {
         public FString RequiredName;
@@ -1774,12 +1794,14 @@ namespace UAssetAPI
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null)
+        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.FilePath = path;
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             SetEngineVersion(engineVersion);
 
             Read(PathToReader(path));
@@ -1792,11 +1814,13 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
+        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             SetEngineVersion(engineVersion);
             Read(reader);
@@ -1807,9 +1831,11 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
-        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null)
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             SetEngineVersion(engineVersion);
         }
 
@@ -1821,12 +1847,14 @@ namespace UAssetAPI
         /// <param name="objectVersionUE5">The UE5 object version of the Unreal Engine that will be used to parse this asset.</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null)
+        public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.FilePath = path;
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
             if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;
@@ -1843,11 +1871,13 @@ namespace UAssetAPI
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false)
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
@@ -1863,9 +1893,11 @@ namespace UAssetAPI
         /// <param name="objectVersionUE5">The UE5 object version of the Unreal Engine that will be used to parse this asset.</param>
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
-        public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null)
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
         {
             this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
             if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;

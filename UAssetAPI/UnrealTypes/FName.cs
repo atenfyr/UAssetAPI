@@ -176,6 +176,11 @@ namespace UAssetAPI.UnrealTypes
         /// <returns>A dummy FName instance that represents the string.</returns>
         public static FName DefineDummy(INameMap asset, FString val, int number = 0)
         {
+            if (asset != null && !asset.CanCreateDummies())
+            {
+                return new FName(asset, val, number);
+            }
+
             var res = new FName();
             res.Asset = asset;
             res.DummyValue = val;
@@ -195,6 +200,11 @@ namespace UAssetAPI.UnrealTypes
         /// <returns>A dummy FName instance that represents the string.</returns>
         public static FName DefineDummy(INameMap asset, string val, int number = 0)
         {
+            if (asset != null && !asset.CanCreateDummies())
+            {
+                return new FName(asset, val, number);
+            }
+
             var res = new FName();
             res.Asset = asset;
             res.DummyValue = FString.FromString(val);

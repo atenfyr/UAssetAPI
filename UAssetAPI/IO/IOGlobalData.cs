@@ -24,6 +24,7 @@ namespace UAssetAPI.IO
         bool ContainsNameReference(FString search);
         int SearchNameReference(FString search);
         int AddNameReference(FString name, bool forceAddDuplicates = false);
+        bool CanCreateDummies();
     }
 
     /// <summary>
@@ -211,6 +212,15 @@ namespace UAssetAPI.IO
             nameMapIndexList.Add(name);
             nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
             return nameMapIndexList.Count - 1;
+        }
+
+        /// <summary>
+        /// Whether or not we can create dummies in this name map. If false, attempting to define a dummy will append to the name map instead.
+        /// </summary>
+        /// <returns>A boolean.</returns>
+        public bool CanCreateDummies()
+        {
+            return true;
         }
     }
 }

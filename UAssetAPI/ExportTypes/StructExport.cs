@@ -43,11 +43,6 @@ namespace UAssetAPI.ExportTypes
         /// </summary>
         public byte[] ScriptBytecodeRaw;
 
-        /// <summary>
-        /// A static bool that determines whether or not the serializer will attempt to parse Kismet bytecode.
-        /// </summary>
-        private static readonly bool ParseBytecode = true;
-
         public StructExport(Export super) : base(super)
         {
 
@@ -106,7 +101,7 @@ namespace UAssetAPI.ExportTypes
 #pragma warning disable CS0168 // Variable is declared but never used
             try
             {
-                if (ParseBytecode)
+                if (Asset.CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingBytecode))
                 {
                     var tempCode = new List<Kismet.Bytecode.KismetExpression>();
                     while ((reader.BaseStream.Position - startedReading) < scriptStorageSize)
