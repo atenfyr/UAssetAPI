@@ -674,6 +674,10 @@ namespace UAssetAPI
                         Exports[i] = Exports[i].ConvertToChildExport<FunctionExport>();
                         Exports[i].Read(reader, (int)nextStarting);
                         break;
+                    case "UserDefinedStruct":
+                        Exports[i] = Exports[i].ConvertToChildExport<UserDefinedStructExport>();
+                        Exports[i].Read(reader, (int)nextStarting);
+                        break;
                     default:
                         if (exportClassType.EndsWith("DataTable"))
                         {

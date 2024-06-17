@@ -861,30 +861,11 @@ namespace UAssetAPI
                     newExport.ReadExportMapEntry(reader);
                     Exports.Add(newExport);
 
-                    if (newExport.GetExportClassType().Value.Value.EndsWith("BlueprintGeneratedClass"))
+                    string ect = newExport.GetExportClassType().Value.Value;
+                    if (ect.EndsWith("BlueprintGeneratedClass"))
                     {
                         prioritizedExports.Add(i);
-                    }
-
-                    // import other assets if needed
-                    if (newExport.ClassIndex.IsImport())
-                    {
-                        Import imp = newExport.ClassIndex.ToImport(this);
-                        if (imp.OuterIndex.IsImport())
-                        {
-                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
-                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
-                        }
-                    }
-                    if (newExport.SuperIndex.IsImport())
-                    {
-                        Import imp = newExport.SuperIndex.ToImport(this);
-                        if (imp.OuterIndex.IsImport())
-                        {
-                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
-                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
-                        }
-                    }   
+                    } 
                 }
             }
 
@@ -1011,6 +992,30 @@ namespace UAssetAPI
             {
                 doWeHaveDataResources = false;
             }
+
+            // load dependencies, if needed and available
+            foreach (Export newExport in Exports)
+            {
+                List<FPackageIndex> deps = new List<FPackageIndex>();
+                deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
+                deps.AddRange(newExport.SerializationBeforeCreateDependencies);
+                //deps.Add(newExport.ClassIndex);
+                //deps.Add(newExport.SuperIndex);
+
+                foreach (FPackageIndex dep in deps)
+                {
+                    if (dep.IsImport())
+                    {
+                        Import imp = dep.ToImport(this);
+                        if (imp.OuterIndex.IsImport())
+                        {
+                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
+                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                        }
+                    }
+                }
+            }
+
 
             // Export data
             if (SectionSixOffset > 0 && Exports.Count > 0)
