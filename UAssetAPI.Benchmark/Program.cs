@@ -116,6 +116,7 @@ namespace UAssetAPI.Benchmark
                     int thresholdToForceStatusUpdate = numTotal / 4;
                     int numAtLastStatusUpdate = 0;
                     double lastMsGaveStatusUpdate = double.MinValue;
+                    ISet<string> problemAssets = new HashSet<string>();
                     foreach (string assetPath in allTestingAssets2)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
@@ -129,13 +130,45 @@ namespace UAssetAPI.Benchmark
                         }
 
                         timer.Start();
-                        var loaded = new UAsset(assetPath, ver, mappings);
+                        UAsset loaded = null;
+                        try
+                        {
+                            loaded = new UAsset(assetPath, ver, mappings);
+                        }
+                        catch
+                        {
+                            timer.Stop();
+                            numExportsTotal += loaded?.Exports?.Count ?? 0;
+                            num += 1;
+                            loaded = null;
+                            continue;
+                        }
                         timer.Stop();
 
-                        if (loaded.VerifyBinaryEquality()) numPassedBinaryEq += 1;
-                        if (CheckAllExportsParsedCorrectly(loaded)) numPassedAllExports += 1;
+                        bool isProblemAsset = false;
+                        if (loaded.VerifyBinaryEquality())
+                        {
+                            numPassedBinaryEq += 1;
+                        }
+                        else
+                        {
+                            isProblemAsset = true;
+                        }
+
+                        if (CheckAllExportsParsedCorrectly(loaded))
+
+                        {
+                            numPassedAllExports += 1;
+                        }
+                        else
+                        {
+                            isProblemAsset = true;
+                        }
+
+                        if (isProblemAsset) problemAssets.Add(assetPath);
                         numExportsTotal += loaded.Exports.Count;
                         num += 1;
+                        loaded = null;
                     }
 
                     Console.WriteLine();
@@ -143,6 +176,19 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine(numExportsTotal + " exports were parsed (" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / numExportsTotal * 100) + " ms per 100 exports, on average)");
                     Console.WriteLine(numPassedBinaryEq + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedBinaryEq / (double)num * 100) + "%) passed binary equality");
                     Console.WriteLine(numPassedAllExports + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedAllExports / (double)num * 100) + "%) passed on all exports");
+
+                    if (problemAssets.Count > 0)
+                    {
+                        int i = 0;
+                        Console.WriteLine("\nList of problematic assets:");
+                        foreach (string problemAsset in problemAssets)
+                        {
+                            Console.WriteLine(problemAsset);
+                            i++;
+                            if (i >= 50) break;
+                        }
+                        if (problemAssets.Count > 50) Console.WriteLine("...");
+                    }
                     break;
                 case "testcpu":
                     int numCpuTrials = 5;
