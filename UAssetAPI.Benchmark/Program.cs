@@ -32,20 +32,6 @@ namespace UAssetAPI.Benchmark
             return (int)num + "." + (int)(num * 100 % 100);
         }
 
-        /// <summary>
-        /// Determines whether or not all exports in an asset have parsed correctly.
-        /// </summary>
-        /// <param name="tester">The asset to test.</param>
-        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
-        private static bool CheckAllExportsParsedCorrectly(UAsset tester)
-        {
-            foreach (Export testExport in tester.Exports)
-            {
-                if (testExport is RawExport) return false;
-            }
-            return true;
-        }
-
         private static HashSet<string> allowedExtensions = new HashSet<string>()
         {
             ".umap",
@@ -111,6 +97,7 @@ namespace UAssetAPI.Benchmark
                     int numPassedBinaryEq = 0;
                     int numPassedAllExports = 0;
                     int numExportsTotal = 0;
+                    int numPassedExportsTotal = 0;
                     timer.Restart();
 
                     int thresholdToForceStatusUpdate = numTotal / 4;
@@ -155,8 +142,21 @@ namespace UAssetAPI.Benchmark
                             isProblemAsset = true;
                         }
 
-                        if (CheckAllExportsParsedCorrectly(loaded))
+                        bool passedAllExports = true;
+                        foreach (Export testExport in loaded.Exports)
+                        {
+                            if (testExport is RawExport)
+                            {
+                                passedAllExports = false;
+                            }
+                            else
+                            {
+                                numPassedExportsTotal += 1;
+                            }
+                            numExportsTotal += 1;
+                        }
 
+                        if (passedAllExports)
                         {
                             numPassedAllExports += 1;
                         }
@@ -166,7 +166,6 @@ namespace UAssetAPI.Benchmark
                         }
 
                         if (isProblemAsset) problemAssets.Add(assetPath);
-                        numExportsTotal += loaded.Exports.Count;
                         num += 1;
                         loaded = null;
                     }
@@ -174,6 +173,7 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine();
                     Console.WriteLine(num + " assets parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms combined (" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / num) + " ms/asset, on average)");
                     Console.WriteLine(numExportsTotal + " exports were parsed (" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / numExportsTotal * 100) + " ms per 100 exports, on average)");
+                    Console.WriteLine(numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(numPassedExportsTotal / (double)numExportsTotal * 100) + "%) passed");
                     Console.WriteLine(numPassedBinaryEq + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedBinaryEq / (double)num * 100) + "%) passed binary equality");
                     Console.WriteLine(numPassedAllExports + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedAllExports / (double)num * 100) + "%) passed on all exports");
 
