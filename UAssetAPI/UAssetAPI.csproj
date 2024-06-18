@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{178417EC-1177-413E-BE85-C83AECD64279}</ProjectGuid>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>UAssetAPI</AssemblyTitle>
     <Product>UAssetAPI</Product>
     <Copyright>Copyright © Atenfyr 2023</Copyright>
@@ -39,8 +39,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="ZstdSharp.Port" Version="0.8.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="git_commit.txt">
