@@ -14,21 +14,64 @@ namespace UAssetAPI.UnrealTypes
         Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
     */
 
-    public class NiagaraVariablePropertyData : StructPropertyData 
+    public class NiagaraVariableBasePropertyData : PropertyData
     {
         [JsonProperty]
         public FName VariableName;
-        public int VariableOffset;
+        [JsonProperty]
+        public StructPropertyData TypeDef;
+
+        public NiagaraVariableBasePropertyData(FName name) : base(name)
+        {
+            //Value = new List<PropertyData>();
+        }
+
+        public NiagaraVariableBasePropertyData(FName name, FName forcedType) : base(name)
+        {
+            //StructType = forcedType;
+            //Value = new List<PropertyData>();
+        }
+
+        public NiagaraVariableBasePropertyData()
+        {
+
+        }
+
+        private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
+        public override bool HasCustomStructSerialization { get { return true; } }
+        public override FString PropertyType { get { return CurrentPropertyType; } }
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        {
+            VariableName = reader.ReadFName();
+            TypeDef = new StructPropertyData(FName.DefineDummy(reader.Asset, "TypeDef"), FName.DefineDummy(reader.Asset, "NiagaraTypeDefinition"));
+            TypeDef.Read(reader, false, 1, 0, serializationContext);
+        }
+
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        {
+            int here = (int)writer.BaseStream.Position;
+            writer.Write(VariableName);
+            TypeDef.Write(writer, false);
+            return (int)writer.BaseStream.Position - here;
+        }
+
+    }
+
+    public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData
+    {
+        [JsonProperty]
+        public byte[] VarData;
 
         public NiagaraVariablePropertyData(FName name) : base(name)
         {
-            Value = new List<PropertyData>();
+            //Value = new List<PropertyData>();
         }
 
         public NiagaraVariablePropertyData(FName name, FName forcedType) : base(name)
         {
-            StructType = forcedType;
-            Value = new List<PropertyData>();
+            //StructType = forcedType;
+            //Value = new List<PropertyData>();
         }
 
         public NiagaraVariablePropertyData()
@@ -37,38 +80,41 @@ namespace UAssetAPI.UnrealTypes
         }
 
         private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
-        //public override bool HasCustomStructSerialization { get { return true; } }
+        public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            VariableName = reader.ReadFName();
-            base.Read(reader, false, leng1, leng2);
-            VariableOffset = reader.ReadInt32();
+            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
+            int varDataSize = reader.ReadInt32();
+            VarData = reader.ReadBytes(varDataSize);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            int here = (int)writer.BaseStream.Position;
-            writer.Write(VariableName);
-            base.Write(writer, false);
-            writer.Write(VariableOffset);
-            return (int)writer.BaseStream.Position - here;
+            int sz = base.Write(writer, includeHeader, serializationContext);
+            writer.Write(VarData.Length); sz += sizeof(int);
+            writer.Write(VarData); sz += VarData.Length;
+            return sz;
         }
 
     }
 
-    public class NiagaraVariableWithOffsetPropertyData : NiagaraVariablePropertyData {
+    public class NiagaraVariableWithOffsetPropertyData : NiagaraVariableBasePropertyData
+   {
+
+        [JsonProperty]
+        public int VariableOffset;
 
         public NiagaraVariableWithOffsetPropertyData(FName name) : base(name)
         {
-            Value = new List<PropertyData>();
+            //Value = new List<PropertyData>();
         }
 
         public NiagaraVariableWithOffsetPropertyData(FName name, FName forcedType) : base(name)
         {
-            StructType = forcedType;
-            Value = new List<PropertyData>();
+            //StructType = forcedType;
+            //Value = new List<PropertyData>();
         }
 
         public NiagaraVariableWithOffsetPropertyData()
@@ -82,12 +128,16 @@ namespace UAssetAPI.UnrealTypes
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            base.Read(reader, includeHeader, leng1);
+            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
+            VariableOffset = reader.ReadInt32();
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            return base.Write(writer, includeHeader);
+            int sz = base.Write(writer, includeHeader);
+            writer.Write(VariableOffset);
+            sz += sizeof(int);
+            return sz;
         }
     }
 }
