@@ -37,7 +37,7 @@ namespace UAssetAPI.UnrealTypes
 
         }
 
-        private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
+        private static readonly FString CurrentPropertyType = new FString("NiagaraVariableBase");
         public override bool HasCustomStructSerialization { get { return true; } }
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
