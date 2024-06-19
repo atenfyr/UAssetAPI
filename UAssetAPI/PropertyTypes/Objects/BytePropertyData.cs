@@ -5,6 +5,7 @@ using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using System.Collections.Generic;
 using UAssetAPI.Unversioned;
+using System.Reflection.PortableExecutable;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -60,7 +61,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private void ReadCustom(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, bool canRepeat)
         {
-            if (includeHeader)
+            if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 EnumType = reader.ReadFName();
                 PropertyGuid = reader.ReadPropertyGuid();
@@ -122,7 +123,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            if (includeHeader)
+            if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(EnumType);
                 writer.WritePropertyGuid(PropertyGuid);

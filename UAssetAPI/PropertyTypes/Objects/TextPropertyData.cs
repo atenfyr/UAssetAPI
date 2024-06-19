@@ -101,8 +101,8 @@ namespace UAssetAPI.PropertyTypes.Objects
                         break;
                     case TextHistoryType.Base:
                         Namespace = reader.ReadFString();
-                        Value = reader.ReadFString();
-                        CultureInvariantString = reader.ReadFString();
+                        Value = reader.ReadFString(); // Key
+                        CultureInvariantString = reader.ReadFString(); // SourceString
                         break;
                     case TextHistoryType.StringTableEntry:
                         TableId = reader.ReadFName();
