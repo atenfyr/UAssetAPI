@@ -573,7 +573,7 @@ namespace UAssetAPI.Tests
             }
         }
 
-#if DEBUG_TRACING
+#if DEBUGTRACING
         [TestMethod]
         public void TestTracing()
         {
