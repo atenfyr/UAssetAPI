@@ -133,27 +133,38 @@ namespace UAssetAPI.Benchmark
                         timer.Stop();
 
                         bool isProblemAsset = false;
-                        if (loaded.VerifyBinaryEquality())
+                        try
                         {
-                            numPassedBinaryEq += 1;
-                        }
-                        else
-                        {
-                            isProblemAsset = true;
-                        }
-
-                        bool passedAllExports = true;
-                        foreach (Export testExport in loaded.Exports)
-                        {
-                            if (testExport is RawExport)
+                            if (loaded.VerifyBinaryEquality())
                             {
-                                passedAllExports = false;
+                                numPassedBinaryEq += 1;
                             }
                             else
                             {
-                                numPassedExportsTotal += 1;
+                                isProblemAsset = true;
                             }
-                            numExportsTotal += 1;
+                        }
+                        catch { isProblemAsset = true; }
+
+                        bool passedAllExports = true;
+                        try
+                        {
+                            foreach (Export testExport in loaded.Exports)
+                            {
+                                if (testExport is RawExport)
+                                {
+                                    passedAllExports = false;
+                                }
+                                else
+                                {
+                                    numPassedExportsTotal += 1;
+                                }
+                                numExportsTotal += 1;
+                            }
+                        }
+                        catch
+                        {
+                            passedAllExports = false;
                         }
 
                         if (passedAllExports)
