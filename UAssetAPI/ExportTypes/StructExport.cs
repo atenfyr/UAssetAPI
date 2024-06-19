@@ -114,7 +114,7 @@ namespace UAssetAPI.ExportTypes
             }
             catch (Exception ex)
             {
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
                 Debug.WriteLine(ex.StackTrace);
 #endif
             }

@@ -11,12 +11,15 @@
     <Product>UAssetAPI.Tests</Product>
     <Copyright>Copyright © Atenfyr 2023</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <Configurations>Debug;Release;Debug Verbose</Configurations>
+    <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Verbose|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVerbose|AnyCPU'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTracing|AnyCPU'">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

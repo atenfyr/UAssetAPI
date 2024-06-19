@@ -573,6 +573,7 @@ namespace UAssetAPI.Tests
             }
         }
 
+#if DEBUG_TRACING
         [TestMethod]
         public void TestTracing()
         {
@@ -589,6 +590,7 @@ namespace UAssetAPI.Tests
             //Assert.IsTrue(tester.VerifyBinaryEquality());
             //Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
         }
+#endif
 
         [AssemblyCleanup()]
         public static void AssemblyCleanup()

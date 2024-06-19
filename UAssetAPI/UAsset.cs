@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using PostSharp.Aspects;
-using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +11,11 @@ using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
+
+#if DEBUGTRACING
+using PostSharp.Aspects;
+using PostSharp.Serialization;
+#endif
 
 namespace UAssetAPI
 {
@@ -1950,14 +1953,16 @@ namespace UAssetAPI
     }
 }
 
+#if DEBUGTRACING
 namespace UAssetAPI.Trace {
     public class TraceStream : Stream
     {
         Stream BaseStream;
         public byte[] Data;
         public LoggingAspect.LogContext Context;
+        public string PathOnDisk;
 
-        public TraceStream(Stream BaseStream)
+        public TraceStream(Stream BaseStream, string pathOnDisk = null)
         {
             var start = BaseStream.Position;
             using (MemoryStream ms = new MemoryStream())
@@ -1967,7 +1972,9 @@ namespace UAssetAPI.Trace {
             }
             BaseStream.Position = start;
             this.BaseStream = BaseStream;
+            this.PathOnDisk = pathOnDisk;
         }
+
         public override bool CanRead { get => BaseStream.CanRead; }
         public override bool CanSeek => throw new NotImplementedException();
         public override bool CanWrite => throw new NotImplementedException();
@@ -2004,7 +2011,8 @@ namespace UAssetAPI.Trace {
     }
 
     [PSerializable]
-    public class LoggingAspect : OnMethodBoundaryAspect {
+    public class LoggingAspect : OnMethodBoundaryAspect
+    {
         public class ActionRead : IAction {
             public long Size;
         }
@@ -2070,7 +2078,8 @@ namespace UAssetAPI.Trace {
             }
         }
 
-        public class LogContext {
+        public class LogContext
+        {
             public uint SpanId = 0;
             public Span Root;
             public Span Current;
@@ -2086,8 +2095,15 @@ namespace UAssetAPI.Trace {
                 };
             }
 
-            public void Stop() {
-                using (StreamWriter writer = File.CreateText("trace.json")) {
+            public void Stop()
+            {
+                string outputPath = "trace.json";
+                if (!string.IsNullOrEmpty(UnderlyingStream.PathOnDisk))
+                {
+                    outputPath = Path.Combine(Path.GetDirectoryName(UnderlyingStream.PathOnDisk), Path.GetFileNameWithoutExtension(UnderlyingStream.PathOnDisk) + "-trace.json");
+                }
+
+                using (StreamWriter writer = File.CreateText(outputPath)) {
                     var trace = new Trace {
                         Data = UnderlyingStream.Data,
                         Root = Root,
@@ -2095,6 +2111,7 @@ namespace UAssetAPI.Trace {
                     writer.Write(JsonConvert.SerializeObject(trace, Formatting.None, new VersionConverter()));
                 }
             }
+
             public void OnEntry(MethodExecutionArgs args) {
                 var newSpan = new Span() {
                     Parent = Current,
@@ -2139,4 +2156,4 @@ namespace UAssetAPI.Trace {
         }
     }
 }
-
+#endif

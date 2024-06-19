@@ -4,24 +4,37 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>UAssetAPI</AssemblyTitle>
     <Product>UAssetAPI</Product>
-    <Copyright>Copyright © Atenfyr 2023</Copyright>
+    <Copyright>Copyright © Atenfyr 2024</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Configurations>Debug;Release;Debug Verbose</Configurations>
+    <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
     <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Verbose|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVerbose|AnyCPU'">
     <DebugType>full</DebugType>
     <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTracing|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DefineConstants>ADDTRACING</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+  <Choose>
+    <When Condition="$(DefineConstants.Contains('ADDTRACING'))">
+        <ItemGroup>
+          <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="2024.1.3" />
+        </ItemGroup>
+    </When>
+  </Choose>
   <Target Name="BeforeBuildMigrated" BeforeTargets="PreBuildEvent">
     <Exec ContinueOnError="true" ConsoleToMsBuild="true" Command="git rev-parse --short HEAD">
       <Output TaskParameter="ConsoleOutput" PropertyName="GitCommit" />
@@ -41,7 +54,6 @@
   <ItemGroup>
     <PackageReference Include="ZstdSharp.Port" Version="0.8.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PostSharp.Patterns.Diagnostics" Version="2024.1.3" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="git_commit.txt">
