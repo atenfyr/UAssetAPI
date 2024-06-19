@@ -15,14 +15,38 @@ namespace UAssetAPI.Benchmark
 {
     public class Program
     {
-        private static double BenchmarkAsset(string path, EngineVersion ver)
+        private static double BenchmarkAsset(string path, EngineVersion ver, Usmap mappings = null)
         {
             var timer = new Stopwatch();
             timer.Start();
-            new UAsset(path, ver);
+            var loaded = new UAsset(path, ver, mappings);
             timer.Stop();
 
+            bool passBinaryEq = false;
+            try
+            {
+                passBinaryEq = loaded.VerifyBinaryEquality();
+            }
+            catch { passBinaryEq = false; }
+
+            int numPassedExportsTotal = 0;
+            int numExportsTotal = 0;
+            try
+            {
+                foreach (Export testExport in loaded.Exports)
+                {
+                    if (testExport is not RawExport)
+                    {
+                        numPassedExportsTotal += 1;
+                    }
+                    numExportsTotal += 1;
+                }
+            }
+            catch { }
+
             Console.WriteLine(Path.GetFileName(path) + " parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
+            Console.WriteLine("Binary equality: " + (passBinaryEq ? "PASS" : "FAIL"));
+            Console.WriteLine(numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(100 * numPassedExportsTotal / (double)numExportsTotal) + ") passed");
             return timer.Elapsed.TotalMilliseconds;
         }
 
@@ -113,7 +137,10 @@ namespace UAssetAPI.Benchmark
                         {
                             lastMsGaveStatusUpdate = timer.Elapsed.TotalMilliseconds;
                             numAtLastStatusUpdate = num;
-                            Console.WriteLine("[" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms] " + num + "/" + numTotal + " assets parsed");
+                            Console.WriteLine("[" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / 1000) + " s] " + num + "/" + numTotal + " assets parsed" + new string(' ', 15));
+                            Console.Write("[" + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds / 1000) + " s] " + numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(numExportsTotal < 1 ? 0 : (numPassedExportsTotal / (double)numExportsTotal * 100)) + "%) passing" + new string(' ', 15));
+                            Console.CursorTop -= 1;
+                            Console.CursorLeft = 0;
                         }
 
                         timer.Start();
@@ -222,7 +249,10 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine("\n" + numCpuTrials + " CPU trials completed in " + trialSum + " ms (" + (trialSum / numCpuTrials) + " ms/trial)");
                     break;
                 case "test":
-                    BenchmarkAsset(args[1], (EngineVersion)Enum.Parse(typeof(EngineVersion), args[2]));
+                    // replace "!" for " " as stupid hack lol...
+                    Usmap singleMappings = null;
+                    if (args.Length >= 4) singleMappings = new Usmap(args[3].Replace("!", " "));
+                    BenchmarkAsset(args[1].Replace("!", " "), (EngineVersion)Enum.Parse(typeof(EngineVersion), args[2].Replace("!", " ")), singleMappings);
                     break;
                 case "guesscustomversion":
                     timer.Restart();
