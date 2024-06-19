@@ -137,6 +137,16 @@ namespace UAssetAPI
             return res.ToUnsignedInts();
         }
 
+        // adapted from UAssetGUI - see NOTICE.md
+        public static byte[] ConvertStringToByteArray(this string val)
+        {
+            if (string.IsNullOrWhiteSpace(val)) return Array.Empty<byte>();
+            string[] rawStringArr = val.Split(' ');
+            byte[] byteArr = new byte[rawStringArr.Length];
+            for (int i = 0; i < rawStringArr.Length; i++) byteArr[i] = Convert.ToByte(rawStringArr[i], 16);
+            return byteArr;
+        }
+
         public static uint[] ToUnsignedInts(this Guid value)
         {
             byte[] vals = value.ToByteArray();

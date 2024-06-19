@@ -36,7 +36,6 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            bool skipEndingFName = false;
             if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
                 if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))

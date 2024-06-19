@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UAssetAPI.PropertyTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
-using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -56,6 +51,10 @@ namespace UAssetAPI.UnrealTypes
             return (int)writer.BaseStream.Position - here;
         }
 
+        public override void FromString(string[] d, UAsset asset)
+        {
+            VariableName = FName.FromString(asset, d[0]);
+        }
     }
 
     public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData
@@ -98,6 +97,11 @@ namespace UAssetAPI.UnrealTypes
             return sz;
         }
 
+        public override void FromString(string[] d, UAsset asset)
+        {
+            base.FromString(d, asset);
+            VarData = d[2].ConvertStringToByteArray();
+        }
     }
 
     public class NiagaraVariableWithOffsetPropertyData : NiagaraVariableBasePropertyData
@@ -138,6 +142,13 @@ namespace UAssetAPI.UnrealTypes
             writer.Write(VariableOffset);
             sz += sizeof(int);
             return sz;
+        }
+
+        public override void FromString(string[] d, UAsset asset)
+        {
+            base.FromString(d, asset);
+            VariableOffset = 0;
+            if (int.TryParse(d[2], out int res)) VariableOffset = res;
         }
     }
 }
