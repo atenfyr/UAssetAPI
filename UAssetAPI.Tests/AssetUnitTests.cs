@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
@@ -545,6 +546,36 @@ namespace UAssetAPI.Tests
         public void TestTraditionalUE5_3()
         {
             TestUE5_3Subsection("Engine", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "Engine", "Engine.usmap")));
+        }
+
+        /// <summary>
+        /// In this test, we save and load a .pak file to verify functionality of the repak interop.
+        /// </summary>
+        [TestMethod]
+        public void TestRepak()
+        {
+            Console.WriteLine("Writing pak");
+            using (FileStream stream = new FileStream("output2.pak", FileMode.Create))
+            {
+                var builder = new PakBuilder();
+                var pak_writer = builder.Writer(stream);
+                pak_writer.WriteFile("a_file.txt", Encoding.ASCII.GetBytes("some file contents\n"));
+                pak_writer.WriteFile("another_file.txt", Encoding.ASCII.GetBytes("lorem ipsum\ndolor sit\n"));
+                pak_writer.WriteFile("nested/file.txt", Encoding.ASCII.GetBytes("hello world\n"));
+                pak_writer.WriteIndex();
+            }
+            Console.WriteLine("Reading pak");
+            using (FileStream stream = new FileStream("output2.pak", FileMode.Open))
+            {
+                var builder = new PakBuilder();
+                var pak_reader = builder.Reader(stream);
+                foreach (var file in pak_reader.Files())
+                {
+                    Console.WriteLine($"File: {file}");
+                    var bytes = pak_reader.Get(stream, file);
+                    Console.WriteLine($"Contents: {Encoding.ASCII.GetString(bytes)}");
+                }
+            }
         }
 
         public static MemoryStream PathToStream(string p)
