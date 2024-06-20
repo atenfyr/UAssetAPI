@@ -226,6 +226,9 @@ namespace UAssetAPI.Benchmark
                             if (i >= 50) break;
                         }
                         if (problemAssets.Count > 50) Console.WriteLine("...");
+
+                        File.WriteAllText("problematic_assets.txt", string.Join('\n', problemAssets));
+                        Console.WriteLine("Written to problematic_assets.txt");
                     }
                     break;
                 case "testcpu":
