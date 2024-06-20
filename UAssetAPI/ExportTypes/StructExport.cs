@@ -6,6 +6,10 @@ using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 
+#if DEBUGVERBOSE
+using System.Diagnostics;
+#endif
+
 namespace UAssetAPI.ExportTypes
 {
     /// <summary>
@@ -114,7 +118,7 @@ namespace UAssetAPI.ExportTypes
             }
             catch (Exception ex)
             {
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
                 Debug.WriteLine(ex.StackTrace);
 #endif
             }

@@ -13,6 +13,10 @@ using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
+#if DEBUGVERBOSE
+using System.Diagnostics;
+#endif
+
 namespace UAssetAPI
 {
     /// <summary>
@@ -35,7 +39,7 @@ namespace UAssetAPI
     /// </summary>
     public static class MainSerializer
     {
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
         private static PropertyData lastType;
 #endif
 
@@ -167,7 +171,7 @@ namespace UAssetAPI
                     while (!propertiesToTouch.Contains(firstNum) && firstNum <= lastNumAll) firstNum++;
                     if (firstNum > lastNumAll) break;
 
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
                     if (allFrags.Count > 0) Debug.WriteLine("W: " + allFrags[allFrags.Count - 1]);
 #endif
 
@@ -199,7 +203,7 @@ namespace UAssetAPI
                     lastNumBefore = lastNum;
                 }
                 allFrags[allFrags.Count - 1].bIsLast = true;
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
                 Debug.WriteLine("W: " + allFrags[allFrags.Count - 1]);
 #endif
             }
@@ -283,7 +287,7 @@ namespace UAssetAPI
             }
             else
             {
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
                 Debug.WriteLine("-----------");
                 Debug.WriteLine("Parsing unknown type " + type.ToString());
                 Debug.WriteLine("Length: " + leng);
@@ -318,7 +322,7 @@ namespace UAssetAPI
                 }
             }
 
-#if DEBUG_VERBOSE
+#if DEBUGVERBOSE
             lastType = data;
 #endif
 

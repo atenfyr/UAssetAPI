@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,11 @@ using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
+
+#if DEBUGTRACING
+using PostSharp.Aspects;
+using PostSharp.Serialization;
+#endif
 
 namespace UAssetAPI
 {
@@ -1946,3 +1952,221 @@ namespace UAssetAPI
         }
     }
 }
+
+#if DEBUGTRACING
+namespace UAssetAPI.Trace {
+    public class TraceStream : Stream
+    {
+        Stream BaseStream;
+        public byte[] Data;
+        public LoggingAspect.LogContext Context;
+        public string PathOnDisk;
+
+        public TraceStream(Stream BaseStream, string pathOnDisk = null)
+        {
+            var start = BaseStream.Position;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BaseStream.CopyTo(ms);
+                this.Data = ms.ToArray();
+            }
+            BaseStream.Position = start;
+            this.BaseStream = BaseStream;
+            this.PathOnDisk = pathOnDisk;
+        }
+
+        public override bool CanRead { get => BaseStream.CanRead; }
+        public override bool CanSeek => throw new NotImplementedException();
+        public override bool CanWrite => throw new NotImplementedException();
+        public override long Length { get => BaseStream.Length; }
+        public override long Position { get => BaseStream.Position; set => throw new NotImplementedException(); }
+
+        public override void Flush()
+        {
+            BaseStream.Flush();
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            Context.OnRead(count);
+            return BaseStream.Read(buffer, offset, count);
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            var pos = BaseStream.Seek(offset, origin);
+            Context.OnSeek(pos);
+            return pos;
+        }
+
+        public override void SetLength(long value)
+        {
+            BaseStream.SetLength(value);
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            BaseStream.Write(buffer, offset, count);
+        }
+    }
+
+    [PSerializable]
+    public class LoggingAspect : OnMethodBoundaryAspect
+    {
+        public class ActionRead : IAction {
+            public long Size;
+        }
+        public class ActionSeek : IAction {
+            public long Position;
+        }
+        public class ActionSpan : IAction {
+            public Span Span;
+        }
+
+        public interface IAction {}
+
+        public class Span
+        {
+            [JsonIgnore]
+            public Span Parent;
+            [JsonProperty("name")]
+            public string Name;
+            [JsonProperty("actions")]
+            public IList<IAction> Actions;
+        }
+
+        public class Trace
+        {
+            [JsonProperty("data")]
+            public byte[] Data;
+            [JsonProperty("root")]
+            public Span Root;
+        }
+
+        public class VersionConverter : JsonConverter<IAction>
+        {
+            public override void WriteJson(JsonWriter writer, IAction value, JsonSerializer serializer)
+            {
+                switch (value)
+                {
+                    case ActionSeek s:
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("Seek");
+                        writer.WriteValue(s.Position);
+                        writer.WriteEndObject();
+                        break;
+                    case ActionRead s:
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("Read");
+                        writer.WriteValue(s.Size);
+                        writer.WriteEndObject();
+                        break;
+                    case ActionSpan s:
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("Span");
+                        serializer.Serialize(writer, s.Span);
+                        writer.WriteEndObject();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                };
+            }
+
+            public override IAction ReadJson(JsonReader reader, Type objectType, IAction existingValue, bool hasExistingValue, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class LogContext
+        {
+            public uint SpanId = 0;
+            public Span Root;
+            public Span Current;
+            TraceStream UnderlyingStream;
+
+            public LogContext(TraceStream stream) {
+                UnderlyingStream = stream;
+                stream.Context = this;
+                Root = Current = new Span() {
+                    Parent = null,
+                    Name = "root",
+                    Actions = new List<IAction>(),
+                };
+            }
+
+            /// <summary>
+            /// Stop logging.
+            /// </summary>
+            /// <returns>Path to the saved .json file.</returns>
+            public string Stop()
+            {
+                string outputPath = "trace.json";
+                if (!string.IsNullOrEmpty(UnderlyingStream.PathOnDisk))
+                {
+                    outputPath = Path.Combine(Path.GetDirectoryName(UnderlyingStream.PathOnDisk), Path.GetFileNameWithoutExtension(UnderlyingStream.PathOnDisk) + "-trace.json");
+                }
+
+                using (StreamWriter writer = File.CreateText(outputPath)) {
+                    var trace = new Trace {
+                        Data = UnderlyingStream.Data,
+                        Root = Root,
+                    };
+                    writer.Write(JsonConvert.SerializeObject(trace, Formatting.None, new VersionConverter()));
+                }
+
+                return outputPath;
+            }
+
+            public void OnEntry(MethodExecutionArgs args) {
+                var newSpan = new Span() {
+                    Parent = Current,
+                    Name = $"{args.Method.ReflectedType.FullName}.{args.Method.Name}",
+                    Actions = new List<IAction>(),
+                };
+                Current.Actions.Add(new ActionSpan() { Span = newSpan });
+                Current = newSpan;
+            }
+            public void OnExit(MethodExecutionArgs args) {
+                Current = Current.Parent;
+            }
+            public void OnRead(long size) {
+                Current.Actions.Add(new ActionRead() {
+                    Size = size,
+                });
+            }
+            public void OnSeek(long position) {
+                Current.Actions.Add(new ActionSeek() {
+                    Position = position,
+                });
+            }
+        }
+
+        static LogContext Context = null;
+
+        public override void OnEntry(MethodExecutionArgs args) {
+            if (Context != null) Context.OnEntry(args);
+        }
+        public override void OnSuccess(MethodExecutionArgs args) {}
+        public override void OnExit(MethodExecutionArgs args) {
+            if (Context != null) Context.OnExit(args);
+        }
+        public override void OnException(MethodExecutionArgs args) {}
+
+        public static void Start(TraceStream stream) {
+            LoggingAspect.Context = new LogContext(stream);
+        }
+
+        /// <summary>
+        /// Stop logging.
+        /// </summary>
+        /// <returns>Path to the saved .json file.</returns>
+        public static string Stop()
+        {
+            string res = LoggingAspect.Context.Stop();
+            LoggingAspect.Context = null;
+            return res;
+        }
+    }
+}
+#endif
