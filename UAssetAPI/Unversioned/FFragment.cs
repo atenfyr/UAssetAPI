@@ -84,12 +84,13 @@ namespace UAssetAPI.Unversioned
 
         }
 
-        public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes)
+        public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes, int firstNum = -1) // specifying firstNum is not usually necessary
         {
             SkipNum = skipNum;
             ValueNum = valueNum;
             this.bIsLast = bIsLast;
             this.bHasAnyZeroes = bHasAnyZeroes;
+            this.FirstNum = firstNum;
         }
     }
 }

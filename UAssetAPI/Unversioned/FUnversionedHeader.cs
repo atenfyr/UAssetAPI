@@ -101,7 +101,8 @@ namespace UAssetAPI.Unversioned
             }
             else
             {
-                res = new byte[UAPUtils.DivideAndRoundUp(NumBits, 32) * 4];
+                int numWords = UAPUtils.DivideAndRoundUp(NumBits, 32);
+                res = new byte[numWords * sizeof(int)];
             }
 
             ZeroMask.CopyTo(res, 0);

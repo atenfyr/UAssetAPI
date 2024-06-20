@@ -147,12 +147,12 @@ namespace UAssetAPI
             int lastNumAll = int.MinValue;
             HashSet<int> propertiesToTouch = new HashSet<int>();
             Dictionary<int, PropertyData> propMap = new Dictionary<int, PropertyData>();
-            Dictionary<int, bool> zeroProps = new Dictionary<int, bool>();
+            HashSet<int> zeroProps = new HashSet<int>();
             foreach (PropertyData entry in data)
             {
                 if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
-                zeroProps[idx] = entry.CanBeZero(asset) && entry.IsZero;
+                if (entry.CanBeZero(asset) && entry.IsZero) zeroProps.Add(idx);
 
                 if (idx < firstNumAll) firstNumAll = idx;
                 if (idx > lastNumAll) lastNumAll = idx;
@@ -165,7 +165,7 @@ namespace UAssetAPI
             {
                 while (true)
                 {
-                    bool hasAnyZeros = false;
+                    HashSet<int> fragmentHasAnyZeros = new HashSet<int>(); // add 0 if any zeros from 0 to (FFragment.ValueMax-1), 1 if any zeros from FFragment.ValueMax to (FFragment.ValueMax*2-1), etc.
 
                     int firstNum = lastNumBefore + 1;
                     while (!propertiesToTouch.Contains(firstNum) && firstNum <= lastNumAll) firstNum++;
@@ -178,14 +178,18 @@ namespace UAssetAPI
                     int lastNum = firstNum;
                     while (propertiesToTouch.Contains(lastNum))
                     {
-                        if (zeroProps[lastNum]) hasAnyZeros = true;
+                        if (zeroProps.Contains(lastNum))
+                        {
+                            int valueNum = lastNum - firstNum + 1;
+                            fragmentHasAnyZeros.Add(valueNum / FFragment.ValueMax);
+                        }
                         sortedProps.Add(propMap[lastNum]);
 
                         lastNum++;
                     }
                     lastNum--;
 
-                    var newFrag = FFragment.GetFromBounds(lastNumBefore, firstNum, lastNum, hasAnyZeros, false);
+                    var newFrag = FFragment.GetFromBounds(lastNumBefore, firstNum, lastNum, fragmentHasAnyZeros.Contains(0), false);
 
                     // add extra 127s if we went over the max for either skip or value
                     while (newFrag.SkipNum > FFragment.SkipMax)
@@ -193,10 +197,13 @@ namespace UAssetAPI
                         allFrags.Add(new FFragment(FFragment.SkipMax, 0, false, false));
                         newFrag.SkipNum -= FFragment.SkipMax;
                     }
+                    int fragIdx = 0;
                     while (newFrag.ValueNum > FFragment.ValueMax)
                     {
-                        allFrags.Add(new FFragment(0, FFragment.ValueMax, false, false));
+                        allFrags.Add(new FFragment(0, FFragment.ValueMax, false, fragmentHasAnyZeros.Contains(fragIdx), firstNum + FFragment.ValueMax * fragIdx));
                         newFrag.ValueNum -= FFragment.ValueMax;
+                        newFrag.FirstNum += FFragment.ValueMax;
+                        newFrag.bHasAnyZeroes = fragmentHasAnyZeros.Contains(++fragIdx);
                     }
 
                     allFrags.Add(newFrag);
@@ -235,7 +242,7 @@ namespace UAssetAPI
                 {
                     for (int i = 0; i < frag.ValueNum; i++)
                     {
-                        bool isZero = zeroProps[frag.FirstNum + i];
+                        bool isZero = zeroProps.Contains(frag.FirstNum + i);
                         if (!isZero) bHasNonZeroValues = true;
                         zeroMaskList.Add(isZero);
                     }
