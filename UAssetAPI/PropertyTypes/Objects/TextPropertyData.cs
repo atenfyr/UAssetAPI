@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.IO;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using UAssetAPI.CustomVersions;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes.EngineEnums;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -17,6 +16,86 @@ namespace UAssetAPI.PropertyTypes.Objects
         Immutable = 1 << 3,
         InitializedFromString = 1 << 4
     }
+
+    public class FFormatArgumentValue
+    {
+        public EFormatArgumentType Type;
+        public object Value;
+
+        public FFormatArgumentValue()
+        {
+
+        }
+
+        public FFormatArgumentValue(EFormatArgumentType type, object value)
+        {
+            Type = type;
+            Value = value;
+        }
+
+        public void Read(AssetBinaryReader reader)
+        {
+            Type = (EFormatArgumentType)reader.ReadByte();
+            switch (Type)
+            {
+                case EFormatArgumentType.Int:
+                    Value = reader.ReadInt32();
+                    break;
+                case EFormatArgumentType.UInt:
+                    Value = reader.ReadUInt32();
+                    break;
+                case EFormatArgumentType.Double:
+                    Value = reader.ReadDouble();
+                    break;
+                case EFormatArgumentType.Float:
+                    Value = reader.ReadSingle();
+                    break;
+                case EFormatArgumentType.Text:
+                    var val = new TextPropertyData(FName.DefineDummy(reader.Asset, "Value"));
+                    val.Read(reader, false, 1, 0, PropertySerializationContext.Normal);
+                    Value = val;
+                    break;
+                default:
+                    throw new NotImplementedException("EFormatArgumentType type " + Type.ToString() + " is not implemented for reading");
+            }
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            int sz = 0;
+            writer.Write((byte)Type); sz += sizeof(byte);
+            switch (Type)
+            {
+                case EFormatArgumentType.Int:
+                    writer.Write((int)Value);
+                    sz += sizeof(int);
+                    break;
+                case EFormatArgumentType.UInt:
+                    writer.Write((uint)Value);
+                    sz += sizeof(uint);
+                    break;
+                case EFormatArgumentType.Double:
+                    writer.Write((double)Value);
+                    sz += sizeof(double);
+                    break;
+                case EFormatArgumentType.Float:
+                    writer.Write((float)Value);
+                    sz += sizeof(float);
+                    break;
+                case EFormatArgumentType.Text:
+                    int here = (int)writer.BaseStream.Position;
+                    var val = (TextPropertyData)Value;
+                    val.Write(writer, false);
+                    sz += (int)writer.BaseStream.Position - here;
+                    break;
+                default:
+                    throw new NotImplementedException("EFormatArgumentType type " + Type.ToString() + " is not implemented for writing");
+            }
+
+            return sz;
+        }
+    }
+
 
     /// <summary>
     /// Describes an FText.
@@ -39,6 +118,12 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>The source string for this FText. In the Unreal Engine, this is also known as SourceString.</summary>
         [JsonProperty]
         public FString CultureInvariantString = null;
+
+        // OrderedFormat
+        [JsonProperty]
+        public TextPropertyData SourceFmt;
+        [JsonProperty]
+        public FFormatArgumentValue[] Arguments;
 
         public bool ShouldSerializeTableId()
         {
@@ -111,6 +196,17 @@ namespace UAssetAPI.PropertyTypes.Objects
                     case TextHistoryType.RawText:
                         Value = reader.ReadFString();
                         break;
+                    case TextHistoryType.OrderedFormat:
+                        SourceFmt = new TextPropertyData(FName.DefineDummy(reader.Asset, "SourceFmt"));
+                        SourceFmt.Read(reader, false, 1, 0, serializationContext);
+                        int ArgumentsSize = reader.ReadInt32();
+                        Arguments = new FFormatArgumentValue[ArgumentsSize];
+                        for (int i = 0; i < ArgumentsSize; i++)
+                        {
+                            Arguments[i] = new FFormatArgumentValue();
+                            Arguments[i].Read(reader);
+                        }
+                        break;
                     default:
                         throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString() + " @ " + reader.BaseStream.Position);
                 }
@@ -173,6 +269,14 @@ namespace UAssetAPI.PropertyTypes.Objects
                         break;
                     case TextHistoryType.RawText:
                         writer.Write(Value);
+                        break;
+                    case TextHistoryType.OrderedFormat:
+                        SourceFmt.Write(writer, false, serializationContext);
+                        writer.Write(Arguments.Length);
+                        for (int i = 0; i < Arguments.Length; i++)
+                        {
+                            Arguments[i].Write(writer);
+                        }
                         break;
                     default:
                         throw new NotImplementedException("Unimplemented writer for " + HistoryType.ToString());
