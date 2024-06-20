@@ -150,25 +150,45 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = reader.ReadSingle();
             Tangent = new FMovieSceneTangentData();
             Tangent.Read(reader);
-            InterpMode = (ERichCurveInterpMode)reader.ReadSByte();
-            TangentMode = (ERichCurveTangentMode)reader.ReadSByte();
-
-            if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25)
-            {
-                padding = reader.ReadBytes(3);
-            }
-            else
-            {
-                padding = new byte[0];
-            }
+            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(3) : [];
         }
 
         public void Write(AssetBinaryWriter writer)
         {
             writer.Write(Value);
             Tangent.Write(writer);
-            writer.Write((sbyte)InterpMode);
-            writer.Write((sbyte)TangentMode);
+            writer.Write((byte)InterpMode);
+            writer.Write((byte)TangentMode);
+            writer.Write(padding);
+        }
+    }
+
+    public class FMovieSceneDoubleValue
+    {
+        public double Value;
+        public FMovieSceneTangentData Tangent;
+        public ERichCurveInterpMode InterpMode;
+        public ERichCurveTangentMode TangentMode;
+        public byte[] padding;
+
+        public void Read(AssetBinaryReader reader)
+        {
+            Value = reader.ReadDouble();
+            Tangent = new FMovieSceneTangentData();
+            Tangent.Read(reader);
+            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(3) : [];
+        }
+
+        public void Write(AssetBinaryWriter writer)
+        {
+            writer.Write(Value);
+            Tangent.Write(writer);
+            writer.Write((byte)InterpMode);
+            writer.Write((byte)TangentMode);
             writer.Write(padding);
         }
     }
@@ -191,14 +211,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
 
             // guessing this happens when `PaddingByte` gets added to FMovieSceneFloatValue but requires a lot more testing
-            if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25)
-            {
-                padding = reader.ReadBytes(2);
-            }
-            else
-            {
-                padding = new byte[0];
-            }
+            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(2) : [];
         }
 
         public void Write(AssetBinaryWriter writer)
@@ -213,27 +226,27 @@ namespace UAssetAPI.PropertyTypes.Structs
     }
 
     // ScriptStruct MovieScene.MovieSceneFloatChannel
-    // Size: 0xa0 (Inherited: 0x08)
     public class FMovieSceneFloatChannel
     {
-        public ERichCurveExtrapolation PreInfinityExtrap; // 0x08(0x01)
-        public ERichCurveExtrapolation PostInfinityExtrap; // 0x09(0x01)
-        public FFrameNumber[] Times; // 0x10(0x10)
-        public FMovieSceneFloatValue[] Values; // 0x20(0x10)
-        public float DefaultValue; // 0x30(0x04)
-        public bool bHasDefaultValue; // 0x34(0x01)
-        //FMovieSceneKeyHandleMap KeyHandles; // 0x38(0x60)
-        public FFrameRate TickResolution; // 0x98(0x08)
+        public ERichCurveExtrapolation PreInfinityExtrap;
+        public ERichCurveExtrapolation PostInfinityExtrap;
+        public FFrameNumber[] Times;
+        public FMovieSceneFloatValue[] Values;
+        public float DefaultValue;
+        public bool bHasDefaultValue;
+        public FFrameRate TickResolution;
+        public bool bShowCurve;
 
         public FMovieSceneFloatChannel()
         {
             PreInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
             PostInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
-            Times = new FFrameNumber[0];
-            Values = new FMovieSceneFloatValue[0];
+            Times = [];
+            Values = [];
             DefaultValue = 0.0f;
             bHasDefaultValue = false;
             TickResolution = new FFrameRate(60000, 1);
+            bShowCurve = false;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.CustomVersions;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.UnrealTypes.EngineEnums;
 
@@ -42,8 +43,8 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             Value = new FMovieSceneFloatChannel();
 
-            Value.PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadSByte();
-            Value.PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadSByte();
+            Value.PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
+            Value.PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
 
             TimesStructLength = reader.ReadInt32();
             TimesLength = reader.ReadInt32();
@@ -68,6 +69,8 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value.bHasDefaultValue = HasDefaultValue == 0 ? false : true;
 
             Value.TickResolution = new FFrameRate(reader.ReadInt32(), reader.ReadInt32());
+
+            Value.bShowCurve = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve && reader.ReadInt32() != 0;
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -98,6 +101,11 @@ namespace UAssetAPI.PropertyTypes.Structs
             writer.Write(Value.bHasDefaultValue == false ? 0 : HasDefaultValue);
             writer.Write(Value.TickResolution.Numerator);
             writer.Write(Value.TickResolution.Denominator);
+
+            if (writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve)
+            {
+                writer.Write(Value.bShowCurve ? 1 : 0);
+            }
 
             return (int)writer.BaseStream.Position - here;
         }
