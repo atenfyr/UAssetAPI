@@ -64,11 +64,6 @@
     <None Include="Resources\AC7Key.bin" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="RePak">
-      <HintPath>RePak.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="repak_bind.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
