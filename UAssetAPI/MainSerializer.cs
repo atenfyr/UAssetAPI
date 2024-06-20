@@ -13,6 +13,10 @@ using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
+#if DEBUGVERBOSE
+using System.Diagnostics;
+#endif
+
 namespace UAssetAPI
 {
     /// <summary>

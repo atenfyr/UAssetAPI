@@ -2095,7 +2095,11 @@ namespace UAssetAPI.Trace {
                 };
             }
 
-            public void Stop()
+            /// <summary>
+            /// Stop logging.
+            /// </summary>
+            /// <returns>Path to the saved .json file.</returns>
+            public string Stop()
             {
                 string outputPath = "trace.json";
                 if (!string.IsNullOrEmpty(UnderlyingStream.PathOnDisk))
@@ -2110,6 +2114,8 @@ namespace UAssetAPI.Trace {
                     };
                     writer.Write(JsonConvert.SerializeObject(trace, Formatting.None, new VersionConverter()));
                 }
+
+                return outputPath;
             }
 
             public void OnEntry(MethodExecutionArgs args) {
@@ -2150,9 +2156,16 @@ namespace UAssetAPI.Trace {
         public static void Start(TraceStream stream) {
             LoggingAspect.Context = new LogContext(stream);
         }
-        public static void Stop() {
-            LoggingAspect.Context.Stop();
+
+        /// <summary>
+        /// Stop logging.
+        /// </summary>
+        /// <returns>Path to the saved .json file.</returns>
+        public static string Stop()
+        {
+            string res = LoggingAspect.Context.Stop();
             LoggingAspect.Context = null;
+            return res;
         }
     }
 }

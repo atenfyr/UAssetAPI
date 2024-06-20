@@ -6,6 +6,10 @@ using UAssetAPI.FieldTypes;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 
+#if DEBUGVERBOSE
+using System.Diagnostics;
+#endif
+
 namespace UAssetAPI.ExportTypes
 {
     /// <summary>
