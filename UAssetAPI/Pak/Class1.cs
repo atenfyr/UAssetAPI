@@ -185,7 +185,7 @@ public class PakReader : IDisposable
 
         if (result != 0)
         {
-            throw new Exception("Failed to get file");
+            return Array.Empty<byte>();
         }
 
         byte[] buffer = new byte[length];
