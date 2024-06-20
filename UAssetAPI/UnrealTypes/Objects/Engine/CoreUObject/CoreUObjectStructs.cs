@@ -8,29 +8,30 @@ namespace UAssetAPI.UnrealTypes
         Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
     */
 
-    public class FFrameNumber
+    public struct FFrameNumber
     {
-		public int Value;
+        public int Value;
 
-		public FFrameNumber(int value)
+        public FFrameNumber(int value)
         {
-			Value = value;
-		}
+            Value = value;
+        }
 
-		public FFrameNumber()
+        public FFrameNumber()
         {
 
-		}
+        }
     }
 
-	public class FFrameRate
+    public struct FFrameRate
     {
-		public int Numerator; // 0x00(0x04)
-		public int Denominator; // 0x04(0x04)
+        public int Numerator; // 0x00(0x04)
+        public int Denominator; // 0x04(0x04)
 
         public FFrameRate()
         {
-
+            Numerator = 0;
+            Denominator = 0;
         }
 
         public FFrameRate(int numerator, int denominator)
@@ -38,12 +39,30 @@ namespace UAssetAPI.UnrealTypes
             Numerator = numerator;
             Denominator = denominator;
         }
+
+        public override string ToString()
+        {
+            return Numerator.ToString() + "/" + Denominator.ToString();
+        }
+
+        public static bool TryParse(string s, out FFrameRate result)
+        {
+            result = new FFrameRate();
+            string[] parts = s.Trim().Split('/');
+
+            if (parts.Length != 2) return false;
+            if (!int.TryParse(parts[0], out int numer)) return false;
+            if (!int.TryParse(parts[1], out int denom)) return false;
+
+            result = new FFrameRate(numer, denom);
+            return true;
+        }
     }
 
-    public class FFrameTime
+    public struct FFrameTime
     {
-		public FFrameNumber FrameNumber; // 0x00(0x04)
-		public float SubFrame; // 0x04(0x04)
+        public FFrameNumber FrameNumber; // 0x00(0x04)
+        public float SubFrame; // 0x04(0x04)
 
         public FFrameTime()
         {
@@ -61,8 +80,8 @@ namespace UAssetAPI.UnrealTypes
     // Size: 0x10 (Inherited: 0x00)
     public class FQualifiedFrameTime
     {
-		public FFrameTime Time; // 0x00(0x08)
-		public FFrameRate Rate; // 0x08(0x08)
+        public FFrameTime Time; // 0x00(0x08)
+        public FFrameRate Rate; // 0x08(0x08)
 
         public FQualifiedFrameTime()
         {
@@ -81,11 +100,11 @@ namespace UAssetAPI.UnrealTypes
     // Size: 0x14 (Inherited: 0x00)
     public class FTimecode
     {
-		public int Hours; // 0x00(0x04)
-		public int Minutes; // 0x04(0x04)
-		public int Seconds; // 0x08(0x04)
-		public int Frames; // 0x0c(0x04)
-		public bool bDropFrameFormat; // 0x10(0x01)
+        public int Hours; // 0x00(0x04)
+        public int Minutes; // 0x04(0x04)
+        public int Seconds; // 0x08(0x04)
+        public int Frames; // 0x0c(0x04)
+        public bool bDropFrameFormat; // 0x10(0x01)
         //char pad_11[0x3]; // 0x11(0x03)
 
         public FTimecode()
@@ -119,7 +138,7 @@ namespace UAssetAPI.UnrealTypes
     public struct FFrameNumberRange
     {
         public FFrameNumberRangeBound LowerBound; // 0x00(0x08)
-	    public FFrameNumberRangeBound UpperBound; // 0x08(0x08)
+        public FFrameNumberRangeBound UpperBound; // 0x08(0x08)
 
         public FFrameNumberRange(AssetBinaryReader reader)
         {

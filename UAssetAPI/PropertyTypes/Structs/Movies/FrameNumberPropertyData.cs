@@ -46,7 +46,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public override void FromString(string[] d, UAsset asset)
         {
-            int.TryParse(d[0], out Value.Value);
+            if (int.TryParse(d[0], out int val)) Value = new FFrameNumber(val);
         }
     }
 }
