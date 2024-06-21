@@ -31,8 +31,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new FMovieSceneFloatValue();
-            Value.Read(reader);
+            Value = new FMovieSceneFloatValue(reader);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)

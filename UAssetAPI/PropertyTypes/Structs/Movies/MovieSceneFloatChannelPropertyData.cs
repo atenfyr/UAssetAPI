@@ -3,121 +3,114 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.UnrealTypes.EngineEnums;
 
-namespace UAssetAPI.PropertyTypes.Structs
+namespace UAssetAPI.PropertyTypes.Structs;
+
+/*
+    The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
+    Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
+*/
+
+public class MovieSceneFloatChannelPropertyData : PropertyData<FMovieSceneFloatChannel>
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public int TimesStructLength;
+    public int TimesLength;
 
-    public class MovieSceneFloatChannelPropertyData : PropertyData<FMovieSceneFloatChannel>
+    public int ValuesStructLength;
+    public int ValuesLength;
+    public int HasDefaultValue;
+
+
+    public MovieSceneFloatChannelPropertyData(FName name) : base(name) { }
+
+    public MovieSceneFloatChannelPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneFloatChannel");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        public int TimesStructLength;
-        public int TimesLength;
-
-        public int ValuesStructLength;
-        public int ValuesLength;
-        public int HasDefaultValue;
-
-
-        public MovieSceneFloatChannelPropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        public MovieSceneFloatChannelPropertyData()
+        Value = new FMovieSceneFloatChannel();
+
+        Value.PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
+        Value.PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
+
+        TimesStructLength = reader.ReadInt32();
+        TimesLength = reader.ReadInt32();
+
+        Value.Times = new FFrameNumber[TimesLength];
+        for (int j = 0; j < TimesLength; j++)
         {
-            
+            Value.Times[j] = new FFrameNumber(reader.ReadInt32());
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneFloatChannel");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
+        ValuesStructLength = reader.ReadInt32();
+        ValuesLength = reader.ReadInt32();
+        Value.Values = new FMovieSceneFloatValue[ValuesLength];
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        for (int j = 0; j < ValuesLength; j++)
         {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            Value = new FMovieSceneFloatChannel();
-
-            Value.PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
-            Value.PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
-
-            TimesStructLength = reader.ReadInt32();
-            TimesLength = reader.ReadInt32();
-
-            Value.Times = new FFrameNumber[TimesLength];
-            for (int j = 0; j < TimesLength; j++)
-            {
-                Value.Times[j] = new FFrameNumber(reader.ReadInt32());
-            }
-
-            ValuesStructLength = reader.ReadInt32();
-            ValuesLength = reader.ReadInt32();
-            Value.Values = new FMovieSceneFloatValue[ValuesLength];
-
-            for (int j = 0; j < ValuesLength; j++)
-            {
-                Value.Values[j].Read(reader);
-            }
-
-            Value.DefaultValue = reader.ReadSingle();
-            HasDefaultValue = reader.ReadInt32();
-            Value.bHasDefaultValue = HasDefaultValue == 0 ? false : true;
-
-            Value.TickResolution = new FFrameRate(reader.ReadInt32(), reader.ReadInt32());
-
-            Value.bShowCurve = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve && reader.ReadInt32() != 0;
+            Value.Values[j] = new FMovieSceneFloatValue(reader);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        Value.DefaultValue = reader.ReadSingle();
+        HasDefaultValue = reader.ReadInt32();
+        Value.bHasDefaultValue = HasDefaultValue == 0 ? false : true;
+
+        Value.TickResolution = new FFrameRate(reader.ReadInt32(), reader.ReadInt32());
+
+        Value.bShowCurve = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve && reader.ReadInt32() != 0;
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-
-            int here = (int)writer.BaseStream.Position;
-
-            writer.Write((sbyte)Value.PreInfinityExtrap);
-            writer.Write((sbyte)Value.PostInfinityExtrap);
-
-            writer.Write(TimesStructLength);
-            writer.Write(TimesLength);
-            for (int j = 0; j < TimesLength; j++) {
-                writer.Write(Value.Times[j].Value); 
-            }
-
-            writer.Write(ValuesStructLength);
-            writer.Write(ValuesLength);
-            for (int j = 0; j < ValuesLength; j++) {
-                Value.Values[j].Write(writer);
-            }
-
-            writer.Write(Value.DefaultValue);
-            writer.Write(Value.bHasDefaultValue == false ? 0 : HasDefaultValue);
-            writer.Write(Value.TickResolution.Numerator);
-            writer.Write(Value.TickResolution.Denominator);
-
-            if (writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve)
-            {
-                writer.Write(Value.bShowCurve ? 1 : 0);
-            }
-
-            return (int)writer.BaseStream.Position - here;
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public override void FromString(string[] d, UAsset asset)
-        {
+        int here = (int)writer.BaseStream.Position;
 
+        writer.Write((byte)Value.PreInfinityExtrap);
+        writer.Write((byte)Value.PostInfinityExtrap);
+
+        writer.Write(TimesStructLength);
+        writer.Write(TimesLength);
+        for (int j = 0; j < TimesLength; j++) {
+            writer.Write(Value.Times[j].Value); 
         }
 
-        public override string ToString()
-        {
-            return "";
+        writer.Write(ValuesStructLength);
+        writer.Write(ValuesLength);
+        for (int j = 0; j < ValuesLength; j++) {
+            Value.Values[j].Write(writer);
         }
+
+        writer.Write(Value.DefaultValue);
+        writer.Write(Value.bHasDefaultValue == false ? 0 : HasDefaultValue);
+        writer.Write(Value.TickResolution.Numerator);
+        writer.Write(Value.TickResolution.Denominator);
+
+        if (writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve)
+        {
+            writer.Write(Value.bShowCurve ? 1 : 0);
+        }
+
+        return (int)writer.BaseStream.Position - here;
+    }
+
+    public override void FromString(string[] d, UAsset asset)
+    {
+
+    }
+
+    public override string ToString()
+    {
+        return "";
     }
 }
