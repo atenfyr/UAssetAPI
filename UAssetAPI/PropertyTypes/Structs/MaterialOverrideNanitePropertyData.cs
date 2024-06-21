@@ -29,6 +29,8 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         private static readonly FString CurrentPropertyType = new FString("MaterialOverrideNanite");
         public override bool HasCustomStructSerialization { get { return true; } }
+        public override bool AlsoHasRegularStructSerialization { get { return true; } }
+
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -48,6 +50,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             bSerializeAsCookedData = reader.ReadInt32() == 1;
             if (bSerializeAsCookedData) OverrideMaterial = FPackageIndex.FromRawIndex(reader.ReadInt32());
+            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)

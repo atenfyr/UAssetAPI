@@ -26,6 +26,7 @@ namespace UAssetAPI
     {
         internal Type PropertyType;
         internal bool HasCustomStructSerialization;
+        internal bool AlsoHasRegularStructSerialization;
         internal Func<FName, PropertyData> Creator;
 
         public RegistryEntry()
@@ -97,6 +98,8 @@ namespace UAssetAPI
                     if (returnedPropType == null) continue;
                     bool? returnedHasCustomStructSerialization = currentPropertyDataType.GetProperty("HasCustomStructSerialization")?.GetValue(testInstance, null) as bool?;
                     if (returnedHasCustomStructSerialization == null) continue;
+                    bool? returnedAlsoHasRegularStructSerialization = currentPropertyDataType.GetProperty("AlsoHasRegularStructSerialization")?.GetValue(testInstance, null) as bool?;
+                    if (returnedAlsoHasRegularStructSerialization == null) continue;
                     bool? returnedShouldBeRegistered = currentPropertyDataType.GetProperty("ShouldBeRegistered")?.GetValue(testInstance, null) as bool?;
                     if (returnedShouldBeRegistered == null) continue;
 
@@ -105,6 +108,7 @@ namespace UAssetAPI
                         RegistryEntry res = new RegistryEntry();
                         res.PropertyType = currentPropertyDataType;
                         res.HasCustomStructSerialization = (bool)returnedHasCustomStructSerialization;
+                        res.AlsoHasRegularStructSerialization = (bool)returnedAlsoHasRegularStructSerialization;
 
                         var nameParam = Expression.Parameter(typeof(FName));
                         res.Creator = Expression.Lambda<Func<FName, PropertyData>>(

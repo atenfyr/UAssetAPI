@@ -146,6 +146,10 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         public virtual bool HasCustomStructSerialization { get { return false; } }
         /// <summary>
+        /// If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+        /// </summary>
+        public virtual bool AlsoHasRegularStructSerialization { get { return false; } }
+        /// <summary>
         /// The type of this property as an FString.
         /// </summary>
         public virtual FString PropertyType { get { return FallbackPropertyType; } }

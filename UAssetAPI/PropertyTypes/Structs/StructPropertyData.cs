@@ -46,9 +46,9 @@ namespace UAssetAPI.PropertyTypes.Structs
             Value = new List<PropertyData> { data };
         }
 
-        private void ReadNTPL(AssetBinaryReader reader)
+        private void ReadNTPL(AssetBinaryReader reader, bool resetValue = true)
         {
-            List<PropertyData> resultingList = new List<PropertyData>();
+            List<PropertyData> resultingList = resetValue ? new List<PropertyData>() : Value;
             PropertyData data = null;
 
             var unversionedHeader = new FUnversionedHeader(reader);
@@ -107,6 +107,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             if (targetEntry != null && hasCustomStructSerialization)
             {
                 ReadOnce(reader, targetEntry.PropertyType, reader.BaseStream.Position);
+                if (targetEntry.AlsoHasRegularStructSerialization) ReadNTPL(reader, false);
             }
             else
             {
@@ -126,9 +127,9 @@ namespace UAssetAPI.PropertyTypes.Structs
             base.ResolveAncestries(asset, ancestrySoFar);
         }
 
-        private int WriteOnce(AssetBinaryWriter writer)
+        private int WriteOnce(AssetBinaryWriter writer, bool AlsoHasRegularStructSerialization)
         {
-            if (Value.Count > 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
+            if (Value.Count > 1 && !AlsoHasRegularStructSerialization) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
 
             if (Value.Count == 0)
             {
@@ -141,12 +142,18 @@ namespace UAssetAPI.PropertyTypes.Structs
             return Value[0].Write(writer, false);
         }
 
-        private int WriteNTPL(AssetBinaryWriter writer)
+        private int WriteNTPL(AssetBinaryWriter writer, bool skipFirst = false)
         {
             int here = (int)writer.BaseStream.Position;
             if (Value != null)
             {
                 List<PropertyData> allDat = Value;
+                if (skipFirst)
+                {
+                    allDat = new List<PropertyData>();
+                    allDat.AddRange(Value);
+                    allDat.RemoveAt(0);
+                }
                 MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, writer.Asset)?.Write(writer);
                 foreach (var t in allDat)
                 {
@@ -157,12 +164,13 @@ namespace UAssetAPI.PropertyTypes.Structs
             return (int)writer.BaseStream.Position - here;
         }
 
-        internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, out RegistryEntry targetEntry)
+        internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, out RegistryEntry targetEntry, out bool AlsoHasRegularStructSerialization)
         {
             targetEntry = null;
             string structTypeVal = StructType?.Value?.Value;
             if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
             bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
+            AlsoHasRegularStructSerialization = targetEntry != null && targetEntry.AlsoHasRegularStructSerialization;
 
             if (structTypeVal == "FloatRange") hasCustomStructSerialization = Value.Count == 1 && Value[0] is FloatRangePropertyData;
             if (structTypeVal == "RichCurveKey" && Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
@@ -180,8 +188,13 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, out RegistryEntry targetEntry);
-            if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
+            bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, out RegistryEntry targetEntry, out bool AlsoHasRegularStructSerialization);
+            if (targetEntry != null && hasCustomStructSerialization)
+            {
+                int sz = WriteOnce(writer, AlsoHasRegularStructSerialization);
+                if (AlsoHasRegularStructSerialization) sz += WriteNTPL(writer, true);
+                return sz;
+            }
             if (Value.Count == 0 && !SerializeNone) return 0;
             return WriteNTPL(writer);
         }
@@ -194,7 +207,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             {
                 return base.CanBeZero(asset);
             }
-            return !DetermineIfSerializeWithCustomStructSerialization(asset, out _) && base.CanBeZero(asset);
+            return !DetermineIfSerializeWithCustomStructSerialization(asset, out _, out __) && base.CanBeZero(asset);
         }*/
 
         public override void FromString(string[] d, UAsset asset)
