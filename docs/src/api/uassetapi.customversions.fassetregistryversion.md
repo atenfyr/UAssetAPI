@@ -9,7 +9,7 @@ public enum FAssetRegistryVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FAssetRegistryVersion](./uassetapi.customversions.fassetregistryversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -33,5 +33,3 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | RemoveAssetPathFNames | 15 | Asset bundles are serialized as FTopLevelAssetPath instead of FSoftObjectPath, deprecated FAssetData::ObjectPath |
 | AddedHeader | 16 | Added header with bFilterEditorOnlyData flag |
 | AssetPackageDataHasExtension | 17 | Added Extension to AssetPackageData. |
-| VersionPlusOne | 18 |  |
-| LatestVersion | 17 |  |

@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FFrameNumber
+public struct FFrameNumber
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFrameNumber](./uassetapi.unrealtypes.fframenumber.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FFrameNumber](./uassetapi.unrealtypes.fframenumber.md)
 
 ## Fields
 
@@ -21,7 +21,7 @@ public int Value;
 ### **FFrameNumber(Int32)**
 
 ```csharp
-public FFrameNumber(int value)
+FFrameNumber(int value)
 ```
 
 #### Parameters
@@ -31,5 +31,5 @@ public FFrameNumber(int value)
 ### **FFrameNumber()**
 
 ```csharp
-public FFrameNumber()
+FFrameNumber()
 ```

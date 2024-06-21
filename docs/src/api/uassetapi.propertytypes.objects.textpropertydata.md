@@ -53,6 +53,18 @@ The source string for this FText. In the Unreal Engine, this is also known as So
 public FString CultureInvariantString;
 ```
 
+### **SourceFmt**
+
+```csharp
+public TextPropertyData SourceFmt;
+```
+
+### **Arguments**
+
+```csharp
+public FFormatArgumentValue[] Arguments;
+```
+
 ### **Name**
 
 The name of this property.
@@ -165,6 +177,18 @@ Determines whether or not this particular property has custom serialization with
 
 ```csharp
 public bool HasCustomStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **AlsoHasRegularStructSerialization**
+
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+
+```csharp
+public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

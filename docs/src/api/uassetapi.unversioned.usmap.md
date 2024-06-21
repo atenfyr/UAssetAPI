@@ -80,6 +80,14 @@ Pre-computed CityHash64 map for all relevant strings
 public Dictionary<ulong, string> CityHash64Map;
 ```
 
+### **FailedExtensions**
+
+List of extensions that failed to parse.
+
+```csharp
+public List<string> FailedExtensions;
+```
+
 ### **PathsAlreadyProcessedForSchemas**
 
 ```csharp

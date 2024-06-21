@@ -9,14 +9,12 @@ public enum ObjectVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [ObjectVersion](./uassetapi.unrealtypes.objectversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
 | Name | Value | Description |
 | --- | --: | --- |
-| UNKNOWN | 0 |  |
-| VER_UE4_OLDEST_LOADABLE_PACKAGE | 214 |  |
 | VER_UE4_BLUEPRINT_VARS_NOT_READ_ONLY | 215 | Removed restriction on blueprint-exposed variables from being read-only |
 | VER_UE4_STATIC_MESH_STORE_NAV_COLLISION | 216 | Added manually serialized element to UStaticMesh (precalculated nav collision) |
 | VER_UE4_ATMOSPHERIC_FOG_DECAY_NAME_CHANGE | 217 | Changed property name for atmospheric fog |
@@ -57,9 +55,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_REFACTOR_CHARACTER_CROUCH | 252 | Refactor character crouching |
 | VER_UE4_SMALLER_DEBUG_MATERIALSHADER_UNIFORM_EXPRESSIONS | 253 | Trimmed down material shader debug information. |
 | VER_UE4_APEX_CLOTH | 254 | APEX Clothing |
-| VER_UE4_SAVE_COLLISIONRESPONSE_PER_CHANNEL | 255 | Change Collision Channel to save only modified ones than all of them.
-            Note!!! Once we pass this CL, we can rename FCollisionResponseContainer enum values.
-            We should rename to match ECollisionChannel |
+| VER_UE4_SAVE_COLLISIONRESPONSE_PER_CHANNEL | 255 | Change Collision Channel to save only modified ones than all of them. Note!!! Once we pass this CL, we can rename FCollisionResponseContainer enum values. We should rename to match ECollisionChannel |
 | VER_UE4_ADDED_LANDSCAPE_SPLINE_EDITOR_MESH | 256 | Added Landscape Spline editor meshes |
 | VER_UE4_CHANGED_MATERIAL_REFACTION_TYPE | 257 | Fixup input expressions for reading from refraction material attributes. |
 | VER_UE4_REFACTOR_PROJECTILE_MOVEMENT | 258 | Refactor projectile movement, along with some other movement component work. |
@@ -117,7 +113,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_REFERENCE_SKELETON_REFACTOR | 310 | Convert USkeleton and FBoneContrainer to using FReferenceSkeleton. |
 | VER_UE4_K2NODE_REFERENCEGUIDS | 311 | Adding references to variable, function, and macro nodes to be able to update to renamed values |
 | VER_UE4_FIXUP_ROOTBONE_PARENT | 312 | Fix up the 0th bone's parent bone index. |
-| VER_UE4_TEXT_RENDER_COMPONENTS_WORLD_SPACE_SIZING | 313 |  |
 | VER_UE4_MATERIAL_INSTANCE_BASE_PROPERTY_OVERRIDES_PHASE_2 | 314 | Material Instances overriding base material properties #2. |
 | VER_UE4_CLASS_NOTPLACEABLE_ADDED | 315 | CLASS_Placeable becomes CLASS_NotPlaceable |
 | VER_UE4_WORLD_LEVEL_INFO_LOD_LIST | 316 | Added LOD info list to a world tile description |
@@ -152,8 +147,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_FOLIAGE_COLLISION | 345 | After implementing foliage collision, need to disable collision on old foliage instances |
 | VER_UE4_SKY_BENT_NORMAL | 346 | Added sky bent normal to indirect lighting cache |
 | VER_UE4_LANDSCAPE_COLLISION_DATA_COOKING | 347 | Added cooking for landscape collision data |
-| VER_UE4_MORPHTARGET_CPU_TANGENTZDELTA_FORMATCHANGE | 348 | Convert CPU tangent Z delta to vector from PackedNormal since we don't get any benefit other than memory
-            we still convert all to FVector in CPU time whenever any calculation |
+| VER_UE4_MORPHTARGET_CPU_TANGENTZDELTA_FORMATCHANGE | 348 | Convert CPU tangent Z delta to vector from PackedNormal since we don't get any benefit other than memory we still convert all to FVector in CPU time whenever any calculation |
 | VER_UE4_SOFT_CONSTRAINTS_USE_MASS | 349 | Soft constraint limits will implicitly use the mass of the bodies |
 | VER_UE4_REFLECTION_DATA_IN_PACKAGES | 350 | Reflection capture data saved in packages |
 | VER_UE4_FOLIAGE_MOVABLE_MOBILITY | 351 | Fix up old foliage components to have movable mobility (superseded by VER_UE4_FOLIAGE_STATIC_LIGHTING_SUPPORT) |
@@ -162,11 +156,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_FLIP_MATERIAL_COORDS | 354 | Permanently flip and scale material expression coordinates |
 | VER_UE4_MEMBERREFERENCE_IN_PINTYPE | 355 | PinSubCategoryMemberReference added to FEdGraphPinType |
 | VER_UE4_VEHICLES_UNIT_CHANGE | 356 | Vehicles use Nm for Torque instead of cm and RPM instead of rad/s |
-| VER_UE4_ANIMATION_REMOVE_NANS | 357 | removes NANs from all animations when loaded
-            now importing should detect NaNs, so we should not have NaNs in source data |
+| VER_UE4_ANIMATION_REMOVE_NANS | 357 | removes NANs from all animations when loaded now importing should detect NaNs, so we should not have NaNs in source data |
 | VER_UE4_SKELETON_ASSET_PROPERTY_TYPE_CHANGE | 358 | Change skeleton preview attached assets property type |
-| VER_UE4_FIX_BLUEPRINT_VARIABLE_FLAGS | 359 | Fix some blueprint variables that have the CPF_DisableEditOnTemplate flag set
-            when they shouldn't |
+| VER_UE4_FIX_BLUEPRINT_VARIABLE_FLAGS | 359 | Fix some blueprint variables that have the CPF_DisableEditOnTemplate flag set when they shouldn't |
 | VER_UE4_VEHICLES_UNIT_CHANGE2 | 360 | Vehicles use Nm for Torque instead of cm and RPM instead of rad/s part two (missed conversion for some variables |
 | VER_UE4_UCLASS_SERIALIZE_INTERFACES_AFTER_LINKING | 361 | Changed order of interface class serialization |
 | VER_UE4_STATIC_MESH_SCREEN_SIZE_LODS | 362 | Change from LOD distances to display factors |
@@ -206,11 +198,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_RENAME_SM3_TO_ES3_1 | 396 | Rename SM3 to ES3_1 and updates featurelevel material node selector |
 | VER_UE4_DEPRECATE_UMG_STYLE_ASSETS | 397 | Deprecated separate style assets for use in UMG |
 | VER_UE4_POST_DUPLICATE_NODE_GUID | 398 | Duplicating Blueprints will regenerate NodeGuids after this version |
-| VER_UE4_RENAME_CAMERA_COMPONENT_VIEW_ROTATION | 399 | Rename USpringArmComponent::bUseControllerViewRotation to bUsePawnViewRotation,
-            Rename UCameraComponent::bUseControllerViewRotation to bUsePawnViewRotation (and change the default value) |
+| VER_UE4_RENAME_CAMERA_COMPONENT_VIEW_ROTATION | 399 | Rename USpringArmComponent::bUseControllerViewRotation to bUsePawnViewRotation, Rename UCameraComponent::bUseControllerViewRotation to bUsePawnViewRotation (and change the default value) |
 | VER_UE4_CASE_PRESERVING_FNAME | 400 | Changed FName to be case preserving |
-| VER_UE4_RENAME_CAMERA_COMPONENT_CONTROL_ROTATION | 401 | Rename USpringArmComponent::bUsePawnViewRotation to bUsePawnControlRotation,
-            Rename UCameraComponent::bUsePawnViewRotation to bUsePawnControlRotation |
+| VER_UE4_RENAME_CAMERA_COMPONENT_CONTROL_ROTATION | 401 | Rename USpringArmComponent::bUsePawnViewRotation to bUsePawnControlRotation, Rename UCameraComponent::bUsePawnViewRotation to bUsePawnControlRotation |
 | VER_UE4_FIX_REFRACTION_INPUT_MASKING | 402 | Fix bad refraction material attribute masks |
 | VER_UE4_GLOBAL_EMITTER_SPAWN_RATE_SCALE | 403 | A global spawn rate for emitters. |
 | VER_UE4_CLEAN_DESTRUCTIBLE_SETTINGS | 404 | Cleanup destructible mesh settings |
@@ -332,5 +322,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_NON_OUTER_PACKAGE_IMPORT | 520 | Added import that can have package different than their outer |
 | VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS | 521 | Added DependencyFlags to AssetRegistry |
 | VER_UE4_CORRECT_LICENSEE_FLAG | 522 | Fixed corrupt licensee flag in 4.26 assets |
-| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 523 |  |
 | VER_UE4_AUTOMATIC_VERSION | 522 | The newest specified version of the Unreal Engine. |

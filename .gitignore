@@ -1,5 +1,6 @@
 .vs
 docs/book
+docs/XMLDoc2Markdown
 packages
 TestResults
 UAssetAPI/git_commit.txt

@@ -7,7 +7,7 @@ public enum FSequencerObjectVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FSequencerObjectVersion](./uassetapi.customversions.fsequencerobjectversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -27,5 +27,3 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ModifyLinearKeysForOldInterp | 11 | Change the linear keys so they act the old way and interpolate always. |
 | SerializeFloatChannelCompletely | 12 | Full Manual serialization of float channel |
 | SpawnableImprovements | 13 | Set ContinuouslyRespawn to false by default, added FMovieSceneSpawnable::bNetAddressableName |
-| VersionPlusOne | 14 |  |
-| LatestVersion | 13 |  |

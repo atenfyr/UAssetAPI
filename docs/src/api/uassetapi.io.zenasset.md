@@ -95,6 +95,14 @@ The corresponding mapping data for the game that this asset is from. Optional un
 public Usmap Mappings;
 ```
 
+### **CustomSerializationFlags**
+
+List of custom serialization flags, used to override certain optional behavior in how UAssetAPI serializes assets.
+
+```csharp
+public CustomSerializationFlags CustomSerializationFlags;
+```
+
 ### **UseSeparateBulkDataFiles**
 
 Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
@@ -270,7 +278,7 @@ A valid set of mappings for the game that this asset is from. Not required unles
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -300,7 +308,7 @@ Does this asset uses separate bulk data files (.uexp, .ubulk)?
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -346,7 +354,7 @@ A valid set of mappings for the game that this asset is from. Not required unles
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -379,7 +387,7 @@ Does this asset uses separate bulk data files (.uexp, .ubulk)?
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -475,7 +483,7 @@ An array of export indexes that must be read, overriding entries in the manualSk
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when  is unspecified.
+Thrown when [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -509,4 +517,4 @@ The path on disk to write the asset to.
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when  is unspecified.
+Thrown when [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.

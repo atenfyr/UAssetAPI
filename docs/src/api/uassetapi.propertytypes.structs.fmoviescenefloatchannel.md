@@ -52,6 +52,12 @@ public bool bHasDefaultValue;
 public FFrameRate TickResolution;
 ```
 
+### **bShowCurve**
+
+```csharp
+public bool bShowCurve;
+```
+
 ## Constructors
 
 ### **FMovieSceneFloatChannel()**

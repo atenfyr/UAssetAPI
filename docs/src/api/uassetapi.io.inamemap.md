@@ -93,3 +93,13 @@ int AddNameReference(FString name, bool forceAddDuplicates)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **CanCreateDummies()**
+
+```csharp
+bool CanCreateDummies()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>

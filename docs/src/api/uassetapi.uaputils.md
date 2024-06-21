@@ -190,6 +190,20 @@ public static UInt32[] InterpretAsGuidAndConvertToUnsignedInts(string value)
 
 [UInt32[]](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
+### **ConvertStringToByteArray(String)**
+
+```csharp
+public static Byte[] ConvertStringToByteArray(string val)
+```
+
+#### Parameters
+
+`val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+#### Returns
+
+[Byte[]](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+
 ### **ToUnsignedInts(Guid)**
 
 ```csharp

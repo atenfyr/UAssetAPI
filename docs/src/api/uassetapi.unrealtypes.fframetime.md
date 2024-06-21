@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FFrameTime
+public struct FFrameTime
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFrameTime](./uassetapi.unrealtypes.fframetime.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FFrameTime](./uassetapi.unrealtypes.fframetime.md)
 
 ## Fields
 
@@ -27,13 +27,13 @@ public float SubFrame;
 ### **FFrameTime()**
 
 ```csharp
-public FFrameTime()
+FFrameTime()
 ```
 
 ### **FFrameTime(FFrameNumber, Single)**
 
 ```csharp
-public FFrameTime(FFrameNumber frameNumber, float subFrame)
+FFrameTime(FFrameNumber frameNumber, float subFrame)
 ```
 
 #### Parameters

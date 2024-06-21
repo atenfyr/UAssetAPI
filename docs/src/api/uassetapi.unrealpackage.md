@@ -35,6 +35,14 @@ The corresponding mapping data for the game that this asset is from. Optional un
 public Usmap Mappings;
 ```
 
+### **CustomSerializationFlags**
+
+List of custom serialization flags, used to override certain optional behavior in how UAssetAPI serializes assets.
+
+```csharp
+public CustomSerializationFlags CustomSerializationFlags;
+```
+
 ### **UseSeparateBulkDataFiles**
 
 Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
@@ -334,6 +342,19 @@ The index of the new value in the name map. If the value already existed in the 
 [ArgumentException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentexception)<br>
 Thrown when forceAddDuplicates is false and the value provided is null or empty.
 
+### **CanCreateDummies()**
+
+Whether or not we can create dummies in this name map. If false, attempting to define a dummy will append to the name map instead.
+
+```csharp
+public bool CanCreateDummies()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+A boolean.
+
 ### **PathToStream(String)**
 
 Creates a MemoryStream from an asset path.
@@ -632,7 +653,7 @@ An array of export indexes that must be read, overriding entries in the manualSk
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [UnrealPackage.ObjectVersion](./uassetapi.unrealpackage.md#objectversion) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -666,4 +687,4 @@ The path on disk to write the asset to.
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when  is unspecified.
+Thrown when [UnrealPackage.ObjectVersion](./uassetapi.unrealpackage.md#objectversion) is unspecified.

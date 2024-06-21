@@ -9,7 +9,7 @@ public enum FFrameworkObjectVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FFrameworkObjectVersion](./uassetapi.customversions.fframeworkobjectversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -53,5 +53,3 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | BlueprintGeneratedClassIsAlwaysAuthoritative | 35 | No longer serialize the legacy flag that indicates this state, as it is now implied since we don't serialize the skeleton CDO |
 | EnforceBlueprintFunctionVisibility | 36 | Enforce visibility of blueprint functions - e.g. raise an error if calling a private function from another blueprint: |
 | StoringUCSSerializationIndex | 37 | ActorComponents now store their serialization index |
-| VersionPlusOne | 38 |  |
-| LatestVersion | 37 |  |

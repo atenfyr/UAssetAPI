@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FFrameRate
+public struct FFrameRate
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFrameRate](./uassetapi.unrealtypes.fframerate.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FFrameRate](./uassetapi.unrealtypes.fframerate.md)
 
 ## Fields
 
@@ -27,13 +27,13 @@ public int Denominator;
 ### **FFrameRate()**
 
 ```csharp
-public FFrameRate()
+FFrameRate()
 ```
 
 ### **FFrameRate(Int32, Int32)**
 
 ```csharp
-public FFrameRate(int numerator, int denominator)
+FFrameRate(int numerator, int denominator)
 ```
 
 #### Parameters
@@ -41,3 +41,31 @@ public FFrameRate(int numerator, int denominator)
 `numerator` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 `denominator` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+## Methods
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **TryParse(String, FFrameRate&)**
+
+```csharp
+bool TryParse(string s, FFrameRate& result)
+```
+
+#### Parameters
+
+`s` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`result` [FFrameRate&](./uassetapi.unrealtypes.fframerate&.md)<br>
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>

@@ -9,7 +9,7 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game
 
 ## Features
 - Low-level read/write capability for a wide variety of cooked and uncooked .uasset files from ~4.13 to 5.3
-- Support for more than 80 property types and 10 export types
+- Support for more than 100 property types and 12 export types
 - Support for JSON export and import to a proprietary format that maintains binary equality
 - Support for reading and writing raw Kismet (blueprint) bytecode
 - Reading capability for the unofficial .usmap format to parse ambiguous and unversioned properties

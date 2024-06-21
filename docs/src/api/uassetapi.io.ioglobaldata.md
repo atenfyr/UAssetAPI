@@ -186,3 +186,16 @@ The index of the new value in the name map. If the value already existed in the 
 
 [ArgumentException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentexception)<br>
 Thrown when forceAddDuplicates is false and the value provided is null or empty.
+
+### **CanCreateDummies()**
+
+Whether or not we can create dummies in this name map. If false, attempting to define a dummy will append to the name map instead.
+
+```csharp
+public bool CanCreateDummies()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+A boolean.

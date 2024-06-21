@@ -9,7 +9,7 @@ public enum EExprToken
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EExprToken](./uassetapi.kismet.bytecode.eexprtoken.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -56,28 +56,18 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_StructConst | 47 | An arbitrary UStruct constant |
 | EX_EndStructConst | 48 | End of UStruct constant |
 | EX_SetArray | 49 | Set the value of arbitrary array |
-| EX_EndArray | 50 |  |
 | EX_PropertyConst | 51 | FProperty constant. |
 | EX_UnicodeStringConst | 52 | Unicode string constant. |
 | EX_Int64Const | 53 | 64-bit integer constant. |
 | EX_UInt64Const | 54 | 64-bit unsigned integer constant. |
 | EX_DoubleConst | 55 | Double-precision floating point constant. |
 | EX_PrimitiveCast | 56 | A casting operator for primitives which reads the type as the subsequent byte |
-| EX_SetSet | 57 |  |
-| EX_EndSet | 58 |  |
-| EX_SetMap | 59 |  |
-| EX_EndMap | 60 |  |
-| EX_SetConst | 61 |  |
-| EX_EndSetConst | 62 |  |
-| EX_MapConst | 63 |  |
-| EX_EndMapConst | 64 |  |
 | EX_StructMemberContext | 66 | Context expression to address a property within a struct |
 | EX_LetMulticastDelegate | 67 | Assignment to a multi-cast delegate |
 | EX_LetDelegate | 68 | Assignment to a delegate |
 | EX_LocalVirtualFunction | 69 | Special instructions to quickly call a virtual function that we know is going to run only locally |
 | EX_LocalFinalFunction | 70 | Special instructions to quickly call a final function that we know is going to run only locally |
 | EX_LocalOutVariable | 72 | local out (pass by reference) function parameter |
-| EX_DeprecatedOp4A | 74 |  |
 | EX_InstanceDelegate | 75 | const reference to a delegate or normal function object |
 | EX_PushExecutionFlow | 76 | push an address on to the execution flow stack for future execution when a EX_PopExecutionFlow is executed. Execution continues on normally and doesn't change to the pushed address. |
 | EX_PopExecutionFlow | 77 | continue execution at the last address previously pushed onto the execution flow stack. |
@@ -89,24 +79,16 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_EndOfScript | 83 | Last byte in script code |
 | EX_CrossInterfaceCast | 84 | Converting an interface variable reference to native interface variable |
 | EX_InterfaceToObjCast | 85 | Converting an interface variable reference to an object |
-| EX_WireTracepoint | 90 | Trace point.  Only observed in the editor, otherwise it behaves like EX_Nothing. |
+| EX_WireTracepoint | 90 | Trace point. Only observed in the editor, otherwise it behaves like EX_Nothing. |
 | EX_SkipOffsetConst | 91 | A CodeSizeSkipOffset constant |
 | EX_AddMulticastDelegate | 92 | Adds a delegate to a multicast delegate's targets |
 | EX_ClearMulticastDelegate | 93 | Clears all delegates in a multicast target |
-| EX_Tracepoint | 94 | Trace point.  Only observed in the editor, otherwise it behaves like EX_Nothing. |
+| EX_Tracepoint | 94 | Trace point. Only observed in the editor, otherwise it behaves like EX_Nothing. |
 | EX_LetObj | 95 | assign to any object ref pointer |
 | EX_LetWeakObjPtr | 96 | assign to a weak object pointer |
 | EX_BindDelegate | 97 | bind object and name to delegate |
 | EX_RemoveMulticastDelegate | 98 | Remove a delegate from a multicast delegate's targets |
 | EX_CallMulticastDelegate | 99 | Call multicast delegate |
-| EX_LetValueOnPersistentFrame | 100 |  |
-| EX_ArrayConst | 101 |  |
-| EX_EndArrayConst | 102 |  |
-| EX_SoftObjectConst | 103 |  |
 | EX_CallMath | 104 | static pure function from on local call space |
-| EX_SwitchValue | 105 |  |
 | EX_InstrumentationEvent | 106 | Instrumentation event |
-| EX_ArrayGetByRef | 107 |  |
 | EX_ClassSparseDataVariable | 108 | Sparse data variable |
-| EX_FieldPathConst | 109 |  |
-| EX_Max | 256 |  |

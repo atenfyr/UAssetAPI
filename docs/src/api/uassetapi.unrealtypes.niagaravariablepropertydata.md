@@ -3,13 +3,19 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class NiagaraVariablePropertyData : UAssetAPI.PropertyTypes.Structs.StructPropertyData, System.ICloneable
+public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md) → [NiagaraVariablePropertyData](./uassetapi.unrealtypes.niagaravariablepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [NiagaraVariableBasePropertyData](./uassetapi.unrealtypes.niagaravariablebasepropertydata.md) → [NiagaraVariablePropertyData](./uassetapi.unrealtypes.niagaravariablepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
+
+### **VarData**
+
+```csharp
+public Byte[] VarData;
+```
 
 ### **VariableName**
 
@@ -17,28 +23,10 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 public FName VariableName;
 ```
 
-### **VariableOffset**
+### **TypeDef**
 
 ```csharp
-public int VariableOffset;
-```
-
-### **StructType**
-
-```csharp
-public FName StructType;
-```
-
-### **SerializeNone**
-
-```csharp
-public bool SerializeNone;
-```
-
-### **StructGUID**
-
-```csharp
-public Guid StructGUID;
+public StructPropertyData TypeDef;
 ```
 
 ### **Name**
@@ -103,6 +91,16 @@ public object Tag;
 
 ## Properties
 
+### **HasCustomStructSerialization**
+
+```csharp
+public bool HasCustomStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **PropertyType**
 
 ```csharp
@@ -112,18 +110,6 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
-
-### **Value**
-
-The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
-
-```csharp
-public List<PropertyData> Value { get; set; }
-```
-
-#### Property Value
-
-[List&lt;PropertyData&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 
 ### **RawValue**
 
@@ -147,12 +133,12 @@ public bool ShouldBeRegistered { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **HasCustomStructSerialization**
+### **AlsoHasRegularStructSerialization**
 
-Determines whether or not this particular property has custom serialization within a StructProperty.
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
 
 ```csharp
-public bool HasCustomStructSerialization { get; }
+public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value
@@ -238,3 +224,15 @@ public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializa
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+public void FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>

@@ -2,16 +2,17 @@
 
 ### Prerequisites
 * Basic C# knowledge
-* Visual Studio 2022 or later
+* Visual Studio 2022 or later, with .NET 8.0 SDK
 * [A copy of UAssetAPI](./build.md)
 
 ### Basic Project Setup
 In this short guide, we will go over the very basics of parsing assets through UAssetAPI.
 
-UAssetAPI targets [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0), which means that UAssetAPI can be safely used with a variety of .NET Framework and .NET Core versions. We will start off in this specific guide by creating a new C# Console App project in Visual Studio, and we will target .NET Framework 4.7.2:
+UAssetAPI targets [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), which means you will need the .NET 8.0 SDK to use UAssetAPI. We will start off in this specific guide by creating a new C# Console App project in Visual Studio, making sure we specifically target .NET 8.0:
 
 ![](./img/basic1.png)
 ![](./img/basic2.png)
+![](./img/basic2_1.png)
 
 Once we have entered Visual Studio, we must add a new reference to our UAssetAPI.dll file. This can be done by right-clicking under "References," clicking "Add Reference," clicking "Browse" in the bottom right of the Reference Manager window, browsing to your UAssetAPI.dll file on disk, and clicking "OK".
 

@@ -68,10 +68,10 @@ public int LastNum { get; }
 public FFragment()
 ```
 
-### **FFragment(Int32, Int32, Boolean, Boolean)**
+### **FFragment(Int32, Int32, Boolean, Boolean, Int32)**
 
 ```csharp
-public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes)
+public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes, int firstNum)
 ```
 
 #### Parameters
@@ -83,6 +83,8 @@ public FFragment(int skipNum, int valueNum, bool bIsLast, bool bHasAnyZeroes)
 `bIsLast` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 `bHasAnyZeroes` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+`firstNum` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ## Methods
 

@@ -5,7 +5,7 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 [FloatPropertyData](./uassetapi.propertytypes.objects.floatpropertydata.md) ([Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)) property with per-platform overrides.
 
 ```csharp
-public class PerPlatformFloatPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Single[], System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class PerPlatformFloatPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Single[], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Single[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [PerPlatformFloatPropertyData](./uassetapi.propertytypes.structs.perplatformfloatpropertydata.md)<br>
@@ -123,6 +123,18 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **AlsoHasRegularStructSerialization**
+
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+
+```csharp
+public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

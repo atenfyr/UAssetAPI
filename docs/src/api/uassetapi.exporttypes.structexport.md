@@ -13,14 +13,6 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 
 ## Fields
 
-### **ScriptBytecode**
-
-The bytecode instructions contained within this struct.
-
-```csharp
-public KismetExpression[] ScriptBytecode;
-```
-
 ### **SuperStruct**
 
 Struct this inherits from, may be null
@@ -43,6 +35,14 @@ Properties serialized with this struct definition
 
 ```csharp
 public FProperty[] LoadedProperties;
+```
+
+### **ScriptBytecode**
+
+The bytecode instructions contained within this struct.
+
+```csharp
+public KismetExpression[] ScriptBytecode;
 ```
 
 ### **ScriptBytecodeSize**

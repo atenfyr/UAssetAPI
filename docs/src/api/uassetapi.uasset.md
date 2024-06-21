@@ -226,6 +226,14 @@ The corresponding mapping data for the game that this asset is from. Optional un
 public Usmap Mappings;
 ```
 
+### **CustomSerializationFlags**
+
+List of custom serialization flags, used to override certain optional behavior in how UAssetAPI serializes assets.
+
+```csharp
+public CustomSerializationFlags CustomSerializationFlags;
+```
+
 ### **UseSeparateBulkDataFiles**
 
 Should the asset be split into separate .uasset, .uexp, and .ubulk files, as opposed to one single .uasset file?
@@ -379,12 +387,12 @@ public bool IsFilterEditorOnly { get; }
 
 ## Constructors
 
-### **UAsset(String, EngineVersion, Usmap)**
+### **UAsset(String, EngineVersion, Usmap, CustomSerializationFlags)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, EngineVersion engineVersion, Usmap mappings)
+public UAsset(string path, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -398,20 +406,23 @@ The version of the Unreal Engine that will be used to parse this asset. If the a
 `mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
 A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
 
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(AssetBinaryReader, EngineVersion, Usmap, Boolean)**
+### **UAsset(AssetBinaryReader, EngineVersion, Usmap, Boolean, CustomSerializationFlags)**
 
 Reads an asset from a BinaryReader and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(AssetBinaryReader reader, EngineVersion engineVersion, Usmap mappings, bool useSeparateBulkDataFiles)
+public UAsset(AssetBinaryReader reader, EngineVersion engineVersion, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -428,20 +439,23 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `useSeparateBulkDataFiles` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Does this asset uses separate bulk data files (.uexp, .ubulk)?
 
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(EngineVersion, Usmap)**
+### **UAsset(EngineVersion, Usmap, CustomSerializationFlags)**
 
 Initializes a new instance of the [UAsset](./uassetapi.uasset.md) class. This instance will store no asset data and does not represent any asset in particular until the [UAsset.Read(AssetBinaryReader, Int32[], Int32[])](./uassetapi.uasset.md#readassetbinaryreader-int32-int32) method is manually called.
 
 ```csharp
-public UAsset(EngineVersion engineVersion, Usmap mappings)
+public UAsset(EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -452,12 +466,15 @@ The version of the Unreal Engine that will be used to parse this asset. If the a
 `mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
 A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
 
-### **UAsset(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap)**
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
+### **UAsset(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings)
+public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -477,20 +494,23 @@ A list of custom versions to parse this asset with.
 `mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
 A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
 
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(AssetBinaryReader, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, Boolean)**
+### **UAsset(AssetBinaryReader, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, Boolean, CustomSerializationFlags)**
 
 Reads an asset from a BinaryReader and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles)
+public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -513,20 +533,23 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `useSeparateBulkDataFiles` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Does this asset uses separate bulk data files (.uexp, .ubulk)?
 
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap)**
+### **UAsset(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags)**
 
 Initializes a new instance of the [UAsset](./uassetapi.uasset.md) class. This instance will store no asset data and does not represent any asset in particular until the [UAsset.Read(AssetBinaryReader, Int32[], Int32[])](./uassetapi.uasset.md#readassetbinaryreader-int32-int32) method is manually called.
 
 ```csharp
-public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings)
+public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags)
 ```
 
 #### Parameters
@@ -542,6 +565,9 @@ A list of custom versions to parse this asset with.
 
 `mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
 A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
+
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
 ### **UAsset()**
 
@@ -731,15 +757,15 @@ public void Read(AssetBinaryReader reader, Int32[] manualSkips, Int32[] forceRea
 The input reader.
 
 `manualSkips` [Int32[]](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-An array of export indexes to skip parsing. For most applications, this should be left blank.
+An array of export indices to skip parsing. For most applications, this should be left blank.
 
 `forceReads` [Int32[]](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-An array of export indexes that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.
+An array of export indices that must be read, overriding entries in the manualSkips parameter. For most applications, this should be left blank.
 
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when this is an unversioned asset and  is unspecified.
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
@@ -773,7 +799,7 @@ The path on disk to write the asset to.
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
-Thrown when  is unspecified.
+Thrown when [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
 
 ### **SerializeJson(Boolean)**
 

@@ -9,7 +9,7 @@ public enum FReleaseObjectVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FReleaseObjectVersion](./uassetapi.customversions.freleaseobjectversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -33,7 +33,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | PinDefaultValuesVerified | 15 | Default values on pins in blueprints could be saved incoherently |
 | FixBrokenStateMachineReferencesInTransitionGetters | 16 | During copy and paste transition getters could end up with broken state machine references |
 | MeshDescriptionNewSerialization | 17 | Change to MeshDescription serialization |
-| UnclampRGBColorCurves | 18 | Change to not clamp RGB values > 1 on linear color curves |
+| UnclampRGBColorCurves | 18 | Change to not clamp RGB values &gt; 1 on linear color curves |
 | LinkTimeAnimBlueprintRootDiscoveryBugFix | 19 | BugFix for FAnimObjectVersion::LinkTimeAnimBlueprintRootDiscovery. |
 | TrailNodeBlendVariableNameChange | 20 | Change trail anim node variable deprecation |
 | PropertiesSerializeRepCondition | 21 | Make sure the Blueprint Replicated Property Conditions are actually serialized properly. |
@@ -59,6 +59,3 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | RemoteControlSerializeFunctionArgumentsSize | 41 | Serialize the number of bytes written when serializing function arguments |
 | AddedSubSequenceEntryWarpCounter | 42 | Add loop counters to sequencer's compiled sub-sequence data |
 | LonglatTextureCubeDefaultMaxResolution | 43 | Remove default resolution limit of 512 pixels for cubemaps generated from long-lat sources |
-| GeometryCollectionCacheRemovesMassToLocal | 44 |  |
-| VersionPlusOne | 45 |  |
-| LatestVersion | 44 |  |

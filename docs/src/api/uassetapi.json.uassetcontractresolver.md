@@ -31,6 +31,12 @@ public bool DynamicCodeGeneration { get; }
 
 ### **DefaultMembersSearchFlags**
 
+#### Caution
+
+DefaultMembersSearchFlags is obsolete. To modify the members serialized inherit from DefaultContractResolver and override the GetSerializableMembers method instead.
+
+---
+
 ```csharp
 public BindingFlags DefaultMembersSearchFlags { get; set; }
 ```

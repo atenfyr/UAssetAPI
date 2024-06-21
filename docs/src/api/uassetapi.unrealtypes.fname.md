@@ -200,7 +200,7 @@ public static bool IsFromStringValid(INameMap asset, string val)
 
 ### **FromString(INameMap, String)**
 
-Converts a human-readable string into an FName instance. This is the inverse of .
+Converts a human-readable string into an FName instance. This is the inverse of [FName.ToString()](./uassetapi.unrealtypes.fname.md#tostring).
 
 ```csharp
 public static FName FromString(INameMap asset, string val)

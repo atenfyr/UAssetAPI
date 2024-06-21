@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class StructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Collections.Generic.List`1[[UAssetAPI.PropertyTypes.Objects.PropertyData, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class StructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Collections.Generic.List`1[[UAssetAPI.PropertyTypes.Objects.PropertyData, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>
@@ -147,6 +147,18 @@ public bool HasCustomStructSerialization { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+### **AlsoHasRegularStructSerialization**
+
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+
+```csharp
+public bool AlsoHasRegularStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **DefaultValue**
 
 The default value of this property, used as a fallback when no value is defined. Null by default.
@@ -221,10 +233,10 @@ public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
-### **DetermineIfSerializeWithCustomStructSerialization(UnrealPackage, RegistryEntry&)**
+### **DetermineIfSerializeWithCustomStructSerialization(UnrealPackage, RegistryEntry&, Boolean&)**
 
 ```csharp
-internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, RegistryEntry& targetEntry)
+internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, RegistryEntry& targetEntry, Boolean& AlsoHasRegularStructSerialization)
 ```
 
 #### Parameters
@@ -232,6 +244,8 @@ internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage As
 `Asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
 
 `targetEntry` [RegistryEntry&](./uassetapi.registryentry&.md)<br>
+
+`AlsoHasRegularStructSerialization` [Boolean&](https://docs.microsoft.com/en-us/dotnet/api/system.boolean&)<br>
 
 #### Returns
 

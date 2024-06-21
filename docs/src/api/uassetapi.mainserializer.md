@@ -75,7 +75,7 @@ The name of the parent class/struct of this property.
 The UnrealPackage which this property is contained within.
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-The BinaryReader to read from. If left unspecified, you must call the  method manually.
+The BinaryReader to read from. If left unspecified, you must call the [PropertyData.Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)](./uassetapi.propertytypes.objects.propertydata.md#readassetbinaryreader-boolean-int64-int64-propertyserializationcontext) method manually.
 
 `leng` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length of this property on disk in bytes.

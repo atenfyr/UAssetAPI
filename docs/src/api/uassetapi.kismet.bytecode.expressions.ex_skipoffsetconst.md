@@ -6,7 +6,7 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_SkipOf
  Represents a code offset constant.
 
 ```csharp
-public class EX_SkipOffsetConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[System.UInt32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]
+public class EX_SkipOffsetConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[System.UInt32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;UInt32&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_SkipOffsetConst](./uassetapi.kismet.bytecode.expressions.ex_skipoffsetconst.md)

@@ -141,6 +141,18 @@ public bool HasCustomStructSerialization { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+### **AlsoHasRegularStructSerialization**
+
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+
+```csharp
+public bool AlsoHasRegularStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Constructors
 
 ### **UInt32PropertyData(FName)**

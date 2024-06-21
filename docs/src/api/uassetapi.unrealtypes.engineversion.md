@@ -9,14 +9,12 @@ public enum EngineVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EngineVersion](./uassetapi.unrealtypes.engineversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
 | Name | Value | Description |
 | --- | --: | --- |
-| UNKNOWN | 0 |  |
-| VER_UE4_OLDEST_LOADABLE_PACKAGE | 1 |  |
 | VER_UE4_0 | 2 | 4.0 |
 | VER_UE4_1 | 3 | 4.1 |
 | VER_UE4_2 | 4 | 4.2 |
@@ -51,5 +49,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE5_2 | 33 | 5.2 |
 | VER_UE5_3 | 34 | 5.3 |
 | VER_UE5_4 | 35 | 5.4 |
-| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 36 |  |
 | VER_UE4_AUTOMATIC_VERSION | 35 | The newest specified version of the Unreal Engine. |

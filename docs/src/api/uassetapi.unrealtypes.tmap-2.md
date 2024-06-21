@@ -167,7 +167,7 @@ public void Add(TKey key, TValue value)
 The key of the element to add.
 
 `value` TValue<br>
-The value of the element to add.  The value can be null for reference types.
+The value of the element to add. The value can be null for reference types.
 
 ### **Clear()**
 
@@ -188,13 +188,13 @@ public void Insert(int index, TKey key, TValue value)
 #### Parameters
 
 `index` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The insertion index.  This value must be between 0 and the count of items in this object.
+The insertion index. This value must be between 0 and the count of items in this object.
 
 `key` TKey<br>
 A unique key for the element to add
 
 `value` TValue<br>
-The value of the element to add.  Can be null for reference types.
+The value of the element to add. Can be null for reference types.
 
 ### **IndexOf(TKey)**
 
@@ -212,7 +212,7 @@ The key whose index will be located
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-Returns the index of the key specified if found.  Returns -1 if the key could not be located.
+Returns the index of the key specified if found. Returns -1 if the key could not be located.
 
 ### **ContainsValue(TValue)**
 
@@ -230,7 +230,7 @@ The value to locate in this object.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True if the value is found.  False otherwise.
+True if the value is found. False otherwise.
 
 ### **ContainsValue(TValue, IEqualityComparer&lt;TValue&gt;)**
 
@@ -251,7 +251,7 @@ The equality comparer used to locate the specified value in this object.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True if the value is found.  False otherwise.
+True if the value is found. False otherwise.
 
 ### **ContainsKey(TKey)**
 
@@ -269,7 +269,7 @@ The key to locate in this object.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True if the key is found.  False otherwise.
+True if the key is found. False otherwise.
 
 ### **GetItem(Int32)**
 
@@ -291,8 +291,7 @@ KeyValuePair&lt;TKey, TValue&gt;<br>
 #### Exceptions
 
 [ArgumentOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentoutofrangeexception)<br>
-
-            Thrown when the index specified does not refer to a KeyValuePair in this object
+Thrown when the index specified does not refer to a KeyValuePair in this object
 
 ### **SetItem(Int32, TValue)**
 
@@ -313,8 +312,7 @@ The value to set
 #### Exceptions
 
 [ArgumentOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentoutofrangeexception)<br>
-
-            Thrown when the index specified does not refer to a KeyValuePair in this object
+Thrown when the index specified does not refer to a KeyValuePair in this object
 
 ### **GetEnumerator()**
 
@@ -344,7 +342,7 @@ The key to remove from the dictionary.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True if the item specified existed and the removal was successful.  False otherwise.
+True if the item specified existed and the removal was successful. False otherwise.
 
 ### **RemoveAt(Int32)**
 
@@ -406,15 +404,14 @@ public bool TryGetValue(TKey key, TValue& value)
 The key of the desired element.
 
 `value` TValue&<br>
-
-            When this method returns, contains the value associated with the specified key if
-            that key was found.  Otherwise it will contain the default value for parameter's type.
-            This parameter should be provided uninitialized.
+When this method returns, contains the value associated with the specified key if
+ that key was found. Otherwise it will contain the default value for parameter's type.
+ This parameter should be provided uninitialized.
 
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True if the value was found.  False otherwise.
+True if the value was found. False otherwise.
 
 **Remarks:**
 

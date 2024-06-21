@@ -9,7 +9,7 @@ public enum FAnimPhysObjectVersion
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [FAnimPhysObjectVersion](./uassetapi.customversions.fanimphysobjectversion.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
@@ -33,5 +33,3 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ChangeRetargetSourceReferenceToSoftObjectPtr | 15 | Change RetargetSource reference to SoftObjectPtr |
 | SaveEditorOnlyFullPoseForPoseAsset | 16 | Save editor only full pose for pose asset |
 | GeometryCacheAssetDeprecation | 17 | Asset change and cleanup to facilitate new streaming system |
-| VersionPlusOne | 18 |  |
-| LatestVersion | 17 |  |

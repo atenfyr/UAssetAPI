@@ -13,7 +13,7 @@ Implements a time span.
  difference between two dates or adding a certain amount of time to a given date.
 
 ```csharp
-public class TimespanPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.TimeSpan, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class TimespanPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.TimeSpan, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TimeSpan&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [TimespanPropertyData](./uassetapi.propertytypes.structs.timespanpropertydata.md)<br>
@@ -131,6 +131,18 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **AlsoHasRegularStructSerialization**
+
+If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
+
+```csharp
+public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

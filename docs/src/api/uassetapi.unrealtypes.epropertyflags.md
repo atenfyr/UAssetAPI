@@ -9,13 +9,12 @@ public enum EPropertyFlags
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [EPropertyFlags](./uassetapi.unrealtypes.epropertyflags.md)<br>
-Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
 | Name | Value | Description |
 | --- | --: | --- |
-| CPF_None | 0 |  |
 | CPF_Edit | 1 | Property is user-settable in the editor. |
 | CPF_ConstParm | 2 | This is a constant function parameter |
 | CPF_BlueprintVisible | 4 | This property can be read by blueprint code |
@@ -38,8 +37,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | CPF_SaveGame | 16777216 | Property should be serialized for save games, this is only checked for game-specific archives with ArIsSaveGame |
 | CPF_NoClear | 33554432 | Hide clear (and browse) button. |
 | CPF_ReferenceParm | 134217728 | Value is passed by reference; CPF_OutParam and CPF_Param should also be set. |
-| CPF_BlueprintAssignable | 268435456 | MC Delegates only.  Property should be exposed for assigning in blueprint code |
-| CPF_Deprecated | 536870912 | Property is deprecated.  Read it from an archive, but don't save it. |
+| CPF_BlueprintAssignable | 268435456 | MC Delegates only. Property should be exposed for assigning in blueprint code |
+| CPF_Deprecated | 536870912 | Property is deprecated. Read it from an archive, but don't save it. |
 | CPF_IsPlainOldData | 1073741824 | If this is set, then the property can be memcopied instead of CopyCompleteValue / CopySingleValue |
 | CPF_RepSkip | 2147483648 | Not replicated. For non replicated properties in replicated structs |
 | CPF_RepNotify | 4294967296 | Notify actors when a property is replicated |
@@ -53,8 +52,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | CPF_SimpleDisplay | 2199023255552 | The property is visible by default in the editor details view |
 | CPF_AdvancedDisplay | 4398046511104 | The property is advanced and not visible by default in the editor details view |
 | CPF_Protected | 8796093022208 | property is protected from the perspective of script |
-| CPF_BlueprintCallable | 17592186044416 | MC Delegates only.  Property should be exposed for calling in blueprint code |
-| CPF_BlueprintAuthorityOnly | 35184372088832 | MC Delegates only.  This delegate accepts (only in blueprint) only events with BlueprintAuthorityOnly. |
+| CPF_BlueprintCallable | 17592186044416 | MC Delegates only. Property should be exposed for calling in blueprint code |
+| CPF_BlueprintAuthorityOnly | 35184372088832 | MC Delegates only. This delegate accepts (only in blueprint) only events with BlueprintAuthorityOnly. |
 | CPF_TextExportTransient | 70368744177664 | Property shouldn't be exported to text format (e.g. copy/paste) |
 | CPF_NonPIEDuplicateTransient | 140737488355328 | Property should only be copied in PIE |
 | CPF_ExposeOnSpawn | 281474976710656 | Property is exposed on spawn |

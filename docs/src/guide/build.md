@@ -1,7 +1,7 @@
 # Build Instructions
 
 ### Prerequisites
-* Visual Studio 2022 or later
+* Visual Studio 2022 or later, with .NET 8.0 SDK
 * Git
 
 ### Initial Setup
