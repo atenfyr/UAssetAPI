@@ -82,7 +82,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             RegistryEntry targetEntry = null;
             string structTypeVal = StructType?.Value?.Value;
             if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
-            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
+            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization && serializationContext != PropertySerializationContext.StructFallback;
 
             if (structTypeVal == "FloatRange")
             {
@@ -107,7 +107,6 @@ namespace UAssetAPI.PropertyTypes.Structs
             if (targetEntry != null && hasCustomStructSerialization)
             {
                 ReadOnce(reader, targetEntry.PropertyType, reader.BaseStream.Position);
-                if (targetEntry.AlsoHasRegularStructSerialization) ReadNTPL(reader, false);
             }
             else
             {
@@ -127,9 +126,9 @@ namespace UAssetAPI.PropertyTypes.Structs
             base.ResolveAncestries(asset, ancestrySoFar);
         }
 
-        private int WriteOnce(AssetBinaryWriter writer, bool AlsoHasRegularStructSerialization)
+        private int WriteOnce(AssetBinaryWriter writer)
         {
-            if (Value.Count > 1 && !AlsoHasRegularStructSerialization) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
+            if (Value.Count > 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
 
             if (Value.Count == 0)
             {
@@ -164,13 +163,12 @@ namespace UAssetAPI.PropertyTypes.Structs
             return (int)writer.BaseStream.Position - here;
         }
 
-        internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, out RegistryEntry targetEntry, out bool AlsoHasRegularStructSerialization)
+        internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, PropertySerializationContext serializationContext, out RegistryEntry targetEntry)
         {
             targetEntry = null;
             string structTypeVal = StructType?.Value?.Value;
             if (structTypeVal != null) MainSerializer.PropertyTypeRegistry.TryGetValue(structTypeVal, out targetEntry);
-            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization;
-            AlsoHasRegularStructSerialization = targetEntry != null && targetEntry.AlsoHasRegularStructSerialization;
+            bool hasCustomStructSerialization = targetEntry != null && targetEntry.HasCustomStructSerialization && serializationContext != PropertySerializationContext.StructFallback;
 
             if (structTypeVal == "FloatRange") hasCustomStructSerialization = Value.Count == 1 && Value[0] is FloatRangePropertyData;
             if (structTypeVal == "RichCurveKey" && Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
@@ -188,13 +186,8 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, out RegistryEntry targetEntry, out bool AlsoHasRegularStructSerialization);
-            if (targetEntry != null && hasCustomStructSerialization)
-            {
-                int sz = WriteOnce(writer, AlsoHasRegularStructSerialization);
-                if (AlsoHasRegularStructSerialization) sz += WriteNTPL(writer, true);
-                return sz;
-            }
+            bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, serializationContext, out RegistryEntry targetEntry);
+            if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
             if (Value.Count == 0 && !SerializeNone) return 0;
             return WriteNTPL(writer);
         }

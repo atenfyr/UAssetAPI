@@ -10,7 +10,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
-    public class MaterialOverrideNanitePropertyData : PropertyData
+    public class MaterialOverrideNanitePropertyData : StructPropertyData
     {
         public FSoftObjectPath OverrideMaterialRef;
         public bool bEnableOverride;
@@ -19,7 +19,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         public MaterialOverrideNanitePropertyData(FName name) : base(name)
         {
-
+            Value = new List<PropertyData>();
         }
 
         public MaterialOverrideNanitePropertyData()
@@ -29,7 +29,6 @@ namespace UAssetAPI.PropertyTypes.Structs
 
         private static readonly FString CurrentPropertyType = new FString("MaterialOverrideNanite");
         public override bool HasCustomStructSerialization { get { return true; } }
-        public override bool AlsoHasRegularStructSerialization { get { return true; } }
 
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
@@ -50,7 +49,9 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             bSerializeAsCookedData = reader.ReadInt32() == 1;
             if (bSerializeAsCookedData) OverrideMaterial = FPackageIndex.FromRawIndex(reader.ReadInt32());
-            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
+
+            this.StructType = FName.DefineDummy(reader.Asset, CurrentPropertyType);
+            base.Read(reader, includeHeader, 1, 0, PropertySerializationContext.StructFallback);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -71,6 +72,9 @@ namespace UAssetAPI.PropertyTypes.Structs
 
             writer.Write(bSerializeAsCookedData ? 1 : 0);
             if (bSerializeAsCookedData) writer.Write(OverrideMaterial.Index);
+
+            this.StructType = FName.DefineDummy(writer.Asset, CurrentPropertyType);
+            base.Write(writer, includeHeader, PropertySerializationContext.StructFallback);
 
             return (int)writer.BaseStream.Position - here;
         }

@@ -10,7 +10,8 @@ namespace UAssetAPI.PropertyTypes.Objects
     {
         Normal,
         Array,
-        Map
+        Map,
+        StructFallback // a StructPropertyData with custom struct serialization falling back to standard serialization before/after reading custom data
     }
 
     public class AncestryInfo : ICloneable
@@ -145,10 +146,6 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// Determines whether or not this particular property has custom serialization within a StructProperty.
         /// </summary>
         public virtual bool HasCustomStructSerialization { get { return false; } }
-        /// <summary>
-        /// If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-        /// </summary>
-        public virtual bool AlsoHasRegularStructSerialization { get { return false; } }
         /// <summary>
         /// The type of this property as an FString.
         /// </summary>
