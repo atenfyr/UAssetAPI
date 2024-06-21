@@ -280,8 +280,8 @@ namespace UAssetAPI
             if (Mappings?.Schemas == null) return false;
             if (path?.Value?.Value == null) return false;
             if (!path.Value.Value.StartsWith("/Game/")) return false;
-
-            string pathOnDisk = FindAssetOnDiskFromPath(path.Value.Value);
+            var assetPath = path.ToString();
+            string pathOnDisk = FindAssetOnDiskFromPath(assetPath);
             if (pathOnDisk == string.Empty)
             {
                 OtherAssetsFailedToAccess.Add(path);
@@ -289,7 +289,7 @@ namespace UAssetAPI
             }
 
             // basic circular referencing guard
-            if (Mappings.PathsAlreadyProcessedForSchemas.Contains(path.Value.Value))
+            if (Mappings.PathsAlreadyProcessedForSchemas.Contains(assetPath))
             {
                 return false;
             }
@@ -297,7 +297,7 @@ namespace UAssetAPI
             bool success = false;
             try
             {
-                Mappings.PathsAlreadyProcessedForSchemas.Add(path.Value.Value);
+                Mappings.PathsAlreadyProcessedForSchemas.Add(assetPath);
                 UAsset otherAsset = new UAsset(pathOnDisk, this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
                 // loading the asset will automatically add any new schemas to the mappings in-situ
             }
