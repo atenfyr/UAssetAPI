@@ -24,7 +24,7 @@ Once you've referenced the UAssetAPI assembly in your project, you're ready to s
 ## Using UAssetAPI with UE4 Assets
 ### Modifying a specific property
 
-Every Unreal Engine 4 parsed with UAssetAPI is represented by the [UAsset](../api/uassetapi.uasset.md#constructors) class. The simplest way to construct a UAsset is to initialize it with the path to the asset on disk (note that if your asset has a paired .uexp file, both files must be located in the same directory, and the path should point to the .uasset file) and an [EngineVersion](../api/uassetapi.unrealtypes.engineversion.html#fields).
+Every Unreal Engine 4 asset parsed with UAssetAPI is represented by the [UAsset](../api/uassetapi.uasset.md#constructors) class. The simplest way to construct a UAsset is to initialize it with the path to the asset on disk (note that if your asset has a paired .uexp file, both files must be located in the same directory, and the path should point to the .uasset file) and an [EngineVersion](../api/uassetapi.unrealtypes.engineversion.html#fields).
 
 I will be analyzing a small asset from the video game [Ace Combat 7](https://www.bandainamcoent.com/games/ace-combat-7) (4.18) for this demonstration, which can be downloaded here:
 - [plwp_6aam_a0.uasset](../samples/plwp_6aam_a0.uasset) &rarr; `C:\plwp_6aam_a0.uasset`
@@ -32,9 +32,9 @@ I will be analyzing a small asset from the video game [Ace Combat 7](https://www
 
 Save these files to those respective locations.
 
-If you are familiar with UAssetGUI or other tools for reverse-engineering Unreal Engine 4 assets, you will likely be aware that there are generally at least five major sections to any asset, each of which can be read and modified through UAssetAPI as listed under the "Accessing Data" tab.
+If you are familiar with UAssetGUI or other tools for reverse-engineering Unreal Engine 4 assets, you will likely be aware that there are generally at least five major sections to any asset, each of which can be read and modified through UAssetAPI.
 
-For now, let's simply modify an integer. If we open the asset in UAssetGUI and look under "Export Data," we can see all the exports that we can access; for our demonstrations, we're interested in Export 2, and we'll be modifying the "MaxRotationAngle" float.
+For now, let's simply modify an integer. If we open the asset in UAssetGUI and look under "Export Data," we can see all the exports that we can access; for our demonstration here, we're interested in Export 2, and we'll be modifying the "MaxRotationAngle" float.
 
 ![](./img/basic5.png)
 
