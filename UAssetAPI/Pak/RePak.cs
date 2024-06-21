@@ -194,7 +194,7 @@ public class PakReader : SafeHandleZeroOrMinusOneIsInvalid
 
         StreamCallbacks.Free(streamCtx.Context);
 
-        if (result != 0) return Array.Empty<byte>();
+        if (result != 0) return null;
 
         byte[] buffer = new byte[length];
         Marshal.Copy(bufferPtr, buffer, 0, (int)length);
