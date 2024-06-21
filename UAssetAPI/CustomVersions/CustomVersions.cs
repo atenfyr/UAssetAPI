@@ -1355,4 +1355,71 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     }
+
+    public enum FFortniteReleaseBranchCustomObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary>Custom 14.10 File Object Version</summary>
+        [Introduced(EngineVersion.VER_UE4_26)]
+        DisableLevelset_v14_10,
+
+        /// <summary>Add the long range attachment tethers to the cloth asset to avoid a large hitch during the cloth's initialization.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosClothAddTethersToCachedData,
+
+        /// <summary>Chaos::TKinematicTarget no longer stores a full transform, only position/rotation.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosKinematicTargetRemoveScale,
+
+        /// <summary>Move UCSModifiedProperties out of ActorComponent and in to sparse storage</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        ActorComponentUCSModifiedPropertiesSparseStorage,
+
+        /// <summary>Fixup Nanite meshes which were using the wrong material and didn't have proper UVs :</summary>
+        [Introduced(EngineVersion.VER_UE5_2)]
+        FixupNaniteLandscapeMeshes,
+
+        /// <summary>Remove any cooked collision data from nanite landscape / editor spline meshes since collisions are not needed there :</summary>
+        [Introduced(EngineVersion.VER_UE5_2)]
+        RemoveUselessLandscapeMeshesCookedCollisionData,
+
+        /// <summary>Serialize out UAnimCurveCompressionCodec::InstanceGUID to maintain deterministic DDC key generation in cooked-editor</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        SerializeAnimCurveCompressionCodecGuidOnCook,
+
+        /// <summary>Fix the Nanite landscape mesh being reused because of a bad name</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        FixNaniteLandscapeMeshNames,
+
+        /// <summary>Fixup and synchronize shared properties modified before the synchronicity enforcement</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        LandscapeSharedPropertiesEnforcement,
+
+        /// <summary>Include the cell size when computing the cell guid</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionRuntimeCellGuidWithCellSize,
+
+        /// <summary>Enable SkipOnlyEditorOnly style cooking of NaniteOverrideMaterial</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        NaniteMaterialOverrideUsesEditorOnly,
+
+        /// <summary>Store game thread particles data in single precision</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        SinglePrecisonParticleData,
+
+        /// <summary>UPCGPoint custom serialization</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        PCGPointStructuredSerializer,
+
+        /// <summary>-----<new versions can be added above this line>-------------------------------------------------</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
+
 }
