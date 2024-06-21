@@ -45,9 +45,23 @@ namespace UAssetAPI.PropertyTypes.Structs
             this.A = A;
         }
 
-        public object Clone()
+        public object Clone() => new LinearColor(this.R, this.G, this.B, this.A);
+
+        public LinearColor(AssetBinaryReader reader)
         {
-            return new LinearColor(this.R, this.G, this.B, this.A);
+            R = reader.ReadSingle();
+            G = reader.ReadSingle();
+            B = reader.ReadSingle();
+            A = reader.ReadSingle();
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            writer.Write(R);
+            writer.Write(G);
+            writer.Write(B);
+            writer.Write(A);
+            return sizeof(float) * 4;
         }
     }
 
@@ -74,13 +88,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new LinearColor
-            {
-                R = reader.ReadSingle(),
-                G = reader.ReadSingle(),
-                B = reader.ReadSingle(),
-                A = reader.ReadSingle()
-            };
+            Value = new LinearColor(reader);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -90,11 +98,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
-            writer.Write(Value.R);
-            writer.Write(Value.G);
-            writer.Write(Value.B);
-            writer.Write(Value.A);
-            return sizeof(float) * 4;
+            return Value.Write(writer);
         }
 
         public override string ToString()

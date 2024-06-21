@@ -118,41 +118,4 @@ namespace UAssetAPI.PropertyTypes.Structs
             return "(" + X + ", " + Y + ")";
         }
     }
-
-    public class DeprecateSlateVector2DPropertyData : Vector2DPropertyData
-    {
-        public DeprecateSlateVector2DPropertyData(FName name) : base(name)
-        {
-
-        }
-
-        public DeprecateSlateVector2DPropertyData()
-        {
-
-        }
-
-        private static readonly FString CurrentPropertyType = new FString("DeprecateSlateVector2D");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            return base.Write(writer, includeHeader, serializationContext);
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-            base.FromString(d, asset);
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-    }
 }
