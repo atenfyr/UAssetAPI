@@ -53,7 +53,8 @@ namespace UAssetAPI.Benchmark
         private static string NumberToTwoDecimalPlaces(double num)
         {
             // avoid any other formatting (e.g. commas), just round decimal places
-            return (int)num + "." + (int)(num * 100 % 100);
+            int secondPart = (int)(num * 100 % 100);
+            return (int)num + "." + (secondPart < 10 ? "0" : "") + secondPart;
         }
 
         private static HashSet<string> allowedExtensions = new HashSet<string>()
