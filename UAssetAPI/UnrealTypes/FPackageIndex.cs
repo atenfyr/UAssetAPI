@@ -168,5 +168,16 @@ namespace UAssetAPI.UnrealTypes
         {
             Index = index;
         }
+
+        public FPackageIndex(AssetBinaryReader reader)
+        {
+            Index = reader.ReadInt32();
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            writer.Write(Index);
+            return sizeof(int);
+        }
     }
 }
