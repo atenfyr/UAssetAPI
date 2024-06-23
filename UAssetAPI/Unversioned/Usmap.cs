@@ -345,6 +345,11 @@ namespace UAssetAPI.Unversioned
         }
 
         /// <summary>
+        /// Whether or not to skip blueprint schemas serialized in this mappings file. Only useful for testing.
+        /// </summary>
+        public bool SkipBlueprintSchemas = false;
+
+        /// <summary>
         /// .usmap name map
         /// </summary>
         public List<string> NameMap;
@@ -612,7 +617,7 @@ namespace UAssetAPI.Unversioned
         /// </summary>
         /// <param name="p">The path to the input file.</param>
         /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
-        public MemoryStream PathToStream(string p)
+        public static MemoryStream PathToStream(string p)
         {
             using (FileStream origStream = File.Open(p, FileMode.Open))
             {
@@ -802,6 +807,11 @@ namespace UAssetAPI.Unversioned
                     }
                 }
 
+                if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C"))
+                {
+                    continue;
+                }
+
                 var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
                 schemaIndexMap[i] = newSchema;
                 Schemas[schemaName] = newSchema;
@@ -943,9 +953,9 @@ namespace UAssetAPI.Unversioned
         }
 
         /// <summary>
-        /// Reads a .usmap file from a BinaryReader and initializes a new instance of the <see cref="Usmap"/> class to store its data in memory.
+        /// Reads a .usmap file from a UsmapBinaryReader and initializes a new instance of the <see cref="Usmap"/> class to store its data in memory.
         /// </summary>
-        /// <param name="reader">The file's BinaryReader that this instance will read from.</param>
+        /// <param name="reader">The file's UsmapBinaryReader that this instance will read from.</param>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
         public Usmap(UsmapBinaryReader reader)
         {
