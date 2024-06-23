@@ -319,6 +319,31 @@ namespace UAssetAPI.Unversioned
 
         public uint NetCL;
 
+        private bool _AreFNamesCaseInsensitive = true;
+        /// <summary>
+        /// Whether or not FNames are case insensitive. Modifying this property is an expensive operation, and will re-construct several dictionaries.
+        /// </summary>
+        public bool AreFNamesCaseInsensitive
+        {
+            get
+            {
+                return _AreFNamesCaseInsensitive;
+            }
+            set
+            {
+                if (value == _AreFNamesCaseInsensitive) return;
+                _AreFNamesCaseInsensitive = value;
+
+                var EnumMapNuevo = new Dictionary<string, UsmapEnum>(value ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+                foreach (var entry in EnumMap) EnumMapNuevo.Add(entry.Key, entry.Value);
+                EnumMap = EnumMapNuevo;
+
+                var SchemasNuevo = new Dictionary<string, UsmapSchema>(value ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+                foreach (var entry in Schemas) SchemasNuevo.Add(entry.Key, entry.Value);
+                Schemas = SchemasNuevo;
+            }
+        }
+
         /// <summary>
         /// .usmap name map
         /// </summary>
@@ -727,7 +752,7 @@ namespace UAssetAPI.Unversioned
 
             // part 2: enums
             //Console.WriteLine(reader.BaseStream.Position);
-            EnumMap = new Dictionary<string, UsmapEnum>();
+            EnumMap = new Dictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
             int numEnums = reader.ReadInt32();
             UsmapEnum[] enumIndexMap = new UsmapEnum[numEnums];
             for (int i = 0; i < numEnums; i++)
@@ -750,7 +775,7 @@ namespace UAssetAPI.Unversioned
 
             // part 3: schema
             //Console.WriteLine(reader.BaseStream.Position);
-            Schemas = new Dictionary<string, UsmapSchema>();
+            Schemas = new Dictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
             int numSchema = reader.ReadInt32();
             UsmapSchema[] schemaIndexMap = new UsmapSchema[numSchema];
             for (int i = 0; i < numSchema; i++)
