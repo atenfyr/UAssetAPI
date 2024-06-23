@@ -766,11 +766,6 @@ namespace UAssetAPI.Unversioned
                     byte ArraySize = reader.ReadByte();
                     string Name = reader.ReadName();
 
-                    if (Name.Contains("LandingType"))
-                    {
-                        Console.WriteLine("hi");
-                    }
-
                     var currProp = new UsmapProperty(Name, SchemaIdx, 0, ArraySize, null);
                     currProp.PropertyData = DeserializePropData(reader);
                     for (int k = 0; k < ArraySize; k++)
