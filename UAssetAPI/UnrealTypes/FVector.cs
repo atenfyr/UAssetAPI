@@ -87,5 +87,41 @@ namespace UAssetAPI.UnrealTypes
             _y1 = y;
             _z1 = z;
         }
+
+        public FVector(AssetBinaryReader reader)
+        {
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                _x1 = null; _y1 = null; _z1 = null;
+                _x2 = reader.ReadDouble();
+                _y2 = reader.ReadDouble();
+                _z2 = reader.ReadDouble();
+            }
+            else
+            {
+                _x2 = 0; _y2 = 0; _z2 = 0;
+                _x1 = reader.ReadSingle();
+                _y1 = reader.ReadSingle();
+                _z1 = reader.ReadSingle();
+            }
+        }
+
+        public int Write(AssetBinaryWriter writer)
+        {
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
+            {
+                writer.Write(X);
+                writer.Write(Y);
+                writer.Write(Z);
+                return sizeof(double) * 3;
+            }
+            else
+            {
+                writer.Write(XFloat);
+                writer.Write(YFloat);
+                writer.Write(ZFloat);
+                return sizeof(float) * 3;
+            }
+        }
     }
 }
