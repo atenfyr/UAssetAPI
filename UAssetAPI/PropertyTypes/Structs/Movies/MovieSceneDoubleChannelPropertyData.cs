@@ -53,7 +53,7 @@ public class MovieSceneDoubleChannelPropertyData : PropertyData<FMovieSceneDoubl
             Value.Values[j] = new FMovieSceneDoubleValue(reader);
         }
 
-        Value.DefaultValue = reader.ReadSingle();
+        Value.DefaultValue = reader.ReadDouble();
         HasDefaultValue = reader.ReadInt32();
         Value.bHasDefaultValue = HasDefaultValue == 0 ? false : true;
 

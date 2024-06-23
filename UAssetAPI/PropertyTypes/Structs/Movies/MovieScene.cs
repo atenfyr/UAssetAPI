@@ -180,7 +180,7 @@ namespace UAssetAPI.PropertyTypes.Structs
             Tangent.Read(reader);
             InterpMode = (ERichCurveInterpMode)reader.ReadByte();
             TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(3) : [];
+            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(2) : [];
         }
 
         public void Write(AssetBinaryWriter writer)
