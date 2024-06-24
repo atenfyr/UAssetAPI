@@ -807,13 +807,15 @@ namespace UAssetAPI.Unversioned
                     }
                 }
 
+                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
+                schemaIndexMap[i] = newSchema;
+
                 if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C"))
                 {
                     continue;
                 }
 
-                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
-                schemaIndexMap[i] = newSchema;
+                // add to schema map
                 Schemas[schemaName] = newSchema;
             }
 
