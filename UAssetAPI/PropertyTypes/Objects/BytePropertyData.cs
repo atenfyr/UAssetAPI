@@ -2,10 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using System.Collections.Generic;
 using UAssetAPI.Unversioned;
-using System.Reflection.PortableExecutable;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -71,17 +68,29 @@ namespace UAssetAPI.PropertyTypes.Objects
             if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapPropertyData propDat))
             {
                 useFailsafe = false;
-                ByteType = propDat is UsmapEnumData ? BytePropertyType.FName : BytePropertyType.Byte;
+                ByteType = propDat is UsmapEnumData ? BytePropertyType.FName : BytePropertyType.Byte; // TODO: not always accurate?
             }
-            
-            if (useFailsafe)
+
+            // override with length if it makes sense to do so
+            if (!reader.Asset.HasUnversionedProperties)
             {
-                // if no mappings, use length
                 switch (leng1)
                 {
                     case 1:
                         ByteType = BytePropertyType.Byte;
+                        useFailsafe = false;
                         break;
+                    case 8:
+                        ByteType = BytePropertyType.FName;
+                        useFailsafe = false;
+                        break;
+                }
+            }
+            
+            if (useFailsafe)
+            {
+                switch (leng1)
+                {
                     case 0: // Should be only seen in maps; fallback "make our best guess and pray we're right" behavior
                         int nameMapPointer = reader.ReadInt32();
                         int nameMapIndex = reader.ReadInt32();
@@ -98,9 +107,6 @@ namespace UAssetAPI.PropertyTypes.Objects
                             ByteType = BytePropertyType.Byte;
                             break;
                         }
-                    case 8:
-                        ByteType = BytePropertyType.FName;
-                        break;
                     default:
                         if (canRepeat)
                         {
