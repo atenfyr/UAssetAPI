@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -11,10 +10,7 @@ public class ClothTetherDataPropertyData : StructPropertyData
 {
     public (int, int, float)[][] Tethers;
 
-    public ClothTetherDataPropertyData(FName name) : base(name)
-    {
-        Value = new List<PropertyData>();
-    }
+    public ClothTetherDataPropertyData(FName name) : base(name) { }
 
     public ClothTetherDataPropertyData() { }
 
