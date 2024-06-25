@@ -94,7 +94,7 @@ namespace UAssetAPI.ExportTypes
             }
             else
             {
-                LoadedProperties = new FProperty[0];
+                LoadedProperties = [];
             }
 
             ScriptBytecodeSize = reader.ReadInt32(); // # of bytes in total in deserialized memory

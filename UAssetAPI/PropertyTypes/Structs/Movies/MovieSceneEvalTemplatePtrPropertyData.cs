@@ -33,6 +33,7 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
             StructType = FName.DefineDummy(reader.Asset, type.Value.ToString().Split(".")[1]);
             base.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
         }
+
         Value.Insert(0, type);
     }
 
@@ -59,6 +60,7 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
                 {
                     MainSerializer.Write(t, writer, true);
                 }
+                if (!writer.Asset.HasUnversionedProperties) writer.Write(new FName(writer.Asset, "None"));
             }
         }
 
