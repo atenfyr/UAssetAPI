@@ -618,13 +618,13 @@ namespace UAssetAPI.Unversioned
             }
 
             var schemaName = ancestry.Parent.Value.Value;
-            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset, null, false);
             while (schemaName != null && relevantSchema != null)
             {
                 propDat = relevantSchema.GetProperty(propertyName.Value.Value, 0)?.PropertyData as T;
                 if (propDat != null) return true;
                 schemaName = relevantSchema.SuperType;
-                relevantSchema = this.GetSchemaFromName(schemaName, asset);
+                relevantSchema = this.GetSchemaFromName(schemaName, asset, null, false);
             }
 
             return false;
