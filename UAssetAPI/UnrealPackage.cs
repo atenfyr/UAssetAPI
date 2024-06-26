@@ -650,7 +650,24 @@ namespace UAssetAPI
             return res;
         }
 
-        internal string AssetPathForPullingSchemas = null;
+        private string _internalAssetPath = null;
+        internal string InternalAssetPath
+        {
+            get
+            {
+                if (_internalAssetPath != null) return _internalAssetPath;
+                if (this is UAsset uas)
+                {
+                    string folderName = uas.FolderName?.Value;
+                    if (folderName != null && folderName != "None") return folderName;
+                }
+                return null;
+            }
+            set
+            {
+                _internalAssetPath = value;
+            }
+        }
         protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -735,7 +752,7 @@ namespace UAssetAPI
                         UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp);
                         if (newSchema != null)
                         {
-                            newSchema.ModulePath = AssetPathForPullingSchemas;
+                            newSchema.ModulePath = InternalAssetPath;
                             Mappings.Schemas[fetchedStructExp.ObjectName.ToString()] = newSchema;
                             if (!string.IsNullOrEmpty(newSchema.ModulePath)) Mappings.Schemas[newSchema.ModulePath + "." + fetchedStructExp.ObjectName.ToString()] = newSchema;
                         }

@@ -43,7 +43,7 @@ namespace UAssetAPI.ExportTypes
             PropertyData bit;
 
             var unversionedHeader = new FUnversionedHeader(reader);
-            while ((bit = MainSerializer.Read(reader, null, this.ObjectName, null, unversionedHeader, true)) != null)
+            while ((bit = MainSerializer.Read(reader, null, this.ObjectName, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath), unversionedHeader, true)) != null)
             {
                 StructData.Add(bit);
             }
@@ -69,7 +69,7 @@ namespace UAssetAPI.ExportTypes
 
             writer.Write(StructFlags);
 
-            MainSerializer.GenerateUnversionedHeader(ref StructData, this.ObjectName, null, writer.Asset)?.Write(writer);
+            MainSerializer.GenerateUnversionedHeader(ref StructData, this.ObjectName, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath), writer.Asset)?.Write(writer);
             for (int j = 0; j < StructData.Count; j++)
             {
                 PropertyData current = StructData[j];

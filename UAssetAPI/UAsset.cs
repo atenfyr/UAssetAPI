@@ -302,7 +302,7 @@ namespace UAssetAPI
             {
                 Mappings.PathsAlreadyProcessedForSchemas.Add(assetPath);
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
-                otherAsset.AssetPathForPullingSchemas = assetPath;
+                otherAsset.InternalAssetPath = assetPath;
                 otherAsset.FilePath = pathOnDisk;
                 otherAsset.Read(otherAsset.PathToReader(pathOnDisk));
                 // loading the asset will automatically add any new schemas to the mappings in-situ
