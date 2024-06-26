@@ -282,10 +282,10 @@ namespace UAssetAPI
         {
             if (Mappings?.Schemas == null) return false;
             if (path?.Value?.Value == null) return false;
-            if (!path.Value.Value.StartsWith("/Game/")) return false;
+            if (!path.Value.Value.StartsWith("/") || path.Value.Value.StartsWith("/Script")) return false;
             var assetPath = path.ToString();
             string pathOnDisk = FindAssetOnDiskFromPath(assetPath);
-            if (pathOnDisk == string.Empty)
+            if (pathOnDisk == null)
             {
                 OtherAssetsFailedToAccess.Add(path);
                 return false;

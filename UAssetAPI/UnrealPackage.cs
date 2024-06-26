@@ -403,10 +403,10 @@ namespace UAssetAPI
         /// Attempt to find another asset on disk given an asset path (i.e. one starting with /Game/).
         /// </summary>
         /// <param name="path">The asset path.</param>
-        /// <returns>The path to the file on disk, or string.Empty if none could be found.</returns>
+        /// <returns>The path to the file on disk, or null if none could be found.</returns>
         public virtual string FindAssetOnDiskFromPath(string path)
         {
-            if (!path.StartsWith("/Game/")) return string.Empty;
+            if (!path.StartsWith("/") || path.StartsWith("/Script")) return null;
             path = path.Substring(6) + ".uasset";
 
             string mappedPathOnDisk = string.Empty;
@@ -435,7 +435,7 @@ namespace UAssetAPI
                 }
             }
 
-            return foundMappedPath ? mappedPathOnDisk : string.Empty;
+            return foundMappedPath ? mappedPathOnDisk : null;
         }
 
         /// <summary>
