@@ -737,7 +737,7 @@ namespace UAssetAPI
                         {
                             newSchema.ModulePath = AssetPathForPullingSchemas;
                             Mappings.Schemas[fetchedStructExp.ObjectName.ToString()] = newSchema;
-                            Mappings.Schemas[newSchema.ModulePath + "." + fetchedStructExp.ObjectName.ToString()] = newSchema;
+                            if (!string.IsNullOrEmpty(newSchema.ModulePath)) Mappings.Schemas[newSchema.ModulePath + "." + fetchedStructExp.ObjectName.ToString()] = newSchema;
                         }
                     }
                 }
