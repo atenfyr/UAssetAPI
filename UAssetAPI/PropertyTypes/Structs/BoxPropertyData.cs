@@ -6,7 +6,7 @@ using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs
 {
-    public class BoxPropertyData : PropertyData<VectorPropertyData[]> // Min, Max, IsValid
+    public class BoxPropertyData : PropertyData<FVector[]> // Min, Max, IsValid
     {
         [JsonProperty]
         public bool IsValid;
@@ -32,25 +32,13 @@ namespace UAssetAPI.PropertyTypes.Structs
                 PropertyGuid = reader.ReadPropertyGuid();
             }
 
-            Value = new VectorPropertyData[2];
+            Value = new FVector[2];
             for (int i = 0; i < 2; i++)
             {
-                var next = new VectorPropertyData(Name);
-                next.Ancestry.Initialize(Ancestry, Name);
-                next.Read(reader, false, 0);
-                Value[i] = next;
+                Value[i] = new FVector(reader);
             }
 
             IsValid = reader.ReadBoolean();
-        }
-
-        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
-        {
-            var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
-            ancestryNew.SetAsParent(Name);
-
-            foreach (var entry in Value) entry.ResolveAncestries(asset, ancestryNew);
-            base.ResolveAncestries(asset, ancestrySoFar);
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -60,10 +48,17 @@ namespace UAssetAPI.PropertyTypes.Structs
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
+            if (Value == null)
+            {
+                Value = new FVector[2];
+                Value[0] = new FVector(0, 0, 0);
+                Value[1] = new FVector(0, 0, 0);
+            }
+
             int totalSize = 0;
             for (int i = 0; i < 2; i++)
             {
-                totalSize += Value[i].Write(writer, includeHeader);
+                totalSize += Value[i].Write(writer);
             }
             writer.Write(IsValid);
             return totalSize + sizeof(bool);
@@ -88,10 +83,10 @@ namespace UAssetAPI.PropertyTypes.Structs
         {
             BoxPropertyData cloningProperty = (BoxPropertyData)res;
 
-            VectorPropertyData[] newData = new VectorPropertyData[this.Value.Length];
+            FVector[] newData = new FVector[this.Value.Length];
             for (int i = 0; i < this.Value.Length; i++)
             {
-                newData[i] = (VectorPropertyData)this.Value[i].Clone();
+                newData[i] = this.Value[i]; // struct, don't worry about cloning
             }
             cloningProperty.Value = newData;
         }
