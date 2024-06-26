@@ -395,28 +395,56 @@ namespace UAssetAPI.Unversioned
             switch (typ)
             {
                 case EPropertyType.EnumProperty:
-                    FPackageIndex enumIndex = (entry as FEnumProperty).Enum;
-                    var underlyingProp = (entry as FEnumProperty).UnderlyingProp;
-                    if (enumIndex.IsExport())
                     {
-                        var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
-                        var allNames = new List<string>();
-                        foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
-                        converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
-                        ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
+                        FPackageIndex enumIndex = (entry as FEnumProperty).Enum;
+                        var underlyingProp = (entry as FEnumProperty).UnderlyingProp;
+                        if (enumIndex.IsExport())
+                        {
+                            var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
+                            var allNames = new List<string>();
+                            foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
+                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
+                            ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
+                        }
+                        else if (enumIndex.IsImport())
+                        {
+                            string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
+                            if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                            var allNames = new List<string>();
+                            foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
+                            converted1 = new UsmapEnumData(enumName, allNames);
+                            ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
+                        }
+                        else
+                        {
+                            converted1 = null;
+                        }
                     }
-                    else if (enumIndex.IsImport())
+                    break;
+                case EPropertyType.ByteProperty:
                     {
-                        string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
-                        if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
-                        var allNames = new List<string>();
-                        foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
-                        converted1 = new UsmapEnumData(enumName, allNames);
-                        ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
-                    }
-                    else
-                    {
-                        converted1 = null;
+                        FPackageIndex enumIndex = (entry as FByteProperty).Enum;
+                        if (enumIndex.IsExport())
+                        {
+                            var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
+                            var allNames = new List<string>();
+                            foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
+                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
+                            ((UsmapEnumData)converted1).InnerType = new UsmapPropertyData(EPropertyType.ByteProperty);
+                        }
+                        else if (enumIndex.IsImport())
+                        {
+                            string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
+                            if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                            var allNames = new List<string>();
+                            foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
+                            converted1 = new UsmapEnumData(enumName, allNames);
+                            ((UsmapEnumData)converted1).InnerType = new UsmapPropertyData(EPropertyType.ByteProperty);
+                        }
+                        else
+                        {
+                            converted1 = null;
+                        }
                     }
                     break;
                 case EPropertyType.StructProperty:

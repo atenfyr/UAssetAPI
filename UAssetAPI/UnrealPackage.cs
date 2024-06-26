@@ -742,6 +742,21 @@ namespace UAssetAPI
                     }
                 }
 
+                // if we got an enum, let's add to mappings enum map if we can
+                if (Exports[i] is EnumExport fetchedEnumExp)
+                {
+                    string enumName = fetchedEnumExp.ObjectName?.ToString();
+                    if (Mappings?.EnumMap != null && enumName != null)
+                    {
+                        var newEnum = new UsmapEnum(enumName, new Dictionary<long, string>()); 
+                        foreach (Tuple<FName, long> entry in fetchedEnumExp.Enum.Names)
+                        {
+                            newEnum.Values[entry.Item2] = entry.Item1.ToString();
+                        }
+                        Mappings.EnumMap[enumName] = newEnum;
+                    }
+                }
+
                 long extrasLen = nextStarting - reader.BaseStream.Position;
                 if (extrasLen < 0)
                 {
