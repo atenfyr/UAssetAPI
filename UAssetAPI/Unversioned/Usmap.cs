@@ -443,7 +443,7 @@ namespace UAssetAPI.Unversioned
                         }
                         else
                         {
-                            converted1 = null;
+                            converted1 = new UsmapPropertyData(EPropertyType.ByteProperty); // this is most likely an InnerType of an EnumProperty
                         }
                     }
                     break;
