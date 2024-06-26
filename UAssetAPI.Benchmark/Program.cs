@@ -29,6 +29,15 @@ namespace UAssetAPI.Benchmark
             }
             catch { passBinaryEq = false; }
 
+            if (!passBinaryEq)
+            {
+                try
+                {
+                    loaded.Write("test.uasset");
+                }
+                catch { }
+            }
+
             int numPassedExportsTotal = 0;
             int numExportsTotal = 0;
             try
@@ -46,7 +55,7 @@ namespace UAssetAPI.Benchmark
 
             Console.WriteLine(Path.GetFileName(path) + " parsed in " + timer.Elapsed.TotalMilliseconds + " ms");
             Console.WriteLine("Binary equality: " + (passBinaryEq ? "PASS" : "FAIL"));
-            Console.WriteLine(numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(100 * numPassedExportsTotal / (double)numExportsTotal) + ") passed");
+            Console.WriteLine(numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(100 * numPassedExportsTotal / (double)numExportsTotal) + "%) passed");
             return timer.Elapsed.TotalMilliseconds;
         }
 
