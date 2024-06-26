@@ -61,6 +61,19 @@ namespace UAssetAPI.ExportTypes
                 }
             }
 
+            if (decidedStructType.ToString() == "Generic")
+            {
+                // overrides here...
+                FName exportClassTypeName = this.GetExportClassType();
+                string exportClassType = exportClassTypeName.Value.Value;
+                switch(exportClassType)
+                {
+                    case "CommonGenericInputActionDataTable":
+                        decidedStructType = FName.DefineDummy(reader.Asset, "CommonInputActionDataBase");
+                        break;
+                }
+            }
+
             reader.ReadInt32();
 
             Table = new UDataTable();
