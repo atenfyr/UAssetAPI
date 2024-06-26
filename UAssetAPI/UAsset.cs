@@ -183,13 +183,16 @@ namespace UAssetAPI
 
         internal bool hasFoundParentClassExportName = false;
         internal FName parentClassExportNameCache = null;
-        internal override FName GetParentClassExportName()
+        internal FName parentClassExportName2Cache = null;
+        internal override FName GetParentClassExportName(out FName modulePath)
         {
             if (!hasFoundParentClassExportName)
             {
                 hasFoundParentClassExportName = true;
-                GetParentClass(out _, out parentClassExportNameCache);
+                GetParentClass(out parentClassExportName2Cache, out parentClassExportNameCache);
             }
+
+            modulePath = parentClassExportName2Cache;
             return parentClassExportNameCache;
         }
 
@@ -298,7 +301,10 @@ namespace UAssetAPI
             try
             {
                 Mappings.PathsAlreadyProcessedForSchemas.Add(assetPath);
-                UAsset otherAsset = new UAsset(pathOnDisk, this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
+                UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
+                otherAsset.AssetPathForPullingSchemas = assetPath;
+                otherAsset.FilePath = pathOnDisk;
+                otherAsset.Read(otherAsset.PathToReader(pathOnDisk));
                 // loading the asset will automatically add any new schemas to the mappings in-situ
             }
             catch
@@ -857,7 +863,7 @@ namespace UAssetAPI
 
             // Export details
             Exports = new List<Export>();
-            List<int> prioritizedExports = new List<int>();
+            List<int> exportLoadOrder = new List<int>();
             if (ExportOffset > 0)
             {
                 reader.BaseStream.Seek(ExportOffset, SeekOrigin.Begin);
@@ -867,11 +873,11 @@ namespace UAssetAPI
                     newExport.ReadExportMapEntry(reader);
                     Exports.Add(newExport);
 
-                    string ect = newExport.GetExportClassType().Value.Value;
+                    /*string ect = newExport.GetExportClassType().Value.Value;
                     if (ect.EndsWith("BlueprintGeneratedClass"))
                     {
-                        prioritizedExports.Add(i);
-                    } 
+                        exportLoadOrder.Add(i);
+                    }*/
                 }
             }
 
@@ -1000,14 +1006,17 @@ namespace UAssetAPI
             }
 
             // load dependencies, if needed and available
-            foreach (Export newExport in Exports)
+            Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
+            for (int i = 0; i < Exports.Count; i++)
             {
+                Export newExport = Exports[i];
                 List<FPackageIndex> deps = new List<FPackageIndex>();
                 deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
                 deps.AddRange(newExport.SerializationBeforeCreateDependencies);
                 //deps.Add(newExport.ClassIndex);
                 //deps.Add(newExport.SuperIndex);
 
+                depsMap[i + 1] = new List<int>();
                 foreach (FPackageIndex dep in deps)
                 {
                     if (dep.IsImport())
@@ -1019,19 +1028,34 @@ namespace UAssetAPI
                             this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
                         }
                     }
+
+                    if (dep.IsExport())
+                    {
+                        depsMap[i + 1].Add(dep.Index);
+                    }
                 }
             }
-
+            exportLoadOrder.AddRange(Enumerable.Range(1, Exports.Count).SortByDependencies(depsMap));
 
             // Export data
             if (SectionSixOffset > 0 && Exports.Count > 0)
             {
-                foreach (int prioritizedExportIndex in prioritizedExports)
+                foreach (int exportIdx in exportLoadOrder)
                 {
-                    reader.BaseStream.Seek(Exports[prioritizedExportIndex].SerialOffset, SeekOrigin.Begin);
-                    ConvertExportToChildExportAndRead(reader, prioritizedExportIndex);
+                    int i = exportIdx - 1;
+
+                    reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                    if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
+                    {
+                        Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
+                        ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                        continue;
+                    }
+
+                    ConvertExportToChildExportAndRead(reader, i);
                 }
 
+                // catch any stragglers
                 for (int i = 0; i < Exports.Count; i++)
                 {
                     if (Exports[i].alreadySerialized) continue;

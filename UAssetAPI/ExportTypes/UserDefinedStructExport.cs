@@ -43,7 +43,7 @@ namespace UAssetAPI.ExportTypes
             PropertyData bit;
 
             var unversionedHeader = new FUnversionedHeader(reader);
-            while ((bit = MainSerializer.Read(reader, null, this.ObjectName, unversionedHeader, true)) != null)
+            while ((bit = MainSerializer.Read(reader, null, this.ObjectName, null, unversionedHeader, true)) != null)
             {
                 StructData.Add(bit);
             }
@@ -52,7 +52,7 @@ namespace UAssetAPI.ExportTypes
         public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
-            ancestryNew.SetAsParent(this.ObjectName);
+            ancestryNew.SetAsParent(this.ObjectName, null);
 
             if (StructData != null)
             {
@@ -69,7 +69,7 @@ namespace UAssetAPI.ExportTypes
 
             writer.Write(StructFlags);
 
-            MainSerializer.GenerateUnversionedHeader(ref StructData, this.ObjectName, writer.Asset)?.Write(writer);
+            MainSerializer.GenerateUnversionedHeader(ref StructData, this.ObjectName, null, writer.Asset)?.Write(writer);
             for (int j = 0; j < StructData.Count; j++)
             {
                 PropertyData current = StructData[j];

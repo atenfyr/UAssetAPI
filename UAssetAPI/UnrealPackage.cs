@@ -381,8 +381,9 @@ namespace UAssetAPI
             parentClassExportName = null;
         }
 
-        internal virtual FName GetParentClassExportName()
+        internal virtual FName GetParentClassExportName(out FName modulePath)
         {
+            modulePath = null;
             return null;
         }
 
@@ -649,6 +650,7 @@ namespace UAssetAPI
             return res;
         }
 
+        internal string AssetPathForPullingSchemas = null;
         protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -728,10 +730,15 @@ namespace UAssetAPI
                     }
 
                     // add schema if possible (!!!)
-                    if (Mappings?.Schemas != null && fetchedStructExp.ObjectName?.Value?.Value != null)
+                    if (Mappings?.Schemas != null && fetchedStructExp.ObjectName?.ToString() != null)
                     {
                         UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp);
-                        Mappings.Schemas[fetchedStructExp.ObjectName.Value.Value] = newSchema;
+                        if (newSchema != null)
+                        {
+                            newSchema.ModulePath = AssetPathForPullingSchemas;
+                            Mappings.Schemas[fetchedStructExp.ObjectName.ToString()] = newSchema;
+                            Mappings.Schemas[newSchema.ModulePath + "." + fetchedStructExp.ObjectName.ToString()] = newSchema;
+                        }
                     }
                 }
 

@@ -54,7 +54,7 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
             if (type.Value != null)
             {
                 var dat = Value.Except([type]).ToList();
-                MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
+                MainSerializer.GenerateUnversionedHeader(ref dat, Name, null, writer.Asset)?.Write(writer);
 
                 foreach (var t in dat)
                 {

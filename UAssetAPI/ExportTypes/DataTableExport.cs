@@ -66,7 +66,7 @@ namespace UAssetAPI.ExportTypes
             Table = new UDataTable();
 
             int numEntries = reader.ReadInt32();
-            FName pcen = reader.Asset.GetParentClassExportName();
+            FName pcen = reader.Asset.GetParentClassExportName(out FName pcen2);
             for (int i = 0; i < numEntries; i++)
             {
                 FName rowName = reader.ReadFName();
@@ -74,7 +74,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     StructType = decidedStructType
                 };
-                nextStruct.Ancestry.Initialize(null, pcen);
+                nextStruct.Ancestry.Initialize(null, pcen, pcen2);
                 nextStruct.Read(reader, false, 1);
                 Table.Data.Add(nextStruct);
             }
@@ -83,8 +83,8 @@ namespace UAssetAPI.ExportTypes
         public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
-            FName pcen = asset.GetParentClassExportName();
-            ancestryNew.SetAsParent(pcen);
+            FName pcen = asset.GetParentClassExportName(out FName pcen2);
+            ancestryNew.SetAsParent(pcen, pcen2);
 
             if (Data != null)
             {

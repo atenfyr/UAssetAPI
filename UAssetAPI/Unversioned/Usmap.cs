@@ -357,17 +357,17 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// .usmap enum map
         /// </summary>
-        public Dictionary<string, UsmapEnum> EnumMap;
+        public IDictionary<string, UsmapEnum> EnumMap;
 
         /// <summary>
         /// .usmap schema map
         /// </summary>
-        public Dictionary<string, UsmapSchema> Schemas;
+        public IDictionary<string, UsmapSchema> Schemas;
 
         /// <summary>
         /// Pre-computed CityHash64 map for all relevant strings
         /// </summary>
-        public Dictionary<ulong, string> CityHash64Map;
+        public IDictionary<ulong, string> CityHash64Map;
 
         /// <summary>
         /// List of extensions that failed to parse.
@@ -376,13 +376,16 @@ namespace UAssetAPI.Unversioned
 
         private void AddCityHash64MapEntry(string val)
         {
-            ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
+            // for now, we don't actually use this
+            return;
+
+            /*ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
             if (CityHash64Map.ContainsKey(hsh))
             {
                 if (CRCGenerator.ToLower(CityHash64Map[hsh]) == CRCGenerator.ToLower(val)) return;
                 throw new FormatException("CityHash64 hash collision between \"" + CityHash64Map[hsh] + "\" and \"" + val + "\"");
             }
-            CityHash64Map.Add(hsh, val);
+            CityHash64Map.Add(hsh, val);*/
         }
 
         private static UsmapPropertyData ConvertFPropertyToUsmapPropertyData(StructExport exp, FProperty entry)
@@ -417,7 +420,7 @@ namespace UAssetAPI.Unversioned
                     }
                     break;
                 case EPropertyType.StructProperty:
-                    var strucstr = Export.GetClassTypeForAncestry((entry as FStructProperty).Struct, exp.Asset);
+                    var strucstr = Export.GetClassTypeForAncestry((entry as FStructProperty).Struct, exp.Asset, out _);
                     converted1 = new UsmapStructData(strucstr.ToString());
                     break;
                 case EPropertyType.SetProperty:
@@ -467,12 +470,13 @@ namespace UAssetAPI.Unversioned
         /// Retrieve all the properties that a particular schema can reference.
         /// </summary>
         /// <param name="schemaName">The name of the schema of interest.</param>
+        /// <param name="modulePath">Module path of the schema of interest.</param>
         /// <param name="asset">An asset to also search for schemas within.</param>
         /// <returns>All the properties that the schema can reference.</returns>
-        public IList<UsmapProperty> GetAllProperties(string schemaName, UnrealPackage asset = null)
+        public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath = null, UnrealPackage asset = null)
         {
             List<UsmapProperty> res = new List<UsmapProperty>();
-            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
+            UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset, modulePath);
             while (schemaName != null && relevantSchema != null)
             {
                 res.AddRange(relevantSchema.Properties.Values);
@@ -523,16 +527,30 @@ namespace UAssetAPI.Unversioned
         }
 
         public ISet<string> PathsAlreadyProcessedForSchemas = new HashSet<string>();
-        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, bool throwExceptions = true)
+        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, string modulePath = null, bool throwExceptions = true)
         {
             if (string.IsNullOrEmpty(nm)) return null;
 
+            string withModulePath = null;
+            if (modulePath != null) withModulePath = modulePath + "." + nm;
+
+            string[] withoutModulePathComponents = nm.Split(".");
+            string withoutModulePath = withoutModulePathComponents.Length > 1 ? withoutModulePathComponents[withoutModulePathComponents.Length - 1] : null;
+
             UsmapSchema relevantSchema = null;
-            if (this.Schemas.ContainsKey(nm))
+            if (withModulePath != null && this.Schemas.ContainsKey(withModulePath))
+            {
+                relevantSchema = this.Schemas[withModulePath];
+            }
+            else if (this.Schemas.ContainsKey(nm)) // fallback to without module path
             {
                 relevantSchema = this.Schemas[nm];
             }
-            else if (asset != null)
+            else if (withoutModulePath != null && this.Schemas.ContainsKey(withoutModulePath))
+            {
+                relevantSchema = this.Schemas[withoutModulePath];
+            }
+            else 
             {
                 // note: this is probably not needed anymore since we now collate schemas on asset load
                 relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
@@ -839,6 +857,7 @@ namespace UAssetAPI.Unversioned
                         for (int i = 0; i < ppthNumSchemas; i++)
                         {
                             schemaIndexMap[i].ModulePath = reader.ReadName();
+                            Schemas[schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name] = schemaIndexMap[i];
                             AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
                         }
 

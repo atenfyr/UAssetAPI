@@ -95,7 +95,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     data.Read(reader, false, 1, 0, PropertySerializationContext.Map);
                     return data;
                 default:
-                    var res = MainSerializer.TypeToClass(type, name, Ancestry, Name, reader.Asset, null, leng);
+                    var res = MainSerializer.TypeToClass(type, name, Ancestry, Name, null, reader.Asset, null, leng);
                     res.Ancestry.Initialize(Ancestry, Name);
                     res.Read(reader, includeHeader, leng, 0, PropertySerializationContext.Map);
                     return res;

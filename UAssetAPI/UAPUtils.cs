@@ -230,5 +230,32 @@ namespace UAssetAPI
         {
             return path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
         }
+
+        public static List<T> SortByDependencies<T>(this IEnumerable<T> allExports, IDictionary<T, IList<T>> dependencies)
+        {
+            var sortedSoFar = new List<T>();
+            var visited = new HashSet<T>();
+
+            foreach (var item in allExports) SortByDependenciesVisit(item, visited, sortedSoFar, dependencies);
+
+            return sortedSoFar;
+        }
+
+        private static void SortByDependenciesVisit<T>(T item, HashSet<T> visited, List<T> sortedSoFar, IDictionary<T, IList<T>> dependencies)
+        {
+            if (!visited.Contains(item))
+            {
+                visited.Add(item);
+                if (dependencies.ContainsKey(item))
+                {
+                    foreach (var dependency in dependencies[item]) SortByDependenciesVisit(dependency, visited, sortedSoFar, dependencies);
+                }
+                sortedSoFar.Add(item);
+            }
+            else
+            {
+                if (!sortedSoFar.Contains(item)) throw new FormatException("Cyclic dependency exists in preload dependency graph");
+            }
+        }
     }
 }

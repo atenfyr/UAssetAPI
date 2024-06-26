@@ -136,8 +136,9 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="data">The list of properties to sort and generate an unversioned header from.</param>
         /// <param name="parentName">The name of the parent of all the properties.</param>
+        /// <param name="parentModulePath">The path to the module that the parent class/struct of this property is contained within.</param>
         /// <param name="asset">The UnrealPackage which the properties are contained within.</param>
-        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, UnrealPackage asset)
+        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, FName parentModulePath, UnrealPackage asset)
         {
             var sortedProps = new List<PropertyData>();
             if (!asset.HasUnversionedProperties) return null; // no point in wasting time generating it
@@ -218,17 +219,17 @@ namespace UAssetAPI
             {
                 // add "blank" fragment
                 // i'm pretty sure that any SkipNum should work here as long as ValueNum = 0, but this is what the engine does
-                string highestSchema = parentName?.Value?.Value;
+                string highestSchema = parentName?.ToString();
 
                 // i doubt that this is true, empirically tested; need more data
                 int numSkip = 0;
                 if (asset.ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
                 {
-                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString()).Count, FFragment.SkipMax);
                 }
                 else
                 {
-                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema).Count, FFragment.SkipMax);
+                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString()).Count, FFragment.SkipMax);
                 }
                 allFrags.Add(new FFragment(numSkip, 0, true, false));
             }
@@ -273,6 +274,7 @@ namespace UAssetAPI
         /// <param name="name">The serialized name of this property.</param>
         /// <param name="ancestry">The ancestry of the parent of this property.</param>
         /// <param name="parentName">The name of the parent class/struct of this property.</param>
+        /// <param name="parentModulePath">The path to the module that the parent class/struct of this property is contained within.</param>
         /// <param name="asset">The UnrealPackage which this property is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long, PropertySerializationContext)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
@@ -280,7 +282,7 @@ namespace UAssetAPI
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <param name="isZero">Is the body of this property empty?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
@@ -334,7 +336,7 @@ namespace UAssetAPI
 #endif
 
             data.IsZero = isZero;
-            data.Ancestry.Initialize(ancestry, parentName);
+            data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
             data.DuplicationIndex = duplicationIndex;
             if (reader != null && !isZero)
             {
@@ -349,7 +351,7 @@ namespace UAssetAPI
                     if (data is StructPropertyData && !reader.Asset.HasUnversionedProperties)
                     {
                         data = new RawStructPropertyData(name);
-                        data.Ancestry.Initialize(ancestry, parentName);
+                        data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
                         data.DuplicationIndex = duplicationIndex;
                         data.Read(reader, includeHeader, leng);
                     }
@@ -370,10 +372,11 @@ namespace UAssetAPI
         /// <param name="reader">The BinaryReader to read from. The underlying stream should be at the position of the property to be read.</param>
         /// <param name="ancestry">The ancestry of the parent of this property.</param>
         /// <param name="parentName">The name of the parent class/struct of this property.</param>
+        /// <param name="parentModulePath">The path to the module that the parent class/struct of this property is contained within.</param>
         /// <param name="header">The unversioned header to be used when reading this property. Leave null if none exists.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <returns>The property read from disk.</returns>
-        public static PropertyData Read(AssetBinaryReader reader, AncestryInfo ancestry, FName parentName, FUnversionedHeader header, bool includeHeader)
+        public static PropertyData Read(AssetBinaryReader reader, AncestryInfo ancestry, FName parentName, FName parentModulePath, FUnversionedHeader header, bool includeHeader)
         {
             long startingOffset = reader.BaseStream.Position;
             FName name = null;
@@ -390,7 +393,7 @@ namespace UAssetAPI
                     throw new InvalidMappingsException();
                 }
 
-                UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName.Value.Value, reader.Asset);
+                UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName.Value.Value, reader.Asset, parentModulePath?.Value.Value);
                 while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
                     if (header.CurrentFragment.Value.bIsLast) return null;
@@ -432,7 +435,7 @@ namespace UAssetAPI
                 duplicationIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, ancestry, parentName, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
+            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             //Debug.WriteLine(type);

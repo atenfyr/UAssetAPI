@@ -43,16 +43,16 @@ namespace UAssetAPI.PropertyTypes.Objects
             return res;
         }
 
-        public void Initialize(AncestryInfo ancestors, FName dad)
+        public void Initialize(AncestryInfo ancestors, FName dad, FName modulePath = null)
         {
             Ancestors.Clear();
             if (ancestors != null) Ancestors.AddRange(ancestors.Ancestors);
-            SetAsParent(dad);
+            SetAsParent(dad, modulePath);
         }
 
-        public void SetAsParent(FName dad)
+        public void SetAsParent(FName dad, FName modulePath = null)
         {
-            if (dad != null) Ancestors.Add(dad);
+            if (dad != null) Ancestors.Add(modulePath == null ? dad : FName.DefineDummy(null, modulePath.Value.Value + "." + dad.Value.Value));
         }
     }
 

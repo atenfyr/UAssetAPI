@@ -480,17 +480,21 @@ namespace UAssetAPI.ExportTypes
             return this.ClassIndex.IsImport() ? this.ClassIndex.ToImport(Asset).ObjectName : FName.DefineDummy(Asset, this.ClassIndex.Index.ToString());
         }
 
-        public FName GetClassTypeForAncestry(UnrealPackage asset = null)
+        public FName GetClassTypeForAncestry(UnrealPackage asset, out FName modulePath)
         {
             if (asset == null) asset = Asset;
-            return GetClassTypeForAncestry(this.ClassIndex, asset);
+            return GetClassTypeForAncestry(this.ClassIndex, asset, out modulePath);
         }
 
-        public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset = null)
+        public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset, out FName modulePath)
         {
+            modulePath = null;
             if (classIndex.IsNull()) return null;
-            if (classIndex.IsImport()) return classIndex.ToImport(asset).ObjectName;
-            return classIndex.ToExport(asset).ObjectName;
+            if (classIndex.IsExport()) return classIndex.ToExport(asset).ObjectName;
+
+            var imp = classIndex.ToImport(asset);
+            if (imp.OuterIndex.IsImport()) modulePath = imp.OuterIndex.ToImport(asset).ObjectName;
+            return imp.ObjectName;
         }
 
         public override string ToString()

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -100,7 +101,8 @@ namespace UAssetAPI.ExportTypes
             PropertyData bit;
 
             var unversionedHeader = new FUnversionedHeader(reader);
-            while ((bit = MainSerializer.Read(reader, null, GetClassTypeForAncestry(reader.Asset), unversionedHeader, true)) != null)
+            FName parentName = GetClassTypeForAncestry(reader.Asset, out FName parentModulePath);
+            while ((bit = MainSerializer.Read(reader, null, parentName, parentModulePath, unversionedHeader, true)) != null)
             {
                 Data.Add(bit);
             }
@@ -109,7 +111,7 @@ namespace UAssetAPI.ExportTypes
         public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
-            ancestryNew.SetAsParent(GetClassTypeForAncestry(asset));
+            ancestryNew.SetAsParent(GetClassTypeForAncestry(asset, out FName modulePath), modulePath);
 
             if (Data != null)
             {
@@ -120,7 +122,9 @@ namespace UAssetAPI.ExportTypes
 
         public override void Write(AssetBinaryWriter writer)
         {
-            MainSerializer.GenerateUnversionedHeader(ref Data, GetClassTypeForAncestry(writer.Asset), writer.Asset)?.Write(writer);
+            FName parentName = GetClassTypeForAncestry(writer.Asset, out FName parentModulePath);
+
+            MainSerializer.GenerateUnversionedHeader(ref Data, parentName, parentModulePath, writer.Asset)?.Write(writer);
             for (int j = 0; j < Data.Count; j++)
             {
                 PropertyData current = Data[j];

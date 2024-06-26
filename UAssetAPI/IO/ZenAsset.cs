@@ -216,7 +216,7 @@ namespace UAssetAPI.IO
             throw new NotImplementedException("Unimplemented method ZenAsset.GetParentClass");
         }
 
-        internal override FName GetParentClassExportName()
+        internal override FName GetParentClassExportName(out FName modulePath)
         {
             throw new NotImplementedException("Unimplemented method ZenAsset.GetParentClassExportName");
         }

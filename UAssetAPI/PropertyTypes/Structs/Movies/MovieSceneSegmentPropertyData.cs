@@ -46,7 +46,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 List<PropertyData> resultingList = new List<PropertyData>();
                 PropertyData data = null;
                 var unversionedHeader = new FUnversionedHeader(reader);
-                while ((data = MainSerializer.Read(reader, Ancestry, Name, unversionedHeader, true)) != null)
+                while ((data = MainSerializer.Read(reader, Ancestry, Name, null, unversionedHeader, true)) != null)
                 {
                     resultingList.Add(data);
                 }
@@ -80,7 +80,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 if (Value.Impls[i] != null)
                 {
                     var dat = Value.Impls[i];
-                    MainSerializer.GenerateUnversionedHeader(ref dat, Name, writer.Asset)?.Write(writer);
+                    MainSerializer.GenerateUnversionedHeader(ref dat, Name, null, writer.Asset)?.Write(writer);
                     foreach (var t in dat)
                     {
                         MainSerializer.Write(t, writer, true);

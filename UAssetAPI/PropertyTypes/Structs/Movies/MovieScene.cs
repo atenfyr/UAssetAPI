@@ -654,7 +654,7 @@ namespace UAssetAPI.PropertyTypes.Structs
                 List<PropertyData> resultingList = new List<PropertyData>();
                 PropertyData data = null;
                 var unversionedHeader = new FUnversionedHeader(reader);
-                while ((data = MainSerializer.Read(reader, null, null, unversionedHeader, true)) != null) {
+                while ((data = MainSerializer.Read(reader, null, null, null, unversionedHeader, true)) != null) {
                     resultingList.Add(data);
                 }
                 items[i] = resultingList;
@@ -696,7 +696,7 @@ namespace UAssetAPI.PropertyTypes.Structs
 
                 if (Tree.Data.Items[i] != null) {
                     var dat = Tree.Data.Items[i];
-                    MainSerializer.GenerateUnversionedHeader(ref dat, FName.DefineDummy(writer.Asset, "SectionEvaluationDataTree"), writer.Asset)?.Write(writer);
+                    MainSerializer.GenerateUnversionedHeader(ref dat, FName.DefineDummy(writer.Asset, "SectionEvaluationDataTree"), null, writer.Asset)?.Write(writer);
                     foreach (var t in dat) {
                         MainSerializer.Write(t, writer, true);
                     }

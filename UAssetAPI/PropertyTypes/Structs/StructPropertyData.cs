@@ -49,7 +49,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         PropertyData data = null;
 
         var unversionedHeader = new FUnversionedHeader(reader);
-        while ((data = MainSerializer.Read(reader, Ancestry, StructType, unversionedHeader, true)) != null)
+        while ((data = MainSerializer.Read(reader, Ancestry, StructType, null, unversionedHeader, true)) != null)
         {
             resultingList.Add(data);
         }
@@ -132,7 +132,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
             // populate fallback zero entry 
             if (Value == null) Value = new List<PropertyData>();
             Value.Clear();
-            Value.Add(MainSerializer.TypeToClass(StructType, Name, Ancestry, Name, writer.Asset, null, 0, 0, false));
+            Value.Add(MainSerializer.TypeToClass(StructType, Name, Ancestry, Name, null, writer.Asset, null, 0, 0, false));
         }
         Value[0].Offset = writer.BaseStream.Position;
         return Value[0].Write(writer, false);
@@ -150,7 +150,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
                 allDat.AddRange(Value);
                 allDat.RemoveAt(0);
             }
-            MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, writer.Asset)?.Write(writer);
+            MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, null, writer.Asset)?.Write(writer);
             foreach (var t in allDat)
             {
                 MainSerializer.Write(t, writer, true);
