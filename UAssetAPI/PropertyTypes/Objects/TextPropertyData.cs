@@ -17,6 +17,12 @@ public enum ETextFlag
     InitializedFromString = 1 << 4
 }
 
+public enum ETransformType : byte
+{
+    ToLower = 0,
+    ToUpper,
+}
+
 public class FFormatArgumentValue
 {
     public EFormatArgumentType Type;
@@ -150,6 +156,8 @@ public class TextPropertyData : PropertyData<FString>
     public FFormatArgumentValue[] Arguments;
     [JsonProperty]
     public FFormatArgumentData[] ArgumentsData;
+    [JsonProperty]
+    public ETransformType TransformType;
 
 
     public bool ShouldSerializeTableId()
@@ -239,6 +247,11 @@ public class TextPropertyData : PropertyData<FString>
                         ArgumentsData[i].Read(reader);
                     }
                     break;
+                case TextHistoryType.Transform:
+                    SourceFmt = new TextPropertyData(FName.DefineDummy(reader.Asset, "SourceFmt"));
+                    SourceFmt.Read(reader, false, 1, 0, serializationContext);
+                    TransformType = (ETransformType)reader.ReadByte();
+                    break;
                 default:
                     throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString() + " @ " + reader.BaseStream.Position);
             }
@@ -317,6 +330,10 @@ public class TextPropertyData : PropertyData<FString>
                     {
                         ArgumentsData[i].Write(writer);
                     }
+                    break;
+                case TextHistoryType.Transform:
+                    SourceFmt.Write(writer, false, serializationContext);
+                    writer.Write((byte)TransformType);
                     break;
                 default:
                     throw new NotImplementedException("Unimplemented writer for " + HistoryType.ToString());
