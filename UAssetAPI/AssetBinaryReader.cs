@@ -65,6 +65,17 @@ namespace UAssetAPI
             return BitConverter.ToDouble(ReverseIfBigEndian(base.ReadBytes(8)), 0);
         }
 
+        public bool ReadBooleanInt()
+        {
+            var i = ReadInt32();
+            return i switch
+            {
+                1 => true,
+                0 => false,
+                _ => throw new FormatException($"Invalid boolean value {i}")
+            };
+        }
+
         public override string ReadString()
         {
             return ReadFString()?.Value;

@@ -1,50 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
 
-public struct FPerQualityLevelFloat
+public struct FPerQualityLevel<T>
 {
     public bool bCooked;
-    public float Default;
-    public Dictionary<int, float> PerQuality;
+    public T Default;
+    public Dictionary<int, T> PerQuality;
 
-    public FPerQualityLevelFloat(bool bCooked, float Default, Dictionary<int, float> PerQuality)
+    public FPerQualityLevel(bool _bCooked, T _default, Dictionary<int, T> perQuality)
     {
-        this.bCooked = bCooked;
-        this.Default = Default;
-        this.PerQuality = PerQuality;
+        bCooked = _bCooked;
+        Default = _default;
+        PerQuality = perQuality;
     }
 
-    public FPerQualityLevelFloat(AssetBinaryReader reader)
+    public FPerQualityLevel(AssetBinaryReader reader, Func<T> valueReader)
     {
-        bCooked = reader.ReadInt32() != 0;
-        Default = reader.ReadSingle();
+        bCooked = reader.ReadBooleanInt();
+        Default = valueReader();
         PerQuality = [];
         int numElements = reader.ReadInt32();
         for (int i = 0; i < numElements; i++)
         {
-            PerQuality[reader.ReadInt32()] = reader.ReadSingle();
+            PerQuality[reader.ReadInt32()] = valueReader();
         }
     }
 
-    public int Write(AssetBinaryWriter writer)
+    public int Write(AssetBinaryWriter writer, Action<T> valueWriter)
     {
         var offset = writer.BaseStream.Position;
         writer.Write(bCooked ? 1 : 0);
-        writer.Write(Default);
+        valueWriter(Default);
         writer.Write(PerQuality.Count);
         foreach (var pair in PerQuality)
         {
             writer.Write(pair.Key);
-            writer.Write(pair.Value);
+            valueWriter(pair.Value);
         }
         return (int)(writer.BaseStream.Position - offset);
     }
 }
 
-public class PerQualityLevelFloatPropertyData : PropertyData<FPerQualityLevelFloat>
+public class PerQualityLevelFloatPropertyData : PropertyData<FPerQualityLevel<float>>
 {
     public PerQualityLevelFloatPropertyData(FName name) : base(name) { }
 
@@ -61,7 +62,7 @@ public class PerQualityLevelFloatPropertyData : PropertyData<FPerQualityLevelFlo
             PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        Value = new FPerQualityLevelFloat(reader);
+        Value = new(reader, reader.ReadSingle);
     }
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -71,51 +72,11 @@ public class PerQualityLevelFloatPropertyData : PropertyData<FPerQualityLevelFlo
             writer.WritePropertyGuid(PropertyGuid);
         }
 
-        return Value.Write(writer);
+        return Value.Write(writer, writer.Write);
     }
 }
 
-public struct FPerQualityLevelInt
-{
-    public bool bCooked;
-    public int Default;
-    public Dictionary<int, int> PerQuality;
-
-    public FPerQualityLevelInt(bool bCooked, int Default, Dictionary<int, int> PerQuality)
-    {
-        this.bCooked = bCooked;
-        this.Default = Default;
-        this.PerQuality = PerQuality;
-    }
-
-    public FPerQualityLevelInt(AssetBinaryReader reader)
-    {
-        bCooked = reader.ReadInt32() != 0;
-        Default = reader.ReadInt32();
-        PerQuality = [];
-        int numElements = reader.ReadInt32();
-        for (int i = 0; i < numElements; i++)
-        {
-            PerQuality[reader.ReadInt32()] = reader.ReadInt32();
-        }
-    }
-
-    public int Write(AssetBinaryWriter writer)
-    {
-        var offset = writer.BaseStream.Position;
-        writer.Write(bCooked ? 1 : 0);
-        writer.Write(Default);
-        writer.Write(PerQuality.Count);
-        foreach (var pair in PerQuality)
-        {
-            writer.Write(pair.Key);
-            writer.Write(pair.Value);
-        }
-        return (int)(writer.BaseStream.Position - offset);
-    }
-}
-
-public class PerQualityLevelIntPropertyData : PropertyData<FPerQualityLevelInt>
+public class PerQualityLevelIntPropertyData : PropertyData<FPerQualityLevel<int>>
 {
     public PerQualityLevelIntPropertyData(FName name) : base(name) { }
 
@@ -132,7 +93,7 @@ public class PerQualityLevelIntPropertyData : PropertyData<FPerQualityLevelInt>
             PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        Value = new FPerQualityLevelInt(reader);
+        Value = new(reader, reader.ReadInt32);
     }
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -142,6 +103,6 @@ public class PerQualityLevelIntPropertyData : PropertyData<FPerQualityLevelInt>
             writer.WritePropertyGuid(PropertyGuid);
         }
 
-        return Value.Write(writer);
+        return Value.Write(writer, writer.Write);
     }
 }
