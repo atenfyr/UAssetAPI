@@ -306,6 +306,10 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine("Operation completed in " + timer.Elapsed.TotalMilliseconds + " ms");
                     timer.Stop();
                     break;
+                case "mappings":
+                    Usmap with_skip = new Usmap(@"C:\Dumper-7\with_skip.usmap");
+                    Usmap no_skip = new Usmap(@"C:\Dumper-7\no_skip.usmap");
+                    break;
                 case "zen":
                     IOStoreContainer test1 = new IOStoreContainer(@"C:\Program Files (x86)\Steam\steamapps\common\Garten Of Banban\Clay\Content\Paks\global.utoc");
                     ZenAsset test = new ZenAsset(EngineVersion.VER_UE5_1, new Usmap(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UAssetGUI", "Mappings", "Clay.usmap")));
@@ -323,6 +327,8 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
+            //Run(new string[] { "mappings" });
+
             while (true)
             {
                 Console.Write("Input: ");
