@@ -713,6 +713,11 @@ namespace UAssetAPI
                             Exports[i] = Exports[i].ConvertToChildExport<ClassExport>();
                             Exports[i].Read(reader, (int)nextStarting);
                         }
+                        else if (exportClassType == "ScriptStruct")
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<StructExport>();
+                            Exports[i].Read(reader, (int)nextStarting);
+                        }
                         else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || exportClassType == "ClassProperty")
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
@@ -726,8 +731,8 @@ namespace UAssetAPI
                         break;
                 }
 
-                // if we got a ClassExport, let's modify mappings/MapStructTypeOverride if we can
-                if (Exports[i] is ClassExport fetchedStructExp)
+                // if we got a StructExport, let's modify mappings/MapStructTypeOverride if we can
+                if (Exports[i] is StructExport fetchedStructExp && Exports[i] is not FunctionExport)
                 {
                     // check to see if we can add some new map type overrides
                     if (fetchedStructExp.LoadedProperties != null)
@@ -749,12 +754,16 @@ namespace UAssetAPI
                     // add schema if possible (!!!)
                     if (Mappings?.Schemas != null && fetchedStructExp.ObjectName?.ToString() != null)
                     {
+                        string outer = null;
+                        if (fetchedStructExp.OuterIndex.IsImport()) outer = fetchedStructExp.OuterIndex.ToImport(this).ObjectName.ToString();
+                        if (fetchedStructExp.OuterIndex.IsExport()) outer = fetchedStructExp.OuterIndex.ToExport(this).ObjectName.ToString();
+
                         UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp);
                         if (newSchema != null)
                         {
                             newSchema.ModulePath = InternalAssetPath;
                             Mappings.Schemas[fetchedStructExp.ObjectName.ToString()] = newSchema;
-                            if (!string.IsNullOrEmpty(newSchema.ModulePath)) Mappings.Schemas[newSchema.ModulePath + "." + fetchedStructExp.ObjectName.ToString()] = newSchema;
+                            if (!string.IsNullOrEmpty(newSchema.ModulePath)) Mappings.Schemas[newSchema.ModulePath + "." + (string.IsNullOrEmpty(outer) ? string.Empty : (outer + ".")) + fetchedStructExp.ObjectName.ToString()] = newSchema;
                         }
                     }
                 }

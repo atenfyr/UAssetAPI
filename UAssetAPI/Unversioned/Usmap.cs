@@ -856,10 +856,9 @@ namespace UAssetAPI.Unversioned
                 var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
                 schemaIndexMap[i] = newSchema;
 
-                if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C"))
-                {
-                    continue;
-                }
+                if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C")) continue;
+                if (SkipBlueprintSchemas && schemaName == "AnimBlueprintGeneratedConstantData") continue;
+                if (SkipBlueprintSchemas && schemaName == "AnimBlueprintGeneratedMutableData") continue;
 
                 // add to schema map
                 Schemas[schemaName] = newSchema;
