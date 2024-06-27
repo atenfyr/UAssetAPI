@@ -49,7 +49,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         PropertyData data = null;
 
         var unversionedHeader = new FUnversionedHeader(reader);
-        while ((data = MainSerializer.Read(reader, Ancestry, StructType, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath + "." + Ancestry.Parent), unversionedHeader, true)) != null)
+        while ((data = MainSerializer.Read(reader, Ancestry, StructType, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), unversionedHeader, true)) != null)
         {
             resultingList.Add(data);
         }
@@ -114,7 +114,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
-        ancestryNew.SetAsParent(StructType, FName.DefineDummy(asset, asset.InternalAssetPath + "." + ancestrySoFar.Parent));
+        ancestryNew.SetAsParent(StructType, FName.DefineDummy(asset, asset.InternalAssetPath + (ancestrySoFar.Ancestors.Count == 0 ? string.Empty : ("." + ancestrySoFar.Parent))));
 
         if (Value != null)
         {
@@ -150,7 +150,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
                 allDat.AddRange(Value);
                 allDat.RemoveAt(0);
             }
-            MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath + "." + Ancestry.Parent), writer.Asset)?.Write(writer);
+            MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), writer.Asset)?.Write(writer);
             foreach (var t in allDat)
             {
                 MainSerializer.Write(t, writer, true);

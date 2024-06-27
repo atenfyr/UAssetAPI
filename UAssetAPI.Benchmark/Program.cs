@@ -307,8 +307,8 @@ namespace UAssetAPI.Benchmark
                     timer.Stop();
                     break;
                 case "mappings":
-                    Usmap with_skip = new Usmap(@"C:\Dumper-7\with_skip.usmap");
-                    Usmap no_skip = new Usmap(@"C:\Dumper-7\no_skip.usmap");
+                    //Usmap with_skip = new Usmap(@"C:\Dumper-7\with_skip.usmap");
+                    Usmap no_skip = new Usmap(@"C:\Users\Alexandros\AppData\Local\UAssetGUI\Mappings\ReadyOrNot-D7-PPTH.usmap");
                     break;
                 case "zen":
                     IOStoreContainer test1 = new IOStoreContainer(@"C:\Program Files (x86)\Steam\steamapps\common\Garten Of Banban\Clay\Content\Paks\global.utoc");
@@ -327,7 +327,7 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            //Run(new string[] { "mappings" });
+            Run(new string[] { "mappings" });
 
             while (true)
             {
