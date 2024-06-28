@@ -1,163 +1,184 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 
-namespace UAssetAPI.UnrealTypes
+namespace UAssetAPI.UnrealTypes;
+
+public struct TRange<T>(AssetBinaryReader reader, Func<T> valueReader)
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public TRangeBound<T> LowerBound = new TRangeBound<T>(reader, valueReader);
+    public TRangeBound<T> UpperBound = new TRangeBound<T>(reader, valueReader);
 
-    public struct FFrameNumber
+    public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
     {
-        public int Value;
+        LowerBound.Write(writer, valueWriter);
+        UpperBound.Write(writer, valueWriter);
+    }
+}
 
-        public FFrameNumber(int value)
-        {
-            Value = value;
-        }
+/// <summary>
+/// Template for range bounds.
+/// </summary>
+public struct TRangeBound<T>(AssetBinaryReader reader, Func<T> valueReader)
+{
+    public ERangeBoundTypes Type = (ERangeBoundTypes)reader.ReadByte();
+    public T Value = valueReader();
 
-        public FFrameNumber()
-        {
+    public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
+    {
+        writer.Write((byte)Type);
+        valueWriter(Value);
+    }
+}
 
-        }
+public struct FFrameNumber
+{
+    public int Value;
+
+    public FFrameNumber(int value)
+    {
+        Value = value;
     }
 
-    public struct FFrameRate
+    public FFrameNumber(AssetBinaryReader reader)
     {
-        public int Numerator; // 0x00(0x04)
-        public int Denominator; // 0x04(0x04)
+        Value = reader.ReadInt32();
+    }
+    
+    public void Write(AssetBinaryWriter writer)
+    {
+        writer.Write(Value);
+    }
+}
 
-        public FFrameRate()
-        {
-            Numerator = 0;
-            Denominator = 0;
-        }
+public struct FFrameRate
+{
+    public int Numerator;
+    public int Denominator;
 
-        public FFrameRate(int numerator, int denominator)
-        {
-            Numerator = numerator;
-            Denominator = denominator;
-        }
+    public FFrameRate() { }
 
-        public override string ToString()
-        {
-            return Numerator.ToString() + "/" + Denominator.ToString();
-        }
-
-        public static bool TryParse(string s, out FFrameRate result)
-        {
-            result = new FFrameRate();
-            string[] parts = s.Trim().Split('/');
-
-            if (parts.Length != 2) return false;
-            if (!int.TryParse(parts[0], out int numer)) return false;
-            if (!int.TryParse(parts[1], out int denom)) return false;
-
-            result = new FFrameRate(numer, denom);
-            return true;
-        }
+    public FFrameRate(int numerator, int denominator)
+    {
+        Numerator = numerator;
+        Denominator = denominator;
     }
 
-    public struct FFrameTime
+    public FFrameRate(AssetBinaryReader reader)
     {
-        public FFrameNumber FrameNumber; // 0x00(0x04)
-        public float SubFrame; // 0x04(0x04)
-
-        public FFrameTime()
-        {
-
-        }
-
-        public FFrameTime(FFrameNumber frameNumber, float subFrame)
-        {
-            FrameNumber = frameNumber;
-            SubFrame = subFrame;
-        }
+        Numerator = reader.ReadInt32();
+        Denominator = reader.ReadInt32();
     }
 
-    // Scriptclass CoreUObject.QualifiedFrameTime
-    // Size: 0x10 (Inherited: 0x00)
-    public class FQualifiedFrameTime
+    public void Write(AssetBinaryWriter writer)
     {
-        public FFrameTime Time; // 0x00(0x08)
-        public FFrameRate Rate; // 0x08(0x08)
-
-        public FQualifiedFrameTime()
-        {
-
-        }
-
-        public FQualifiedFrameTime(FFrameTime time, FFrameRate rate)
-        {
-            Time = time;
-            Rate = rate;
-        }
-
+        writer.Write(Numerator);
+        writer.Write(Denominator);
     }
 
-    // Scriptclass CoreUObject.Timecode
-    // Size: 0x14 (Inherited: 0x00)
-    public class FTimecode
+    public override string ToString()
     {
-        public int Hours; // 0x00(0x04)
-        public int Minutes; // 0x04(0x04)
-        public int Seconds; // 0x08(0x04)
-        public int Frames; // 0x0c(0x04)
-        public bool bDropFrameFormat; // 0x10(0x01)
-        //char pad_11[0x3]; // 0x11(0x03)
-
-        public FTimecode()
-        {
-        }
-
-        public FTimecode(int hours, int minutes, int seconds, int frames, bool bDropFrameFormat)
-        {
-            Hours = hours;
-            Minutes = minutes;
-            Seconds = seconds;
-            Frames = frames;
-            this.bDropFrameFormat = bDropFrameFormat;
-        }
+        return Numerator.ToString() + "/" + Denominator.ToString();
     }
 
-    public struct FFrameNumberRangeBound
+    public static bool TryParse(string s, out FFrameRate result)
     {
-        public ERangeBoundTypes Type; // 0x00(0x01)
-        public FFrameNumber Value; // 0x04(0x04)
+        result = new FFrameRate();
+        string[] parts = s.Trim().Split('/');
 
-        public FFrameNumberRangeBound(sbyte _Type, int _Value)
-        {
-            Type = (ERangeBoundTypes)_Type;
-            Value = new FFrameNumber(_Value);
-        }
+        if (parts.Length != 2) return false;
+        if (!int.TryParse(parts[0], out int numer)) return false;
+        if (!int.TryParse(parts[1], out int denom)) return false;
+
+        result = new FFrameRate(numer, denom);
+        return true;
+    }
+}
+
+public struct FFrameTime
+{
+    public FFrameNumber FrameNumber;
+    public float SubFrame;
+
+    public FFrameTime() { }
+
+    public FFrameTime(FFrameNumber frameNumber, float subFrame)
+    {
+        FrameNumber = frameNumber;
+        SubFrame = subFrame;
     }
 
-    // ScriptStruct CoreUObject.FrameNumberRange
-    // Size: 0x10 (Inherited: 0x00)
-    public struct FFrameNumberRange
+    public FFrameTime(AssetBinaryReader reader)
     {
-        public FFrameNumberRangeBound LowerBound; // 0x00(0x08)
-        public FFrameNumberRangeBound UpperBound; // 0x08(0x08)
+        FrameNumber = new FFrameNumber(reader);
+        SubFrame = reader.ReadSingle();
+    }
 
-        public FFrameNumberRange(AssetBinaryReader reader)
-        {
-            LowerBound = new FFrameNumberRangeBound(reader.ReadSByte(), reader.ReadInt32());
-            UpperBound = new FFrameNumberRangeBound(reader.ReadSByte(), reader.ReadInt32());
-        }
+    public void Write(AssetBinaryWriter writer)
+    {
+        FrameNumber.Write(writer);
+        writer.Write(SubFrame);
+    }
+}
 
-        public void Read(AssetBinaryReader reader)
-        {
-            LowerBound = new FFrameNumberRangeBound(reader.ReadSByte(), reader.ReadInt32());
-            UpperBound = new FFrameNumberRangeBound(reader.ReadSByte(), reader.ReadInt32());
-        }
+public struct FQualifiedFrameTime
+{
+    public FFrameTime Time;
+    public FFrameRate Rate;
 
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write((sbyte)LowerBound.Type);
-            writer.Write(LowerBound.Value.Value);
-            writer.Write((sbyte)UpperBound.Type);
-            writer.Write(UpperBound.Value.Value);
-        }
+    public FQualifiedFrameTime() { }
+
+    public FQualifiedFrameTime(FFrameTime time, FFrameRate rate)
+    {
+        Time = time;
+        Rate = rate;
+    }
+
+    public FQualifiedFrameTime(AssetBinaryReader reader)
+    {
+        Time = new FFrameTime(reader);
+        Rate = new FFrameRate(reader);
+    }
+
+    public void Write(AssetBinaryWriter writer)
+    {
+        Time.Write(writer);
+        Rate.Write(writer);
+    }
+}
+
+public struct FTimecode
+{
+    public int Hours;
+    public int Minutes;
+    public int Seconds;
+    public int Frames;
+    public bool bDropFrameFormat;
+
+    public FTimecode() { }
+
+    public FTimecode(int hours, int minutes, int seconds, int frames, bool bDropFrameFormat)
+    {
+        Hours = hours;
+        Minutes = minutes;
+        Seconds = seconds;
+        Frames = frames;
+        this.bDropFrameFormat = bDropFrameFormat;
+    }
+
+    public FTimecode(AssetBinaryReader reader)
+    {
+        Hours = reader.ReadInt32();
+        Minutes = reader.ReadInt32();
+        Seconds = reader.ReadInt32();
+        Frames = reader.ReadInt32();
+        bDropFrameFormat = reader.ReadBoolean();
+    }
+
+    public void Write(AssetBinaryWriter writer)
+    {
+        writer.Write(Hours);
+        writer.Write(Minutes);
+        writer.Write(Seconds);
+        writer.Write(Frames);
+        writer.Write(bDropFrameFormat);
     }
 }

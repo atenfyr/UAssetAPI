@@ -1,845 +1,235 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.UnrealTypes.EngineEnums;
-using UAssetAPI.Unversioned;
 
-namespace UAssetAPI.PropertyTypes.Structs
+namespace UAssetAPI.PropertyTypes.Structs;
+
+public enum ESectionEvaluationFlags : byte {
+    None = 0,
+    PreRoll = 1,
+    PostRoll = 2,
+    ForceKeepState = 4,
+    ForceRestoreState = 8,
+};
+
+/// <summary>
+/// Keyable struct that represents a particular entity within an evaluation template (either a section/template or a track)
+/// </summary>
+public struct FMovieSceneEvaluationKey
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    /// <summary> ID of the sequence that the entity is contained within </summary>
+    public uint SequenceID;
+    /// <summary> ID of the track this key relates to </summary>
+    public uint TrackIdentifier;
+    /// <summary> Index of the section template within the track this key relates to (or -1 where this key relates to a track) </summary>
+    public uint SectionIndex;
 
-    #region Enums
-    // Enum MovieScene.EMovieSceneKeyInterpolation
-    public enum EMovieSceneKeyInterpolation : byte {
-        Auto = 0,
-        User = 1,
-        Break = 2,
-        Linear = 3,
-        Constant = 4,
-        EMovieSceneKeyInterpolation_MAX = 5
-    };
-
-    // Enum MovieScene.EMovieSceneBlendType
-    public enum EMovieSceneBlendType : byte {
-        Invalid = 0,
-        Absolute = 1,
-        Additive = 2,
-        Relative = 4,
-        EMovieSceneBlendType_MAX = 5
-    };
-
-    // Enum MovieScene.EMovieSceneBuiltInEasing
-    public enum EMovieSceneBuiltInEasing : byte {
-        Linear = 0,
-        SinIn = 1,
-        SinOut = 2,
-        SinInOut = 3,
-        QuadIn = 4,
-        QuadOut = 5,
-        QuadInOut = 6,
-        CubicIn = 7,
-        CubicOut = 8,
-        CubicInOut = 9,
-        QuartIn = 10,
-        QuartOut = 11,
-        QuartInOut = 12,
-        QuintIn = 13,
-        QuintOut = 14,
-        QuintInOut = 15,
-        ExpoIn = 16,
-        ExpoOut = 17,
-        ExpoInOut = 18,
-        CircIn = 19,
-        CircOut = 20,
-        CircInOut = 21,
-        EMovieSceneBuiltInEasing_MAX = 22
-    };
-
-    // Enum MovieScene.EEvaluationMethod
-    public enum EEvaluationMethod : byte {
-        Static = 0,
-        Swept = 1,
-        EEvaluationMethod_MAX = 2
-    };
-
-    // Enum MovieScene.EUpdateClockSource
-    public enum EUpdateClockSource : byte {
-        Tick = 0,
-        Platform = 1,
-        Audio = 2,
-        RelativeTimecode = 3,
-        Timecode = 4,
-        Custom = 5,
-        EUpdateClockSource_MAX = 6
-    };
-
-    // Enum MovieScene.EMovieSceneEvaluationType
-    public enum EMovieSceneEvaluationType : byte {
-        FrameLocked = 0,
-        WithSubFrames = 1,
-        EMovieSceneEvaluationType_MAX = 2
-    };
-
-    // Enum MovieScene.EMovieScenePlayerStatus
-    public enum EMovieScenePlayerStatus : byte {
-        Stopped = 0,
-        Playing = 1,
-        Recording = 2,
-        Scrubbing = 3,
-        Jumping = 4,
-        Stepping = 5,
-        Paused = 6,
-        MAX = 7
-    };
-
-    // Enum MovieScene.EMovieSceneObjectBindingSpace
-    public enum EMovieSceneObjectBindingSpace : byte {
-        Local = 0,
-        Root = 1,
-        EMovieSceneObjectBindingSpace_MAX = 2
-    };
-
-    // Enum MovieScene.EMovieSceneCompletionMode
-    public enum EMovieSceneCompletionMode : byte {
-        KeepState = 0,
-        RestoreState = 1,
-        ProjectDefault = 2,
-        EMovieSceneCompletionMode_MAX = 3
-    };
-
-    // Enum MovieScene.ESectionEvaluationFlags
-    public enum ESectionEvaluationFlags : byte {
-        None = 0,
-        PreRoll = 1,
-        PostRoll = 2,
-        ESectionEvaluationFlags_MAX = 3
-    };
-
-    // Enum MovieScene.EUpdatePositionMethod
-    public enum EUpdatePositionMethod : byte {
-        Play = 0,
-        Jump = 1,
-        Scrub = 2,
-        EUpdatePositionMethod_MAX = 3
-    };
-
-    // Enum MovieScene.ESpawnOwnership
-    public enum ESpawnOwnership : byte {
-        InnerSequence = 0,
-        MasterSequence = 1,
-        External = 2,
-        ESpawnOwnership_MAX = 3
-    };
-
-
-    #endregion
-
-    public class FMovieSceneFloatValue
+    public FMovieSceneEvaluationKey(uint _SequenceID, uint _TrackIdentifier, uint _SectionIndex)
     {
-        public float Value; // 0x00(0x04)
-        public FMovieSceneTangentData Tangent; // 0x04(0x14)
-        public ERichCurveInterpMode InterpMode; // 0x18(0x01)
-        public ERichCurveTangentMode TangentMode; // 0x19(0x01)
-        public byte[] padding;
-
-        public FMovieSceneFloatValue(AssetBinaryReader reader)
-        {
-            Value = reader.ReadSingle();
-            Tangent = new FMovieSceneTangentData();
-            Tangent.Read(reader);
-            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
-            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(2) : [];
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(Value);
-            Tangent.Write(writer);
-            writer.Write((byte)InterpMode);
-            writer.Write((byte)TangentMode);
-            writer.Write(padding);
-        }
+        SequenceID = _SequenceID;
+        TrackIdentifier = _TrackIdentifier;
+        SectionIndex = _SectionIndex;
     }
 
-    public class FMovieSceneDoubleValue
+    public FMovieSceneEvaluationKey(AssetBinaryReader reader)
     {
-        public double Value;
-        public FMovieSceneTangentData Tangent;
-        public ERichCurveInterpMode InterpMode;
-        public ERichCurveTangentMode TangentMode;
-        public byte[] padding;
-
-        public FMovieSceneDoubleValue(AssetBinaryReader reader)
-        {
-            Value = reader.ReadDouble();
-            Tangent = new FMovieSceneTangentData();
-            Tangent.Read(reader);
-            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
-            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(2) : [];
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(Value);
-            Tangent.Write(writer);
-            writer.Write((byte)InterpMode);
-            writer.Write((byte)TangentMode);
-            writer.Write(padding);
-        }
+        SequenceID = reader.ReadUInt32();
+        TrackIdentifier = reader.ReadUInt32();
+        SectionIndex = reader.ReadUInt32();
     }
 
-    public class FMovieSceneTangentData
+    public int Write(AssetBinaryWriter writer)
     {
-        public float ArriveTangent; // 0x00(0x04)
-        public float LeaveTangent; // 0x04(0x04)
-        public float ArriveTangentWeight; // 0x08(0x04)
-        public float LeaveTangentWeight; // 0x0c(0x04)
-        public ERichCurveTangentWeightMode TangentWeightMode; // 0x10(0x01)
-        public byte[] padding;
-
-        public void Read(AssetBinaryReader reader)
-        {
-            ArriveTangent = reader.ReadSingle();
-            LeaveTangent = reader.ReadSingle();
-            ArriveTangentWeight = reader.ReadSingle();
-            LeaveTangentWeight = reader.ReadSingle();
-            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-
-            // guessing this happens when `PaddingByte` gets added to FMovieSceneFloatValue but requires a lot more testing
-            padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(3) : [];
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(ArriveTangent);
-            writer.Write(LeaveTangent);
-            writer.Write(ArriveTangentWeight);
-            writer.Write(LeaveTangentWeight);
-            writer.Write((byte)TangentWeightMode);
-            writer.Write(padding);
-        }
+        writer.Write(SequenceID);
+        writer.Write(TrackIdentifier);
+        writer.Write(SectionIndex);
+        return sizeof(uint) * 3;
     }
+}
 
-    // ScriptStruct MovieScene.MovieSceneFloatChannel
-    public class FMovieSceneFloatChannel
+/// <summary>
+/// Data that represents a single sub-section
+/// </summary>
+public struct FMovieSceneSubSectionData
+{
+    /// <summary> The sub section itself  </summary>
+    public FPackageIndex Section;
+    /// <summary> The object binding that the sub section belongs to (usually zero) </summary>
+    public Guid ObjectBindingId;
+    /// <summary> Evaluation flags for the section </summary>
+    public ESectionEvaluationFlags Flags;
+
+    public FMovieSceneSubSectionData(FPackageIndex section, Guid objectBindingId, ESectionEvaluationFlags flags)
     {
-        public ERichCurveExtrapolation PreInfinityExtrap;
-        public ERichCurveExtrapolation PostInfinityExtrap;
-        public FFrameNumber[] Times;
-        public FMovieSceneFloatValue[] Values;
-        public float DefaultValue;
-        public bool bHasDefaultValue;
-        public FFrameRate TickResolution;
-        public bool bShowCurve;
-
-        public FMovieSceneFloatChannel()
-        {
-            PreInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
-            PostInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
-            Times = [];
-            Values = [];
-            DefaultValue = 0.0f;
-            bHasDefaultValue = false;
-            TickResolution = new FFrameRate(60000, 1);
-            bShowCurve = false;
-        }
+        Section = section;
+        ObjectBindingId = objectBindingId;
+        Flags = flags;
     }
 
-    // ScriptStruct MovieScene.MovieSceneDoubleChannel
-    public class FMovieSceneDoubleChannel
+    public FMovieSceneSubSectionData(AssetBinaryReader reader)
     {
-        public ERichCurveExtrapolation PreInfinityExtrap;
-        public ERichCurveExtrapolation PostInfinityExtrap;
-        public FFrameNumber[] Times;
-        public FMovieSceneDoubleValue[] Values;
-        public double DefaultValue;
-        public bool bHasDefaultValue;
-        public FFrameRate TickResolution;
-        public bool bShowCurve;
-
-        public FMovieSceneDoubleChannel()
-        {
-            PreInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
-            PostInfinityExtrap = ERichCurveExtrapolation.RCCE_Constant;
-            Times = [];
-            Values = [];
-            DefaultValue = 0.0f;
-            bHasDefaultValue = false;
-            TickResolution = new FFrameRate(60000, 1);
-            bShowCurve = false;
-        }
+        Section = new FPackageIndex(reader);
+        ObjectBindingId = new Guid(reader.ReadBytes(16));
+        Flags = (ESectionEvaluationFlags)reader.ReadByte();
     }
 
-    public class FMovieSceneTrackIdentifier
+    public int Write(AssetBinaryWriter writer)
     {
-        public uint Value;
-
-        public FMovieSceneTrackIdentifier(uint value)
-        {
-            Value = value;
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(Value);
-        }
+        Section.Write(writer);
+        writer.Write(ObjectBindingId.ToByteArray());
+        writer.Write((byte)Flags);
+        return sizeof(int) + 16 + sizeof(byte);
     }
+}
 
-    public class FMovieSceneSequenceID {
-        public uint Value;
+public struct FEntityAndMetaDataIndex
+{
+    public int EntityIndex;
+    public int MetaDataIndex;
 
-        public FMovieSceneSequenceID(uint value)
-        {
-            Value = value;
-        }
-    }
-
-    public class FMovieSceneEvaluationKey
+    public FEntityAndMetaDataIndex(int entityIndex, int metaDataIndex)
     {
-        public FMovieSceneSequenceID SequenceID;
-        public FMovieSceneTrackIdentifier TrackIdentifier;
-        public uint SectionIndex;
-
-        public FMovieSceneEvaluationKey(uint _SequenceID, uint _TrackIdentifier, uint _SectionIndex)
-        {
-            SequenceID = new FMovieSceneSequenceID(_SequenceID);
-            TrackIdentifier = new FMovieSceneTrackIdentifier(_TrackIdentifier);
-            SectionIndex = _SectionIndex;
-        }
+        EntityIndex = entityIndex;
+        MetaDataIndex = metaDataIndex;
     }
 
-    public struct FMovieSceneEvaluationFieldEntityTree
+    public FEntityAndMetaDataIndex(AssetBinaryReader reader)
     {
-        public TMovieSceneEvaluationTree<FEntityAndMetaDataIndex> SerializedData;
-
-        public FMovieSceneEvaluationFieldEntityTree(TMovieSceneEvaluationTree<FEntityAndMetaDataIndex> serializedData)
-        {
-            SerializedData = serializedData;
-        }
-
-        public FMovieSceneEvaluationFieldEntityTree Read(AssetBinaryReader reader)
-        {
-            SerializedData = new TMovieSceneEvaluationTree<FEntityAndMetaDataIndex>();
-
-            SerializedData.RootNode = new FMovieSceneEvaluationTreeNode();
-            SerializedData.RootNode.Read(reader);
-
-            SerializedData.ChildNodes = new TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode>();
-            int entriesamount = reader.ReadInt32();
-            SerializedData.ChildNodes.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                SerializedData.ChildNodes.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            int itemsamount = reader.ReadInt32();
-
-            SerializedData.ChildNodes.Items = new FMovieSceneEvaluationTreeNode[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                SerializedData.ChildNodes.Items[i] = new FMovieSceneEvaluationTreeNode();
-                SerializedData.ChildNodes.Items[i].Read(reader);
-            }
-
-            SerializedData.Data = new TEvaluationTreeEntryContainer<FEntityAndMetaDataIndex>();
-
-            entriesamount = reader.ReadInt32();
-            SerializedData.Data.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                SerializedData.Data.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            itemsamount = reader.ReadInt32();
-
-            SerializedData.Data.Items = new FEntityAndMetaDataIndex[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                SerializedData.Data.Items[i] = new FEntityAndMetaDataIndex(reader.ReadInt32(), reader.ReadInt32());
-            }
-            return new FMovieSceneEvaluationFieldEntityTree(SerializedData);
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            SerializedData.RootNode.Write(writer);
-
-            int entriesamount = SerializedData.ChildNodes.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++)
-            {
-                SerializedData.ChildNodes.Entries[i].Write(writer);
-            }
-
-            int itemsamount = SerializedData.ChildNodes.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++)
-            {
-                SerializedData.ChildNodes.Items[i].Write(writer);
-            }
-
-            entriesamount = SerializedData.Data.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++)
-            {
-                SerializedData.Data.Entries[i].Write(writer);
-            }
-
-            itemsamount = SerializedData.Data.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++)
-            {
-                SerializedData.Data.Items[i].Write(writer);
-            }
-
-        }
+        EntityIndex = reader.ReadInt32();
+        MetaDataIndex = reader.ReadInt32();
     }
 
-    public struct FMovieSceneSubSequenceTreeEntry
+    public void Write(AssetBinaryWriter writer)
     {
-        public FMovieSceneSequenceID SequenceID;
-        public ESectionEvaluationFlags Flags;
-
-        public FMovieSceneSubSequenceTreeEntry(FMovieSceneSequenceID sequenceID, byte flags)
-        {
-            SequenceID = sequenceID;
-            Flags = (ESectionEvaluationFlags)flags;
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(SequenceID.Value);
-            writer.Write((byte)Flags);
-        }
+        writer.Write(EntityIndex);
+        writer.Write(MetaDataIndex);
     }
+}
 
-    public struct FMovieSceneSubSequenceTree
+public struct FMovieSceneSubSequenceTreeEntry
+{
+    public uint SequenceID;
+    public ESectionEvaluationFlags Flags;
+    public StructPropertyData RootToSequenceWarpCounter = null;
+
+    public FMovieSceneSubSequenceTreeEntry(uint sequenceID, byte flags, StructPropertyData _struct = null)
     {
-        public TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry> Data;
-
-        public FMovieSceneSubSequenceTree(TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry> data)
-        {
-            Data = data;
-        }
-
-        public FMovieSceneSubSequenceTree Read(AssetBinaryReader reader)
-        {
-
-            Data = new TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry>();
-
-            Data.RootNode = new FMovieSceneEvaluationTreeNode();
-            Data.RootNode.Read(reader);
-
-            Data.ChildNodes = new TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode>();
-            int entriesamount = reader.ReadInt32();
-            Data.ChildNodes.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Data.ChildNodes.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            int itemsamount = reader.ReadInt32();
-
-            Data.ChildNodes.Items = new FMovieSceneEvaluationTreeNode[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                Data.ChildNodes.Items[i] = new FMovieSceneEvaluationTreeNode();
-                Data.ChildNodes.Items[i].Read(reader);
-            }
-
-            Data.Data = new TEvaluationTreeEntryContainer<FMovieSceneSubSequenceTreeEntry>();
-
-            entriesamount = reader.ReadInt32();
-            Data.Data.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Data.Data.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            itemsamount = reader.ReadInt32();
-
-            Data.Data.Items = new FMovieSceneSubSequenceTreeEntry[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                Data.Data.Items[i] = new FMovieSceneSubSequenceTreeEntry(new FMovieSceneSequenceID(reader.ReadUInt32()), reader.ReadByte());
-            }
-            return new FMovieSceneSubSequenceTree(Data);
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            Data.RootNode.Write(writer);
-            int entriesamount = Data.ChildNodes.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Data.ChildNodes.Entries[i].Write(writer);
-            }
-
-            int itemsamount = Data.ChildNodes.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-                Data.ChildNodes.Items[i].Write(writer);
-            }
-
-            entriesamount = Data.Data.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Data.Data.Entries[i].Write(writer);
-            }
-            itemsamount = Data.Data.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-                Data.Data.Items[i].Write(writer);
-            }
-        }
+        SequenceID = sequenceID;
+        Flags = (ESectionEvaluationFlags)flags;
+        RootToSequenceWarpCounter = _struct;
     }
 
-    public class FMovieSceneEvaluationTree
+    public FMovieSceneSubSequenceTreeEntry(AssetBinaryReader reader)
     {
-        /** This tree's root node */
-        public FMovieSceneEvaluationTreeNode RootNode;
-        /** Segmented array of all child nodes within this tree (in no particular order) */
-        public TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode> ChildNodes;
-
+        SequenceID = reader.ReadUInt32();
+        Flags = (ESectionEvaluationFlags)reader.ReadByte();
+        if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter ||
+            reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.AddedSubSequenceEntryWarpCounter)
+        {
+            var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "RootToSequenceWarpCounter"), FName.DefineDummy(reader.Asset, "MovieSceneWarpCounter"));
+            data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
+            RootToSequenceWarpCounter = data;
+        }
     }
 
-    public class TMovieSceneEvaluationTree<T> : FMovieSceneEvaluationTree
+    public void Write(AssetBinaryWriter writer)
     {
-        /// <summary>
-        /// Tree data container that corresponds to FMovieSceneEvaluationTreeNode::DataID
-        /// </summary>
-        public TEvaluationTreeEntryContainer<T> Data;
-    }
-
-    public class FMovieSceneEvaluationTreeNode
-    {
-        /// <summary>
-        /// The time-range that this node represents
-        /// </summary>
-        public FFrameNumberRange Range;
-        public FMovieSceneEvaluationTreeNodeHandle Parent;
-        /// <summary>
-        /// Identifier for the child node entries associated with this node (FMovieSceneEvaluationTree::ChildNodes)
-        /// </summary>
-        public FEvaluationTreeEntryHandle ChildrenID;
-        /// <summary>
-        /// Identifier for externally stored data entries associated with this node
-        /// </summary>
-        public FEvaluationTreeEntryHandle DataID;
-
-        public void Read(AssetBinaryReader reader)
+        writer.Write(SequenceID);
+        writer.Write((byte)Flags);
+        if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter &&
+            writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.AddedSubSequenceEntryWarpCounter)
         {
-            Range = new FFrameNumberRange();
-            Range.Read(reader);
-            Parent = new FMovieSceneEvaluationTreeNodeHandle(reader.ReadInt32(), reader.ReadInt32());
-            ChildrenID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
-            DataID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            Range.Write(writer);
-            writer.Write(Parent.ChildrenHandle.EntryIndex);
-            writer.Write(Parent.Index);
-            writer.Write(ChildrenID.EntryIndex);
-            writer.Write(DataID.EntryIndex);
-        }
-    }
-
-    public struct FMovieSceneEvaluationTreeNodeHandle
-    {
-        /// <summary>
-        /// Entry handle for the parent's children in FMovieSceneEvaluationTree::ChildNodes
-        /// </summary>
-        public FEvaluationTreeEntryHandle ChildrenHandle;
-        /// <summary>
-        /// The index of this child within its parent's children
-        /// </summary>
-        public int Index;
-
-        public FMovieSceneEvaluationTreeNodeHandle(int _ChildrenHandle, int _Index)
-        {
-            ChildrenHandle.EntryIndex = _ChildrenHandle;
-            Index = _Index;
-        }
-    }
-
-    public struct FEvaluationTreeEntryHandle
-    {
-        /// <summary>
-        /// Specifies an index into TEvaluationTreeEntryContainer::Entries
-        /// </summary>
-        public int EntryIndex;
-
-        public FEvaluationTreeEntryHandle (int _EntryIndex)
-        {
-            EntryIndex = _EntryIndex;
-        }
-    }
-
-    public struct FEntry {
-        /// <summary>
-        /// The index into Items of the first item
-        /// </summary>
-        public int StartIndex;
-        /// <summary>
-        /// The number of currently valid items
-        /// </summary>
-        public int Size;
-        /// <summary>
-        /// The total capacity of allowed items before reallocating
-        /// </summary>
-        public int Capacity;
-
-        public FEntry(int startIndex, int size, int capacity)
-        {
-            StartIndex = startIndex;
-            Size = size;
-            Capacity = capacity;
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(StartIndex);
-            writer.Write(Size);
-            writer.Write(Capacity);
-        }
-    }
-
-    public struct TEvaluationTreeEntryContainer<T>
-    {
-        /// <summary>
-        /// List of allocated entries for each allocated entry. Should only ever grow, never shrink. Shrinking would cause previously established handles to become invalid. */
-        /// </summary>
-        public FEntry[] Entries;
-        /// <summary>
-        /// Linear array of allocated entry contents. Once allocated, indices are never invalidated until Compact is called. Entries needing more capacity are re-allocated on the end of the array.
-        /// </summary>
-        public T[] Items;
-    }
-
-    public struct FSectionEvaluationDataTree
-    {
-        public TMovieSceneEvaluationTree<List<PropertyData>> Tree;
-
-        public FSectionEvaluationDataTree(TMovieSceneEvaluationTree<List<PropertyData>> tree) {
-            Tree = tree;
-        }
-
-        public FSectionEvaluationDataTree Read(AssetBinaryReader reader) {
-
-            Tree = new TMovieSceneEvaluationTree<List<PropertyData>>();
-
-            Tree.RootNode = new FMovieSceneEvaluationTreeNode();
-            Tree.RootNode.Read(reader);
-
-            Tree.ChildNodes = new TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode>();
-            int entriesamount = reader.ReadInt32();
-            Tree.ChildNodes.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Tree.ChildNodes.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            int itemsamount = reader.ReadInt32();
-
-            Tree.ChildNodes.Items = new FMovieSceneEvaluationTreeNode[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                Tree.ChildNodes.Items[i] = new FMovieSceneEvaluationTreeNode();
-                Tree.ChildNodes.Items[i].Read(reader);
-            }
-
-            Tree.Data = new TEvaluationTreeEntryContainer<List<PropertyData>>();
-
-            entriesamount = reader.ReadInt32();
-            Tree.Data.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Tree.Data.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            itemsamount = reader.ReadInt32();
-
-            List<PropertyData>[] items = new List<PropertyData>[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                List<PropertyData> resultingList = new List<PropertyData>();
-                PropertyData data = null;
-                var unversionedHeader = new FUnversionedHeader(reader);
-                while ((data = MainSerializer.Read(reader, null, null, null, unversionedHeader, true)) != null) {
-                    resultingList.Add(data);
-                }
-                items[i] = resultingList;
-            }
-            Tree.Data.Items = items;
-
-            //Tree.Data.Items = new StructPropertyData[itemsamount];
-            //for (int i = 0; i < itemsamount; i++) {
-            //	Tree.Data.Items[i] = new StructPropertyData(new FName("Impls"), new FName("SectionEvaluationData"));
-            //	Tree.Data.Items[i].Read(reader, false, 1);
-            //}
-
-            return new FSectionEvaluationDataTree(Tree);
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            Tree.RootNode.Write(writer);
-            int entriesamount = Tree.ChildNodes.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Tree.ChildNodes.Entries[i].Write(writer);
-            }
-
-            int itemsamount = Tree.ChildNodes.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-                Tree.ChildNodes.Items[i].Write(writer);
-            }
-
-            entriesamount = Tree.Data.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Tree.Data.Entries[i].Write(writer);
-            }
-            itemsamount = Tree.Data.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-
-                if (Tree.Data.Items[i] != null) {
-                    var dat = Tree.Data.Items[i];
-                    MainSerializer.GenerateUnversionedHeader(ref dat, FName.DefineDummy(writer.Asset, "SectionEvaluationDataTree"), null, writer.Asset)?.Write(writer);
-                    foreach (var t in dat) {
-                        MainSerializer.Write(t, writer, true);
-                    }
-                }
-                if (!writer.Asset.HasUnversionedProperties) writer.Write(FName.FromString(writer.Asset, "None"));
-            }
-
-        }
-    }
-
-    public struct FEntityAndMetaDataIndex
-    {
-        public int EntityIndex;
-        public int MetaDataIndex;
-
-        public FEntityAndMetaDataIndex(int entityIndex, int metaDataIndex)
-        {
-            EntityIndex = entityIndex;
-            MetaDataIndex = metaDataIndex;
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(EntityIndex);
-            writer.Write(MetaDataIndex);
-        }
-    }
-
-    public struct FSectionEvaluationData
-    {
-        public int ImplIndex; // 0x00(0x04)
-        public FFrameNumber ForcedTime; // 0x04(0x04)
-        public ESectionEvaluationFlags Flags; // 0x08(0x01)
-
-        public FSectionEvaluationData(int implIndex, FFrameNumber forcedTime, byte flags)
-        {
-            ImplIndex = implIndex;
-            ForcedTime = forcedTime;
-            Flags = (ESectionEvaluationFlags)flags;
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            writer.Write(ImplIndex);
-            writer.Write(ForcedTime.Value);
-            writer.Write((byte)Flags);
-        }
-    }
-
-    public class FMovieSceneSegment
-    {
-
-        public FFrameNumberRange Range;
-        public FMovieSceneSegmentIdentifier ID;
-        public bool bAllowEmpty;
-        public List<PropertyData>[] Impls;
-        //public FSectionEvaluationData[] Impls;
-    }
-
-    public struct FMovieSceneSegmentIdentifier
-    {
-        public int IdentifierIndex; // 0x00(0x04)
-
-        public FMovieSceneSegmentIdentifier(int identifierIndex) {
-            IdentifierIndex = identifierIndex;
-        }
-
-        public void Write(AssetBinaryWriter writer) {
-            writer.Write(IdentifierIndex);
-        }
-    }
-
-    public struct FMovieSceneTrackFieldData {
-        public TMovieSceneEvaluationTree<FMovieSceneTrackIdentifier> Field;
-
-        public FMovieSceneTrackFieldData(TMovieSceneEvaluationTree<FMovieSceneTrackIdentifier> field)
-        {
-            Field = field;
-        }
-
-        public FMovieSceneTrackFieldData Read(AssetBinaryReader reader)
-        {
-            Field = new TMovieSceneEvaluationTree<FMovieSceneTrackIdentifier>();
-
-            Field.RootNode = new FMovieSceneEvaluationTreeNode();
-            Field.RootNode.Read(reader);
-
-            Field.ChildNodes = new TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode>();
-            int entriesamount = reader.ReadInt32();
-            Field.ChildNodes.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Field.ChildNodes.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            int itemsamount = reader.ReadInt32();
-
-            Field.ChildNodes.Items = new FMovieSceneEvaluationTreeNode[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                Field.ChildNodes.Items[i] = new FMovieSceneEvaluationTreeNode();
-                Field.ChildNodes.Items[i].Read(reader);
-            }
-
-            Field.Data = new TEvaluationTreeEntryContainer<FMovieSceneTrackIdentifier>();
-
-            entriesamount = reader.ReadInt32();
-            Field.Data.Entries = new FEntry[entriesamount];
-            for (int i = 0; i < entriesamount; i++) {
-                Field.Data.Entries[i] = new FEntry(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
-            }
-            itemsamount = reader.ReadInt32();
-
-            Field.Data.Items = new FMovieSceneTrackIdentifier[itemsamount];
-            for (int i = 0; i < itemsamount; i++) {
-                Field.Data.Items[i] = new FMovieSceneTrackIdentifier(reader.ReadUInt32());
-            }
-            return new FMovieSceneTrackFieldData(Field);
-        }
-
-        public void Write(AssetBinaryWriter writer)
-        {
-            Field.RootNode.Write(writer);
-            int entriesamount = Field.ChildNodes.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Field.ChildNodes.Entries[i].Write(writer);
-            }
-
-            int itemsamount = Field.ChildNodes.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-                Field.ChildNodes.Items[i].Write(writer);
-            }
-
-            entriesamount = Field.Data.Entries.Length;
-            writer.Write(entriesamount);
-            for (int i = 0; i < entriesamount; i++) {
-                Field.Data.Entries[i].Write(writer);
-            }
-            itemsamount = Field.Data.Items.Length;
-            writer.Write(itemsamount);
-            for (int i = 0; i < itemsamount; i++) {
-                Field.Data.Items[i].Write(writer);
-            }
+            RootToSequenceWarpCounter?.Write(writer, false, PropertySerializationContext.StructFallback);
         }
     }
 }
 
+public struct FMovieSceneSubSectionFieldData(AssetBinaryReader reader)
+{
+    public TMovieSceneEvaluationTree<FMovieSceneSubSectionData> Field = new(reader, () => new FMovieSceneSubSectionData(reader));
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        var offset = writer.BaseStream.Position;
+
+        Field.Write(writer, entry => entry.Write(writer));
+
+        return (int)(writer.BaseStream.Position - offset);
+    }
+}
+
+public struct FMovieSceneEvaluationFieldEntityTree(AssetBinaryReader reader)
+{
+    public TMovieSceneEvaluationTree<FEntityAndMetaDataIndex> SerializedData = new(reader, () => new FEntityAndMetaDataIndex(reader));
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        var offset = writer.BaseStream.Position;
+
+        SerializedData.Write(writer, entry => entry.Write(writer));
+
+        return (int)(writer.BaseStream.Position - offset);
+    }
+}
+
+public struct FMovieSceneSubSequenceTree(AssetBinaryReader reader)
+{
+    public TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry> Data = new(reader, () => new FMovieSceneSubSequenceTreeEntry(reader));
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        var offset = writer.BaseStream.Position;
+
+        Data.Write(writer, entry => entry.Write(writer));
+
+        return (int)(writer.BaseStream.Position - offset);
+    }
+}
+
+public struct FSectionEvaluationDataTree
+{
+    public TMovieSceneEvaluationTree<StructPropertyData> Tree;
+
+    public FSectionEvaluationDataTree(AssetBinaryReader reader)
+    {
+        Tree = new(reader, () => ReadTree(reader));
+
+        static StructPropertyData ReadTree(AssetBinaryReader reader)
+        {
+            var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "Tree"), FName.DefineDummy(reader.Asset, "SectionEvaluationDataTree"));
+            data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
+            return data;
+        }
+    }
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        static void WriteTree(AssetBinaryWriter writer, StructPropertyData data)
+        {
+            if (data != null)
+            {
+                data.StructType = FName.DefineDummy(writer.Asset, "SectionEvaluationDataTree");
+                data.Write(writer, false, PropertySerializationContext.StructFallback);
+            }
+        }
+
+        var offset = writer.BaseStream.Position;
+        Tree.Write(writer, entry => WriteTree(writer, entry));
+        return (int)(writer.BaseStream.Position - offset);
+    }
+}
+
+public struct FMovieSceneTrackFieldData(AssetBinaryReader reader)
+{
+    public TMovieSceneEvaluationTree<uint> Field = new (reader, reader.ReadUInt32);
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        var offset = writer.BaseStream.Position;
+
+        Field.Write(writer, writer.Write);
+
+        return (int)(writer.BaseStream.Position - offset);
+    }
+}

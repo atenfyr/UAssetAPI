@@ -1,61 +1,39 @@
 ﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.PropertyTypes.Structs
+namespace UAssetAPI.PropertyTypes.Structs;
+
+public class MovieSceneFloatValuePropertyData : PropertyData<FMovieSceneFloatValue>
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public MovieSceneFloatValuePropertyData(FName name) : base(name) { }
 
-    public class MovieSceneFloatValuePropertyData : PropertyData<FMovieSceneFloatValue>
+    public MovieSceneFloatValuePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneFloatValue");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        public MovieSceneFloatValuePropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        public MovieSceneFloatValuePropertyData()
+        Value = new FMovieSceneFloatValue(reader);
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-            
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneFloatValue");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
+        var offset = writer.BaseStream.Position;
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
+        Value.Write(writer, writer.Write);
 
-            Value = new FMovieSceneFloatValue(reader);
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-
-            int here = (int)writer.BaseStream.Position;
-
-            Value.Write(writer);
-
-            return (int)writer.BaseStream.Position - here;
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-
-        }
-
-        public override string ToString()
-        {
-            return "";
-        }
+        return (int)(writer.BaseStream.Position - offset);
     }
 }

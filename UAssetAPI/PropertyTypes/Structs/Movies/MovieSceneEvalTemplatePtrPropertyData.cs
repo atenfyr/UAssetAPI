@@ -7,15 +7,9 @@ namespace UAssetAPI.PropertyTypes.Structs;
 
 public class MovieSceneTemplatePropertyData : StructPropertyData 
 {
-    public MovieSceneTemplatePropertyData(FName name) : base(name) { }
-
     public MovieSceneTemplatePropertyData(FName name, FName forcedType) : base(name, forcedType) { }
-
+    public MovieSceneTemplatePropertyData(FName name) : base(name) { }
     public MovieSceneTemplatePropertyData() { }
-
-    private static readonly FString CurrentPropertyType = new FString("MovieSceneTemplate");
-    public override bool HasCustomStructSerialization => true;
-    public override FString PropertyType => CurrentPropertyType;
 
     public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {

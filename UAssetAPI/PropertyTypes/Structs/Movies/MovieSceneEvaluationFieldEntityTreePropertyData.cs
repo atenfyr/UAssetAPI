@@ -1,201 +1,188 @@
 ﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.PropertyTypes.Structs
+namespace UAssetAPI.PropertyTypes.Structs;
+
+public class MovieSceneSubSectionFieldDataPropertyData : PropertyData<FMovieSceneSubSectionFieldData>
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public MovieSceneSubSectionFieldDataPropertyData(FName name) : base(name) { }
 
-    public class MovieSceneEvaluationFieldEntityTreePropertyData : PropertyData<FMovieSceneEvaluationFieldEntityTree>
+    public MovieSceneSubSectionFieldDataPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneSubSectionFieldData");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        public MovieSceneEvaluationFieldEntityTreePropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        public MovieSceneEvaluationFieldEntityTreePropertyData()
-        {
-
-        }
-
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneEvaluationFieldEntityTree");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            Value = new FMovieSceneEvaluationFieldEntityTree().Read(reader);
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-            int here = (int)writer.BaseStream.Position;
-            Value.Write(writer);
-
-            return (int)writer.BaseStream.Position - here;
-        }
+        Value = new FMovieSceneSubSectionFieldData(reader);
     }
 
-    public class MovieSceneSubSequenceTreePropertyData : PropertyData<FMovieSceneSubSequenceTree>
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-
-        public MovieSceneSubSequenceTreePropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public MovieSceneSubSequenceTreePropertyData()
+        return Value.Write(writer);
+    }
+}
+
+public class MovieSceneEvaluationFieldEntityTreePropertyData : PropertyData<FMovieSceneEvaluationFieldEntityTree>
+{
+    public MovieSceneEvaluationFieldEntityTreePropertyData(FName name) : base(name) { }
+
+    public MovieSceneEvaluationFieldEntityTreePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneEvaluationFieldEntityTree");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneSubSequenceTree");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal) {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            Value = new FMovieSceneSubSequenceTree().Read(reader);
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal) {
-            if (includeHeader) {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-            int here = (int)writer.BaseStream.Position;
-            Value.Write(writer);
-
-            return (int)writer.BaseStream.Position - here;
-        }
+        Value = new FMovieSceneEvaluationFieldEntityTree(reader);
     }
 
-    public class MovieSceneSequenceInstanceDataPtrPropertyData : PropertyData<FPackageIndex>
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-
-        public MovieSceneSequenceInstanceDataPtrPropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public MovieSceneSequenceInstanceDataPtrPropertyData()
-        {
+        return Value.Write(writer);
+    }
+}
 
+public class MovieSceneSubSequenceTreePropertyData : PropertyData<FMovieSceneSubSequenceTree>
+{
+    public MovieSceneSubSequenceTreePropertyData(FName name) : base(name) { }
+
+    public MovieSceneSubSequenceTreePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneSubSequenceTree");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneSequenceInstanceDataPtr");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-            Value = reader.XFER_OBJECT_POINTER();
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-            int here = (int)writer.BaseStream.Position;
-            writer.XFER_OBJECT_POINTER(Value);
-            return (int)writer.BaseStream.Position - here;
-        }
+        Value = new FMovieSceneSubSequenceTree(reader);
     }
 
-    public class SectionEvaluationDataTreePropertyData : PropertyData<FSectionEvaluationDataTree>
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-
-        public SectionEvaluationDataTreePropertyData(FName name) : base(name) {
-
+        if (includeHeader) {
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public SectionEvaluationDataTreePropertyData() {
+        return Value.Write(writer);
+    }
+}
 
-        }
+public class MovieSceneSequenceInstanceDataPtrPropertyData : PropertyData<FPackageIndex>
+{
+    public MovieSceneSequenceInstanceDataPtrPropertyData(FName name) : base(name) { }
 
-        private static readonly FString CurrentPropertyType = new FString("SectionEvaluationDataTree");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
+    public MovieSceneSequenceInstanceDataPtrPropertyData() { }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneSequenceInstanceDataPtr");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            Value = new FSectionEvaluationDataTree().Read(reader);
+            PropertyGuid = reader.ReadPropertyGuid();
         }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-            int here = (int)writer.BaseStream.Position;
-            Value.Write(writer);
-
-            return (int)writer.BaseStream.Position - here;
-        }
+        Value = new FPackageIndex(reader);
     }
 
-    public class MovieSceneTrackFieldDataPropertyData : PropertyData<FMovieSceneTrackFieldData>
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-
-        public MovieSceneTrackFieldDataPropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public MovieSceneTrackFieldDataPropertyData()
-        {
+        writer.Write(Value.Index);
+        return sizeof(int);
+    }
+}
 
+public class SectionEvaluationDataTreePropertyData : PropertyData<FSectionEvaluationDataTree>
+{
+    public SectionEvaluationDataTreePropertyData(FName name) : base(name) { }
+
+    public SectionEvaluationDataTreePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("SectionEvaluationDataTree");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        private static readonly FString CurrentPropertyType = new FString("MovieSceneTrackFieldData");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
+        Value = new FSectionEvaluationDataTree(reader);
+    }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            Value = new FMovieSceneTrackFieldData().Read(reader);
+            writer.WritePropertyGuid(PropertyGuid);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader) {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-            int here = (int)writer.BaseStream.Position;
-            Value.Write(writer);
+        return Value.Write(writer);
+    }
+}
 
-            return (int)writer.BaseStream.Position - here;
+public class MovieSceneTrackFieldDataPropertyData : PropertyData<FMovieSceneTrackFieldData>
+{
+    public MovieSceneTrackFieldDataPropertyData(FName name) : base(name) { }
+
+    public MovieSceneTrackFieldDataPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneTrackFieldData");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            PropertyGuid = reader.ReadPropertyGuid();
         }
+
+        Value = new FMovieSceneTrackFieldData(reader);
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader) {
+            writer.WritePropertyGuid(PropertyGuid);
+        }
+
+        return Value.Write(writer);
     }
 }
