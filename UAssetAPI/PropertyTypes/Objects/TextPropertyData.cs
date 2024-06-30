@@ -23,6 +23,51 @@ public enum ETransformType : byte
     ToUpper,
 }
 
+public class FNumberFormattingOptions
+{
+    public bool AlwaysSign;
+    public bool UseGrouping;
+    public ERoundingMode RoundingMode;
+    public int MinimumIntegralDigits;
+    public int MaximumIntegralDigits;
+    public int MinimumFractionalDigits;
+    public int MaximumFractionalDigits;
+
+    public FNumberFormattingOptions()
+    {
+        AlwaysSign = false;
+        UseGrouping = true;
+        RoundingMode = ERoundingMode.HalfToEven;
+        MinimumIntegralDigits = 1;
+        MaximumIntegralDigits = 316;
+        MinimumFractionalDigits = 0;
+        MaximumFractionalDigits = 3;
+    }
+
+    public FNumberFormattingOptions(AssetBinaryReader reader)
+    {
+        AlwaysSign = reader.ReadBooleanInt();
+        UseGrouping = reader.ReadBooleanInt();
+        RoundingMode = (ERoundingMode)reader.ReadByte();
+        MinimumIntegralDigits = reader.ReadInt32();
+        MaximumIntegralDigits = reader.ReadInt32();
+        MinimumFractionalDigits = reader.ReadInt32();
+        MaximumFractionalDigits = reader.ReadInt32();
+    }
+
+    public void Write(AssetBinaryWriter writer)
+    {
+        writer.Write(AlwaysSign ? 1 : 0);
+        writer.Write(UseGrouping ? 1 : 0);
+        writer.Write((byte)RoundingMode);
+        writer.Write(MinimumIntegralDigits);
+        writer.Write(MaximumIntegralDigits);
+        writer.Write(MinimumFractionalDigits);
+        writer.Write(MaximumFractionalDigits);
+    }
+}
+
+
 public class FFormatArgumentValue
 {
     public EFormatArgumentType Type;
@@ -36,16 +81,16 @@ public class FFormatArgumentValue
         Value = value;
     }
 
-    public void Read(AssetBinaryReader reader)
+    public FFormatArgumentValue(AssetBinaryReader reader, bool isArgumentData = false)
     {
         Type = (EFormatArgumentType)reader.ReadByte();
         switch (Type)
         {
             case EFormatArgumentType.Int:
-                Value = reader.ReadInt32();
+                Value = isArgumentData && reader.Asset.GetCustomVersion<FUE5ReleaseStreamObjectVersion>() < FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport ? reader.ReadInt32() : reader.ReadInt64();
                 break;
             case EFormatArgumentType.UInt:
-                Value = reader.ReadUInt32();
+                Value = reader.ReadUInt64();
                 break;
             case EFormatArgumentType.Double:
                 Value = reader.ReadDouble();
@@ -63,19 +108,27 @@ public class FFormatArgumentValue
         }
     }
 
-    public int Write(AssetBinaryWriter writer)
+    public int Write(AssetBinaryWriter writer, bool isArgumentData = false)
     {
         int sz = 0;
         writer.Write((byte)Type); sz += sizeof(byte);
         switch (Type)
         {
             case EFormatArgumentType.Int:
-                writer.Write((int)Value);
-                sz += sizeof(int);
+                if (isArgumentData && writer.Asset.GetCustomVersion<FUE5ReleaseStreamObjectVersion>() < FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport)
+                {
+                    writer.Write((int)(long)Value);
+                    sz += sizeof(int);
+                }
+                else
+                {
+                    writer.Write((long)Value);
+                    sz += sizeof(long);
+                }
                 break;
             case EFormatArgumentType.UInt:
-                writer.Write((uint)Value);
-                sz += sizeof(uint);
+                writer.Write((ulong)Value);
+                sz += sizeof(ulong);
                 break;
             case EFormatArgumentType.Double:
                 writer.Write((double)Value);
@@ -112,17 +165,21 @@ public class FFormatArgumentData
         ArgumentValue = value;
     }
 
+    public FFormatArgumentData(AssetBinaryReader reader)
+    {
+        Read(reader);
+    }
+
     public void Read(AssetBinaryReader reader)
     {
         ArgumentName = reader.ReadFString();
-        ArgumentValue = new FFormatArgumentValue();
-        ArgumentValue.Read(reader);
+        ArgumentValue = new FFormatArgumentValue(reader, true);
     }
 
     public int Write(AssetBinaryWriter writer)
     {
         int sz = writer.Write(ArgumentName);
-        sz += ArgumentValue.Write(writer);
+        sz += ArgumentValue.Write(writer, true);
         return sz;
     }
 }
@@ -154,10 +211,19 @@ public class TextPropertyData : PropertyData<FString>
     public TextPropertyData SourceFmt;
     [JsonProperty]
     public FFormatArgumentValue[] Arguments;
+    //ArgumentFormat
     [JsonProperty]
     public FFormatArgumentData[] ArgumentsData;
+    //Transform
     [JsonProperty]
     public ETransformType TransformType;
+    //AsNumber
+    [JsonProperty]
+    FFormatArgumentValue SourceValue;
+    [JsonProperty]
+    FNumberFormattingOptions FormatOptions;
+    [JsonProperty]
+    FString TargetCulture;
 
 
     public bool ShouldSerializeTableId()
@@ -232,8 +298,7 @@ public class TextPropertyData : PropertyData<FString>
                     Arguments = new FFormatArgumentValue[ArgumentsSize];
                     for (int i = 0; i < ArgumentsSize; i++)
                     {
-                        Arguments[i] = new FFormatArgumentValue();
-                        Arguments[i].Read(reader);
+                        Arguments[i] = new FFormatArgumentValue(reader);
                     }
                     break;
                 case TextHistoryType.ArgumentFormat:
@@ -243,14 +308,21 @@ public class TextPropertyData : PropertyData<FString>
                     ArgumentsData = new FFormatArgumentData[ArgumentsSize];
                     for (int i = 0; i < ArgumentsSize; i++)
                     {
-                        ArgumentsData[i] = new FFormatArgumentData();
-                        ArgumentsData[i].Read(reader);
+                        ArgumentsData[i] = new FFormatArgumentData(reader);
                     }
                     break;
                 case TextHistoryType.Transform:
                     SourceFmt = new TextPropertyData(FName.DefineDummy(reader.Asset, "SourceFmt"));
                     SourceFmt.Read(reader, false, 1, 0, serializationContext);
                     TransformType = (ETransformType)reader.ReadByte();
+                    break;
+                case TextHistoryType.AsNumber:
+                    SourceValue = new FFormatArgumentValue(reader);
+                    if (reader.ReadBooleanInt())
+                    {
+                        FormatOptions = new FNumberFormattingOptions(reader);
+                    }
+                    TargetCulture = reader.ReadFString();
                     break;
                 default:
                     throw new NotImplementedException("Unimplemented reader for " + HistoryType.ToString() + " @ " + reader.BaseStream.Position);
@@ -265,7 +337,7 @@ public class TextPropertyData : PropertyData<FString>
             writer.WritePropertyGuid(PropertyGuid);
         }
 
-        int here = (int)writer.BaseStream.Position;
+        var here = writer.BaseStream.Position;
 
         if (writer.Asset.ObjectVersion < ObjectVersion.VER_UE4_FTEXT_HISTORY)
         {
@@ -335,12 +407,25 @@ public class TextPropertyData : PropertyData<FString>
                     SourceFmt.Write(writer, false, serializationContext);
                     writer.Write((byte)TransformType);
                     break;
+                case TextHistoryType.AsNumber:
+                    SourceValue.Write(writer);
+                    if (FormatOptions != null)
+                    {
+                        writer.Write(1);
+                        FormatOptions.Write(writer);
+                    }
+                    else
+                    {
+                        writer.Write(0);
+                    }
+                    writer.Write(TargetCulture);
+                    break;
                 default:
                     throw new NotImplementedException("Unimplemented writer for " + HistoryType.ToString());
             }
         }
 
-        return (int)writer.BaseStream.Position - here;
+        return (int)(writer.BaseStream.Position - here);
     }
 
     public override string ToString()
