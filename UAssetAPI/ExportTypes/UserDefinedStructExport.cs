@@ -31,7 +31,7 @@ namespace UAssetAPI.ExportTypes
 
             if (reader.Asset.Mappings?.Schemas != null && this.ObjectName?.Value?.Value != null)
             {
-                UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(this);
+                UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(this, reader.Asset.Mappings?.AreFNamesCaseInsensitive ?? true);
                 reader.Asset.Mappings.Schemas[this.ObjectName.Value.Value] = newSchema;
             }
 

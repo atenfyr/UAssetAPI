@@ -327,7 +327,7 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            Run(new string[] { "mappings" });
+            //Run(new string[] { "mappings" });
 
             while (true)
             {

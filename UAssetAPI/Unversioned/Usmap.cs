@@ -219,6 +219,21 @@ namespace UAssetAPI.Unversioned
         }
     }
 
+    internal class PropertyMapComparer : IEqualityComparer<Tuple<string, int>>
+    {
+        public StringComparer Comparer;
+
+        public bool Equals(Tuple<string, int> lhs, Tuple<string, int> rhs)
+        {
+            return Comparer.Equals(lhs.Item1, rhs.Item1) && lhs.Item2 == rhs.Item2;
+        }
+
+        public int GetHashCode(Tuple<string, int> tuple)
+        {
+            return Comparer.GetHashCode(tuple.Item1) ^ tuple.Item2.GetHashCode();
+        }
+    }
+
     public class UsmapSchema
     {
         public string Name;
@@ -244,7 +259,16 @@ namespace UAssetAPI.Unversioned
             return propertiesMap.ContainsKey(keyTuple) ? propertiesMap[keyTuple] : null;
         }
 
-        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool fromAsset = false)
+        public void ConstructPropertiesMap(bool isCaseInsensitive)
+        {
+            propertiesMap = new Dictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
+            foreach (KeyValuePair<int, UsmapProperty> entry in properties)
+            {
+                propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
+            }
+        }
+
+        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset = false)
         {
             Name = name;
             SuperType = superType;
@@ -252,11 +276,7 @@ namespace UAssetAPI.Unversioned
             properties = props;
             FromAsset = fromAsset;
 
-            propertiesMap = new Dictionary<Tuple<string, int>, UsmapProperty>();
-            foreach (KeyValuePair<int, UsmapProperty> entry in props)
-            {
-                propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
-            }
+            ConstructPropertiesMap(isCaseInsensitive);
         }
 
         public UsmapSchema()
@@ -339,7 +359,11 @@ namespace UAssetAPI.Unversioned
                 EnumMap = EnumMapNuevo;
 
                 var SchemasNuevo = new Dictionary<string, UsmapSchema>(value ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
-                foreach (var entry in Schemas) SchemasNuevo.Add(entry.Key, entry.Value);
+                foreach (var entry in Schemas)
+                {
+                    entry.Value.ConstructPropertiesMap(value);
+                    SchemasNuevo.Add(entry.Key, entry.Value);
+                }
                 Schemas = SchemasNuevo;
             }
         }
@@ -492,12 +516,12 @@ namespace UAssetAPI.Unversioned
             if (asset == null) throw new InvalidOperationException("Cannot evaluate struct export without package reference");
             foreach (var exp in asset.Exports)
             {
-                if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp);
+                if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp, asset.Mappings?.AreFNamesCaseInsensitive ?? true);
             }
             return null;
         }
 
-        public static UsmapSchema GetSchemaFromStructExport(StructExport exp)
+        public static UsmapSchema GetSchemaFromStructExport(StructExport exp, bool isCaseInsensitive)
         {
             var res = new Dictionary<int, UsmapProperty>();
             int idx = 0;
@@ -507,7 +531,7 @@ namespace UAssetAPI.Unversioned
                 res.Add(idx, converted);
                 idx++;
             }
-            return new UsmapSchema(exp.ObjectName.ToString(), exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null, (ushort)res.Count, res, true);
+            return new UsmapSchema(exp.ObjectName.ToString(), exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null, (ushort)res.Count, res, isCaseInsensitive, true);
         }
 
         /// <summary>
@@ -869,7 +893,7 @@ namespace UAssetAPI.Unversioned
                     }
                 }
 
-                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props);
+                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props, this.AreFNamesCaseInsensitive);
                 schemaIndexMap[i] = newSchema;
 
                 if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C")) continue;

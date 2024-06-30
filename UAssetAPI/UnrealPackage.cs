@@ -758,7 +758,7 @@ namespace UAssetAPI
                         if (fetchedStructExp.OuterIndex.IsImport()) outer = fetchedStructExp.OuterIndex.ToImport(this).ObjectName.ToString();
                         if (fetchedStructExp.OuterIndex.IsExport()) outer = fetchedStructExp.OuterIndex.ToExport(this).ObjectName.ToString();
 
-                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp);
+                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp, Mappings?.AreFNamesCaseInsensitive ?? true);
                         if (newSchema != null)
                         {
                             newSchema.ModulePath = InternalAssetPath;
