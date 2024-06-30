@@ -1,4 +1,5 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.CustomVersions;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.StructTypes;
@@ -87,8 +88,7 @@ public class FSkeletalMeshSamplingRegionBuiltData
 
         AreaWeightedSampler = new FSkeletalMeshAreaWeightedTriangleSampler(reader);
         
-        //if (reader.Asset.GetCustomVersion<FNiagaraObjectVersion>() >= FNiagaraObjectVersion.SkeletalMeshVertexSampling)
-        if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_21)
+        if (reader.Asset.GetCustomVersion<FNiagaraObjectVersion>() >= FNiagaraObjectVersion.SkeletalMeshVertexSampling)
         {
             num = reader.ReadInt32();
             Vertices = new int[num];
@@ -114,10 +114,9 @@ public class FSkeletalMeshSamplingRegionBuiltData
         {
             writer.Write(b);
         }
-
         AreaWeightedSampler.Write(writer);
 
-        if (writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_21)
+        if (writer.Asset.GetCustomVersion<FNiagaraObjectVersion>() >= FNiagaraObjectVersion.SkeletalMeshVertexSampling)
         {
             writer.Write(Vertices.Length);
             foreach (var v in Vertices)

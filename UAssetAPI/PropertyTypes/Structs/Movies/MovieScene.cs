@@ -137,7 +137,7 @@ public struct FMovieSceneSubSequenceTreeEntry
     {
         writer.Write(SequenceID);
         writer.Write((byte)Flags);
-        if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter &&
+        if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter ||
             writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.AddedSubSequenceEntryWarpCounter)
         {
             RootToSequenceWarpCounter?.Write(writer, false, PropertySerializationContext.StructFallback);

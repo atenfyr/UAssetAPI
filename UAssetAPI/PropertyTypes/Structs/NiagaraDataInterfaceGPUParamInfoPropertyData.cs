@@ -1,4 +1,5 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.CustomVersions;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -57,8 +58,7 @@ public class FNiagaraDataInterfaceGPUParamInfo
         DataInterfaceHLSLSymbol = reader.ReadFString();
         DIClassName = reader.ReadFString();
 
-        //NiagaraVer >= FNiagaraCustomVersion::AddGeneratedFunctionsToGPUParamInfo
-        if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25)
+        if (reader.Asset.GetCustomVersion<FNiagaraCustomVersion>() >= FNiagaraCustomVersion.AddGeneratedFunctionsToGPUParamInfo)
         {
             int num = reader.ReadInt32();
             GeneratedFunctions = new FNiagaraDataInterfaceGeneratedFunction[num];
@@ -74,11 +74,13 @@ public class FNiagaraDataInterfaceGPUParamInfo
         var offset = writer.BaseStream.Position;
         writer.Write(DataInterfaceHLSLSymbol);
         writer.Write(DIClassName);
-
-        writer.Write(GeneratedFunctions.Length);
-        foreach (var func in GeneratedFunctions)
+        if (writer.Asset.GetCustomVersion<FNiagaraCustomVersion>() >= FNiagaraCustomVersion.AddGeneratedFunctionsToGPUParamInfo)
         {
-            func.Write(writer);
+            writer.Write(GeneratedFunctions.Length);
+            foreach (var func in GeneratedFunctions)
+            {
+                func.Write(writer);
+            }
         }
 
         return (int)(writer.BaseStream.Position - offset);

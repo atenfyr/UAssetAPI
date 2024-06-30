@@ -56,7 +56,9 @@ namespace UAssetAPI
             { UAPUtils.GUID(0x430C4D19, 0x71544970, 0x87699B69, 0xDF90B0E5), "FFoliageCustomVersion" },
             { UAPUtils.GUID(0xaafe32bd, 0x53954c14, 0xb66a5e25, 0x1032d1dd), "FProceduralFoliageCustomVersion" },
             { UAPUtils.GUID(0xab965196, 0x45d808fc, 0xb7d7228d, 0x78ad569e), "FLiveLinkCustomVersion" },
-            { UAPUtils.GUID(0xE7086368, 0x6B234C58, 0x84391B70, 0x16265E91), "FFortniteReleaseBranchCustomObjectVersion" }
+            { UAPUtils.GUID(0xE7086368, 0x6B234C58, 0x84391B70, 0x16265E91), "FFortniteReleaseBranchCustomObjectVersion" },
+            { UAPUtils.GUID(0xD89B5E42, 0x24BD4D46, 0x8412ACA8, 0xDF641779), "FUE5ReleaseStreamObjectVersion" },
+            { UAPUtils.GUID(0xFCF57AFA, 0x50764283, 0xB9A9E658, 0xFFA02D32), "FNiagaraCustomVersion" },
 
             // etc.
         };

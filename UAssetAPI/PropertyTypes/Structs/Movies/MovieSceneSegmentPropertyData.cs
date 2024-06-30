@@ -34,7 +34,6 @@ public class MovieSceneSegmentPropertyData : PropertyData<FMovieSceneSegment>
     }
 }
 
-//public class MovieSceneSegmentIdentifierPropertyData : PropertyData<FMovieSceneSegmentIdentifier>
 public class MovieSceneSegmentIdentifierPropertyData : PropertyData<int>
 {
     public MovieSceneSegmentIdentifierPropertyData(FName name) : base(name) { }
@@ -52,7 +51,6 @@ public class MovieSceneSegmentIdentifierPropertyData : PropertyData<int>
             PropertyGuid = reader.ReadPropertyGuid();
         }
 
-        //Value = new FMovieSceneSegmentIdentifier(reader.ReadInt32());
         Value = reader.ReadInt32();
     }
 
