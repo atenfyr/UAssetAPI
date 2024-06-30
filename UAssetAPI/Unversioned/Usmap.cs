@@ -403,17 +403,25 @@ namespace UAssetAPI.Unversioned
                             var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
                             var allNames = new List<string>();
                             foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
-                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
-                            ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
+                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames) { InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp) };
                         }
                         else if (enumIndex.IsImport())
                         {
                             string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
-                            if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                            if (enumName == null || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
+                            {
+                                if (!exp.Asset.HasUnversionedProperties)
+                                {
+                                    return new UsmapEnumData(enumName, []) { InnerType = new UsmapPropertyData(EPropertyType.ByteProperty) };
+                                }
+                                else
+                                {
+                                    throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                                }
+                            }
                             var allNames = new List<string>();
-                            foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
-                            converted1 = new UsmapEnumData(enumName, allNames);
-                            ((UsmapEnumData)converted1).InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp);
+                            foreach (var cosa in value.Values) allNames.Add(cosa.ToString());
+                            converted1 = new UsmapEnumData(enumName, allNames) { InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp) };
                         }
                         else
                         {
@@ -429,17 +437,25 @@ namespace UAssetAPI.Unversioned
                             var exp2 = enumIndex.ToExport(exp.Asset) as EnumExport;
                             var allNames = new List<string>();
                             foreach (var cosa in exp2.Enum.Names) allNames.Add(cosa.Item1.ToString());
-                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames);
-                            ((UsmapEnumData)converted1).InnerType = new UsmapPropertyData(EPropertyType.ByteProperty);
+                            converted1 = new UsmapEnumData(exp2.ObjectName.ToString(), allNames) { InnerType = new UsmapPropertyData(EPropertyType.ByteProperty) };
                         }
                         else if (enumIndex.IsImport())
                         {
                             string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
-                            if (enumName == null || !exp.Asset.Mappings.EnumMap.ContainsKey(enumName)) throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                            if (enumName == null || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
+                            {
+                                if (!exp.Asset.HasUnversionedProperties)
+                                {
+                                    return new UsmapEnumData(enumName, []) { InnerType = new UsmapPropertyData(EPropertyType.ByteProperty) };
+                                }
+                                else
+                                {
+                                    throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
+                                }
+                            }
                             var allNames = new List<string>();
-                            foreach (var cosa in exp.Asset.Mappings.EnumMap[enumName].Values) allNames.Add(cosa.ToString());
-                            converted1 = new UsmapEnumData(enumName, allNames);
-                            ((UsmapEnumData)converted1).InnerType = new UsmapPropertyData(EPropertyType.ByteProperty);
+                            foreach (var cosa in value.Values) allNames.Add(cosa.ToString());
+                            converted1 = new UsmapEnumData(enumName, allNames) { InnerType = new UsmapPropertyData(EPropertyType.ByteProperty) };
                         }
                         else
                         {
@@ -452,17 +468,17 @@ namespace UAssetAPI.Unversioned
                     converted1 = new UsmapStructData(strucstr.ToString());
                     break;
                 case EPropertyType.SetProperty:
-                    converted1 = new UsmapArrayData(typ);
-                    (converted1 as UsmapArrayData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FSetProperty).ElementProp);
+                    converted1 = new UsmapArrayData(typ) { InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FSetProperty).ElementProp) };
                     break;
                 case EPropertyType.ArrayProperty:
-                    converted1 = new UsmapArrayData(typ);
-                    (converted1 as UsmapArrayData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FArrayProperty).Inner);
+                    converted1 = new UsmapArrayData(typ) { InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FArrayProperty).Inner) };
                     break;
                 case EPropertyType.MapProperty:
-                    converted1 = new UsmapMapData();
-                    (converted1 as UsmapMapData).InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).KeyProp);
-                    (converted1 as UsmapMapData).ValueType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).ValueProp);
+                    converted1 = new UsmapMapData()
+                    { 
+                        InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).KeyProp),
+                        ValueType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).ValueProp)
+                    };
                     break;
                 default:
                     converted1 = new UsmapPropertyData(typ);
