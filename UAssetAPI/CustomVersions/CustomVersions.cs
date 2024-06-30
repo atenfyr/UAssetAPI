@@ -1414,7 +1414,7 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE5_4)]
         PCGPointStructuredSerializer,
 
-        /// <summary>-----<new versions can be added above this line>-------------------------------------------------</summary>
+        /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
 
@@ -1422,4 +1422,596 @@ namespace UAssetAPI.CustomVersions
         LatestVersion = VersionPlusOne - 1
     }
 
+    public enum FUE5ReleaseStreamObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary>Added Lumen reflections to new reflection enum, changed defaults</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        ReflectionMethodEnum,
+
+        /// <summary>Serialize HLOD info in WorldPartitionActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        WorldPartitionActorDescSerializeHLODInfo,
+
+        /// <summary>Removing Tessellation from materials and meshes.</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        RemovingTessellation,
+
+        /// <summary>LevelInstance serialize runtime behavior</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        LevelInstanceSerializeRuntimeBehavior,
+
+        /// <summary>Refactoring Pose Asset runtime data structures</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        PoseAssetRuntimeRefactor,
+
+        /// <summary>Serialize the folder path of actor descs</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        WorldPartitionActorDescSerializeActorFolderPath,
+
+        /// <summary>Change hair strands vertex format</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        HairStrandsVertexFormatChange,
+
+        /// <summary>Added max linear and angular speed to Chaos bodies</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        AddChaosMaxLinearAngularSpeed,
+
+        /// <summary>PackedLevelInstance version</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        PackedLevelInstanceVersion,
+
+        /// <summary>PackedLevelInstance bounds fix</summary>
+        [Introduced(EngineVersion.VER_UE5_0EA)]
+        PackedLevelInstanceBoundsFix,
+
+        /// <summary>Custom property anim graph nodes (linked anim graphs, control rig etc.) now use optional pin manager</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        CustomPropertyAnimGraphNodesUseOptionalPinManager,
+
+        /// <summary>Add native double and int64 support to FFormatArgumentData</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        TextFormatArgumentData64bitSupport,
+
+        /// <summary>Material layer stacks are no longer considered 'static parameters'</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        MaterialLayerStacksAreNotParameters,
+
+        /// <summary>CachedExpressionData is moved from UMaterial to UMaterialInterface</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        MaterialInterfaceSavedCachedData,
+
+        /// <summary>Add support for multiple cloth deformer LODs to be able to raytrace cloth with a different LOD than the one it is rendered with</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        AddClothMappingLODBias,
+
+        /// <summary>Add support for different external actor packaging schemes</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        AddLevelActorPackagingScheme,
+
+        /// <summary>Add support for linking to the attached parent actor in WorldPartitionActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        WorldPartitionActorDescSerializeAttachParent,
+
+        /// <summary>Converted AActor GridPlacement to bIsSpatiallyLoaded flag</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ConvertedActorGridPlacementToSpatiallyLoadedFlag,
+
+        /// <summary>Fixup for bad default value for GridPlacement_DEPRECATED</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ActorGridPlacementDeprecateDefaultValueFixup,
+
+        /// <summary>PackedLevelActor started using FWorldPartitionActorDesc (not currently checked against but added as a security)</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        PackedLevelActorUseWorldPartitionActorDesc,
+
+        /// <summary>Add support for actor folder objects</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        AddLevelActorFolders,
+
+        /// <summary>Remove FSkeletalMeshLODModel bulk datas</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        RemoveSkeletalMeshLODModelBulkDatas,
+
+        /// <summary>Exclude brightness from the EncodedHDRCubemap,</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ExcludeBrightnessFromEncodedHDRCubemap,
+
+        /// <summary>Unified volumetric cloud component quality sample count slider between main and reflection views for consistency</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        VolumetricCloudSampleCountUnification,
+
+        /// <summary>Pose asset GUID generated from source AnimationSequence</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        PoseAssetRawDataGUID,
+
+        /// <summary>Convolution bloom now take into account FPostProcessSettings::BloomIntensity for scatter dispersion.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ConvolutionBloomIntensity,
+
+        /// <summary>Serialize FHLODSubActors instead of FGuids in WorldPartition HLODActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        WorldPartitionHLODActorDescSerializeHLODSubActors,
+
+        /// <summary>Large Worlds - serialize double types as doubles</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        LargeWorldCoordinates,
+
+        /// <summary>Deserialize old BP float and double types as real numbers for pins</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        BlueprintPinsUseRealNumbers,
+
+        /// <summary>Changed shadow defaults for directional light components, version needed to not affect old things</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        UpdatedDirectionalLightShadowDefaults,
+
+        /// <summary>Refresh geometry collections that had not already generated convex bodies.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        GeometryCollectionConvexDefaults,
+
+        /// <summary>Add faster damping calculations to the cloth simulation and rename previous Damping parameter to LocalDamping.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosClothFasterDamping,
+
+        /// <summary>Serialize LandscapeActorGuid in FLandscapeActorDesc sub class.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        WorldPartitionLandscapeActorDescSerializeLandscapeActorGuid,
+
+        /// <summary>add inertia tensor and rotation of mass to convex </summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        AddedInertiaTensorAndRotationOfMassAddedToConvex,
+
+        /// <summary>Storing inertia tensor as vec3 instead of matrix.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosInertiaConvertedToVec3,
+
+        /// <summary>For Blueprint real numbers, ensure that legacy float data is serialized as single-precision</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        SerializeFloatPinDefaultValuesAsSinglePrecision,
+
+        /// <summary>Upgrade the BlendMasks array in existing LayeredBoneBlend nodes</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        AnimLayeredBoneBlendMasks,
+
+        /// <summary>Uses RG11B10 format to store the encoded reflection capture data on mobile</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        StoreReflectionCaptureEncodedHDRDataInRG11B10Format,
+
+        /// <summary>Add WithSerializer type trait and implementation for FRawAnimSequenceTrack</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        RawAnimSequenceTrackSerializer,
+
+        /// <summary>Removed font from FEditableTextBoxStyle, and added FTextBlockStyle instead.</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        RemoveDuplicatedStyleInfo,
+
+        /// <summary>Added member reference to linked anim graphs</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        LinkedAnimGraphMemberReference,
+
+        /// <summary>Changed default tangent behavior for new dynamic mesh components</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        DynamicMeshComponentsDefaultUseExternalTangents,
+
+        /// <summary>Added resize methods to media capture</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        MediaCaptureNewResizeMethods,
+
+        /// <summary>Function data stores a map from work to debug operands</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        RigVMSaveDebugMapInGraphFunctionData,
+
+        /// <summary>Changed default Local Exposure Contrast Scale from 1.0 to 0.8</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        LocalExposureDefaultChangeFrom1,
+
+        /// <summary>Serialize bActorIsListedInSceneOutliner in WorldPartitionActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        WorldPartitionActorDescSerializeActorIsListedInSceneOutliner,
+
+        /// <summary>Disabled opencolorio display configuration by default</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        OpenColorIODisabledDisplayConfigurationDefault,
+
+        /// <summary>Serialize ExternalDataLayerAsset in WorldPartitionActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        WorldPartitionExternalDataLayers,
+
+        /// <summary>Fix Chaos Cloth fictitious angular scale bug that requires existing parameter rescaling.</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        ChaosClothFictitiousAngularVelocitySubframeFix,
+
+        /// <summary>Store physics thread particles data in single precision</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        SinglePrecisonParticleDataPT,
+
+        /// <summary>Orthographic Near and Far Plane Auto-resolve enabled by default</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        OrthographicAutoNearFarPlane,
+
+        /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
+
+    public enum FNiagaraObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        [Introduced(EngineVersion.VER_UE4_21)]
+        SkeletalMeshVertexSampling = 1,
+
+        /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
+
+    public enum FNiagaraCustomVersion
+    {
+        /// <summary>Before any version changes were made in niagara</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        /// <summary>Reworked vm external function binding to be more robust.</summary>
+        [Introduced(EngineVersion.VER_UE4_16)]
+        VMExternalFunctionBindingRework,
+
+        /// <summary>Making all Niagara files reference the version number, allowing post loading recompilation if necessary.</summary>
+        [Introduced(EngineVersion.VER_UE4_16)]
+        PostLoadCompilationEnabled,
+
+        /// <summary>Moved some runtime cost from external functions into the binding step and used variadic templates to neaten that code greatly.</summary>
+        [Introduced(EngineVersion.VER_UE4_16)]
+        VMExternalFunctionBindingReworkPartDeux,
+
+        /// <summary>Moved per instance data needed for certain data interfaces out to it's own struct.</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        DataInterfacePerInstanceRework,
+
+        /// <summary>Added shader maps and corresponding infrastructure</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        NiagaraShaderMaps,
+
+        /// <summary>Combined Spawn, Update, and Event scripts into one graph.</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        UpdateSpawnEventGraphCombination,
+
+        /// <summary>Reworked data layout to store float and int data separately.</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        DataSetLayoutRework,
+
+        /// <summary>Reworked scripts to support emitter and system scripts</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        AddedEmitterAndSystemScripts,
+
+        /// <summary>Rework of script execution contexts to allow better reuse and reduce overhead of parameter handling. </summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        ScriptExecutionContextRework,
+
+        /// <summary>Removed the Niagara variable ID's making hookup impossible until next compile</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        RemovalOfNiagaraVariableIDs,
+
+        /// <summary>System and emitter script simulations.</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        SystemEmitterScriptSimulations,
+
+        /// <summary>Adding integer random to VM. TODO: The vm really needs its own versioning system that will force a recompile when changes.</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        IntegerRandom,
+
+        /// <summary>Added emitter spawn attributes</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        AddedEmitterSpawnAttributes,
+
+        /// <summary>cooking of shader maps and corresponding infrastructure</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        NiagaraShaderMapCooking,
+
+        /// <summary>don't serialize shader maps for system scripts</summary>
+        [Introduced(EngineVersion.VER_UE4_18)]
+        NiagaraShaderMapCooking2,
+
+        /// <summary>Added script rapid iteration variables, usually top-level module parameters...</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        AddedScriptRapidIterationVariables,
+
+        /// <summary>Added type to data interface infos</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        AddedTypeToDataInterfaceInfos,
+
+        /// <summary>Hooked up autogenerated default values for function call nodes.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        EnabledAutogeneratedDefaultValuesForFunctionCallNodes,
+
+        /// <summary>Now curve data interfaces have look-up tables on by default.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        CurveLUTNowOnByDefault,
+
+        /// <summary>Scripts now use a guid for identification instead of an index when there are more than one with the same usage.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        ScriptsNowUseAGuidForIdentificationInsteadOfAnIndex,
+
+        /// <summary>don't serialize shader maps for update scripts</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        NiagaraCombinedGPUSpawnUpdate,
+
+        /// <summary>don't serialize shader maps for emitters that don't run on gpu.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        DontCompileGPUWhenNotNeeded,
+
+        [Introduced(EngineVersion.VER_UE4_19)]
+        LifeCycleRework,
+
+        /// <summary>We weren't serializing event data sets previously.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        NowSerializingReadWriteDataSets,
+
+        /// <summary>Forcing the internal parameter map vars to be reset between emitter calls.</summary>
+        [Introduced(EngineVersion.VER_UE4_19)]
+        TranslatorClearOutBetweenEmitters,
+
+        /// <summary>added sampler shader params based on DI buffer descriptors</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        AddSamplerDataInterfaceParams,
+
+        /// <summary>Need to force the GPU shaders to recompile</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        GPUShadersForceRecompileNeeded,
+
+        /// <summary>The playback range for the timeline is now stored in the system editor data.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        PlaybackRangeStoredOnSystem,
+
+        /// <summary>All cached values will auto-recompile.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        MovedToDerivedDataCache,
+
+        /// <summary>Data interfaces are preallocated</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        DataInterfacesNotAllocated,
+
+        /// <summary>emitter scripts are built using "Emitter." instead of the full name.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        EmittersHaveGenericUniqueNames,
+
+        /// <summary>no longer have compiler version enum value in this list, instead moved to a guid, which works better for the DDC</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        MovingTranslatorVersionToGuid,
+
+        /// <summary>adding a parameter map in/out to the data set base node</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        AddingParamMapToDataSetBaseNode,
+
+        /// <summary>refactor of CS parameters allowing regular params as well as buffers.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        DataInterfaceComputeShaderParamRefactor,
+
+        /// <summary>bumping version and forcing curves to regen their LUT on version change.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        CurveLUTRegen,
+
+        /// <summary>Changing the graph generation for assignment nodes so that it uses a "Begin Defaults" node where appropriate.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        AssignmentNodeUsesBeginDefaults,
+
+        /// <summary>Updating the usage flage bitmask for assignment nodes to match the part of the stack it's used in.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        AssignmentNodeHasCorrectUsageBitmask,
+
+        /// <summary>Emitter local space is compiled into the hlsl as a literal constant to expose it to emitter scripts and allow for some better optimization of particle transforms.</summary>
+        [Introduced(EngineVersion.VER_UE4_20)]
+        EmitterLocalSpaceLiteralConstant,
+
+        /// <summary>The cpu cache of the texture is now directly serialized instead of using array property serialization.</summary>
+        [Introduced(EngineVersion.VER_UE4_21)]
+        TextureDataInterfaceUsesCustomSerialize,
+
+        /// <summary>The texture data interface now streams size info</summary>
+        [Introduced(EngineVersion.VER_UE4_21)]
+        TextureDataInterfaceSizeSerialize,
+
+        /// <summary>API to skeletal mesh interface was improved but requires a recompile and some graph fixup.</summary>
+        [Introduced(EngineVersion.VER_UE4_21)]
+        SkelMeshInterfaceAPIImprovements,
+
+        /// <summary>Only do op add pin fixup on existing nodes which are before this version</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        ImproveLoadTimeFixupOfOpAddPins,
+
+        /// <summary>Moved commonly used input metadata out of the strin/string property metadata map to actual properties on the metadata struct.</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        MoveCommonInputMetadataToProperties,
+
+        /// <summary>Move to using the traversed graph hash and the base script id for the FNiagaraVMExecutableDataId instead of the change id guid to prevent invalidating the DDC.</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        UseHashesToIdentifyCompileStateOfTopLevelScripts,
+
+        /// <summary>Reworked how the metadata is stored in NiagaraGraph from storing a Map of FNiagaraVariableMetaData to storing a map of UNiagaraScriptVariable* to be used with the Details panel.</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        MetaDataAndParametersUpdate,
+
+        /// <summary>Moved the emitter inheritance data from the emitter handle to the emitter to allow for chained emitter inheritance.</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        MoveInheritanceDataFromTheEmitterHandleToTheEmitter,
+
+        /// <summary>Add property to all Niagara scripts indicating whether or not they belong to the library</summary>
+        [Introduced(EngineVersion.VER_UE4_23)]
+        AddLibraryAssetProperty,
+
+        /// <summary>Addding additional defines to the GPU script</summary>
+        [Introduced(EngineVersion.VER_UE4_24)]
+        AddAdditionalDefinesProperty,
+
+        /// <summary>Remove the random compile id guids from the cached script usage and from the compile and script ids since the hashes serve the same purpose and are deterministic.</summary>
+        [Introduced(EngineVersion.VER_UE4_24)]
+        RemoveGraphUsageCompileIds,
+
+        /// <summary>Adding UseRapidIterationParams and DetailLevelMask to the GPU script</summary>
+        [Introduced(EngineVersion.VER_UE4_24)]
+        AddRIAndDetailLevel,
+
+        /// <summary>Changing the system and emitter compiled data to shared pointers to deal with lifetime issues in the editor.  They now are handled directly in system serialize.</summary>
+        [Introduced(EngineVersion.VER_UE4_24)]
+        ChangeEmitterCompiledDataToSharedRefs,
+
+        /// <summary>Sorting on Renderers is disabled by default, we add a version to maintain existing systems that expected sorting to be enabled</summary>
+        [Introduced(EngineVersion.VER_UE4_24)]
+        DisableSortingByDefault,
+
+        /// <summary>Convert TMap into TArray to save memory, TMap contains an inline allocator which pushes the size to 80 bytes</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        MemorySaving,
+
+        /// <summary>Added a new value to the script usage enum, and we need a custom version to fix the existing bitfields.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        AddSimulationStageUsageEnum,
+
+        /// <summary>Save the functions generated by a GPU data interface inside FNiagaraDataInterfaceGPUParamInfo</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        AddGeneratedFunctionsToGPUParamInfo,
+
+        /// <summary>Removed DetailLevel in favor of FNiagaraPlatfomSet based selection of per platform settings.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        PlatformScalingRefactor,
+
+        /// <summary>Promote parameters used across script executions to the Dataset, and Demote unused parameters.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        PrecompileNamespaceFixup,
+
+        /// <summary>Postload fixup in UNiagaraGraph to fixup VariableToScriptVariable map entries being null.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        FixNullScriptVariables,
+
+        /// <summary>Move FNiagaraVariableMetaData from storing scope enum to storing registered scope name.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        PrecompileNamespaceFixup2,
+
+        /// <summary>Enable the simulation stage flag by default in the usage bitmask of modules and functions</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        SimulationStageInUsageBitmask,
+
+        /// <summary>Fix graph parameter map parameters on post load so that they all have a consisten parsable format and update the UI to show and filter based on these formats.</summary>
+        [Introduced(EngineVersion.VER_UE4_25)]
+        StandardizeParameterNames,
+
+        /// <summary>Make sure that UNiagaraComponents only have override maps for User variables.</summary>
+        [Introduced(EngineVersion.VER_UE4_26)]
+        ComponentsOnlyHaveUserVariables,
+
+        /// <summary>Refactor the options for UV settings on the ribbon renderer.</summary>
+        [Introduced(EngineVersion.VER_UE4_26)]
+        RibbonRendererUVRefactor,
+
+        /// <summary>Replace the TypeDefinition in VariableBase with an index into the type registry</summary>
+        [Introduced(EngineVersion.VER_UE4_26)]
+        VariablesUseTypeDefRegistry,
+
+        /// <summary>Expand the visibility options of the scripts to be able to hide a script completely from the user </summary>
+        [Introduced(EngineVersion.VER_UE4_26)]
+        AddLibraryVisibilityProperty,
+
+        [Introduced(EngineVersion.VER_UE4_26)]
+        SignificanceHandlers,
+
+        /// <summary>Added support for multiple versions of script data</summary>
+        [Introduced(EngineVersion.VER_UE4_27)]
+        ModuleVersioning,
+
+        [Introduced(EngineVersion.VER_UE4_27)]
+        MoveDefaultValueFromFNiagaraVariableMetaDataToUNiagaraScriptVariable,
+
+        /// <summary>Changed the default mode from deterministic to non-deterministic which matches emitters</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChangeSystemDeterministicDefault,
+
+        /// <summary>Update static switch pins to use the PersistentId from their script variable so that when they're renamed their values aren't lost when reallocating pins.</summary>
+        [Introduced(EngineVersion.VER_UE5_0)]
+        StaticSwitchFunctionPinsUsePersistentGuids,
+
+        /// <summary>Extended visibility culling options and moved properties into their own struct.</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        VisibilityCullingImprovements,
+
+        [Introduced(EngineVersion.VER_UE5_1)]
+        AddBakerCameraBookmarks,
+
+        /// <summary>Function call node refresh from external changes has been refactored so that they don't need to populate their name bindings every load.</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        PopulateFunctionCallNodePinNameBindings,
+
+        /// <summary>Changed the default value for the component renderer's OnlyCreateComponentsOnParticleSpawn property</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        ComponentRendererSpawnProperty,
+
+        /// <summary>Previous repopulate didn't handle module attributes like Particles.Module.Name so they need to be repopulated for renaming to work correctly.</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        RepopulateFunctionCallNodePinNameBindings,
+
+        /// <summary>Event spawns now optionally update Initial. attribute values. New default is true but old data is kept false to maintain existing behavior.</summary>
+        [Introduced(EngineVersion.VER_UE5_1)]
+        EventSpawnsUpdateInitialAttributeValues,
+
+        /// <summary>Adds list of variadic parameters to the information about GPU functions.</summary>
+        [Introduced(EngineVersion.VER_UE5_2)]
+        AddVariadicParametersToGPUFunctionInfo,
+
+        /// <summary>Some data fixup for NiagaraNodeWithDynamicPins.</summary>
+        [Introduced(EngineVersion.VER_UE5_2)]
+        DynamicPinNodeFixup,
+
+        /// <summary>Ribbon renderer will default to unique ID rather than normalized age to make more things 'just work'</summary>
+        [Introduced(EngineVersion.VER_UE5_3)]
+        RibbonRendererLinkOrderDefaultIsUniqueID,
+
+        /// <summary>Renderer SubImage Blends are enabled by default</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        SubImageBlendEnabledByDefault,
+
+        /// <summary>Ribbon renderer will use geometry normals by default rather than screen / facing aligned normals</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        RibbonPlaneUseGeometryNormals,
+
+        /// <summary>Actors velocity is used for the initial velocity before the component has any tracking, old assets use the old zero velocity</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        InitialOwnerVelocityFromActor,
+
+        /// <summary>FNiagaraParameterBindingWithValue wouldn't necessarily have the appropriate ResolvedParameter namespace when it comes to emitter merging</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        ParameterBindingWithValueRenameFixup,
+
+        /// <summary>Sim Cache moved to bulk data by default</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        SimCache_BulkDataVersion1,
+
+        /// <summary>Decoupling of 'Template' and 'Inheritance'</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        InheritanceUxRefactor,
+
+        /// <summary>NDC Read DIs will not override spawn group by default when spawning particles. Old content will remain unchanged.</summary>
+        [Introduced(EngineVersion.VER_UE5_4)]
+        NDCSpawnGroupOverrideDisabledByDefault,
+
+        /// <summary>
+        /// DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously.
+        /// -----new versions can be added above this line-------------------------------------------------
+        /// </summary>
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    }
 }
