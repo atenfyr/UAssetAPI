@@ -411,6 +411,11 @@ namespace UAssetAPI
         public byte[] AssetRegistryData;
 
         /// <summary>
+        /// Any bulk data that is not stored in the export map.
+        /// </summary>
+        public byte[] BulkData;
+
+        /// <summary>
         /// Some garbage data that appears to be present in certain games (e.g. Valorant)
         /// </summary>
         public byte[] ValorantGarbageData;
@@ -920,7 +925,7 @@ namespace UAssetAPI
             }
 
             // AssetRegistryData
-            AssetRegistryData = Array.Empty<byte>();
+            AssetRegistryData = [];
             if (AssetRegistryDataOffset > 0)
             {
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
@@ -942,6 +947,13 @@ namespace UAssetAPI
             else
             {
                 doWeHaveAssetRegistryData = false;
+            }
+
+            BulkData = [];
+            if (BulkDataStartOffset > 0)
+            {
+                reader.BaseStream.Seek(BulkDataStartOffset, SeekOrigin.Begin);
+                BulkData = reader.ReadBytes((int)(reader.BaseStream.Length - BulkDataStartOffset));
             }
 
             // WorldTileInfoDataOffset
@@ -1590,9 +1602,9 @@ namespace UAssetAPI
                         writer.Write(us.Extras);
                     }
                 }
-                writer.Write(UAsset.UASSET_MAGIC);
-
-                this.BulkDataStartOffset = (int)stre.Length - 4;
+                
+                this.BulkDataStartOffset = (int)writer.BaseStream.Position;
+                writer.Write(BulkData);
 
                 // Rewrite Section 3
                 if (this.Exports.Count > 0)

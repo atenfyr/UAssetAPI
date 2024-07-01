@@ -673,8 +673,7 @@ namespace UAssetAPI
 #pragma warning disable CS0168 // Variable is declared but never used
             try
             {
-                long nextStarting = reader.BaseStream.Length - 4;
-                if ((Exports.Count - 1) > i) nextStarting = Exports[i + 1].SerialOffset;
+                long nextStarting = (Exports.Count - 1) > i ? Exports[i + 1].SerialOffset : ((UAsset)reader.Asset).BulkDataStartOffset;
 
                 FName exportClassTypeName = Exports[i].GetExportClassType();
                 string exportClassType = exportClassTypeName.Value.Value;
