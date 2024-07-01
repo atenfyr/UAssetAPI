@@ -35,8 +35,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
     private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
     {
-        var data = Activator.CreateInstance(T, Name) as PropertyData;
-        if (data == null) return;
+        if (Activator.CreateInstance(T, Name) is not PropertyData data) return;
         data.Offset = offset;
         data.Ancestry.Initialize(Ancestry, Name);
         data.Read(reader, false, 0);
@@ -92,7 +91,9 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         }
         if (structTypeVal == "RichCurveKey" && reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTrackIdentifier" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
-        if (structTypeVal == "MovieSceneFloatChannel" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneFloatChannel" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneFloatValue" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneTangentData" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
 
         if (leng1 == 0)
         {
@@ -170,7 +171,9 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (structTypeVal == "FloatRange") hasCustomStructSerialization = Value.Count == 1 && Value[0] is FloatRangePropertyData;
         if (structTypeVal == "RichCurveKey" && Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTrackIdentifier" && Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;
-        if (structTypeVal == "MovieSceneFloatChannel" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely && Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneFloatChannel" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneFloatValue" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
+        if (structTypeVal == "MovieSceneTangentData" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
         return hasCustomStructSerialization;
     }
 
