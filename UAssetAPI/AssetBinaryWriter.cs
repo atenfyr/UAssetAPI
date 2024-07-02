@@ -316,7 +316,7 @@ namespace UAssetAPI
         /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFER_PROP_POINTER(KismetPropertyPointer val)
         {
-            if (Asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            if (Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.FFieldPathOwnerSerialization)
             {
                 this.Write(val.New.Path.Length);
                 for (int i = 0; i < val.New.Path.Length; i++)

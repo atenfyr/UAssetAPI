@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
@@ -364,7 +365,7 @@ namespace UAssetAPI
 
         public KismetPropertyPointer XFER_PROP_POINTER()
         {
-            if (Asset.ObjectVersion >= KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION)
+            if (Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.FFieldPathOwnerSerialization)
             {
                 int numEntries = this.ReadInt32();
                 FName[] allNames = new FName[numEntries];
