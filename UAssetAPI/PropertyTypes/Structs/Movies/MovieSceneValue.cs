@@ -1,6 +1,6 @@
 ﻿using System;
 using UAssetAPI.UnrealTypes.EngineEnums;
-using UAssetAPI.UnrealTypes;
+using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.PropertyTypes.Structs;
 
@@ -17,39 +17,84 @@ public class FMovieSceneTangentData
     {
         ArriveTangent = reader.ReadSingle();
         LeaveTangent = reader.ReadSingle();
-        ArriveTangentWeight = reader.ReadSingle();
-        LeaveTangentWeight = reader.ReadSingle();
-        TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-
-        // guessing this happens when `PaddingByte` gets added to FMovieSceneFloatValue but requires a lot more testing
-        padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(3) : [];
+        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        {
+            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
+            ArriveTangentWeight = reader.ReadSingle();
+            LeaveTangentWeight = reader.ReadSingle();
+            padding = [];
+        }
+        else
+        {
+            ArriveTangentWeight = reader.ReadSingle();
+            LeaveTangentWeight = reader.ReadSingle();
+            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
+            padding = reader.ReadBytes(3);
+        }
     }
 
     public void Write(AssetBinaryWriter writer)
     {
         writer.Write(ArriveTangent);
         writer.Write(LeaveTangent);
-        writer.Write(ArriveTangentWeight);
-        writer.Write(LeaveTangentWeight);
-        writer.Write((byte)TangentWeightMode);
+        if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        {
+            writer.Write((byte)TangentWeightMode);
+            writer.Write(ArriveTangentWeight);
+            writer.Write(LeaveTangentWeight);
+        }
+        else
+        {
+            writer.Write(ArriveTangentWeight);
+            writer.Write(LeaveTangentWeight);
+            writer.Write((byte)TangentWeightMode);
+        }
         writer.Write(padding);
     }
 }
 
-public class FMovieSceneValue<T>(AssetBinaryReader reader, T value)
+public class FMovieSceneValue<T>
 {
-    public T Value = value;
-    public FMovieSceneTangentData Tangent = new FMovieSceneTangentData(reader);
-    public ERichCurveInterpMode InterpMode = (ERichCurveInterpMode)reader.ReadByte();
-    public ERichCurveTangentMode TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-    public byte[] padding = reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_25 ? reader.ReadBytes(2) : [];
+    public T Value;
+    public FMovieSceneTangentData Tangent;
+    public ERichCurveInterpMode InterpMode;
+    public ERichCurveTangentMode TangentMode;
+    public byte[] padding;
+
+    public FMovieSceneValue(AssetBinaryReader reader, T value)
+    {
+        Value = value;
+        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        {
+            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+            Tangent = new FMovieSceneTangentData(reader);
+            padding = [];
+        }
+        else
+        {
+            Tangent = new FMovieSceneTangentData(reader);
+            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+            padding = reader.ReadBytes(2);
+        }
+    }
 
     public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
     {
         valueWriter(Value);
-        Tangent.Write(writer);
-        writer.Write((byte)InterpMode);
-        writer.Write((byte)TangentMode);
+        if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        {
+            writer.Write((byte)InterpMode);
+            writer.Write((byte)TangentMode);
+            Tangent.Write(writer);
+        }
+        else
+        {
+            Tangent.Write(writer);
+            writer.Write((byte)InterpMode);
+            writer.Write((byte)TangentMode);
+        }
         writer.Write(padding);
     }
 }
