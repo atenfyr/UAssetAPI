@@ -960,7 +960,7 @@ namespace UAssetAPI
             WorldTileInfo = null;
             if (WorldTileInfoDataOffset > 0)
             {
-                //reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
+                reader.BaseStream.Seek(WorldTileInfoDataOffset, SeekOrigin.Begin);
                 WorldTileInfo = new FWorldTileInfo();
                 WorldTileInfo.Read(reader, this);
             }
@@ -1088,7 +1088,7 @@ namespace UAssetAPI
             if (SearchableNamesOffset > 0)
             {
                 SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
-
+                reader.BaseStream.Seek(SearchableNamesOffset, SeekOrigin.Begin);
                 var searchableNamesCount = reader.ReadInt32();
                 if (searchableNamesCount > 0)
                     throw new NotImplementedException("TODO: read the searchable names");
