@@ -10,8 +10,8 @@ public class ClothTetherDataPropertyData : StructPropertyData
 {
     public (int, int, float)[][] Tethers;
 
+    public ClothTetherDataPropertyData(FName name, FName forcedType) : base(name, forcedType) { }
     public ClothTetherDataPropertyData(FName name) : base(name) { }
-
     public ClothTetherDataPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("ClothTetherData");

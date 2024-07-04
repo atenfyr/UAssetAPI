@@ -100,10 +100,7 @@ public class FMeshToMeshVertData
         Padding = padding;
     }
 
-    public FMeshToMeshVertData()
-    {
-
-    }
+    public FMeshToMeshVertData() { }
 }
 
 /// <summary>
@@ -121,8 +118,8 @@ public class ClothLODDataPropertyData : StructPropertyData
     /// </summary>
     public FMeshToMeshVertData[] TransitionDownSkinData;
 
+    public ClothLODDataPropertyData(FName name, FName forcedType) : base(name, forcedType) { }
     public ClothLODDataPropertyData(FName name) : base(name) { }
-
     public ClothLODDataPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("ClothLODData");
@@ -182,8 +179,8 @@ public class ClothLODDataPropertyData : StructPropertyData
 
 public class ClothLODDataCommonPropertyData : ClothLODDataPropertyData
 {
+    public ClothLODDataCommonPropertyData(FName name, FName forcedType) : base(name, forcedType) { }
     public ClothLODDataCommonPropertyData(FName name) : base(name) { }
-
     public ClothLODDataCommonPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("ClothLODDataCommon");

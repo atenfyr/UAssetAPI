@@ -59,7 +59,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             int offset = 0;
             offset += writer.XFER_PROP_POINTER(KeyProperty);
             offset += writer.XFER_PROP_POINTER(ValueProperty);
-            writer.Write(Elements.Length); offset += sizeof(int);
+            writer.Write(Elements.Length / 2); offset += sizeof(int);
             for (int i = 0; i < Elements.Length; i++)
             {
                 offset += ExpressionSerializer.WriteExpression(Elements[i], writer);
