@@ -19,13 +19,13 @@ namespace UAssetAPI.FieldTypes
         {
             Name = reader.ReadFName();
             Flags = (EObjectFlags)reader.ReadUInt32();
-            MetaDataMap = new TMap<FName, FString>();
 
             if (!reader.Asset.IsFilterEditorOnly && !reader.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {
-                bool bHasMetaData = reader.ReadInt32() == 1;
+                bool bHasMetaData = reader.ReadBooleanInt();
                 if (bHasMetaData)
                 {
+                    MetaDataMap = new TMap<FName, FString>();
                     int leng = reader.ReadInt32();
                     for (int i = 0; i < leng; i++)
                     {
@@ -44,8 +44,8 @@ namespace UAssetAPI.FieldTypes
 
             if (!writer.Asset.IsFilterEditorOnly && !writer.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {
-                writer.Write(MetaDataMap.Count > 0 ? 1 : 0); // int32
-                if (MetaDataMap.Count > 0)
+                writer.Write(MetaDataMap is not null ? 1 : 0); // int32
+                if (MetaDataMap is not null && MetaDataMap.Count > 0)
                 {
                     writer.Write(MetaDataMap.Count); // int32
                     for (int i = 0; i < MetaDataMap.Count; i++)
@@ -421,6 +421,23 @@ namespace UAssetAPI.FieldTypes
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
+        }
+    }
+
+    public class FOptionalProperty : FProperty
+    {
+        public FProperty ValueProperty;
+
+        public override void Read(AssetBinaryReader reader)
+        {
+            base.Read(reader);
+            ValueProperty = MainSerializer.ReadFProperty(reader);
+        }
+
+        public override void Write(AssetBinaryWriter writer)
+        {
+            base.Write(writer);
+            MainSerializer.WriteFProperty(ValueProperty, writer);
         }
     }
 }
