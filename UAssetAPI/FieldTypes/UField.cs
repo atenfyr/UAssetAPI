@@ -1,6 +1,7 @@
 ﻿using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.CustomVersions;
+using UAssetAPI.Unversioned;
 
 namespace UAssetAPI.FieldTypes;
 
@@ -89,6 +90,50 @@ public abstract class UProperty : UField
     }
 
     public UProperty() { }
+
+    public EPropertyType GetUsmapPropertyType()
+    {
+        return this switch
+        {
+            UEnumProperty => EPropertyType.EnumProperty,
+            UByteProperty => EPropertyType.ByteProperty,
+            UBoolProperty => EPropertyType.BoolProperty,
+            UInt8Property => EPropertyType.Int8Property,
+            UInt16Property => EPropertyType.Int16Property,
+            UIntProperty => EPropertyType.IntProperty,
+            UInt64Property => EPropertyType.Int64Property,
+            UUInt16Property => EPropertyType.UInt16Property,
+            UUInt32Property => EPropertyType.UInt32Property,
+            UUInt64Property => EPropertyType.UInt64Property,
+            UFloatProperty => EPropertyType.FloatProperty,
+            UDoubleProperty => EPropertyType.DoubleProperty,
+
+            UAssetClassProperty => EPropertyType.SoftObjectProperty,
+            USoftClassProperty => EPropertyType.SoftObjectProperty,
+            UClassProperty => EPropertyType.ObjectProperty,
+            UAssetObjectProperty => EPropertyType.AssetObjectProperty,
+            UWeakObjectProperty => EPropertyType.WeakObjectProperty,
+            ULazyObjectProperty => EPropertyType.LazyObjectProperty,
+            USoftObjectProperty => EPropertyType.SoftObjectProperty,
+            UObjectProperty => EPropertyType.ObjectProperty,
+
+            UNameProperty => EPropertyType.NameProperty,
+            UStrProperty => EPropertyType.StrProperty,
+            UTextProperty => EPropertyType.TextProperty,
+
+            UInterfaceProperty => EPropertyType.InterfaceProperty,
+
+            UMulticastDelegateProperty => EPropertyType.MulticastDelegateProperty,
+            UDelegateProperty => EPropertyType.DelegateProperty,
+
+            UMapProperty => EPropertyType.MapProperty,
+            USetProperty => EPropertyType.SetProperty,
+            UArrayProperty => EPropertyType.ArrayProperty,
+            UStructProperty => EPropertyType.StructProperty,
+
+            _ => EPropertyType.Unknown,
+        };
+    }
 }
 
 public class UEnumProperty : UProperty

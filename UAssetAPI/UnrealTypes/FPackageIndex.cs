@@ -122,10 +122,14 @@ namespace UAssetAPI.UnrealTypes
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
         public Export ToExport(UnrealPackage asset)
         {
-            if (!IsExport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
-            int newIndex = Index - 1;
-            if (newIndex < 0 || newIndex >= asset.Exports.Count) return null;
-            return asset.Exports[newIndex];
+            if (!IsExport() || Index > asset.Exports.Count) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
+            return asset.Exports[Index - 1];
+        }
+
+        public T ToExport<T>(UnrealPackage asset) where T : Export
+        {
+            if (!IsExport() || Index > asset.Exports.Count) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
+            return (T)asset.Exports[Index-1];
         }
 
         public override bool Equals(object obj)
