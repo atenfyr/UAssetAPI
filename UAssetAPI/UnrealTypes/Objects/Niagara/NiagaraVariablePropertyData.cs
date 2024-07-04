@@ -1,154 +1,131 @@
-﻿using Newtonsoft.Json;
-using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 
-namespace UAssetAPI.UnrealTypes
+namespace UAssetAPI.UnrealTypes;
+
+public class NiagaraVariableBasePropertyData : StructPropertyData
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public FName VariableName;
+    public StructPropertyData TypeDef;
 
-    public class NiagaraVariableBasePropertyData : PropertyData
+    public NiagaraVariableBasePropertyData(FName name, FName forcedType) : base(name, forcedType) { }
+    public NiagaraVariableBasePropertyData(FName name) : base(name) { }
+    public NiagaraVariableBasePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("NiagaraVariableBase");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        [JsonProperty]
-        public FName VariableName;
-        [JsonProperty]
-        public StructPropertyData TypeDef;
-
-        public NiagaraVariableBasePropertyData(FName name) : base(name)
+        if (reader.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_25)
         {
-            //Value = new List<PropertyData>();
+            StructType = FName.DefineDummy(reader.Asset, PropertyType);
+            base.Read(reader, includeHeader, 1, 0, PropertySerializationContext.StructFallback);
+            return;
         }
 
-        public NiagaraVariableBasePropertyData(FName name, FName forcedType) : base(name)
-        {
-            //StructType = forcedType;
-            //Value = new List<PropertyData>();
-        }
-
-        public NiagaraVariableBasePropertyData()
-        {
-
-        }
-
-        private static readonly FString CurrentPropertyType = new FString("NiagaraVariableBase");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            VariableName = reader.ReadFName();
-            TypeDef = new StructPropertyData(FName.DefineDummy(reader.Asset, "TypeDef"), FName.DefineDummy(reader.Asset, "NiagaraTypeDefinition"));
-            TypeDef.Read(reader, false, 1, 0, serializationContext);
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            int here = (int)writer.BaseStream.Position;
-            writer.Write(VariableName);
-            TypeDef.Write(writer, false);
-            return (int)writer.BaseStream.Position - here;
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-            VariableName = FName.FromString(asset, d[0]);
-        }
+        VariableName = reader.ReadFName();
+        TypeDef = new StructPropertyData(FName.DefineDummy(reader.Asset, "TypeDef"), FName.DefineDummy(reader.Asset, "NiagaraTypeDefinition"));
+        TypeDef.Read(reader, false, 1, 0, serializationContext);
     }
 
-    public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        [JsonProperty]
-        public byte[] VarData;
-
-        public NiagaraVariablePropertyData(FName name) : base(name)
+        if (writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_25)
         {
-            //Value = new List<PropertyData>();
+            StructType = FName.DefineDummy(writer.Asset, PropertyType);
+            return base.Write(writer, includeHeader, PropertySerializationContext.StructFallback);
         }
 
-        public NiagaraVariablePropertyData(FName name, FName forcedType) : base(name)
+        var offset = writer.BaseStream.Position;
+        writer.Write(VariableName);
+        TypeDef.Write(writer, false);
+        return (int)(writer.BaseStream.Position - offset);
+    }
+
+    public override void FromString(string[] d, UAsset asset)
+    {
+        VariableName = FName.FromString(asset, d[0]);
+    }
+}
+
+public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData
+{
+    public byte[] VarData;
+
+    public NiagaraVariablePropertyData(FName name, FName forcedType) : base(name, forcedType) { }
+    public NiagaraVariablePropertyData(FName name) : base(name) { }
+    public NiagaraVariablePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        base.Read(reader, includeHeader, leng1, leng2, serializationContext);
+
+        if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_26)
         {
-            //StructType = forcedType;
-            //Value = new List<PropertyData>();
-        }
-
-        public NiagaraVariablePropertyData()
-        {
-
-        }
-
-        private static readonly FString CurrentPropertyType = new FString("NiagaraVariable");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
             int varDataSize = reader.ReadInt32();
             VarData = reader.ReadBytes(varDataSize);
         }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            int sz = base.Write(writer, includeHeader, serializationContext);
-            writer.Write(VarData.Length); sz += sizeof(int);
-            writer.Write(VarData); sz += VarData.Length;
-            return sz;
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-            base.FromString(d, asset);
-            VarData = d[2].ConvertStringToByteArray();
-        }
     }
 
-    public class NiagaraVariableWithOffsetPropertyData : NiagaraVariableBasePropertyData
-   {
-
-        [JsonProperty]
-        public int VariableOffset;
-
-        public NiagaraVariableWithOffsetPropertyData(FName name) : base(name)
-        {
-            //Value = new List<PropertyData>();
-        }
-
-        public NiagaraVariableWithOffsetPropertyData(FName name, FName forcedType) : base(name)
-        {
-            //StructType = forcedType;
-            //Value = new List<PropertyData>();
-        }
-
-        public NiagaraVariableWithOffsetPropertyData()
-        {
-
-        }
-
-        private static readonly FString CurrentPropertyType = new FString("NiagaraVariableWithOffset");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            base.Read(reader, includeHeader, leng1, leng2, serializationContext);
-            VariableOffset = reader.ReadInt32();
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            int sz = base.Write(writer, includeHeader);
-            writer.Write(VariableOffset);
-            sz += sizeof(int);
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        int sz = base.Write(writer, includeHeader, serializationContext);
+        if (writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_25)
             return sz;
-        }
 
-        public override void FromString(string[] d, UAsset asset)
-        {
-            base.FromString(d, asset);
-            VariableOffset = 0;
-            if (int.TryParse(d[2], out int res)) VariableOffset = res;
-        }
+        writer.Write(VarData.Length); sz += sizeof(int);
+        writer.Write(VarData); sz += VarData.Length;
+        return sz;
+    }
+
+    public override void FromString(string[] d, UAsset asset)
+    {
+        base.FromString(d, asset);
+        VarData = d[2].ConvertStringToByteArray();
+    }
+}
+
+public class NiagaraVariableWithOffsetPropertyData : NiagaraVariableBasePropertyData
+{
+    public int VariableOffset;
+
+    public NiagaraVariableWithOffsetPropertyData(FName name, FName forcedType) : base(name, forcedType) { }
+    public NiagaraVariableWithOffsetPropertyData(FName name) : base(name) { }
+    public NiagaraVariableWithOffsetPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("NiagaraVariableWithOffset");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        base.Read(reader, includeHeader, leng1, leng2, serializationContext);
+
+        if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_26)
+            VariableOffset = reader.ReadInt32();
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        int sz = base.Write(writer, includeHeader);
+        if (writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_25)
+            return sz;
+
+        writer.Write(VariableOffset);
+        sz += sizeof(int);
+        return sz;
+    }
+
+    public override void FromString(string[] d, UAsset asset)
+    {
+        base.FromString(d, asset);
+        VariableOffset = 0;
+        if (int.TryParse(d[2], out int res)) VariableOffset = res;
     }
 }
