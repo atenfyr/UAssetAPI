@@ -2,424 +2,393 @@
 using UAssetAPI.ExportTypes;
 using UAssetAPI.CustomVersions;
 
-namespace UAssetAPI.FieldTypes
+namespace UAssetAPI.FieldTypes;
+
+/// <summary>
+/// Base class of reflection data objects.
+/// </summary>
+public class UField
 {
     /// <summary>
-    /// Base class of reflection data objects.
+    /// Next Field in the linked list. Removed entirely in the custom version FFrameworkObjectVersion::RemoveUField_Next in favor of a regular array
     /// </summary>
-    public class UField
+    [DisplayIndexOrder(0)]
+    public FPackageIndex Next;
+
+    public virtual void Read(AssetBinaryReader reader)
     {
-        /// <summary>
-        /// Next Field in the linked list. Removed entirely in the custom version FFrameworkObjectVersion::RemoveUField_Next in favor of a regular array
-        /// </summary>
-        [DisplayIndexOrder(0)]
-        public FPackageIndex Next;
-
-        public virtual void Read(AssetBinaryReader reader)
+        if (reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
         {
-            if (reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
-            {
-                Next = new FPackageIndex(reader.ReadInt32());
-            }
-        }
-
-        public virtual void Write(AssetBinaryWriter writer)
-        {
-            if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
-            {
-                writer.Write(Next.Index);
-            }
-        }
-
-        public UField()
-        {
-
+            Next = new FPackageIndex(reader.ReadInt32());
         }
     }
 
-    /// <summary>
-    /// An UnrealScript variable.
-    /// </summary>
-    public abstract class UProperty : UField
+    public virtual void Write(AssetBinaryWriter writer)
     {
-        [DisplayIndexOrder(1)]
-        public EArrayDim ArrayDim;
-        [DisplayIndexOrder(2)]
-        public int ElementSize;
-        [DisplayIndexOrder(3)]
-        public EPropertyFlags PropertyFlags;
-        [DisplayIndexOrder(4)]
-        public FName RepNotifyFunc;
-        [DisplayIndexOrder(5)]
-        public ELifetimeCondition BlueprintReplicationCondition;
-
-        public object RawValue;
-
-        public void SetObject(object value)
+        if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
         {
-            RawValue = value;
-        }
-
-        public T GetObject<T>()
-        {
-            return (T)RawValue;
-        }
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            ArrayDim = (EArrayDim)reader.ReadInt32();
-            PropertyFlags = (EPropertyFlags)reader.ReadUInt64();
-            RepNotifyFunc = reader.ReadFName();
-
-            if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
-            {
-                BlueprintReplicationCondition = (ELifetimeCondition)reader.ReadByte();
-            }
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write((int)ArrayDim);
-            writer.Write((ulong)PropertyFlags);
-            writer.Write(RepNotifyFunc);
-
-            if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
-            {
-                writer.Write((byte)BlueprintReplicationCondition);
-            }
-        }
-
-        public UProperty()
-        {
-
+            writer.Write(Next.Index);
         }
     }
 
-    public class UEnumProperty : UProperty
+    public UField() { }
+}
+
+/// <summary>
+/// An UnrealScript variable.
+/// </summary>
+public abstract class UProperty : UField
+{
+    [DisplayIndexOrder(1)]
+    public EArrayDim ArrayDim;
+    [DisplayIndexOrder(2)]
+    public int ElementSize;
+    [DisplayIndexOrder(3)]
+    public EPropertyFlags PropertyFlags;
+    [DisplayIndexOrder(4)]
+    public FName RepNotifyFunc;
+    [DisplayIndexOrder(5)]
+    public ELifetimeCondition BlueprintReplicationCondition;
+
+    public object RawValue;
+
+    public void SetObject(object value)
     {
-        ///<summary>A pointer to the UEnum represented by this property</summary>
-        [DisplayIndexOrder(6)]
-        public FPackageIndex Enum;
-        ///<summary>The FNumericProperty which represents the underlying type of the enum</summary>
-        [DisplayIndexOrder(7)]
-        public FPackageIndex UnderlyingProp;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-
-            Enum = new FPackageIndex(reader.ReadInt32());
-            UnderlyingProp = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-
-            writer.Write(Enum.Index);
-            writer.Write(UnderlyingProp.Index);
-        }
+        RawValue = value;
     }
 
-    public class UArrayProperty : UProperty
+    public T GetObject<T>()
     {
-        [DisplayIndexOrder(6)]
-        public FPackageIndex Inner;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            Inner = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(Inner.Index);
-        }
+        return (T)RawValue;
     }
 
-    public class USetProperty : UProperty
+    public override void Read(AssetBinaryReader reader)
     {
-        [DisplayIndexOrder(6)]
-        public FPackageIndex ElementProp;
+        base.Read(reader);
+        ArrayDim = (EArrayDim)reader.ReadInt32();
+        PropertyFlags = (EPropertyFlags)reader.ReadUInt64();
+        RepNotifyFunc = reader.ReadFName();
 
-        public override void Read(AssetBinaryReader reader)
+        if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
         {
-            base.Read(reader);
-            ElementProp = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(ElementProp.Index);
+            BlueprintReplicationCondition = (ELifetimeCondition)reader.ReadByte();
         }
     }
 
-    public class UObjectProperty : UProperty
+    public override void Write(AssetBinaryWriter writer)
     {
-        // UClass*
-        [DisplayIndexOrder(6)]
-        public FPackageIndex PropertyClass;
+        base.Write(writer);
+        writer.Write((int)ArrayDim);
+        writer.Write((ulong)PropertyFlags);
+        writer.Write(RepNotifyFunc);
 
-        public override void Read(AssetBinaryReader reader)
+        if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.PropertiesSerializeRepCondition)
         {
-            base.Read(reader);
-            PropertyClass = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(PropertyClass.Index);
+            writer.Write((byte)BlueprintReplicationCondition);
         }
     }
 
-    public class USoftObjectProperty : UObjectProperty
-    {
+    public UProperty() { }
+}
 
+public class UEnumProperty : UProperty
+{
+    ///<summary>A pointer to the UEnum represented by this property</summary>
+    [DisplayIndexOrder(6)]
+    public FPackageIndex Enum;
+    ///<summary>The FNumericProperty which represents the underlying type of the enum</summary>
+    [DisplayIndexOrder(7)]
+    public FPackageIndex UnderlyingProp;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+
+        Enum = new FPackageIndex(reader.ReadInt32());
+        UnderlyingProp = new FPackageIndex(reader.ReadInt32());
     }
 
-    public class ULazyObjectProperty : UObjectProperty
+    public override void Write(AssetBinaryWriter writer)
     {
+        base.Write(writer);
 
-    }
-
-    public class UClassProperty : UObjectProperty
-    {
-        // UClass*
-        [DisplayIndexOrder(7)]
-        public FPackageIndex MetaClass;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            MetaClass = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(MetaClass.Index);
-        }
-    }
-
-    public class USoftClassProperty : UObjectProperty
-    {
-        // UClass*
-        [DisplayIndexOrder(7)]
-        public FPackageIndex MetaClass;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            MetaClass = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(MetaClass.Index);
-        }
-    }
-
-    public class UDelegateProperty : UProperty
-    {
-        // UFunction*
-        [DisplayIndexOrder(6)]
-        public FPackageIndex SignatureFunction;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            SignatureFunction = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(SignatureFunction.Index);
-        }
-    }
-
-    public class UMulticastDelegateProperty : UDelegateProperty
-    {
-
-    }
-
-    public class UMulticastInlineDelegateProperty : UMulticastDelegateProperty
-    {
-
-    }
-
-    public class UInterfaceProperty : UProperty
-    {
-        // UFunction*
-        [DisplayIndexOrder(6)]
-        public FPackageIndex InterfaceClass;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            InterfaceClass = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(InterfaceClass.Index);
-        }
-    }
-
-    public class UMapProperty : UProperty
-    {
-        [DisplayIndexOrder(6)]
-        public FPackageIndex KeyProp;
-        [DisplayIndexOrder(7)]
-        public FPackageIndex ValueProp;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            KeyProp = new FPackageIndex(reader.ReadInt32());
-            ValueProp = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(KeyProp.Index);
-            writer.Write(ValueProp.Index);
-        }
-    }
-
-    public class UBoolProperty : UProperty
-    {
-        [DisplayIndexOrder(6)]
-        public bool NativeBool;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-
-            ElementSize = reader.ReadByte();
-            NativeBool = reader.ReadBoolean();
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write((byte)ElementSize);
-            writer.Write(NativeBool);
-        }
-    }
-
-    public class UByteProperty : UProperty
-    {
-        /// <summary>A pointer to the UEnum represented by this property</summary>
-        [DisplayIndexOrder(6)]
-        public FPackageIndex Enum;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            Enum = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(Enum.Index);
-        }
-    }
-
-    public class UStructProperty : UProperty
-    {
-        // UScriptStruct*
-        [DisplayIndexOrder(6)]
-        public FPackageIndex Struct;
-
-        public override void Read(AssetBinaryReader reader)
-        {
-            base.Read(reader);
-            Struct = new FPackageIndex(reader.ReadInt32());
-        }
-
-        public override void Write(AssetBinaryWriter writer)
-        {
-            base.Write(writer);
-            writer.Write(Struct.Index);
-        }
-    }
-
-    public class UNumericProperty : UProperty
-    {
-        
-    }
-
-    public class UDoubleProperty : UNumericProperty
-    {
-
-    }
-
-    public class UFloatProperty : UNumericProperty
-    {
-
-    }
-
-    public class UIntProperty : UNumericProperty
-    {
-
-    }
-
-    public class UInt8Property : UNumericProperty
-    {
-
-    }
-
-    public class UInt16Property : UNumericProperty
-    {
-
-    }
-
-    public class UInt64Property : UNumericProperty
-    {
-
-    }
-
-    public class UUInt8Property : UNumericProperty
-    {
-
-    }
-
-    public class UUInt16Property : UNumericProperty
-    {
-
-    }
-
-    public class UUInt64Property : UNumericProperty
-    {
-
-    }
-
-    public class UNameProperty : UProperty
-    {
-
-    }
-
-    public class UStrProperty : UProperty
-    {
-
-    }
-
-    /// <summary>
-    /// This is a UAssetAPI-specific property that represents anything that we don't have special serialization for
-    /// </summary>
-    public class UGenericProperty : UProperty
-    {
-        
+        writer.Write(Enum.Index);
+        writer.Write(UnderlyingProp.Index);
     }
 }
+
+public class UArrayProperty : UProperty
+{
+    [DisplayIndexOrder(6)]
+    public FPackageIndex Inner;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        Inner = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(Inner.Index);
+    }
+}
+
+public class USetProperty : UProperty
+{
+    [DisplayIndexOrder(6)]
+    public FPackageIndex ElementProp;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        ElementProp = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(ElementProp.Index);
+    }
+}
+
+public class UObjectProperty : UProperty
+{
+    // UClass*
+    [DisplayIndexOrder(6)]
+    public FPackageIndex PropertyClass;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        PropertyClass = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(PropertyClass.Index);
+    }
+}
+
+public class UWeakObjectProperty : UObjectProperty { }
+
+public class USoftObjectProperty : UObjectProperty { }
+
+public class ULazyObjectProperty : UObjectProperty { }
+
+public class UAssetObjectProperty : UObjectProperty { }
+
+public class UClassProperty : UObjectProperty
+{
+    // UClass*
+    [DisplayIndexOrder(7)]
+    public FPackageIndex MetaClass;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        MetaClass = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(MetaClass.Index);
+    }
+}
+
+public class UAssetClassProperty : UObjectProperty
+{
+    // UClass*
+    [DisplayIndexOrder(7)]
+    public FPackageIndex MetaClass;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        MetaClass = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(MetaClass.Index);
+    }
+}
+
+public class USoftClassProperty : UObjectProperty
+{
+    // UClass*
+    [DisplayIndexOrder(7)]
+    public FPackageIndex MetaClass;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        MetaClass = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(MetaClass.Index);
+    }
+}
+
+public class UDelegateProperty : UProperty
+{
+    // UFunction*
+    [DisplayIndexOrder(6)]
+    public FPackageIndex SignatureFunction;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        SignatureFunction = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(SignatureFunction.Index);
+    }
+}
+
+public class UMulticastDelegateProperty : UDelegateProperty { }
+
+public class UMulticastInlineDelegateProperty : UMulticastDelegateProperty { }
+
+public class UMulticastSparseDelegateProperty : UMulticastDelegateProperty { }
+
+public class UInterfaceProperty : UProperty
+{
+    // UFunction*
+    [DisplayIndexOrder(6)]
+    public FPackageIndex InterfaceClass;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        InterfaceClass = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(InterfaceClass.Index);
+    }
+}
+
+public class UMapProperty : UProperty
+{
+    [DisplayIndexOrder(6)]
+    public FPackageIndex KeyProp;
+    [DisplayIndexOrder(7)]
+    public FPackageIndex ValueProp;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        KeyProp = new FPackageIndex(reader.ReadInt32());
+        ValueProp = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(KeyProp.Index);
+        writer.Write(ValueProp.Index);
+    }
+}
+
+public class UBoolProperty : UProperty
+{
+    [DisplayIndexOrder(6)]
+    public bool NativeBool;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+
+        ElementSize = reader.ReadByte();
+        NativeBool = reader.ReadBoolean();
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write((byte)ElementSize);
+        writer.Write(NativeBool);
+    }
+}
+
+public class UByteProperty : UProperty
+{
+    /// <summary>A pointer to the UEnum represented by this property</summary>
+    [DisplayIndexOrder(6)]
+    public FPackageIndex Enum;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        Enum = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(Enum.Index);
+    }
+}
+
+public class UStructProperty : UProperty
+{
+    // UScriptStruct*
+    [DisplayIndexOrder(6)]
+    public FPackageIndex Struct;
+
+    public override void Read(AssetBinaryReader reader)
+    {
+        base.Read(reader);
+        Struct = new FPackageIndex(reader.ReadInt32());
+    }
+
+    public override void Write(AssetBinaryWriter writer)
+    {
+        base.Write(writer);
+        writer.Write(Struct.Index);
+    }
+}
+
+public class UNameProperty : UProperty { }
+
+public class UStrProperty : UProperty { }
+
+public class UTextProperty : UProperty { }
+
+public class UNumericProperty : UProperty { }
+
+public class UDoubleProperty : UNumericProperty { }
+
+public class UFloatProperty : UNumericProperty { }
+
+public class UIntProperty : UNumericProperty { }
+
+public class UInt8Property : UNumericProperty { }
+
+public class UInt16Property : UNumericProperty { }
+
+public class UInt64Property : UNumericProperty { }
+
+public class UUInt16Property : UNumericProperty { }
+
+public class UUInt32Property : UNumericProperty { }
+
+public class UUInt64Property : UNumericProperty { }
+
+/// <summary>
+/// This is a UAssetAPI-specific property that represents anything that we don't have special serialization for
+/// </summary>
+public class UGenericProperty : UProperty { }
