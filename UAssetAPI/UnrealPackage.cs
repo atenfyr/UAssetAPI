@@ -114,7 +114,7 @@ namespace UAssetAPI
         public bool IsFilterEditorOnly => PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly);
 
         [JsonIgnore]
-        internal bool isSerializationTime = false;
+        internal volatile bool isSerializationTime = false;
 
         /// <summary>
         /// Internal list of name map entries. Do not directly add values to here under any circumstances; use <see cref="AddNameReference"/> instead
@@ -309,8 +309,9 @@ namespace UAssetAPI
         /// Whether or not we can create dummies in this name map. If false, attempting to define a dummy will append to the name map instead.
         /// </summary>
         /// <returns>A boolean.</returns>
-        public bool CanCreateDummies()
+        public virtual bool CanCreateDummies()
         {
+            if (isSerializationTime) return true;
             return (CustomSerializationFlags & CustomSerializationFlags.NoDummies) == 0;
         }
 
