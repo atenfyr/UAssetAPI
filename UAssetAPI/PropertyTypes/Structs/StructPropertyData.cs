@@ -139,23 +139,15 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         return Value[0].Write(writer, false);
     }
 
-    private int WriteNTPL(AssetBinaryWriter writer, bool skipFirst = false)
+    private int WriteNTPL(AssetBinaryWriter writer)
     {
         int here = (int)writer.BaseStream.Position;
-        if (Value != null)
+
+        List<PropertyData> allDat = Value;
+        MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), writer.Asset)?.Write(writer);
+        foreach (var t in allDat)
         {
-            List<PropertyData> allDat = Value;
-            if (skipFirst)
-            {
-                allDat = new List<PropertyData>();
-                allDat.AddRange(Value);
-                allDat.RemoveAt(0);
-            }
-            MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), writer.Asset)?.Write(writer);
-            foreach (var t in allDat)
-            {
-                MainSerializer.Write(t, writer, true);
-            }
+            MainSerializer.Write(t, writer, true);
         }
         if (!writer.Asset.HasUnversionedProperties) writer.Write(new FName(writer.Asset, "None"));
         return (int)writer.BaseStream.Position - here;
@@ -191,6 +183,8 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
             if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
             writer.WritePropertyGuid(PropertyGuid);
         }
+
+        if (Value == null) Value = [];
 
         bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, serializationContext, out RegistryEntry targetEntry);
         if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
