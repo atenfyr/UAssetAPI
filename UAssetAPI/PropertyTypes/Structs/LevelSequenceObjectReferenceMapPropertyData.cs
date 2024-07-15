@@ -64,6 +64,8 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
         }
 
         var offset = writer.BaseStream.Position;
+
+        if (Value == null) Value = [];
         writer.Write(Value.Count);
 
         foreach (var pair in Value)

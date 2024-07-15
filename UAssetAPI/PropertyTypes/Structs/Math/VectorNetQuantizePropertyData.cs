@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -43,6 +44,12 @@ public class VectorNetQuantizePropertyData : StructPropertyData
     {
         if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
         {
+            if (Value == null)
+            {
+                Value = new List<PropertyData>();
+                Value.Add(new VectorPropertyData(Name));
+            }
+
             if (Value.Count == 1 && Value[0] is VectorPropertyData vector)
             {
                 return Value[0].Write(writer, includeHeader, serializationContext);

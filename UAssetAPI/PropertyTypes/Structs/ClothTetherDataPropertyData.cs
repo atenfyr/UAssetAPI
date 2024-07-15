@@ -52,6 +52,7 @@ public class ClothTetherDataPropertyData : StructPropertyData
         StructType = FName.DefineDummy(writer.Asset, CurrentPropertyType);
         int totalSize = base.Write(writer, includeHeader, PropertySerializationContext.StructFallback);
 
+        if (Tethers == null) Tethers = [];
         writer.Write(Tethers.Length);
         totalSize += sizeof(int);
         for (int i = 0; i < Tethers.Length; i++)

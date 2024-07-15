@@ -170,6 +170,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
         {
+            if (map == null) return;
             foreach (var entry in map)
             {
                 entry.Key.Offset = writer.BaseStream.Position;
@@ -208,7 +209,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 }
             }
 
-            writer.Write(Value.Count);
+            writer.Write(Value?.Count ?? 0);
             WriteRawMap(writer, Value);
             return (int)writer.BaseStream.Position - here;
         }

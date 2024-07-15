@@ -164,11 +164,30 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
+        if (Value == null) Value = [];
+
+        // let's get our ArrayType if we don't already know it
+        // if Value has entries, take it from there
         if (Value.Length > 0)
         {
             ArrayType = writer.Asset.HasUnversionedProperties ? FName.DefineDummy(writer.Asset, Value[0].PropertyType) : new FName(writer.Asset, Value[0].PropertyType);
         }
 
+        // otherwise, let's check mappings
+        FName arrayStructType = null;
+        if (writer.Asset.Mappings != null && ArrayType == null && writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapArrayData strucDat1))
+        {
+            ArrayType = FName.DefineDummy(writer.Asset, strucDat1.InnerType.Type.ToString());
+            if (strucDat1.InnerType is UsmapStructData strucDat2) arrayStructType = FName.DefineDummy(writer.Asset, strucDat2.StructType);
+        }
+
+        // at this point, if we couldn't get our ArrayType and we're using unversioned properties, we can't continue; otherwise, not needed
+        if (writer.Asset.HasUnversionedProperties && ArrayType == null)
+        {
+            throw new InvalidOperationException("Unable to determine array type for array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
+        }
+
+        // begin actual serialization
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
             writer.Write(ArrayType);
@@ -179,7 +198,24 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         writer.Write(Value.Length);
         if (ArrayType?.Value?.Value == "StructProperty" && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
         {
-            if (Value.Length == 0 && DummyStruct == null) throw new InvalidOperationException("No dummy struct present in an empty StructProperty array, cannot serialize");
+            if (Value.Length == 0 && DummyStruct == null)
+            {
+                // let's try and reconstruct DummyStruct, if we can
+                if (arrayStructType == null && writer.Asset.ArrayStructTypeOverride.ContainsKey(this.Name.Value.Value))
+                {
+                    arrayStructType = FName.DefineDummy(writer.Asset, writer.Asset.ArrayStructTypeOverride[this.Name.Value.Value]);
+                }
+
+                if (arrayStructType == null)
+                {
+                    throw new InvalidOperationException("Unable to reconstruct DummyStruct within empty StructProperty array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
+                }
+
+                DummyStruct = new StructPropertyData(this.Name, arrayStructType)
+                {
+                    StructGUID = Guid.Empty // not sure what else to use here...
+                };
+            }
             if (Value.Length > 0) DummyStruct = (StructPropertyData)Value[0];
 
             FName fullType = DummyStruct.StructType;

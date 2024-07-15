@@ -1,4 +1,5 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using System;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -40,6 +41,7 @@ public class NiagaraVariableBasePropertyData : StructPropertyData
 
         var offset = writer.BaseStream.Position;
         writer.Write(VariableName);
+        if (TypeDef == null) TypeDef = new StructPropertyData(FName.DefineDummy(writer.Asset, "TypeDef"), FName.DefineDummy(writer.Asset, "NiagaraTypeDefinition"));
         TypeDef.Write(writer, false);
         return (int)(writer.BaseStream.Position - offset);
     }
@@ -79,6 +81,7 @@ public class NiagaraVariablePropertyData : NiagaraVariableBasePropertyData
         if (writer.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_25)
             return sz;
 
+        if (VarData == null) VarData = Array.Empty<byte>();
         writer.Write(VarData.Length); sz += sizeof(int);
         writer.Write(VarData); sz += VarData.Length;
         return sz;

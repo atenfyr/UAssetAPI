@@ -33,11 +33,14 @@ public struct TPerQualityLevel<T>
         var offset = writer.BaseStream.Position;
         writer.Write(bCooked ? 1 : 0);
         valueWriter(Default);
-        writer.Write(PerQuality.Count);
-        foreach (var pair in PerQuality)
+        writer.Write(PerQuality?.Count ?? 0);
+        if (PerQuality != null)
         {
-            writer.Write(pair.Key);
-            valueWriter(pair.Value);
+            foreach (var pair in PerQuality)
+            {
+                writer.Write(pair.Key);
+                valueWriter(pair.Value);
+            }
         }
         return (int)(writer.BaseStream.Position - offset);
     }

@@ -30,6 +30,7 @@ public class NiagaraDataInterfaceGPUParamInfoPropertyData : PropertyData<FNiagar
             writer.WritePropertyGuid(PropertyGuid);
         }
 
+        if (Value == null) Value = new FNiagaraDataInterfaceGPUParamInfo();
         return Value.Write(writer);
     }
 }

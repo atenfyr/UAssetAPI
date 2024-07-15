@@ -179,6 +179,12 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
+        // if available and needed, fetch StructType from mappings
+        if (writer.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapStructData strucDat1))
+        {
+            StructType = FName.DefineDummy(writer.Asset, strucDat1.StructType);
+        }
+
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
             writer.Write(StructType);

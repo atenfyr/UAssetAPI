@@ -303,7 +303,7 @@ namespace UAssetAPI
         /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
         public int XFERPTR(FPackageIndex val)
         {
-            this.Write(val.Index);
+            this.Write(val?.Index ?? 0);
             return PointerSize; // For the iCode offset, we return the size of a pointer in memory rather than the size of an FPackageIndex on disk
         }
 

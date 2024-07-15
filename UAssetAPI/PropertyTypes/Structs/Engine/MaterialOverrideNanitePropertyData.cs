@@ -54,11 +54,11 @@ public class MaterialOverrideNanitePropertyData : StructPropertyData
         {
             OverrideMaterialRef.Write(writer);
             writer.Write(bEnableOverride ? 1 : 0);
-            writer.Write(OverrideMaterial.Index);
+            writer.Write(OverrideMaterial?.Index ?? 0);
         }
 
         writer.Write(bSerializeAsCookedData ? 1 : 0);
-        if (bSerializeAsCookedData) writer.Write(OverrideMaterial.Index);
+        if (bSerializeAsCookedData) writer.Write(OverrideMaterial?.Index ?? 0);
 
         StructType = FName.DefineDummy(writer.Asset, CurrentPropertyType);
         base.Write(writer, includeHeader, PropertySerializationContext.StructFallback);

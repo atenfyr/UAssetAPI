@@ -30,6 +30,7 @@ public class SkeletalMeshSamplingLODBuiltDataPropertyData : PropertyData<Skeleta
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(Name);
 
+        if (Value == null) Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData();
         Value.ResolveAncestries(asset, ancestryNew);
         base.ResolveAncestries(asset, ancestrySoFar);
     }
@@ -41,6 +42,7 @@ public class SkeletalMeshSamplingLODBuiltDataPropertyData : PropertyData<Skeleta
             writer.WritePropertyGuid(PropertyGuid);
         }
 
+        if (Value == null) Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData();
         return Value.Write(writer, false);
     }
 

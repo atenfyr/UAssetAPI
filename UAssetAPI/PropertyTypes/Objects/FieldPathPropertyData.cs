@@ -39,6 +39,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
+            if (Value == null) Value = new FFieldPath();
             return Value.Write(writer);
         }
 

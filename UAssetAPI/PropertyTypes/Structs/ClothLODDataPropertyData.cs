@@ -151,12 +151,14 @@ public class ClothLODDataPropertyData : StructPropertyData
         StructType = FName.DefineDummy(writer.Asset, PropertyType);
         int res = base.Write(writer, includeHeader, PropertySerializationContext.StructFallback);
 
+        if (TransitionUpSkinData == null) TransitionUpSkinData = [];
         writer.Write(TransitionUpSkinData.Length); res += sizeof(int);
         for (int i = 0; i < TransitionUpSkinData.Length; i++)
         {
             res += TransitionUpSkinData[i].Write(writer);
         }
 
+        if (TransitionDownSkinData == null) TransitionDownSkinData = [];
         writer.Write(TransitionDownSkinData.Length); res += sizeof(int);
         for (int i = 0; i < TransitionDownSkinData.Length; i++)
         {

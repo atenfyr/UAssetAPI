@@ -35,6 +35,7 @@ public class IntPointPropertyData : PropertyData<int[]> // X, Y
             writer.WritePropertyGuid(PropertyGuid);
         }
 
+        if (Value == null) Value = new int[2];
         for (int i = 0; i < 2; i++)
         {
             writer.Write(Value[i]);

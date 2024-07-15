@@ -33,6 +33,7 @@ public class FontDataPropertyData : PropertyData<FFontData>
 
         int here = (int)writer.BaseStream.Position;
 
+        if (Value == null) Value = new FFontData();
         Value.Write(writer);
         
         return (int)writer.BaseStream.Position-here;

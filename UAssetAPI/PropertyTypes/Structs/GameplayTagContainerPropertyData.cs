@@ -42,6 +42,7 @@ public class GameplayTagContainerPropertyData : PropertyData<FName[]>
             writer.WritePropertyGuid(PropertyGuid);
         }
 
+        if (Value == null) Value = [];
         writer.Write(Value.Length);
         int totalSize = sizeof(int);
         for (int i = 0; i < Value.Length; i++)

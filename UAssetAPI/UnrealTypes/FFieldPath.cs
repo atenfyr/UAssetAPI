@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -27,7 +28,8 @@ namespace UAssetAPI.UnrealTypes
 
         public FFieldPath()
         {
-
+            Path = Array.Empty<FName>();
+            ResolvedOwner = FPackageIndex.FromRawIndex(0);
         }
 
         public FFieldPath(AssetBinaryReader reader)

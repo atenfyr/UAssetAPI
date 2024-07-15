@@ -67,6 +67,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
+            if (Value == null) Value = new FDelegate(FPackageIndex.FromRawIndex(0), null);
             writer.XFERPTR(Value.Object);
             writer.Write(Value.Delegate);
 

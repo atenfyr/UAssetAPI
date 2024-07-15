@@ -35,6 +35,11 @@ public class FFontData
     public int SubFaceIndex;
     public bool bIsCooked;
 
+    public FFontData()
+    {
+        bIsCooked = false;
+    }
+
     public FFontData(AssetBinaryReader reader)
     {
         if (reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) return;

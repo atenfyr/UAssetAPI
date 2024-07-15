@@ -43,6 +43,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                 writer.WritePropertyGuid(PropertyGuid);
             }
 
+            if (Value == null) Value = Array.Empty<FDelegate>();
             writer.Write(Value.Length);
             for (int i = 0; i < Value.Length; i++)
             {

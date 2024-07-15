@@ -1,4 +1,5 @@
-﻿using UAssetAPI.CustomVersions;
+﻿using System;
+using UAssetAPI.CustomVersions;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -52,21 +53,26 @@ public class FSkeletalMeshSamplingRegionBuiltData
     {
         var offset = writer.BaseStream.Position;
 
+        if (TriangleIndices == null) TriangleIndices = Array.Empty<int>();
         writer.Write(TriangleIndices.Length);
         foreach (var t in TriangleIndices)
         {
             writer.Write(t);
         }
 
+        if (BoneIndices == null) BoneIndices = Array.Empty<int>();
         writer.Write(BoneIndices.Length);
         foreach (var b in BoneIndices)
         {
             writer.Write(b);
         }
+
+        if (AreaWeightedSampler == null) AreaWeightedSampler = new FSkeletalMeshAreaWeightedTriangleSampler();
         AreaWeightedSampler.Write(writer);
 
         if (writer.Asset.GetCustomVersion<FNiagaraObjectVersion>() >= FNiagaraObjectVersion.SkeletalMeshVertexSampling)
         {
+            if (Vertices == null) Vertices = Array.Empty<int>();
             writer.Write(Vertices.Length);
             foreach (var v in Vertices)
             {

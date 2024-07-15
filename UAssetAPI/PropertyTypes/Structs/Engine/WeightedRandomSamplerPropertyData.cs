@@ -32,6 +32,7 @@ public class WeightedRandomSamplerPropertyData : PropertyData<FWeightedRandomSam
             writer.WritePropertyGuid(PropertyGuid);
         }
 
+        if (Value == null) Value = new FWeightedRandomSampler();
         return Value.Write(writer);
     }
 

@@ -8,7 +8,12 @@ public class FWeightedRandomSampler : ICloneable
     public int[] Alias;
     public float TotalWeight;
 
-    public FWeightedRandomSampler() { }
+    public FWeightedRandomSampler()
+    {
+        Prob = Array.Empty<float>();
+        Alias = Array.Empty<int>();
+        TotalWeight = 0;
+    }
 
     public FWeightedRandomSampler(float[] prob, int[] alias, float totalWeight)
     {
