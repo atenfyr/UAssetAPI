@@ -19,7 +19,7 @@ public struct FMovieSceneEventParameters
 
     public FMovieSceneEventParameters(AssetBinaryReader reader)
     {
-        StructType = FSoftObjectPath.Read(reader);
+        StructType = new FSoftObjectPath(reader);
         var length = reader.ReadInt32();
         StructBytes = reader.ReadBytes(length);
     }
