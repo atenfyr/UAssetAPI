@@ -321,12 +321,19 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestManyAssets()
         {
-            TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
-            TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
-            TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
-            TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
-            TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
+            TestManyAssetsSubsection("MidAir", EngineVersion.VER_UE4_17);
+            TestManyAssetsSubsection("MutantYearZero", EngineVersion.VER_UE4_17);
+            TestManyAssetsSubsection("Bloodstained", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("BurningDaylight", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("CodeVein", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("Liminal", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("ToTheCore", EngineVersion.VER_UE4_18);
+            TestManyAssetsSubsection("TheBeastInside", EngineVersion.VER_UE4_19);
+            TestManyAssetsSubsection("TheOccupation", EngineVersion.VER_UE4_19);
+            TestManyAssetsSubsection("Astroneer", EngineVersion.VER_UE4_23);
+            TestManyAssetsSubsection("StarlitSeason", EngineVersion.VER_UE4_24);
+            TestManyAssetsSubsection("MISC_426", EngineVersion.VER_UE4_26);
             TestManyAssetsSubsection("VERSIONED", EngineVersion.UNKNOWN);
 
             // traditional, NOT zen/io store. includes unversioned properties

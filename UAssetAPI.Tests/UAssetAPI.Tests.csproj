@@ -337,5 +337,77 @@
     <None Update="TestAssets\TestEditorAssets\TestActorBP.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestManyAssets\MidAir\AM_MedChar_Reload_RingLauncher.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MidAir\AM_MedChar_Reload_RingLauncher.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MidAir\WBP_PartyPlayerRow.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MidAir\WBP_PartyPlayerRow.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\BurningDaylight\TestMap.umap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\BurningDaylight\TestMap.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\FinalCinematic.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\FinalCinematic.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\InCathedralCinematic.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\InCathedralCinematic.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\InventoryStruct.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Liminal\InventoryStruct.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None> 
+    <None Update="TestAssets\TestManyAssets\MutantYearZero\ChroniclerpathCutscene.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MutantYearZero\ChroniclerpathCutscene.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MutantYearZero\MainCut.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\MutantYearZero\MainCut.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheBeastInside\DV_ItemDescription.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheBeastInside\DV_ItemDescription.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheBeastInside\MF_CharacterEffects.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheBeastInside\MF_CharacterEffects.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheOccupation\LiftStruct.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\TheOccupation\RecieverPneumaticTerminals.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\ToTheCore\BP_MimicCrate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\ToTheCore\BP_MimicCrate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
