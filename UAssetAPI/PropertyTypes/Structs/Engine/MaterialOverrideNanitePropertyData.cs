@@ -28,7 +28,7 @@ public class MaterialOverrideNanitePropertyData : StructPropertyData
 
         if (reader.Asset.GetCustomVersion<FFortniteReleaseBranchCustomObjectVersion>() < FFortniteReleaseBranchCustomObjectVersion.NaniteMaterialOverrideUsesEditorOnly)
         {
-            OverrideMaterialRef = FSoftObjectPath.Read(reader);
+            OverrideMaterialRef = new FSoftObjectPath(reader);
             bEnableOverride = reader.ReadBooleanInt();
             OverrideMaterial = FPackageIndex.FromRawIndex(reader.ReadInt32());
             return;

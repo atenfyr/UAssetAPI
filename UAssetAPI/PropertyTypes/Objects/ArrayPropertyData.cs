@@ -133,19 +133,24 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         }
         else
         {
-            var results = new PropertyData[numEntries];
-            if (numEntries > 0)
+            if (numEntries == 0)
             {
-                int averageSizeEstimate = (int)((leng1-4) / numEntries);
-                if (averageSizeEstimate <= 0) averageSizeEstimate = 1; // missing possible edge case where leng1 = 4 and numEntries = 2, may result is wrong size
-                for (int i = 0; i < numEntries; i++)
-                {
-                    results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, null, reader.Asset);
-                    results[i].Offset = reader.BaseStream.Position;
-                    if (results[i] is StructPropertyData data) data.StructType = arrayStructType == null ? FName.DefineDummy(reader.Asset, "Generic") : arrayStructType;
-                    results[i].Read(reader, false, averageSizeEstimate, 0, PropertySerializationContext.Array);
-                }
+                Value = [];
+                return;
             }
+
+            int averageSizeEstimate = (int)((leng1 - 4) / numEntries);
+            if (averageSizeEstimate <= 0) averageSizeEstimate = 1; // missing possible edge case where leng1 = 4 and numEntries = 2, may result is wrong size
+
+            var results = new PropertyData[numEntries];
+            for (int i = 0; i < numEntries; i++)
+            {
+                results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, null, reader.Asset);
+                results[i].Offset = reader.BaseStream.Position;
+                if (results[i] is StructPropertyData data) data.StructType = arrayStructType == null ? FName.DefineDummy(reader.Asset, "Generic") : arrayStructType;
+                results[i].Read(reader, false, averageSizeEstimate, 0, PropertySerializationContext.Array);
+            }
+
             Value = results;
         }
     }
