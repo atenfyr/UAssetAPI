@@ -634,7 +634,24 @@ namespace UAssetAPI.Unversioned
             }
             else
             {
-                foreach (var entry in exp.Children)
+                List<FPackageIndex> childlist = [];
+                if (exp.Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next && exp.Children.Length > 0)
+                {
+                    var next = exp.Children.First();
+                    while (!next.IsNull())
+                    {
+                        childlist.Add(next);
+                        next = next.ToExport(exp.Asset) switch
+                        {
+                            FunctionExport func => func.Field?.Next,
+                            PropertyExport prop => prop.Property?.Next,
+                            _ => null
+                        };
+                    }
+                }
+                var children = exp.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.RemoveUField_Next ? exp.Children : childlist.ToArray();
+
+                foreach (var entry in children)
                 {
                     if (entry.ToExport(exp.Asset) is not PropertyExport field) continue;
 
