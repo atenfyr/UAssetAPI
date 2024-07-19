@@ -7,23 +7,15 @@ namespace UAssetAPI.PropertyTypes.Structs;
 
 public abstract class MaterialInputPropertyData<T> : PropertyData<T>
 {
-    [JsonProperty]
     public FPackageIndex Expression;
-    [JsonProperty]
     public int OutputIndex;
-    [JsonProperty]
-    public FString InputName;
-    [JsonProperty]
+    public FName InputName;
+    public FString InputNameOld;
     public int Mask;
-    [JsonProperty]
     public int MaskR;
-    [JsonProperty]
     public int MaskG;
-    [JsonProperty]
     public int MaskB;
-    [JsonProperty]
     public int MaskA;
-    [JsonProperty]
     public FName ExpressionName;
 
     public MaterialInputPropertyData() { }
@@ -47,7 +39,8 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
         if ((reader.Asset.GetEngineVersion() <= EngineVersion.VER_UE5_1 && !reader.Asset.IsFilterEditorOnly) || reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE5_1)
             Expression = reader.XFERPTR();
         OutputIndex = reader.ReadInt32();
-        InputName = reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName ? reader.ReadFName().Value : reader.ReadFString();
+        InputName = reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName ? reader.ReadFName() : null;
+        InputNameOld = reader.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName ? null : reader.ReadFString();
         Mask = reader.ReadInt32();
         MaskR = reader.ReadInt32();
         MaskG = reader.ReadInt32();
@@ -80,11 +73,11 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
             writer.Write(OutputIndex); totalSize += sizeof(int);
             if (writer.Asset.GetCustomVersion<FFrameworkObjectVersion>() >= FFrameworkObjectVersion.PinsStoreFName)
             {
-                writer.Write(new FName(writer.Asset, InputName)); totalSize += sizeof(int) * 2;
+                writer.Write(InputName); totalSize += sizeof(int) * 2;
             }
             else
             {
-                totalSize += writer.Write(InputName);
+                totalSize += writer.Write(InputNameOld);
             }
             writer.Write(Mask);
             writer.Write(MaskR);
@@ -105,7 +98,8 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     protected override void HandleCloned(PropertyData res)
     {
         MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
-        cloningProperty.InputName = (FString)this.InputName.Clone();
+        cloningProperty.InputName = (FName)this.InputName.Clone();
+        cloningProperty.InputNameOld = (FString)this.InputNameOld.Clone();
         cloningProperty.ExpressionName = (FName)this.ExpressionName.Clone();
     }
 }
