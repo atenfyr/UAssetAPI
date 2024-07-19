@@ -1,83 +1,90 @@
 ﻿using System.Text;
 using UAssetAPI.PropertyTypes.Objects;
 
-namespace UAssetAPI.UnrealTypes
+namespace UAssetAPI.UnrealTypes;
+
+public class FUniqueNetId
 {
-    /*
-        The code within this file is modified from LongerWarrior's UEAssetToolkitGenerator project, which is licensed under the Apache License 2.0.
-        Please see the NOTICE.md file distributed with UAssetAPI and UAssetGUI for more information.
-    */
+    public FName Type;
+    public FString Contents;
 
-    public class FUniqueNetId
+    public FUniqueNetId(FName type, FString contents)
     {
-        public FName Type;
-        public FString Contents;
-
-        public FUniqueNetId(FName type, FString contents)
-        {
-            Type = type;
-            Contents = contents;
-        }
+        Type = type;
+        Contents = contents;
     }
 
-    public class UniqueNetIdReplPropertyData : PropertyData<FUniqueNetId>
+    public FUniqueNetId(AssetBinaryReader reader)
     {
-        public UniqueNetIdReplPropertyData(FName name) : base(name)
-        {
+        if (reader.ReadInt32() <= 0) return;
+        if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
+            Type = reader.ReadFName();
+        Contents = reader.ReadFString();
+    }
 
+    public int Write(AssetBinaryWriter writer)
+    {
+        if (Type is null && Contents is null)
+        {
+            writer.Write(0);
+            return sizeof(int);
         }
 
-        public UniqueNetIdReplPropertyData()
+        var size = sizeof(int);
+        if (writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
         {
-
+            size += sizeof(int) * 2;
         }
 
-        private static readonly FString CurrentPropertyType = new FString("UniqueNetIdRepl");
-        public override bool HasCustomStructSerialization { get { return true; } }
-        public override FString PropertyType { get { return CurrentPropertyType; } }
-
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        if (Contents != null)
         {
-            if (includeHeader)
-            {
-                PropertyGuid = reader.ReadPropertyGuid();
-            }
-
-            int size = reader.ReadInt32();
-            if (size > 0)
-            {
-                Value = new FUniqueNetId(reader.ReadFName(), reader.ReadFString());
-            }
-            else
-            {
-                Value = null;
-            }
+            size += Contents.Encoding is UnicodeEncoding ? (Contents.Value.Length + 1) * 2 : (Contents.Value.Length + 1);
         }
 
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        //not sure about this alignment, maybe need this only in old versions
+        writer.Write(size + 3 & ~3);
+
+        if (writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
+            writer.Write(Type);
+        writer.Write(Contents);
+
+        return size+sizeof(int);
+    }
+}
+
+public class UniqueNetIdReplPropertyData : PropertyData<FUniqueNetId>
+{
+    public UniqueNetIdReplPropertyData(FName name) : base(name) { } 
+
+    public UniqueNetIdReplPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("UniqueNetIdRepl");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
         {
-            if (includeHeader)
-            {
-                writer.WritePropertyGuid(PropertyGuid);
-            }
-
-            int here = (int)writer.BaseStream.Position;
-
-            if (Value != null)
-            {
-                int length = 3 * sizeof(int);
-                if (Value.Contents != null)
-                {
-                    length+= Value.Contents.Encoding is UnicodeEncoding ? (Value.Contents.Value.Length+1)*2 : (Value.Contents.Value.Length+1);
-                }
-                writer.Write(Value.Type);
-                writer.Write(Value.Contents);
-            }
-            else
-            {
-                writer.Write(0);
-            }           
-            return (int)writer.BaseStream.Position - here;
+            PropertyGuid = reader.ReadPropertyGuid();
         }
+
+        Value = new FUniqueNetId(reader);
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            writer.WritePropertyGuid(PropertyGuid);
+        }
+
+        if (Value is null)
+        {
+            writer.Write(0);
+            return sizeof(int);
+        }
+      
+        return Value.Write(writer);
     }
 }
