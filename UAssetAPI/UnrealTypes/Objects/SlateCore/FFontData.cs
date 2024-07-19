@@ -44,19 +44,20 @@ public class FFontData
     {
         if (reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) return;
 
-        bIsCooked = reader.ReadInt32() != 0;
+        bIsCooked = reader.ReadBooleanInt();
         if (bIsCooked)
         {
-            LocalFontFaceAsset = reader.XFER_OBJECT_POINTER();
+            LocalFontFaceAsset = new FPackageIndex(reader);
 
             if (LocalFontFaceAsset.Index == 0)
             {
                 FontFilename = reader.ReadFString();
-                Hinting =(EFontHinting)reader.ReadByte();
+                Hinting = (EFontHinting)reader.ReadByte();
                 LoadingPolicy = (EFontLoadingPolicy)reader.ReadByte();
             }
 
-            SubFaceIndex = reader.ReadInt32();
+            if (reader.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
+                SubFaceIndex = reader.ReadInt32();
         }
     }
 
@@ -67,7 +68,7 @@ public class FFontData
         writer.Write(bIsCooked ? 1 : 0);
         if (bIsCooked)
         {
-            writer.XFER_OBJECT_POINTER(LocalFontFaceAsset);
+            writer.Write(LocalFontFaceAsset?.Index ?? 0);
 
             if (LocalFontFaceAsset.Index == 0)
             {
@@ -76,7 +77,8 @@ public class FFontData
                 writer.Write((byte)LoadingPolicy);
             }
 
-            writer.Write(SubFaceIndex);
+            if (writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
+                writer.Write(SubFaceIndex);
         }
     }
 }
