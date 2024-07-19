@@ -1,4 +1,5 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using UAssetAPI.CustomVersions;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -9,6 +10,7 @@ namespace UAssetAPI.PropertyTypes.Structs;
 public class FMovieSceneSegment
 {
     /// <summary> The segment's range </summary>
+    public TRange<float> RangeOld;
     public TRange<FFrameNumber> Range;
     public int ID;
     /// <summary> Whether this segment has been generated yet or not </summary>
@@ -18,9 +20,20 @@ public class FMovieSceneSegment
 
     public FMovieSceneSegment(AssetBinaryReader reader)
     {
-        Range = new(reader, () => new FFrameNumber(reader));
-        ID = reader.ReadInt32();
-        bAllowEmpty = reader.ReadBooleanInt();
+        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
+        {
+            RangeOld = new TRange<float>(reader, reader.ReadSingle);
+        }
+        else
+        {
+            Range = new(reader, () => new FFrameNumber(reader));
+        }
+
+        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() > FSequencerObjectVersion.EvaluationTree)
+        {
+            ID = reader.ReadInt32();
+            bAllowEmpty = reader.ReadBooleanInt();
+        }
 
         int length = reader.ReadInt32();
         Impls = new StructPropertyData[length];
@@ -35,10 +48,20 @@ public class FMovieSceneSegment
     public int Write(AssetBinaryWriter writer)
     {
         var offset = writer.BaseStream.Position;
+        if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
+        {
+            RangeOld.Write(writer, writer.Write);
+        }
+        else
+        {
+            Range.Write(writer, frame => frame.Write(writer));
+        }
 
-        Range.Write(writer, frame => frame.Write(writer));
-        writer.Write(ID);
-        writer.Write(bAllowEmpty ? 1 : 0);
+        if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() > FSequencerObjectVersion.EvaluationTree)
+        {
+            writer.Write(ID);
+            writer.Write(bAllowEmpty ? 1 : 0);
+        }
 
         writer.Write(Impls.Length);
         for (int i = 0; i < Impls.Length; i++)
