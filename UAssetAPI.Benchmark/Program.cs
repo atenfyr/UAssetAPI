@@ -140,6 +140,9 @@ namespace UAssetAPI.Benchmark
                     int numAtLastStatusUpdate = 0;
                     double lastMsGaveStatusUpdate = double.MinValue;
                     ISet<string> problemAssets = new HashSet<string>();
+                    ISet<string> notEqualAssets = new HashSet<string>();
+                    ISet<string> notParsed = new HashSet<string>();
+                    Dictionary<string, Dictionary<int, string>> rawExports = new();
                     foreach (string assetPath in allTestingAssets2)
                     {
                         if (!allowedExtensions.Contains(Path.GetExtension(assetPath))) continue;
@@ -167,11 +170,13 @@ namespace UAssetAPI.Benchmark
                             numExportsTotal += loaded?.Exports?.Count ?? 0;
                             num += 1;
                             loaded = null;
+                            notParsed.Add(assetPath);
                             continue;
                         }
                         timer.Stop();
 
                         bool isProblemAsset = false;
+                        bool isNotEqual = false;
                         try
                         {
                             if (loaded.VerifyBinaryEquality())
@@ -181,18 +186,28 @@ namespace UAssetAPI.Benchmark
                             else
                             {
                                 isProblemAsset = true;
+                                isNotEqual = true;
                             }
                         }
-                        catch { isProblemAsset = true; }
+                        catch
+                        {
+                            isProblemAsset = true;
+                            isNotEqual = true;
+                        }
 
                         bool passedAllExports = true;
                         try
                         {
-                            foreach (Export testExport in loaded.Exports)
+                            for (int i = 0; i < loaded.Exports.Count; i++)
                             {
+                                Export testExport = loaded.Exports[i];
                                 if (testExport is RawExport)
                                 {
                                     passedAllExports = false;
+                                    if (!rawExports.ContainsKey(assetPath)) rawExports[assetPath] = [];
+                                    var clas = testExport.ClassIndex.IsImport() ? testExport.ClassIndex.ToImport(loaded).ObjectName.ToString() : testExport.ClassIndex.ToExport(loaded).ObjectName.ToString();
+                                    rawExports[assetPath].Add(i, clas);
+                                    Console.WriteLine("Raw export found for " + assetPath + " at index " + i + " with class " + clas);
                                 }
                                 else
                                 {
@@ -216,6 +231,7 @@ namespace UAssetAPI.Benchmark
                         }
 
                         if (isProblemAsset) problemAssets.Add(assetPath);
+                        if (isNotEqual) notEqualAssets.Add(assetPath);
                         num += 1;
                         loaded = null;
                     }
@@ -226,6 +242,20 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine(numPassedExportsTotal + "/" + numExportsTotal + " exports (" + NumberToTwoDecimalPlaces(numPassedExportsTotal / (double)numExportsTotal * 100) + "%) passed");
                     Console.WriteLine(numPassedBinaryEq + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedBinaryEq / (double)num * 100) + "%) passed binary equality");
                     Console.WriteLine(numPassedAllExports + "/" + num + " assets (" + NumberToTwoDecimalPlaces(numPassedAllExports / (double)num * 100) + "%) passed on all exports");
+
+                    if (notEqualAssets.Count > 0)
+                    {
+                        Console.WriteLine("\nList of non equal assets:");
+                        File.WriteAllText("noneuqal_assets.txt", string.Join('\n', notEqualAssets));
+                        Console.WriteLine("Written to noneuqal_assets.txt");
+                    }
+
+                    if (notParsed.Count > 0)
+                    {
+                        Console.WriteLine("\nList of not parsed assets:");
+                        File.WriteAllText("nonparsed_assets.txt", string.Join('\n', notParsed));
+                        Console.WriteLine("Written to nonparsed_assets.txt");
+                    }
 
                     if (problemAssets.Count > 0)
                     {
@@ -241,6 +271,13 @@ namespace UAssetAPI.Benchmark
 
                         File.WriteAllText("problematic_assets.txt", string.Join('\n', problemAssets));
                         Console.WriteLine("Written to problematic_assets.txt");
+                    }
+
+                    if (rawExports.Count > 0)
+                    {
+                        Console.WriteLine("\nList of raw export assets:");
+                        File.WriteAllText("raw_export.txt", JsonConvert.SerializeObject(rawExports, Formatting.Indented));
+                        Console.WriteLine("Written to raw_export.txt");
                     }
                     break;
                 case "testcpu":
