@@ -301,7 +301,7 @@ namespace UAssetAPI
             try
             {
                 Mappings.PathsAlreadyProcessedForSchemas.Add(assetPath);
-                UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer, this.Mappings);
+                UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
                 otherAsset.InternalAssetPath = assetPath;
                 otherAsset.FilePath = pathOnDisk;
                 otherAsset.Read(otherAsset.PathToReader(pathOnDisk));
@@ -1343,7 +1343,7 @@ namespace UAssetAPI
                         }
                         else
                         {
-                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], disableCasePreservingHash));
+                            writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], disableCasePreservingHash, writer.Asset.GetEngineVersion() == EngineVersion.VER_UE4_20));
                         }
                     }
                 }
@@ -1555,6 +1555,8 @@ namespace UAssetAPI
                             Exports[i].CreateBeforeSerializationDependencies.Count +
                             Exports[i].SerializationBeforeCreateDependencies.Count +
                             Exports[i].CreateBeforeCreateDependencies.Count;
+
+                        if (Exports[i].FirstExportDependencyOffset == this.PreloadDependencyCount) Exports[i].FirstExportDependencyOffset = -1;
                     }
                 }
                 else
