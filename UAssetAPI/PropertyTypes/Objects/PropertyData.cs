@@ -245,14 +245,51 @@ namespace UAssetAPI.PropertyTypes.Objects
             set => SetObject(value);
         }
 
-        public PropertyData(FName name) : base(name)
-        {
+        public PropertyData(FName name) : base(name) { }
 
+        public PropertyData() : base() { }
+    }
+
+    public interface IStruct<T>
+    {
+        abstract static T Read(AssetBinaryReader reader);
+
+        int Write(AssetBinaryWriter writer);
+    }
+
+    public abstract class BasePropertyData<T> : PropertyData<T> where T : IStruct<T>, new()
+    {
+        public BasePropertyData(FName name) : base(name) { }
+
+        public BasePropertyData() : base() { }
+
+        public override bool HasCustomStructSerialization => true;
+
+        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+        {
+            if (includeHeader)
+            {
+                PropertyGuid = reader.ReadPropertyGuid();
+            }
+
+            Value = T.Read(reader);
         }
 
-        public PropertyData() : base()
+        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
 
+            if (includeHeader)
+            {
+                writer.WritePropertyGuid(PropertyGuid);
+            }
+
+            Value ??= new T();
+            return Value.Write(writer);
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
         }
     }
 }
