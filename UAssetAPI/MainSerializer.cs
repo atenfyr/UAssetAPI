@@ -42,6 +42,7 @@ namespace UAssetAPI
 #if DEBUGVERBOSE
         private static PropertyData lastType;
 #endif
+        public static string[] AdditionalPropertyRegistry = ["ClassProperty", "SoftClassProperty", "AssetClassProperty"];
 
         private static IDictionary<string, RegistryEntry> _propertyTypeRegistry;
 

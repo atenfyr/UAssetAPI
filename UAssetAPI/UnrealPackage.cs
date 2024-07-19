@@ -168,9 +168,11 @@ namespace UAssetAPI
             { "BindingIdToReferences", new Tuple<FString, FString>(new FString("Guid"), null) },
             { "UserParameterRedirects", new Tuple<FString, FString>(new FString("NiagaraVariable"), new FString("NiagaraVariable"))},
             { "Tracks", new Tuple<FString, FString>(new FString("MovieSceneTrackIdentifier"), null)},
+            { "TrackReferenceCounts", new Tuple<FString, FString>(new FString("MovieSceneTrackIdentifier"), null)},
             { "SubSequences", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
             { "Hierarchy", new Tuple<FString, FString>(new FString("MovieSceneSequenceID"), null)},
             { "TrackSignatureToTrackIdentifier", new Tuple<FString, FString>(new FString("Guid"), new FString("MovieSceneTrackIdentifier"))},
+            { "SoftwareCursors", new Tuple<FString, FString>(new FString("Guid"), new FString("SoftClassPath"))},
             { "ItemsToRefund", new Tuple<FString, FString>(new FString("Guid"), null) },
             { "PlayerCharacterIDMap", new Tuple<FString, FString>(new FString("Guid"), null) },
             { "RainChanceMinMaxPerWeatherState", new Tuple<FString, FString>(null, new FString("FloatRange")) },
@@ -718,7 +720,7 @@ namespace UAssetAPI
                             Exports[i] = Exports[i].ConvertToChildExport<StructExport>();
                             Exports[i].Read(reader, (int)nextStarting);
                         }
-                        else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || exportClassType == "ClassProperty")
+                        else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || MainSerializer.AdditionalPropertyRegistry.Contains(exportClassType))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
                             Exports[i].Read(reader, (int)nextStarting);
