@@ -36,7 +36,7 @@ public class SoftObjectPathPropertyData : PropertyData<FSoftObjectPath>
         }
         else
         {
-            Value = FSoftObjectPath.Read(reader);
+            Value = new FSoftObjectPath(reader);
         }
     }
 

@@ -46,7 +46,8 @@ public class FNumberFormattingOptions
 
     public FNumberFormattingOptions(AssetBinaryReader reader)
     {
-        AlwaysSign = reader.ReadBooleanInt();
+        if (reader.Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.AddedAlwaysSignNumberFormattingOption)
+            AlwaysSign = reader.ReadBooleanInt();
         UseGrouping = reader.ReadBooleanInt();
         RoundingMode = (ERoundingMode)reader.ReadByte();
         MinimumIntegralDigits = reader.ReadInt32();
@@ -57,7 +58,8 @@ public class FNumberFormattingOptions
 
     public void Write(AssetBinaryWriter writer)
     {
-        writer.Write(AlwaysSign ? 1 : 0);
+        if (writer.Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.AddedAlwaysSignNumberFormattingOption)
+            writer.Write(AlwaysSign ? 1 : 0);
         writer.Write(UseGrouping ? 1 : 0);
         writer.Write((byte)RoundingMode);
         writer.Write(MinimumIntegralDigits);

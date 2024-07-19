@@ -45,7 +45,7 @@ public class SmartNamePropertyData : PropertyData
         {
             SmartNameID = reader.ReadUInt16();
         }
-        if (reader.Asset.GetCustomVersion<FAnimPhysObjectVersion>() < FAnimPhysObjectVersion.SmartNameRefactorForDeterministicCooking)
+        if (reader.Asset.GetCustomVersion<FAnimPhysObjectVersion>() < FAnimPhysObjectVersion.SmartNameRefactorForDeterministicCooking && !reader.Asset.IsFilterEditorOnly)
         {
             TempGUID = new Guid(reader.ReadBytes(16));
         }
@@ -65,7 +65,7 @@ public class SmartNamePropertyData : PropertyData
         {
             writer.Write(SmartNameID);
         }
-        if (writer.Asset.GetCustomVersion<FAnimPhysObjectVersion>() < FAnimPhysObjectVersion.SmartNameRefactorForDeterministicCooking)
+        if (writer.Asset.GetCustomVersion<FAnimPhysObjectVersion>() < FAnimPhysObjectVersion.SmartNameRefactorForDeterministicCooking && !writer.Asset.IsFilterEditorOnly)
         {
             writer.Write(TempGUID.ToByteArray());
         }

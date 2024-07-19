@@ -87,7 +87,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
             int nextFourBytes = reader.ReadInt32();
             reader.BaseStream.Position -= sizeof(int);
-            hasCustomStructSerialization = !(reader.Asset.HasUnversionedProperties || (nextFourBytes >= 0 && nextFourBytes < reader.Asset.GetNameMapIndexList().Count && reader.Asset.GetNameReference(nextFourBytes).Value == "LowerBound"));
+            hasCustomStructSerialization = !(reader.Asset.HasUnversionedProperties || (nextFourBytes >= 0 && nextFourBytes < reader.Asset.GetNameMapIndexList().Count && reader.Asset.GetNameReference(nextFourBytes).Value.EndsWith("Bound")));
         }
         if (structTypeVal == "RichCurveKey" && reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_SERIALIZE_RICH_CURVE_KEY) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTrackIdentifier" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.MovieSceneMetaDataSerialization) hasCustomStructSerialization = false;

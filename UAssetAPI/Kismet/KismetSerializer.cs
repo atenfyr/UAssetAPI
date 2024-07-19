@@ -115,7 +115,7 @@ namespace UAssetAPI.Kismet
         public static string GetFullName(int index, bool alt = false)
         {
 
-            if (index > 0)
+            if (index > 0 && index < asset.Exports.Count)
             {
                 if (asset.Exports[index - 1].OuterIndex.Index != 0)
                 {

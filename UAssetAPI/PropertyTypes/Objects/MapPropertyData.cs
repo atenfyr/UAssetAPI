@@ -84,6 +84,8 @@ namespace UAssetAPI.PropertyTypes.Objects
                         else
                         {
                             strucType = FName.DefineDummy(reader.Asset, reader.Asset.MapStructTypeOverride[name.Value.Value].Item2);
+                            if (name.Value.Value == "TrackSignatureToTrackIdentifier" && reader.Asset.GetEngineVersion() <= EngineVersion.VER_UE4_18)
+                                strucType = FName.DefineDummy(reader.Asset, "Generic");
                         }
                     }
 

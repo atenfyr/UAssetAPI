@@ -2,10 +2,22 @@
 
 namespace UAssetAPI.UnrealTypes;
 
-public struct TRange<T>(AssetBinaryReader reader, Func<T> valueReader)
+public struct TRange<T>
 {
-    public TRangeBound<T> LowerBound = new TRangeBound<T>(reader, valueReader);
-    public TRangeBound<T> UpperBound = new TRangeBound<T>(reader, valueReader);
+    public TRangeBound<T> LowerBound;
+    public TRangeBound<T> UpperBound;
+
+    public TRange(TRangeBound<T> lowerBound, TRangeBound<T> upperBound)
+    {
+        LowerBound = lowerBound;
+        UpperBound = upperBound;
+    }
+
+    public TRange(AssetBinaryReader reader, Func<T> valueReader)
+    {
+        LowerBound = new TRangeBound<T>(reader, valueReader);
+        UpperBound = new TRangeBound<T>(reader, valueReader);
+    }
 
     public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
     {
@@ -17,10 +29,22 @@ public struct TRange<T>(AssetBinaryReader reader, Func<T> valueReader)
 /// <summary>
 /// Template for range bounds.
 /// </summary>
-public struct TRangeBound<T>(AssetBinaryReader reader, Func<T> valueReader)
+public struct TRangeBound<T>
 {
-    public ERangeBoundTypes Type = (ERangeBoundTypes)reader.ReadByte();
-    public T Value = valueReader();
+    public ERangeBoundTypes Type;
+    public T Value;
+
+    public TRangeBound(ERangeBoundTypes type, T value)
+    {
+        Type = type;
+        Value = value;
+    }
+
+    public TRangeBound(AssetBinaryReader reader, Func<T> valueReader)
+    {
+        Type = (ERangeBoundTypes)reader.ReadByte();
+        Value = valueReader();
+    }
 
     public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
     {
