@@ -3,6 +3,7 @@ using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.Reflection.PortableExecutable;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -122,6 +123,19 @@ namespace UAssetAPI.ExportTypes
                 {
                     decidedStructType = thisObjData.ToImport(writer.Asset).ObjectName;
                     break;
+                }
+            }
+
+            if (decidedStructType.ToString() == "Generic")
+            {
+                // overrides here...
+                FName exportClassTypeName = this.GetExportClassType();
+                string exportClassType = exportClassTypeName.Value.Value;
+                switch (exportClassType)
+                {
+                    case "CommonGenericInputActionDataTable":
+                        decidedStructType = FName.DefineDummy(writer.Asset, "CommonInputActionDataBase");
+                        break;
                 }
             }
 
