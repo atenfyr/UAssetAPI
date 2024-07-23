@@ -27,7 +27,7 @@ namespace UAssetAPI;
 using System;
 using System.Runtime.InteropServices;
 
-public class RePakInterop
+public static class RePakInterop
 {
     public const string NativeLib = "repak_bind";
 

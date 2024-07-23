@@ -8,13 +8,27 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
+    <Platforms>AnyCPU;x86</Platforms>
+    <FileVersion>1.0.1.0</FileVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
     <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DebugType>full</DebugType>
+    <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVerbose|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugVerbose|x86'">
     <DebugType>full</DebugType>
     <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
@@ -25,7 +39,16 @@
     <NoWarn>1591</NoWarn>
     <DefineConstants>ADDTRACING</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugTracing|x86'">
+    <DebugType>full</DebugType>
+    <DocumentationFile>bin\$(Configuration)\UAssetAPI.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DefineConstants>ADDTRACING</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <Choose>
@@ -45,6 +68,9 @@
     <Delete Files="$(ProjectDir)git_commit.txt" />
   </Target>
   <ItemGroup>
+    <None Remove="repak_bind.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -59,13 +85,11 @@
     <EmbeddedResource Include="git_commit.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="repak_bind.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AC7Key.bin" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="repak_bind.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

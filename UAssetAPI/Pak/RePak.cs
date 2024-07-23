@@ -1,5 +1,5 @@
 ﻿/*
-    This code was written by @trumank as part of the repak crate: https://github.com/trumank/repak
+    This code has been slightly adapted from code written by @trumank as part of the repak crate: https://github.com/trumank/repak
 
     MIT License
 
@@ -24,12 +24,13 @@
 
 namespace UAssetAPI;
 
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
+using UAssetAPI.PropertyTypes.Objects;
 
 public enum PakVersion : byte
 {
@@ -60,7 +61,33 @@ public class PakBuilder : SafeHandleZeroOrMinusOneIsInvalid
 {
     public PakBuilder() : base(true)
     {
-        SetHandle(RePakInterop.pak_builder_new());
+        try
+        {
+            SetHandle(RePakInterop.pak_builder_new());
+        }
+        catch (Exception ex)
+        {
+            if (ex is DllNotFoundException || ex is BadImageFormatException)
+            {
+                // extract dll if needed
+                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream("UAssetAPI.repak_bind.dll"))
+                {
+                    if (resource != null)
+                    {
+                        using (var file = new FileStream("repak_bind.dll", FileMode.Create, FileAccess.Write))
+                        {
+                            resource.CopyTo(file);
+                        }
+                    }
+                }
+
+                SetHandle(RePakInterop.pak_builder_new());
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
     protected override bool ReleaseHandle()
     {
@@ -222,7 +249,7 @@ public class PakReader : SafeHandleZeroOrMinusOneIsInvalid
 }
 
 
-public class StreamCallbacks
+public static class StreamCallbacks
 {
     public static RePakInterop.StreamCallbacks Create(Stream stream)
     {
