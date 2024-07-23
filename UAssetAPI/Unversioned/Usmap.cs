@@ -805,6 +805,8 @@ namespace UAssetAPI.Unversioned
         {
             propDat = null;
 
+            if (propertyName == null) return false;
+
             if (propertyName.IsDummy && int.TryParse(propertyName.Value.Value, out _))
             {
                 // this is actually an array member; try to find its parent array
@@ -815,7 +817,7 @@ namespace UAssetAPI.Unversioned
                 }
             }
 
-            var schemaName = ancestry.Parent.Value.Value;
+            var schemaName = ancestry.Parent?.Value?.Value;
             UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset, null, false);
             while (schemaName != null && relevantSchema != null)
             {

@@ -21,6 +21,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             get
             {
+                if (Ancestors.Count == 0) return null;
                 return Ancestors[Ancestors.Count - 1];
             }
             set
