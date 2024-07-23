@@ -409,5 +409,17 @@
     <None Update="TestAssets\TestManyAssets\ToTheCore\BP_MimicCrate.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestManyAssets\Biodigital\Roboto.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\Biodigital\RobotoTiny.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\SnakePass\MP00_GateTutorial.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestManyAssets\SnakePass\MP00_Intro.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

@@ -321,6 +321,8 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestManyAssets()
         {
+            TestManyAssetsSubsection("Biodigital", EngineVersion.VER_UE4_14);
+            TestManyAssetsSubsection("SnakePass", EngineVersion.VER_UE4_14);
             TestManyAssetsSubsection("Tekken", EngineVersion.VER_UE4_14);
             TestManyAssetsSubsection("MidAir", EngineVersion.VER_UE4_17);
             TestManyAssetsSubsection("MutantYearZero", EngineVersion.VER_UE4_17);
