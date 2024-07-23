@@ -31,11 +31,7 @@ public class FontDataPropertyData : PropertyData<FFontData>
             writer.WritePropertyGuid(PropertyGuid);
         }
 
-        int here = (int)writer.BaseStream.Position;
-
         if (Value == null) Value = new FFontData();
-        Value.Write(writer);
-        
-        return (int)writer.BaseStream.Position-here;
+        return Value.Write(writer);
     }
 }

@@ -1,6 +1,4 @@
-﻿using UAssetAPI.CustomVersions;
-
-namespace UAssetAPI.UnrealTypes;
+﻿namespace UAssetAPI.UnrealTypes;
 
 public enum EFontHinting : byte
 {
@@ -42,8 +40,6 @@ public class FFontData
 
     public FFontData(AssetBinaryReader reader)
     {
-        if (reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) return;
-
         bIsCooked = reader.ReadBooleanInt();
         if (bIsCooked)
         {
@@ -61,9 +57,9 @@ public class FFontData
         }
     }
 
-    public void Write(AssetBinaryWriter writer)
+    public int Write(AssetBinaryWriter writer)
     {
-        if (writer.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) return;
+        var offset = writer.BaseStream.Position;
 
         writer.Write(bIsCooked ? 1 : 0);
         if (bIsCooked)
@@ -80,5 +76,7 @@ public class FFontData
             if (writer.Asset.GetEngineVersion() >= EngineVersion.VER_UE4_20)
                 writer.Write(SubFaceIndex);
         }
+
+        return (int)(writer.BaseStream.Position - offset);
     }
 }

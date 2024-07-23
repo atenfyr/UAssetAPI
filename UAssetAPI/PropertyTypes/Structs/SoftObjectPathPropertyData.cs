@@ -123,3 +123,14 @@ public class StringAssetReferencePropertyData : SoftObjectPathPropertyData
     public override bool HasCustomStructSerialization => true;
     public override FString PropertyType => CurrentPropertyType;
 }
+
+public class StringClassReferencePropertyData : SoftObjectPathPropertyData
+{
+    public StringClassReferencePropertyData(FName name) : base(name) { }
+
+    public StringClassReferencePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("StringClassReference");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+}

@@ -33,12 +33,12 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     private static readonly FString CurrentPropertyType = new FString("StructProperty");
     public override FString PropertyType => CurrentPropertyType;
 
-    private void ReadOnce(AssetBinaryReader reader, Type T, long offset)
+    private void ReadOnce(AssetBinaryReader reader, Type T, long offset, long leng1)
     {
         if (Activator.CreateInstance(T, Name) is not PropertyData data) return;
         data.Offset = offset;
         data.Ancestry.Initialize(Ancestry, Name);
-        data.Read(reader, false, 0);
+        data.Read(reader, false, leng1);
         Value = new List<PropertyData> { data };
     }
 
@@ -94,6 +94,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (structTypeVal == "MovieSceneFloatChannel" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneFloatValue" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTangentData" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
+        if (structTypeVal == "FontData" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) hasCustomStructSerialization = false;
 
         if (leng1 == 0)
         {
@@ -104,7 +105,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
         if (targetEntry != null && hasCustomStructSerialization)
         {
-            ReadOnce(reader, targetEntry.PropertyType, reader.BaseStream.Position);
+            ReadOnce(reader, targetEntry.PropertyType, reader.BaseStream.Position, leng1);
         }
         else
         {
@@ -166,6 +167,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (structTypeVal == "MovieSceneFloatChannel" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneFloatValue" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTangentData" && Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
+        if (structTypeVal == "FontData" && Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) hasCustomStructSerialization = false;
         return hasCustomStructSerialization;
     }
 

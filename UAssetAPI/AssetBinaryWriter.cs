@@ -178,7 +178,7 @@ namespace UAssetAPI
                     realNum = 0;
                     for (int i = 0; i < num; i++)
                     {
-                        if (CustomVersionContainer[i].Version <= 0 || !CustomVersionContainer[i].IsSerialized) continue;
+                        if (CustomVersionContainer[i].Version < 0 || !CustomVersionContainer[i].IsSerialized) continue;
                         realNum++;
                         Write(CustomVersionContainer[i].Key.ToByteArray());
                         Write(CustomVersionContainer[i].Version);

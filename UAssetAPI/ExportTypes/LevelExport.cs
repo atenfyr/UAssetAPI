@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.ExportTypes;
@@ -58,6 +59,8 @@ public struct FURL
 
 public class LevelExport : NormalExport
 {
+    // Owner of TTransArray<AActor> Actors
+    public FPackageIndex Owner;
     public List<FPackageIndex> Actors;
     public FURL URL;
     public FPackageIndex Model;
@@ -79,6 +82,9 @@ public class LevelExport : NormalExport
         base.Read(reader, nextStarting);
 
         reader.ReadInt32();
+
+        if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.LevelTransArrayConvertedToTArray)
+            Owner = new FPackageIndex(reader);
 
         int numIndexEntries = reader.ReadInt32();
 
@@ -110,6 +116,10 @@ public class LevelExport : NormalExport
         base.Write(writer);
 
         writer.Write((int)0);
+
+        if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.LevelTransArrayConvertedToTArray)
+            Owner.Write(writer);
+
         writer.Write(Actors.Count);
         for (int i = 0; i < Actors.Count; i++)
         {
