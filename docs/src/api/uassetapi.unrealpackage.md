@@ -420,11 +420,15 @@ The class path of the SuperStruct of this asset, if it exists.
 `parentClassExportName` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 The export name of the SuperStruct of this asset, if it exists.
 
-### **GetParentClassExportName()**
+### **GetParentClassExportName(FName&)**
 
 ```csharp
-internal FName GetParentClassExportName()
+internal FName GetParentClassExportName(FName& modulePath)
 ```
+
+#### Parameters
+
+`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 
 #### Returns
 
@@ -454,7 +458,7 @@ The asset path.
 #### Returns
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path to the file on disk, or string.Empty if none could be found.
+The path to the file on disk, or null if none could be found.
 
 ### **PullSchemasFromAnotherAsset(FName, FName)**
 

@@ -3,43 +3,13 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MovieSceneFloatChannelPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FMovieSceneFloatChannel, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class MovieSceneFloatChannelPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FMovieSceneFloatChannel, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FMovieSceneFloatChannel&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneFloatChannelPropertyData](./uassetapi.propertytypes.structs.moviescenefloatchannelpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
-
-### **TimesStructLength**
-
-```csharp
-public int TimesStructLength;
-```
-
-### **TimesLength**
-
-```csharp
-public int TimesLength;
-```
-
-### **ValuesStructLength**
-
-```csharp
-public int ValuesStructLength;
-```
-
-### **ValuesLength**
-
-```csharp
-public int ValuesLength;
-```
-
-### **HasDefaultValue**
-
-```csharp
-public int HasDefaultValue;
-```
 
 ### **Name**
 
@@ -157,18 +127,6 @@ public bool ShouldBeRegistered { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **DefaultValue**
 
 The default value of this property, used as a fallback when no value is defined. Null by default.
@@ -236,25 +194,3 @@ public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializa
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-
-### **FromString(String[], UAsset)**
-
-```csharp
-public void FromString(String[] d, UAsset asset)
-```
-
-#### Parameters
-
-`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-`asset` [UAsset](./uassetapi.uasset.md)<br>
-
-### **ToString()**
-
-```csharp
-public string ToString()
-```
-
-#### Returns
-
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

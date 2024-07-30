@@ -3,20 +3,36 @@
 Namespace: UAssetAPI
 
 ```csharp
-public class StreamCallbacks
+public static class StreamCallbacks
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [StreamCallbacks](./uassetapi.streamcallbacks.md)
 
-## Constructors
+## Methods
 
-### **StreamCallbacks()**
+### **Create(Stream)**
 
 ```csharp
-public StreamCallbacks()
+public static StreamCallbacks Create(Stream stream)
 ```
 
-## Methods
+#### Parameters
+
+`stream` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
+
+#### Returns
+
+[StreamCallbacks](./uassetapi.repakinterop.streamcallbacks.md)<br>
+
+### **Free(IntPtr)**
+
+```csharp
+public static void Free(IntPtr streamCtx)
+```
+
+#### Parameters
+
+`streamCtx` [IntPtr](https://docs.microsoft.com/en-us/dotnet/api/system.intptr)<br>
 
 ### **ReadCallback(IntPtr, IntPtr, UInt64)**
 

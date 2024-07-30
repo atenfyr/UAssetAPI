@@ -3,13 +3,31 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class VectorNetQuantizePropertyData : VectorPropertyData, System.ICloneable
+public class VectorNetQuantizePropertyData : StructPropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FVector&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [VectorPropertyData](./uassetapi.propertytypes.structs.vectorpropertydata.md) → [VectorNetQuantizePropertyData](./uassetapi.propertytypes.structs.vectornetquantizepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md) → [VectorNetQuantizePropertyData](./uassetapi.propertytypes.structs.vectornetquantizepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
+
+### **StructType**
+
+```csharp
+public FName StructType;
+```
+
+### **SerializeNone**
+
+```csharp
+public bool SerializeNone;
+```
+
+### **StructGUID**
+
+```csharp
+public Guid StructGUID;
+```
 
 ### **Name**
 
@@ -98,12 +116,12 @@ public FString PropertyType { get; }
 The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
-public FVector Value { get; set; }
+public List<PropertyData> Value { get; set; }
 ```
 
 #### Property Value
 
-[FVector](./uassetapi.unrealtypes.fvector.md)<br>
+[List&lt;PropertyData&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 
 ### **RawValue**
 
@@ -127,18 +145,6 @@ public bool ShouldBeRegistered { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **DefaultValue**
 
 The default value of this property, used as a fallback when no value is defined. Null by default.
@@ -152,6 +158,18 @@ public object DefaultValue { get; }
 [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
+
+### **VectorNetQuantizePropertyData(FName, FName)**
+
+```csharp
+public VectorNetQuantizePropertyData(FName name, FName forcedType)
+```
+
+#### Parameters
+
+`name` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`forcedType` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 ### **VectorNetQuantizePropertyData(FName)**
 
@@ -168,3 +186,41 @@ public VectorNetQuantizePropertyData(FName name)
 ```csharp
 public VectorNetQuantizePropertyData()
 ```
+
+## Methods
+
+### **Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)**
+
+```csharp
+public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, PropertySerializationContext serializationContext)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+`includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+`leng1` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
+
+`leng2` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
+
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
+
+### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
+
+```csharp
+public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+`includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

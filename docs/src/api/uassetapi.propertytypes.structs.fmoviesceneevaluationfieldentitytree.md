@@ -18,38 +18,28 @@ public TMovieSceneEvaluationTree<FEntityAndMetaDataIndex> SerializedData;
 
 ## Constructors
 
-### **FMovieSceneEvaluationFieldEntityTree(TMovieSceneEvaluationTree&lt;FEntityAndMetaDataIndex&gt;)**
+### **FMovieSceneEvaluationFieldEntityTree(AssetBinaryReader)**
 
 ```csharp
-FMovieSceneEvaluationFieldEntityTree(TMovieSceneEvaluationTree<FEntityAndMetaDataIndex> serializedData)
-```
-
-#### Parameters
-
-`serializedData` [TMovieSceneEvaluationTree&lt;FEntityAndMetaDataIndex&gt;](./uassetapi.propertytypes.structs.tmoviesceneevaluationtree-1.md)<br>
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-FMovieSceneEvaluationFieldEntityTree Read(AssetBinaryReader reader)
+FMovieSceneEvaluationFieldEntityTree(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-#### Returns
-
-[FMovieSceneEvaluationFieldEntityTree](./uassetapi.propertytypes.structs.fmoviesceneevaluationfieldentitytree.md)<br>
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+int Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

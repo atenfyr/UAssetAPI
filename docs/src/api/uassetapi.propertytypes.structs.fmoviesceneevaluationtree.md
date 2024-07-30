@@ -12,11 +12,15 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ### **RootNode**
 
+This tree's root node
+
 ```csharp
 public FMovieSceneEvaluationTreeNode RootNode;
 ```
 
 ### **ChildNodes**
+
+Segmented array of all child nodes within this tree (in no particular order)
 
 ```csharp
 public TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode> ChildNodes;
@@ -24,8 +28,24 @@ public TEvaluationTreeEntryContainer<FMovieSceneEvaluationTreeNode> ChildNodes;
 
 ## Constructors
 
-### **FMovieSceneEvaluationTree()**
+### **FMovieSceneEvaluationTree(AssetBinaryReader)**
 
 ```csharp
-public FMovieSceneEvaluationTree()
+public FMovieSceneEvaluationTree(AssetBinaryReader reader)
 ```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public void Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

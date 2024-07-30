@@ -126,10 +126,10 @@ public static ulong CityHash64(Byte[] data)
 
 [UInt64](https://docs.microsoft.com/en-us/dotnet/api/system.uint64)<br>
 
-### **GenerateHash(FString, Boolean)**
+### **GenerateHash(FString, Boolean, Boolean)**
 
 ```csharp
-public static uint GenerateHash(FString text, bool disableCasePreservingHash)
+public static uint GenerateHash(FString text, bool disableCasePreservingHash, bool version420)
 ```
 
 #### Parameters
@@ -138,14 +138,16 @@ public static uint GenerateHash(FString text, bool disableCasePreservingHash)
 
 `disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+`version420` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
-### **GenerateHash(String, Boolean)**
+### **GenerateHash(String, Boolean, Boolean)**
 
 ```csharp
-public static uint GenerateHash(string text, bool disableCasePreservingHash)
+public static uint GenerateHash(string text, bool disableCasePreservingHash, bool version420)
 ```
 
 #### Parameters
@@ -154,14 +156,16 @@ public static uint GenerateHash(string text, bool disableCasePreservingHash)
 
 `disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+`version420` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
-### **GenerateHash(String, Encoding, Boolean)**
+### **GenerateHash(String, Encoding, Boolean, Boolean)**
 
 ```csharp
-public static uint GenerateHash(string text, Encoding encoding, bool disableCasePreservingHash)
+public static uint GenerateHash(string text, Encoding encoding, bool disableCasePreservingHash, bool version420)
 ```
 
 #### Parameters
@@ -172,6 +176,8 @@ public static uint GenerateHash(string text, Encoding encoding, bool disableCase
 
 `disableCasePreservingHash` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+`version420` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
@@ -180,6 +186,20 @@ public static uint GenerateHash(string text, Encoding encoding, bool disableCase
 
 ```csharp
 public static char ToUpper(char input)
+```
+
+#### Parameters
+
+`input` [Char](https://docs.microsoft.com/en-us/dotnet/api/system.char)<br>
+
+#### Returns
+
+[Char](https://docs.microsoft.com/en-us/dotnet/api/system.char)<br>
+
+### **ToUpperVersion420(Char)**
+
+```csharp
+public static char ToUpperVersion420(char input)
 ```
 
 #### Parameters
@@ -250,10 +270,10 @@ public static FString ToLower(FString input, bool coalesceToSlash)
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
-### **Strihash_DEPRECATED(String, Encoding)**
+### **Strihash_DEPRECATED(String, Encoding, Boolean)**
 
 ```csharp
-public static uint Strihash_DEPRECATED(string text, Encoding encoding)
+public static uint Strihash_DEPRECATED(string text, Encoding encoding, bool version420)
 ```
 
 #### Parameters
@@ -261,6 +281,8 @@ public static uint Strihash_DEPRECATED(string text, Encoding encoding)
 `text` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `encoding` [Encoding](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding)<br>
+
+`version420` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 #### Returns
 

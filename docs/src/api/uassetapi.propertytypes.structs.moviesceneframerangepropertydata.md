@@ -3,25 +3,13 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MovieSceneFrameRangePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData, System.ICloneable
+public class MovieSceneFrameRangePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.TRange`1[[UAssetAPI.UnrealTypes.FFrameNumber, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [MovieSceneFrameRangePropertyData](./uassetapi.propertytypes.structs.moviesceneframerangepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TRange&lt;FFrameNumber&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneFrameRangePropertyData](./uassetapi.propertytypes.structs.moviesceneframerangepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
-
-### **LowerBound**
-
-```csharp
-public FInt32RangeBound LowerBound;
-```
-
-### **UpperBound**
-
-```csharp
-public FInt32RangeBound UpperBound;
-```
 
 ### **Name**
 
@@ -105,6 +93,18 @@ public FString PropertyType { get; }
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+### **Value**
+
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+
+```csharp
+public TRange<FFrameNumber> Value { get; set; }
+```
+
+#### Property Value
+
+[TRange&lt;FFrameNumber&gt;](./uassetapi.unrealtypes.trange-1.md)<br>
+
 ### **RawValue**
 
 ```csharp
@@ -121,18 +121,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

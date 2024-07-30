@@ -3,13 +3,31 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class VectorNetQuantizeNormalPropertyData : VectorPropertyData, System.ICloneable
+public class VectorNetQuantizeNormalPropertyData : VectorNetQuantizePropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FVector&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [VectorPropertyData](./uassetapi.propertytypes.structs.vectorpropertydata.md) → [VectorNetQuantizeNormalPropertyData](./uassetapi.propertytypes.structs.vectornetquantizenormalpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md) → [VectorNetQuantizePropertyData](./uassetapi.propertytypes.structs.vectornetquantizepropertydata.md) → [VectorNetQuantizeNormalPropertyData](./uassetapi.propertytypes.structs.vectornetquantizenormalpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
+
+### **StructType**
+
+```csharp
+public FName StructType;
+```
+
+### **SerializeNone**
+
+```csharp
+public bool SerializeNone;
+```
+
+### **StructGUID**
+
+```csharp
+public Guid StructGUID;
+```
 
 ### **Name**
 
@@ -98,12 +116,12 @@ public FString PropertyType { get; }
 The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
-public FVector Value { get; set; }
+public List<PropertyData> Value { get; set; }
 ```
 
 #### Property Value
 
-[FVector](./uassetapi.unrealtypes.fvector.md)<br>
+[List&lt;PropertyData&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 
 ### **RawValue**
 
@@ -121,18 +139,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

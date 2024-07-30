@@ -65,6 +65,18 @@ public TextPropertyData SourceFmt;
 public FFormatArgumentValue[] Arguments;
 ```
 
+### **ArgumentsData**
+
+```csharp
+public FFormatArgumentData[] ArgumentsData;
+```
+
+### **TransformType**
+
+```csharp
+public ETransformType TransformType;
+```
+
 ### **Name**
 
 The name of this property.
@@ -177,18 +189,6 @@ Determines whether or not this particular property has custom serialization with
 
 ```csharp
 public bool HasCustomStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

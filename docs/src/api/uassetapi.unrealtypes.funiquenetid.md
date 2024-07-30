@@ -35,3 +35,29 @@ public FUniqueNetId(FName type, FString contents)
 `type` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 `contents` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **FUniqueNetId(AssetBinaryReader)**
+
+```csharp
+public FUniqueNetId(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

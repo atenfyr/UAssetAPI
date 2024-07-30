@@ -2,6 +2,8 @@
 
 Namespace: UAssetAPI.UnrealTypes
 
+4x4 matrix of floating point values.
+
 ```csharp
 public struct FMatrix
 ```
@@ -10,47 +12,47 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Fields
 
-### **Row1**
+### **XPlane**
 
 ```csharp
-public FVector4 Row1;
+public FPlane XPlane;
 ```
 
-### **Row2**
+### **YPlane**
 
 ```csharp
-public FVector4 Row2;
+public FPlane YPlane;
 ```
 
-### **Row3**
+### **ZPlane**
 
 ```csharp
-public FVector4 Row3;
+public FPlane ZPlane;
 ```
 
-### **Row4**
+### **WPlane**
 
 ```csharp
-public FVector4 Row4;
+public FPlane WPlane;
 ```
 
 ## Constructors
 
-### **FMatrix(FVector4, FVector4, FVector4, FVector4)**
+### **FMatrix(FPlane, FPlane, FPlane, FPlane)**
 
 ```csharp
-FMatrix(FVector4 row1, FVector4 row2, FVector4 row3, FVector4 row4)
+FMatrix(FPlane xPlane, FPlane yPlane, FPlane zPlane, FPlane wPlane)
 ```
 
 #### Parameters
 
-`row1` [FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+`xPlane` [FPlane](./uassetapi.unrealtypes.fplane.md)<br>
 
-`row2` [FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+`yPlane` [FPlane](./uassetapi.unrealtypes.fplane.md)<br>
 
-`row3` [FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+`zPlane` [FPlane](./uassetapi.unrealtypes.fplane.md)<br>
 
-`row4` [FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+`wPlane` [FPlane](./uassetapi.unrealtypes.fplane.md)<br>
 
 ### **FMatrix(AssetBinaryReader)**
 

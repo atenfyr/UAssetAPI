@@ -11,28 +11,52 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 
 ## Fields
 
+### **Owner**
+
+```csharp
+public FPackageIndex Owner;
+```
+
 ### **Actors**
 
 ```csharp
 public List<FPackageIndex> Actors;
 ```
 
-### **LevelType**
+### **URL**
 
 ```csharp
-public NamespacedString LevelType;
+public FURL URL;
 ```
 
-### **FlagsProbably**
+### **Model**
 
 ```csharp
-public ulong FlagsProbably;
+public FPackageIndex Model;
 ```
 
-### **MiscCategoryData**
+### **ModelComponents**
 
 ```csharp
-public List<int> MiscCategoryData;
+public List<FPackageIndex> ModelComponents;
+```
+
+### **LevelScriptActor**
+
+```csharp
+public FPackageIndex LevelScriptActor;
+```
+
+### **NavListStart**
+
+```csharp
+public FPackageIndex NavListStart;
+```
+
+### **NavListEnd**
+
+```csharp
+public FPackageIndex NavListEnd;
 ```
 
 ### **Data**

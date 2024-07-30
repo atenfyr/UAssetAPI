@@ -35,3 +35,29 @@ FMovieSceneEventParameters(FSoftObjectPath structType, Byte[] structBytes)
 `structType` [FSoftObjectPath](./uassetapi.propertytypes.objects.fsoftobjectpath.md)<br>
 
 `structBytes` [Byte[]](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+
+### **FMovieSceneEventParameters(AssetBinaryReader)**
+
+```csharp
+FMovieSceneEventParameters(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

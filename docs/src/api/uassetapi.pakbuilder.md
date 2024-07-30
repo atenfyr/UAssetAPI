@@ -3,10 +3,33 @@
 Namespace: UAssetAPI
 
 ```csharp
-public class PakBuilder
+public class PakBuilder : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid, System.IDisposable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PakBuilder](./uassetapi.pakbuilder.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [CriticalFinalizerObject](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.constrainedexecution.criticalfinalizerobject) → [SafeHandle](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.safehandle) → [SafeHandleZeroOrMinusOneIsInvalid](https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.safehandles.safehandlezeroorminusoneisinvalid) → [PakBuilder](./uassetapi.pakbuilder.md)<br>
+Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idisposable)
+
+## Properties
+
+### **IsInvalid**
+
+```csharp
+public bool IsInvalid { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **IsClosed**
+
+```csharp
+public bool IsClosed { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ## Constructors
 
@@ -18,11 +41,43 @@ public PakBuilder()
 
 ## Methods
 
-### **Finalize()**
+### **ReleaseHandle()**
 
 ```csharp
-protected void Finalize()
+protected bool ReleaseHandle()
 ```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **Key(Byte[])**
+
+```csharp
+public PakBuilder Key(Byte[] key)
+```
+
+#### Parameters
+
+`key` [Byte[]](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+
+#### Returns
+
+[PakBuilder](./uassetapi.pakbuilder.md)<br>
+
+### **Compression(PakCompression[])**
+
+```csharp
+public PakBuilder Compression(PakCompression[] compressions)
+```
+
+#### Parameters
+
+`compressions` [PakCompression[]](./uassetapi.pakcompression.md)<br>
+
+#### Returns
+
+[PakBuilder](./uassetapi.pakbuilder.md)<br>
 
 ### **Writer(Stream, PakVersion, String, UInt64)**
 

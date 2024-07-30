@@ -56,21 +56,17 @@ FSoftObjectPath(FTopLevelAssetPath assetPath, FString subPathString)
 
 `subPathString` [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
-## Methods
-
-### **Read(AssetBinaryReader)**
+### **FSoftObjectPath(AssetBinaryReader)**
 
 ```csharp
-FSoftObjectPath Read(AssetBinaryReader reader)
+FSoftObjectPath(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-#### Returns
-
-[FSoftObjectPath](./uassetapi.propertytypes.objects.fsoftobjectpath.md)<br>
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 

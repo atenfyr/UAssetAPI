@@ -2,13 +2,13 @@
 
 Namespace: UAssetAPI.PropertyTypes.Structs
 
-A vector in 2-D space composed of components (X, Y) with floating point precision.
+A vector in 2-D space composed of components (X, Y) with floating/double point precision.
 
 ```csharp
-public class Vector2DPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData, System.ICloneable
+public class Vector2DPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FVector2D, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [Vector2DPropertyData](./uassetapi.propertytypes.structs.vector2dpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FVector2D&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [Vector2DPropertyData](./uassetapi.propertytypes.structs.vector2dpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -75,50 +75,6 @@ public object Tag;
 
 ## Properties
 
-### **X**
-
-The vector's X-component.
-
-```csharp
-public double X { get; set; }
-```
-
-#### Property Value
-
-[Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
-
-### **XFloat**
-
-```csharp
-public float XFloat { get; }
-```
-
-#### Property Value
-
-[Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
-
-### **Y**
-
-The vector's Y-component.
-
-```csharp
-public double Y { get; set; }
-```
-
-#### Property Value
-
-[Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
-
-### **YFloat**
-
-```csharp
-public float YFloat { get; }
-```
-
-#### Property Value
-
-[Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
-
 ### **HasCustomStructSerialization**
 
 ```csharp
@@ -139,6 +95,18 @@ public FString PropertyType { get; }
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+### **Value**
+
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+
+```csharp
+public FVector2D Value { get; set; }
+```
+
+#### Property Value
+
+[FVector2D](./uassetapi.unrealtypes.fvector2d.md)<br>
+
 ### **RawValue**
 
 ```csharp
@@ -155,18 +123,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

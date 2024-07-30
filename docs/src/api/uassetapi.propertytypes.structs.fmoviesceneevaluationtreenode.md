@@ -15,7 +15,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 The time-range that this node represents
 
 ```csharp
-public FFrameNumberRange Range;
+public TRange<FFrameNumber> Range;
 ```
 
 ### **Parent**
@@ -42,23 +42,17 @@ public FEvaluationTreeEntryHandle DataID;
 
 ## Constructors
 
-### **FMovieSceneEvaluationTreeNode()**
+### **FMovieSceneEvaluationTreeNode(AssetBinaryReader)**
 
 ```csharp
-public FMovieSceneEvaluationTreeNode()
-```
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-public void Read(AssetBinaryReader reader)
+public FMovieSceneEvaluationTreeNode(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 

@@ -109,3 +109,13 @@ public void Write(AssetBinaryWriter writer)
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+### **GetUsmapPropertyType()**
+
+```csharp
+public EPropertyType GetUsmapPropertyType()
+```
+
+#### Returns
+
+[EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>

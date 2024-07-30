@@ -108,3 +108,29 @@ FRotator(float pitch, float yaw, float roll)
 `yaw` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
 
 `roll` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
+
+### **FRotator(AssetBinaryReader)**
+
+```csharp
+FRotator(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

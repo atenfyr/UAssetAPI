@@ -26,7 +26,13 @@ public int OutputIndex;
 ### **InputName**
 
 ```csharp
-public FString InputName;
+public FName InputName;
+```
+
+### **InputNameOld**
+
+```csharp
+public FString InputNameOld;
 ```
 
 ### **Mask**
@@ -175,18 +181,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FQualifiedFrameTime
+public struct FQualifiedFrameTime
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FQualifiedFrameTime](./uassetapi.unrealtypes.fqualifiedframetime.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FQualifiedFrameTime](./uassetapi.unrealtypes.fqualifiedframetime.md)
 
 ## Fields
 
@@ -27,13 +27,13 @@ public FFrameRate Rate;
 ### **FQualifiedFrameTime()**
 
 ```csharp
-public FQualifiedFrameTime()
+FQualifiedFrameTime()
 ```
 
 ### **FQualifiedFrameTime(FFrameTime, FFrameRate)**
 
 ```csharp
-public FQualifiedFrameTime(FFrameTime time, FFrameRate rate)
+FQualifiedFrameTime(FFrameTime time, FFrameRate rate)
 ```
 
 #### Parameters
@@ -41,3 +41,25 @@ public FQualifiedFrameTime(FFrameTime time, FFrameRate rate)
 `time` [FFrameTime](./uassetapi.unrealtypes.fframetime.md)<br>
 
 `rate` [FFrameRate](./uassetapi.unrealtypes.fframerate.md)<br>
+
+### **FQualifiedFrameTime(AssetBinaryReader)**
+
+```csharp
+FQualifiedFrameTime(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+void Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

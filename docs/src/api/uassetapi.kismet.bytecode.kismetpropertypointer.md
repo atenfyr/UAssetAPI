@@ -14,7 +14,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ### **Old**
 
-The pointer serialized as an FPackageIndex. Used in versions older than [KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION](./uassetapi.kismet.bytecode.kismetpropertypointer.md#xfer_prop_pointer_switch_to_serializing_as_field_path_version).
+The pointer serialized as an FPackageIndex. Used in versions older than [FReleaseObjectVersion.FFieldPathOwnerSerialization](./uassetapi.customversions.freleaseobjectversion.md#ffieldpathownerserialization).
 
 ```csharp
 public FPackageIndex Old;
@@ -22,16 +22,10 @@ public FPackageIndex Old;
 
 ### **New**
 
-The pointer serialized as an FFieldPath. Used in versions newer than [KismetPropertyPointer.XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION](./uassetapi.kismet.bytecode.kismetpropertypointer.md#xfer_prop_pointer_switch_to_serializing_as_field_path_version).
+The pointer serialized as an FFieldPath. Used in versions newer than [FReleaseObjectVersion.FFieldPathOwnerSerialization](./uassetapi.customversions.freleaseobjectversion.md#ffieldpathownerserialization).
 
 ```csharp
 public FFieldPath New;
-```
-
-### **XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION**
-
-```csharp
-public static ObjectVersion XFER_PROP_POINTER_SWITCH_TO_SERIALIZING_AS_FIELD_PATH_VERSION;
 ```
 
 ## Constructors

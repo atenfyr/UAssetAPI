@@ -6,28 +6,10 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 public class SkeletalMeshAreaWeightedTriangleSamplerPropertyData : WeightedRandomSamplerPropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [WeightedRandomSamplerPropertyData](./uassetapi.propertytypes.structs.weightedrandomsamplerpropertydata.md) → [SkeletalMeshAreaWeightedTriangleSamplerPropertyData](./uassetapi.propertytypes.structs.skeletalmeshareaweightedtrianglesamplerpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FWeightedRandomSampler&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [WeightedRandomSamplerPropertyData](./uassetapi.propertytypes.structs.weightedrandomsamplerpropertydata.md) → [SkeletalMeshAreaWeightedTriangleSamplerPropertyData](./uassetapi.propertytypes.structs.skeletalmeshareaweightedtrianglesamplerpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
-
-### **Prob**
-
-```csharp
-public Single[] Prob;
-```
-
-### **Alias**
-
-```csharp
-public Int32[] Alias;
-```
-
-### **TotalWeight**
-
-```csharp
-public float TotalWeight;
-```
 
 ### **Name**
 
@@ -111,6 +93,18 @@ public FString PropertyType { get; }
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+### **Value**
+
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+
+```csharp
+public FWeightedRandomSampler Value { get; set; }
+```
+
+#### Property Value
+
+[FWeightedRandomSampler](./uassetapi.unrealtypes.fweightedrandomsampler.md)<br>
+
 ### **RawValue**
 
 ```csharp
@@ -127,18 +121,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

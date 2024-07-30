@@ -48,6 +48,14 @@ public List<CustomVersion> CustomVersionContainer;
 public uint NetCL;
 ```
 
+### **SkipBlueprintSchemas**
+
+Whether or not to skip blueprint schemas serialized in this mappings file. Only useful for testing.
+
+```csharp
+public bool SkipBlueprintSchemas;
+```
+
 ### **NameMap**
 
 .usmap name map
@@ -61,7 +69,7 @@ public List<string> NameMap;
 .usmap enum map
 
 ```csharp
-public Dictionary<string, UsmapEnum> EnumMap;
+public IDictionary<string, UsmapEnum> EnumMap;
 ```
 
 ### **Schemas**
@@ -69,7 +77,7 @@ public Dictionary<string, UsmapEnum> EnumMap;
 .usmap schema map
 
 ```csharp
-public Dictionary<string, UsmapSchema> Schemas;
+public IDictionary<string, UsmapSchema> Schemas;
 ```
 
 ### **CityHash64Map**
@@ -77,7 +85,7 @@ public Dictionary<string, UsmapSchema> Schemas;
 Pre-computed CityHash64 map for all relevant strings
 
 ```csharp
-public Dictionary<ulong, string> CityHash64Map;
+public IDictionary<ulong, string> CityHash64Map;
 ```
 
 ### **FailedExtensions**
@@ -102,6 +110,20 @@ Magic number for the .usmap format
 public static ushort USMAP_MAGIC;
 ```
 
+## Properties
+
+### **AreFNamesCaseInsensitive**
+
+Whether or not FNames are case insensitive. Modifying this property is an expensive operation, and will re-construct several dictionaries.
+
+```csharp
+public bool AreFNamesCaseInsensitive { get; set; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Constructors
 
 ### **Usmap(String)**
@@ -124,7 +146,7 @@ Throw when the file cannot be parsed correctly.
 
 ### **Usmap(UsmapBinaryReader)**
 
-Reads a .usmap file from a BinaryReader and initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class to store its data in memory.
+Reads a .usmap file from a UsmapBinaryReader and initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class to store its data in memory.
 
 ```csharp
 public Usmap(UsmapBinaryReader reader)
@@ -133,7 +155,7 @@ public Usmap(UsmapBinaryReader reader)
 #### Parameters
 
 `reader` [UsmapBinaryReader](./uassetapi.usmapbinaryreader.md)<br>
-The file's BinaryReader that this instance will read from.
+The file's UsmapBinaryReader that this instance will read from.
 
 #### Exceptions
 
@@ -166,32 +188,37 @@ public static UsmapSchema GetSchemaFromStructExport(string exportName, UnrealPac
 
 [UsmapSchema](./uassetapi.unversioned.usmapschema.md)<br>
 
-### **GetSchemaFromStructExport(StructExport)**
+### **GetSchemaFromStructExport(StructExport, Boolean)**
 
 ```csharp
-public static UsmapSchema GetSchemaFromStructExport(StructExport exp)
+public static UsmapSchema GetSchemaFromStructExport(StructExport exp, bool isCaseInsensitive)
 ```
 
 #### Parameters
 
 `exp` [StructExport](./uassetapi.exporttypes.structexport.md)<br>
 
+`isCaseInsensitive` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 #### Returns
 
 [UsmapSchema](./uassetapi.unversioned.usmapschema.md)<br>
 
-### **GetAllProperties(String, UnrealPackage)**
+### **GetAllProperties(String, String, UnrealPackage)**
 
 Retrieve all the properties that a particular schema can reference.
 
 ```csharp
-public IList<UsmapProperty> GetAllProperties(string schemaName, UnrealPackage asset)
+public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath, UnrealPackage asset)
 ```
 
 #### Parameters
 
 `schemaName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The name of the schema of interest.
+
+`modulePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+Module path of the schema of interest.
 
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
 An asset to also search for schemas within.
@@ -234,10 +261,10 @@ The suffix of the subheader for each relevant schema.
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 An annotated, human-readable text file containing the properties that the schema can reference.
 
-### **GetSchemaFromName(String, UnrealPackage, Boolean)**
+### **GetSchemaFromName(String, UnrealPackage, String, Boolean)**
 
 ```csharp
-public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset, bool throwExceptions)
+public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset, string modulePath, bool throwExceptions)
 ```
 
 #### Parameters
@@ -245,6 +272,8 @@ public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset, bool throwE
 `nm` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+
+`modulePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `throwExceptions` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
@@ -327,7 +356,7 @@ Whether or not the property data was successfully found.
 Creates a MemoryStream from an asset path.
 
 ```csharp
-public MemoryStream PathToStream(string p)
+public static MemoryStream PathToStream(string p)
 ```
 
 #### Parameters

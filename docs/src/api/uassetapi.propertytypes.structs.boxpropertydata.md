@@ -3,19 +3,13 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class BoxPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.VectorPropertyData[], UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class BoxPropertyData : TBoxPropertyData`1, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;VectorPropertyData[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BoxPropertyData](./uassetapi.propertytypes.structs.boxpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TBox&lt;FVector&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [TBoxPropertyData&lt;FVector&gt;](./uassetapi.propertytypes.structs.tboxpropertydata-1.md) → [BoxPropertyData](./uassetapi.propertytypes.structs.boxpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
-
-### **IsValid**
-
-```csharp
-public bool IsValid;
-```
 
 ### **Name**
 
@@ -104,12 +98,12 @@ public FString PropertyType { get; }
 The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
-public VectorPropertyData[] Value { get; set; }
+public TBox<FVector> Value { get; set; }
 ```
 
 #### Property Value
 
-[VectorPropertyData[]](./uassetapi.propertytypes.structs.vectorpropertydata.md)<br>
+[TBox&lt;FVector&gt;](./uassetapi.unrealtypes.tbox-1.md)<br>
 
 ### **RawValue**
 
@@ -127,18 +121,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value
@@ -195,18 +177,6 @@ public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long 
 
 `serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
 
-### **ResolveAncestries(UnrealPackage, AncestryInfo)**
-
-```csharp
-public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
-```
-
-#### Parameters
-
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
-
-`ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
-
 ### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
 
 ```csharp
@@ -224,35 +194,3 @@ public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializa
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-
-### **FromString(String[], UAsset)**
-
-```csharp
-public void FromString(String[] d, UAsset asset)
-```
-
-#### Parameters
-
-`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-`asset` [UAsset](./uassetapi.uasset.md)<br>
-
-### **ToString()**
-
-```csharp
-public string ToString()
-```
-
-#### Returns
-
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-### **HandleCloned(PropertyData)**
-
-```csharp
-protected void HandleCloned(PropertyData res)
-```
-
-#### Parameters
-
-`res` [PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>

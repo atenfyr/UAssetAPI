@@ -62,3 +62,29 @@ FTransform(FQuat rotation, FVector translation, FVector scale3D)
 `translation` [FVector](./uassetapi.unrealtypes.fvector.md)<br>
 
 `scale3D` [FVector](./uassetapi.unrealtypes.fvector.md)<br>
+
+### **FTransform(AssetBinaryReader)**
+
+```csharp
+FTransform(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

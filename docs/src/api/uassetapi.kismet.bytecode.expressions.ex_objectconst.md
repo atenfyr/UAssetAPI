@@ -5,7 +5,7 @@ Namespace: UAssetAPI.Kismet.Bytecode.Expressions
 A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ObjectConst](./uassetapi.kismet.bytecode.eexprtoken.md#ex_objectconst) instruction.
 
 ```csharp
-public class EX_ObjectConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[UAssetAPI.UnrealTypes.FPackageIndex, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]
+public class EX_ObjectConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[UAssetAPI.UnrealTypes.FPackageIndex, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]]
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;FPackageIndex&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_ObjectConst](./uassetapi.kismet.bytecode.expressions.ex_objectconst.md)

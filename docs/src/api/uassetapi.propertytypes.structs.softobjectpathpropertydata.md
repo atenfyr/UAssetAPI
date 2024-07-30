@@ -7,7 +7,7 @@ A struct that contains a string reference to an object, either a top level asset
  This is stored internally as an FName pointing to the top level asset (/package/path.assetname) and an option a string subobject path.
 
 ```csharp
-public class SoftObjectPathPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class SoftObjectPathPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSoftObjectPath&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [SoftObjectPathPropertyData](./uassetapi.propertytypes.structs.softobjectpathpropertydata.md)<br>
@@ -133,18 +133,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

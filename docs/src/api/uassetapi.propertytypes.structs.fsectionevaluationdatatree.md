@@ -13,27 +13,41 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 ### **Tree**
 
 ```csharp
-public TMovieSceneEvaluationTree<List<PropertyData>> Tree;
+public TMovieSceneEvaluationTree<StructPropertyData> Tree;
 ```
 
 ## Constructors
 
-### **FSectionEvaluationDataTree(TMovieSceneEvaluationTree&lt;List&lt;PropertyData&gt;&gt;)**
+### **FSectionEvaluationDataTree(AssetBinaryReader)**
 
 ```csharp
-FSectionEvaluationDataTree(TMovieSceneEvaluationTree<List<PropertyData>> tree)
+FSectionEvaluationDataTree(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
-`tree` [TMovieSceneEvaluationTree&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.structs.tmoviesceneevaluationtree-1.md)<br>
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
 ## Methods
 
-### **Read(AssetBinaryReader)**
+### **Write(AssetBinaryWriter)**
 
 ```csharp
-FSectionEvaluationDataTree Read(AssetBinaryReader reader)
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **&lt;.ctor&gt;g__ReadTree|1_1(AssetBinaryReader)**
+
+```csharp
+StructPropertyData <.ctor>g__ReadTree|1_1(AssetBinaryReader reader)
 ```
 
 #### Parameters
@@ -42,14 +56,16 @@ FSectionEvaluationDataTree Read(AssetBinaryReader reader)
 
 #### Returns
 
-[FSectionEvaluationDataTree](./uassetapi.propertytypes.structs.fsectionevaluationdatatree.md)<br>
+[StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>
 
-### **Write(AssetBinaryWriter)**
+### **&lt;Write&gt;g__WriteTree|2_0(AssetBinaryWriter, StructPropertyData)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+void <Write>g__WriteTree|2_0(AssetBinaryWriter writer, StructPropertyData data)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+`data` [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>

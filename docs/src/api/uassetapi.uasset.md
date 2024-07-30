@@ -97,6 +97,14 @@ Uncertain
 public Byte[] AssetRegistryData;
 ```
 
+### **BulkData**
+
+Any bulk data that is not stored in the export map.
+
+```csharp
+public Byte[] BulkData;
+```
+
 ### **ValorantGarbageData**
 
 Some garbage data that appears to be present in certain games (e.g. Valorant)
@@ -608,11 +616,15 @@ The class path of the SuperStruct of this asset, if it exists.
 `parentClassExportName` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 The export name of the SuperStruct of this asset, if it exists.
 
-### **GetParentClassExportName()**
+### **GetParentClassExportName(FName&)**
 
 ```csharp
-internal FName GetParentClassExportName()
+internal FName GetParentClassExportName(FName& modulePath)
 ```
+
+#### Parameters
+
+`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 
 #### Returns
 

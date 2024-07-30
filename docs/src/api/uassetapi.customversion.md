@@ -5,10 +5,11 @@ Namespace: UAssetAPI
 A custom version. Controls more specific serialization than the main engine object version does.
 
 ```csharp
-public class CustomVersion
+public class CustomVersion : System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [CustomVersion](./uassetapi.customversion.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [CustomVersion](./uassetapi.customversion.md)<br>
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
 
@@ -151,3 +152,13 @@ public CustomVersion SetIsSerialized(bool val)
 #### Returns
 
 [CustomVersion](./uassetapi.customversion.md)<br>
+
+### **Clone()**
+
+```csharp
+public object Clone()
+```
+
+#### Returns
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>

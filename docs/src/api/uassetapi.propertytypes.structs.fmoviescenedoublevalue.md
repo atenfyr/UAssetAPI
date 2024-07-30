@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class FMovieSceneDoubleValue
+public class FMovieSceneDoubleValue : FMovieSceneValue`1
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FMovieSceneDoubleValue](./uassetapi.propertytypes.structs.fmoviescenedoublevalue.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FMovieSceneValue&lt;Double&gt;](./uassetapi.propertytypes.structs.fmoviescenevalue-1.md) → [FMovieSceneDoubleValue](./uassetapi.propertytypes.structs.fmoviescenedoublevalue.md)
 
 ## Fields
 
@@ -42,30 +42,12 @@ public Byte[] padding;
 
 ## Constructors
 
-### **FMovieSceneDoubleValue()**
+### **FMovieSceneDoubleValue(AssetBinaryReader)**
 
 ```csharp
-public FMovieSceneDoubleValue()
-```
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-public void Read(AssetBinaryReader reader)
+public FMovieSceneDoubleValue(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-
-### **Write(AssetBinaryWriter)**
-
-```csharp
-public void Write(AssetBinaryWriter writer)
-```
-
-#### Parameters
-
-`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

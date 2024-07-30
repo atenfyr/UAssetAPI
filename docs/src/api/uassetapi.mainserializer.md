@@ -10,6 +10,14 @@ public static class MainSerializer
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [MainSerializer](./uassetapi.mainserializer.md)
 
+## Fields
+
+### **AdditionalPropertyRegistry**
+
+```csharp
+public static String[] AdditionalPropertyRegistry;
+```
+
 ## Methods
 
 ### **GetNamesOfAssembliesReferencedBy(Assembly)**
@@ -26,12 +34,12 @@ public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly asse
 
 [IEnumerable&lt;String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
-### **GenerateUnversionedHeader(List`1&, FName, UnrealPackage)**
+### **GenerateUnversionedHeader(List`1&, FName, FName, UnrealPackage)**
 
 Generates an unversioned header based on a list of properties, and sorts the list in the correct order to be serialized.
 
 ```csharp
-public static FUnversionedHeader GenerateUnversionedHeader(List`1& data, FName parentName, UnrealPackage asset)
+public static FUnversionedHeader GenerateUnversionedHeader(List`1& data, FName parentName, FName parentModulePath, UnrealPackage asset)
 ```
 
 #### Parameters
@@ -42,6 +50,9 @@ The list of properties to sort and generate an unversioned header from.
 `parentName` [FName](./uassetapi.unrealtypes.fname.md)<br>
 The name of the parent of all the properties.
 
+`parentModulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
+The path to the module that the parent class/struct of this property is contained within.
+
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
 The UnrealPackage which the properties are contained within.
 
@@ -49,12 +60,12 @@ The UnrealPackage which the properties are contained within.
 
 [FUnversionedHeader](./uassetapi.unversioned.funversionedheader.md)<br>
 
-### **TypeToClass(FName, FName, AncestryInfo, FName, UnrealPackage, AssetBinaryReader, Int32, Int32, Boolean, Boolean)**
+### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UnrealPackage, AssetBinaryReader, Int32, Int32, Boolean, Boolean)**
 
 Initializes the correct PropertyData class based off of serialized name, type, etc.
 
 ```csharp
-public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, UnrealPackage asset, AssetBinaryReader reader, int leng, int duplicationIndex, bool includeHeader, bool isZero)
+public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader, int leng, int duplicationIndex, bool includeHeader, bool isZero)
 ```
 
 #### Parameters
@@ -70,6 +81,9 @@ The ancestry of the parent of this property.
 
 `parentName` [FName](./uassetapi.unrealtypes.fname.md)<br>
 The name of the parent class/struct of this property.
+
+`parentModulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
+The path to the module that the parent class/struct of this property is contained within.
 
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
 The UnrealPackage which this property is contained within.
@@ -94,12 +108,12 @@ Is the body of this property empty?
 [PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
 A new PropertyData instance based off of the passed parameters.
 
-### **Read(AssetBinaryReader, AncestryInfo, FName, FUnversionedHeader, Boolean)**
+### **Read(AssetBinaryReader, AncestryInfo, FName, FName, FUnversionedHeader, Boolean)**
 
 Reads a property into memory.
 
 ```csharp
-public static PropertyData Read(AssetBinaryReader reader, AncestryInfo ancestry, FName parentName, FUnversionedHeader header, bool includeHeader)
+public static PropertyData Read(AssetBinaryReader reader, AncestryInfo ancestry, FName parentName, FName parentModulePath, FUnversionedHeader header, bool includeHeader)
 ```
 
 #### Parameters
@@ -112,6 +126,9 @@ The ancestry of the parent of this property.
 
 `parentName` [FName](./uassetapi.unrealtypes.fname.md)<br>
 The name of the parent class/struct of this property.
+
+`parentModulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
+The path to the module that the parent class/struct of this property is contained within.
 
 `header` [FUnversionedHeader](./uassetapi.unversioned.funversionedheader.md)<br>
 The unversioned header to be used when reading this property. Leave null if none exists.

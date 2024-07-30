@@ -13,43 +13,33 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 ### **Field**
 
 ```csharp
-public TMovieSceneEvaluationTree<FMovieSceneTrackIdentifier> Field;
+public TMovieSceneEvaluationTree<uint> Field;
 ```
 
 ## Constructors
 
-### **FMovieSceneTrackFieldData(TMovieSceneEvaluationTree&lt;FMovieSceneTrackIdentifier&gt;)**
+### **FMovieSceneTrackFieldData(AssetBinaryReader)**
 
 ```csharp
-FMovieSceneTrackFieldData(TMovieSceneEvaluationTree<FMovieSceneTrackIdentifier> field)
-```
-
-#### Parameters
-
-`field` [TMovieSceneEvaluationTree&lt;FMovieSceneTrackIdentifier&gt;](./uassetapi.propertytypes.structs.tmoviesceneevaluationtree-1.md)<br>
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-FMovieSceneTrackFieldData Read(AssetBinaryReader reader)
+FMovieSceneTrackFieldData(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-#### Returns
-
-[FMovieSceneTrackFieldData](./uassetapi.propertytypes.structs.fmoviescenetrackfielddata.md)<br>
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+int Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

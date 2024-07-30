@@ -48,23 +48,17 @@ public Byte[] padding;
 
 ## Constructors
 
-### **FMovieSceneTangentData()**
+### **FMovieSceneTangentData(AssetBinaryReader)**
 
 ```csharp
-public FMovieSceneTangentData()
-```
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-public void Read(AssetBinaryReader reader)
+public FMovieSceneTangentData(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 

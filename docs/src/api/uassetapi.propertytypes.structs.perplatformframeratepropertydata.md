@@ -5,10 +5,10 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 [PerPlatformFrameRatePropertyData](./uassetapi.propertytypes.structs.perplatformframeratepropertydata.md) ([FFrameRate](./uassetapi.unrealtypes.fframerate.md)) property with per-platform overrides.
 
 ```csharp
-public class PerPlatformFrameRatePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFrameRate[], UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class PerPlatformFrameRatePropertyData : TPerPlatformPropertyData`1, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FFrameRate[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [PerPlatformFrameRatePropertyData](./uassetapi.propertytypes.structs.perplatformframeratepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FFrameRate[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [TPerPlatformPropertyData&lt;FFrameRate&gt;](./uassetapi.propertytypes.structs.tperplatformpropertydata-1.md) → [PerPlatformFrameRatePropertyData](./uassetapi.propertytypes.structs.perplatformframeratepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -123,18 +123,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

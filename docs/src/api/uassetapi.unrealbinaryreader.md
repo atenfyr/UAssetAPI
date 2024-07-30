@@ -131,6 +131,16 @@ public double ReadDouble()
 
 [Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
 
+### **ReadBooleanInt()**
+
+```csharp
+public bool ReadBooleanInt()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **ReadString()**
 
 ```csharp

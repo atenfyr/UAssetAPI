@@ -27,3 +27,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | NaniteMaterialOverrideUsesEditorOnly | 11 | Enable SkipOnlyEditorOnly style cooking of NaniteOverrideMaterial |
 | SinglePrecisonParticleData | 12 | Store game thread particles data in single precision |
 | PCGPointStructuredSerializer | 13 | UPCGPoint custom serialization |
+| VersionPlusOne | 14 | -----new versions can be added above this line------------------------------------------------- |

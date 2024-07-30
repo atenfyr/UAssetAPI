@@ -13,7 +13,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 ### **SequenceID**
 
 ```csharp
-public FMovieSceneSequenceID SequenceID;
+public uint SequenceID;
 ```
 
 ### **Flags**
@@ -22,19 +22,37 @@ public FMovieSceneSequenceID SequenceID;
 public ESectionEvaluationFlags Flags;
 ```
 
-## Constructors
-
-### **FMovieSceneSubSequenceTreeEntry(FMovieSceneSequenceID, Byte)**
+### **RootToSequenceWarpCounter**
 
 ```csharp
-FMovieSceneSubSequenceTreeEntry(FMovieSceneSequenceID sequenceID, byte flags)
+public StructPropertyData RootToSequenceWarpCounter;
+```
+
+## Constructors
+
+### **FMovieSceneSubSequenceTreeEntry(UInt32, Byte, StructPropertyData)**
+
+```csharp
+FMovieSceneSubSequenceTreeEntry(uint sequenceID, byte flags, StructPropertyData _struct)
 ```
 
 #### Parameters
 
-`sequenceID` [FMovieSceneSequenceID](./uassetapi.propertytypes.structs.fmoviescenesequenceid.md)<br>
+`sequenceID` [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
 `flags` [Byte](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+
+`_struct` [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>
+
+### **FMovieSceneSubSequenceTreeEntry(AssetBinaryReader)**
+
+```csharp
+FMovieSceneSubSequenceTreeEntry(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
 ## Methods
 

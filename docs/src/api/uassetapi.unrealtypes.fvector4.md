@@ -2,7 +2,7 @@
 
 Namespace: UAssetAPI.UnrealTypes
 
-A vector in 4-D space composed of components (X, Y, Z, W) with floating point precision.
+A vector in 4-D space composed of components (X, Y, Z, W) with floating/double point precision.
 
 ```csharp
 public struct FVector4
@@ -80,7 +80,7 @@ public float ZFloat { get; }
 
 ### **W**
 
-The vector's Z-component.
+The vector's W-component.
 
 ```csharp
 public double W { get; set; }

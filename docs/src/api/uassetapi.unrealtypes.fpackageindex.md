@@ -42,6 +42,16 @@ public FPackageIndex(int index)
 
 `index` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
+### **FPackageIndex(AssetBinaryReader)**
+
+```csharp
+public FPackageIndex(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
 ## Methods
 
 ### **FromRawIndex(Int32)**
@@ -193,6 +203,24 @@ The export that this index represents in the the export map.
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
 Thrown when this is not an index into the export map.
 
+### **ToExport&lt;T&gt;(UnrealPackage)**
+
+```csharp
+public T ToExport<T>(UnrealPackage asset)
+```
+
+#### Type Parameters
+
+`T`<br>
+
+#### Parameters
+
+`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+
+#### Returns
+
+T<br>
+
 ### **Equals(Object)**
 
 ```csharp
@@ -226,3 +254,17 @@ public string ToString()
 #### Returns
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

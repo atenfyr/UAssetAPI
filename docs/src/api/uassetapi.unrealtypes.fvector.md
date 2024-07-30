@@ -2,7 +2,7 @@
 
 Namespace: UAssetAPI.UnrealTypes
 
-A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
+A vector in 3-D space composed of components (X, Y, Z) with floating/double point precision.
 
 ```csharp
 public struct FVector
@@ -107,3 +107,29 @@ FVector(float x, float y, float z)
 `y` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
 
 `z` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
+
+### **FVector(AssetBinaryReader)**
+
+```csharp
+FVector(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

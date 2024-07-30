@@ -2,6 +2,8 @@
 
 Namespace: UAssetAPI.UnrealTypes
 
+This struct is serialized using native serialization so any changes to it require a package version bump.
+
 ```csharp
 public struct FFontCharacter
 ```
@@ -63,9 +65,13 @@ FFontCharacter(AssetBinaryReader reader)
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+int Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

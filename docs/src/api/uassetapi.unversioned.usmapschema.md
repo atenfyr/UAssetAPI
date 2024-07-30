@@ -68,10 +68,10 @@ public IReadOnlyDictionary<int, UsmapProperty> Properties { get; }
 
 ## Constructors
 
-### **UsmapSchema(String, String, UInt16, Dictionary&lt;Int32, UsmapProperty&gt;, Boolean)**
+### **UsmapSchema(String, String, UInt16, Dictionary&lt;Int32, UsmapProperty&gt;, Boolean, Boolean)**
 
 ```csharp
-public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool fromAsset)
+public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset)
 ```
 
 #### Parameters
@@ -83,6 +83,8 @@ public UsmapSchema(string name, string superType, ushort propCount, Dictionary<i
 `propCount` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
 
 `props` [Dictionary&lt;Int32, UsmapProperty&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
+
+`isCaseInsensitive` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 `fromAsset` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
@@ -109,3 +111,13 @@ public UsmapProperty GetProperty(string key, int dupIndex)
 #### Returns
 
 [UsmapProperty](./uassetapi.unversioned.usmapproperty.md)<br>
+
+### **ConstructPropertiesMap(Boolean)**
+
+```csharp
+public void ConstructPropertiesMap(bool isCaseInsensitive)
+```
+
+#### Parameters
+
+`isCaseInsensitive` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>

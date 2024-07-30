@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MovieSceneSequenceIDPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FMovieSceneSequenceID, UAssetAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class MovieSceneSequenceIDPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.UInt32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FMovieSceneSequenceID&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneSequenceIDPropertyData](./uassetapi.propertytypes.structs.moviescenesequenceidpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;UInt32&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneSequenceIDPropertyData](./uassetapi.propertytypes.structs.moviescenesequenceidpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -98,12 +98,12 @@ public FString PropertyType { get; }
 The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
 
 ```csharp
-public FMovieSceneSequenceID Value { get; set; }
+public uint Value { get; set; }
 ```
 
 #### Property Value
 
-[FMovieSceneSequenceID](./uassetapi.propertytypes.structs.fmoviescenesequenceid.md)<br>
+[UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
 
 ### **RawValue**
 
@@ -121,18 +121,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

@@ -17,7 +17,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 Barycentric coords and distance along normal for the position of the final vert
 
 ```csharp
-public Vector4PropertyData PositionBaryCoordsAndDist;
+public Vector4fPropertyData PositionBaryCoordsAndDist;
 ```
 
 ### **NormalBaryCoordsAndDist**
@@ -26,7 +26,7 @@ Barycentric coords and distance along normal for the location of the unit normal
  Actual normal = ResolvedNormalPosition - ResolvedPosition
 
 ```csharp
-public Vector4PropertyData NormalBaryCoordsAndDist;
+public Vector4fPropertyData NormalBaryCoordsAndDist;
 ```
 
 ### **TangentBaryCoordsAndDist**
@@ -35,7 +35,7 @@ Barycentric coords and distance along normal for the location of the unit Tangen
  Actual normal = ResolvedNormalPosition - ResolvedPosition
 
 ```csharp
-public Vector4PropertyData TangentBaryCoordsAndDist;
+public Vector4fPropertyData TangentBaryCoordsAndDist;
 ```
 
 ### **SourceMeshVertIndices**
@@ -76,19 +76,19 @@ public FMeshToMeshVertData(AssetBinaryReader reader)
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-### **FMeshToMeshVertData(Vector4PropertyData, Vector4PropertyData, Vector4PropertyData, UInt16[], Single, UInt32)**
+### **FMeshToMeshVertData(Vector4fPropertyData, Vector4fPropertyData, Vector4fPropertyData, UInt16[], Single, UInt32)**
 
 ```csharp
-public FMeshToMeshVertData(Vector4PropertyData positionBaryCoordsAndDist, Vector4PropertyData normalBaryCoordsAndDist, Vector4PropertyData tangentBaryCoordsAndDist, UInt16[] sourceMeshVertIndices, float weight, uint padding)
+public FMeshToMeshVertData(Vector4fPropertyData positionBaryCoordsAndDist, Vector4fPropertyData normalBaryCoordsAndDist, Vector4fPropertyData tangentBaryCoordsAndDist, UInt16[] sourceMeshVertIndices, float weight, uint padding)
 ```
 
 #### Parameters
 
-`positionBaryCoordsAndDist` [Vector4PropertyData](./uassetapi.propertytypes.structs.vector4propertydata.md)<br>
+`positionBaryCoordsAndDist` [Vector4fPropertyData](./uassetapi.propertytypes.structs.vector4fpropertydata.md)<br>
 
-`normalBaryCoordsAndDist` [Vector4PropertyData](./uassetapi.propertytypes.structs.vector4propertydata.md)<br>
+`normalBaryCoordsAndDist` [Vector4fPropertyData](./uassetapi.propertytypes.structs.vector4fpropertydata.md)<br>
 
-`tangentBaryCoordsAndDist` [Vector4PropertyData](./uassetapi.propertytypes.structs.vector4propertydata.md)<br>
+`tangentBaryCoordsAndDist` [Vector4fPropertyData](./uassetapi.propertytypes.structs.vector4fpropertydata.md)<br>
 
 `sourceMeshVertIndices` [UInt16[]](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
 

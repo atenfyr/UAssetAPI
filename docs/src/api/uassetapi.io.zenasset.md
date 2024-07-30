@@ -451,11 +451,15 @@ The class path of the SuperStruct of this asset, if it exists.
 `parentClassExportName` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 The export name of the SuperStruct of this asset, if it exists.
 
-### **GetParentClassExportName()**
+### **GetParentClassExportName(FName&)**
 
 ```csharp
-internal FName GetParentClassExportName()
+internal FName GetParentClassExportName(FName& modulePath)
 ```
+
+#### Parameters
+
+`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 
 #### Returns
 

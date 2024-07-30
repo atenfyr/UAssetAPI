@@ -5,10 +5,10 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 [BoolPropertyData](./uassetapi.propertytypes.objects.boolpropertydata.md) ([Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)) property with per-platform overrides.
 
 ```csharp
-public class PerPlatformBoolPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Boolean[], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class PerPlatformBoolPropertyData : TPerPlatformPropertyData`1, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Boolean[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [PerPlatformBoolPropertyData](./uassetapi.propertytypes.structs.perplatformboolpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Boolean[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [TPerPlatformPropertyData&lt;Boolean&gt;](./uassetapi.propertytypes.structs.tperplatformpropertydata-1.md) → [PerPlatformBoolPropertyData](./uassetapi.propertytypes.structs.perplatformboolpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -123,18 +123,6 @@ Determines whether or not this particular property should be registered in the p
 
 ```csharp
 public bool ShouldBeRegistered { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
 ```
 
 #### Property Value

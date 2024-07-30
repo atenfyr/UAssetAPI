@@ -163,18 +163,6 @@ public bool ShouldBeRegistered { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **AlsoHasRegularStructSerialization**
-
-If HasCustomStructSerialization returns true, whether or not to also continue to read other properties afterwards (as a None-terminated property list).
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **DefaultValue**
 
 The default value of this property, used as a fallback when no value is defined. Null by default.
@@ -188,6 +176,18 @@ public object DefaultValue { get; }
 [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
+
+### **ClothLODDataPropertyData(FName, FName)**
+
+```csharp
+public ClothLODDataPropertyData(FName name, FName forcedType)
+```
+
+#### Parameters
+
+`name` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`forcedType` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 ### **ClothLODDataPropertyData(FName)**
 

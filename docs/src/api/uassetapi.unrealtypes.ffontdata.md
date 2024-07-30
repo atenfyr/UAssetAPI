@@ -48,6 +48,12 @@ public bool bIsCooked;
 
 ## Constructors
 
+### **FFontData()**
+
+```csharp
+public FFontData()
+```
+
 ### **FFontData(AssetBinaryReader)**
 
 ```csharp
@@ -63,9 +69,13 @@ public FFontData(AssetBinaryReader reader)
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-public void Write(AssetBinaryWriter writer)
+public int Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

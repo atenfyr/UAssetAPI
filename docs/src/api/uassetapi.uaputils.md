@@ -341,3 +341,23 @@ public static string FixDirectorySeparatorsForDisk(string path)
 #### Returns
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **SortByDependencies&lt;T&gt;(IEnumerable&lt;T&gt;, IDictionary&lt;T, IList&lt;T&gt;&gt;)**
+
+```csharp
+public static List<T> SortByDependencies<T>(IEnumerable<T> allExports, IDictionary<T, IList<T>> dependencies)
+```
+
+#### Type Parameters
+
+`T`<br>
+
+#### Parameters
+
+`allExports` IEnumerable&lt;T&gt;<br>
+
+`dependencies` IDictionary&lt;T, IList&lt;T&gt;&gt;<br>
+
+#### Returns
+
+List&lt;T&gt;<br>

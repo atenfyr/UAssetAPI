@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MaterialOverrideNanitePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData, System.ICloneable
+public class MaterialOverrideNanitePropertyData : StructPropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [MaterialOverrideNanitePropertyData](./uassetapi.propertytypes.structs.materialoverridenanitepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md) → [MaterialOverrideNanitePropertyData](./uassetapi.propertytypes.structs.materialoverridenanitepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -33,6 +33,24 @@ public FPackageIndex OverrideMaterial;
 
 ```csharp
 public bool bSerializeAsCookedData;
+```
+
+### **StructType**
+
+```csharp
+public FName StructType;
+```
+
+### **SerializeNone**
+
+```csharp
+public bool SerializeNone;
+```
+
+### **StructGUID**
+
+```csharp
+public Guid StructGUID;
 ```
 
 ### **Name**
@@ -107,16 +125,6 @@ public bool HasCustomStructSerialization { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **AlsoHasRegularStructSerialization**
-
-```csharp
-public bool AlsoHasRegularStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **PropertyType**
 
 ```csharp
@@ -126,6 +134,18 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **Value**
+
+The "main value" of this property, if such a concept is applicable to the property in question. Properties may contain other values as well, in which case they will be present as other fields in the child class.
+
+```csharp
+public List<PropertyData> Value { get; set; }
+```
+
+#### Property Value
+
+[List&lt;PropertyData&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 
 ### **RawValue**
 
@@ -162,6 +182,18 @@ public object DefaultValue { get; }
 [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
 ## Constructors
+
+### **MaterialOverrideNanitePropertyData(FName, FName)**
+
+```csharp
+public MaterialOverrideNanitePropertyData(FName name, FName forcedType)
+```
+
+#### Parameters
+
+`name` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`forcedType` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 ### **MaterialOverrideNanitePropertyData(FName)**
 

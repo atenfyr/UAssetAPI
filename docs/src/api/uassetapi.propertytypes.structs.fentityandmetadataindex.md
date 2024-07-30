@@ -36,6 +36,16 @@ FEntityAndMetaDataIndex(int entityIndex, int metaDataIndex)
 
 `metaDataIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
+### **FEntityAndMetaDataIndex(AssetBinaryReader)**
+
+```csharp
+FEntityAndMetaDataIndex(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
 ## Methods
 
 ### **Write(AssetBinaryWriter)**

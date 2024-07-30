@@ -18,38 +18,28 @@ public TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry> Data;
 
 ## Constructors
 
-### **FMovieSceneSubSequenceTree(TMovieSceneEvaluationTree&lt;FMovieSceneSubSequenceTreeEntry&gt;)**
+### **FMovieSceneSubSequenceTree(AssetBinaryReader)**
 
 ```csharp
-FMovieSceneSubSequenceTree(TMovieSceneEvaluationTree<FMovieSceneSubSequenceTreeEntry> data)
-```
-
-#### Parameters
-
-`data` [TMovieSceneEvaluationTree&lt;FMovieSceneSubSequenceTreeEntry&gt;](./uassetapi.propertytypes.structs.tmoviesceneevaluationtree-1.md)<br>
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-```csharp
-FMovieSceneSubSequenceTree Read(AssetBinaryReader reader)
+FMovieSceneSubSequenceTree(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-#### Returns
-
-[FMovieSceneSubSequenceTree](./uassetapi.propertytypes.structs.fmoviescenesubsequencetree.md)<br>
+## Methods
 
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
-void Write(AssetBinaryWriter writer)
+int Write(AssetBinaryWriter writer)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

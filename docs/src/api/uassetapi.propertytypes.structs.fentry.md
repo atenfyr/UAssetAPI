@@ -50,6 +50,16 @@ FEntry(int startIndex, int size, int capacity)
 
 `capacity` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
+### **FEntry(AssetBinaryReader)**
+
+```csharp
+FEntry(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
 ## Methods
 
 ### **Write(AssetBinaryWriter)**

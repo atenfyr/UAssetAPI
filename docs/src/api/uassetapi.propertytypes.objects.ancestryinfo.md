@@ -59,10 +59,10 @@ public AncestryInfo CloneWithoutParent()
 
 [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
-### **Initialize(AncestryInfo, FName)**
+### **Initialize(AncestryInfo, FName, FName)**
 
 ```csharp
-public void Initialize(AncestryInfo ancestors, FName dad)
+public void Initialize(AncestryInfo ancestors, FName dad, FName modulePath)
 ```
 
 #### Parameters
@@ -71,12 +71,16 @@ public void Initialize(AncestryInfo ancestors, FName dad)
 
 `dad` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **SetAsParent(FName)**
+`modulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+### **SetAsParent(FName, FName)**
 
 ```csharp
-public void SetAsParent(FName dad)
+public void SetAsParent(FName dad, FName modulePath)
 ```
 
 #### Parameters
 
 `dad` [FName](./uassetapi.unrealtypes.fname.md)<br>
+
+`modulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>

@@ -29,3 +29,43 @@ Linear array of allocated entry contents. Once allocated, indices are never inva
 ```csharp
 public T[] Items;
 ```
+
+## Constructors
+
+### **TEvaluationTreeEntryContainer(FEntry[], T[])**
+
+```csharp
+TEvaluationTreeEntryContainer(FEntry[] entries, T[] items)
+```
+
+#### Parameters
+
+`entries` [FEntry[]](./uassetapi.propertytypes.structs.fentry.md)<br>
+
+`items` T[]<br>
+
+### **TEvaluationTreeEntryContainer(AssetBinaryReader, Func&lt;T&gt;)**
+
+```csharp
+TEvaluationTreeEntryContainer(AssetBinaryReader reader, Func<T> valueReader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+`valueReader` Func&lt;T&gt;<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter, Action&lt;T&gt;)**
+
+```csharp
+void Write(AssetBinaryWriter writer, Action<T> valueWriter)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+`valueWriter` Action&lt;T&gt;<br>

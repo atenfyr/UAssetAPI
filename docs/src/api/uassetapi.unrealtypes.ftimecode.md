@@ -3,10 +3,10 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FTimecode
+public struct FTimecode
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FTimecode](./uassetapi.unrealtypes.ftimecode.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FTimecode](./uassetapi.unrealtypes.ftimecode.md)
 
 ## Fields
 
@@ -45,13 +45,13 @@ public bool bDropFrameFormat;
 ### **FTimecode()**
 
 ```csharp
-public FTimecode()
+FTimecode()
 ```
 
 ### **FTimecode(Int32, Int32, Int32, Int32, Boolean)**
 
 ```csharp
-public FTimecode(int hours, int minutes, int seconds, int frames, bool bDropFrameFormat)
+FTimecode(int hours, int minutes, int seconds, int frames, bool bDropFrameFormat)
 ```
 
 #### Parameters
@@ -65,3 +65,25 @@ public FTimecode(int hours, int minutes, int seconds, int frames, bool bDropFram
 `frames` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 `bDropFrameFormat` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **FTimecode(AssetBinaryReader)**
+
+```csharp
+FTimecode(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+void Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

@@ -41,3 +41,25 @@ FFrameTime(FFrameNumber frameNumber, float subFrame)
 `frameNumber` [FFrameNumber](./uassetapi.unrealtypes.fframenumber.md)<br>
 
 `subFrame` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
+
+### **FFrameTime(AssetBinaryReader)**
+
+```csharp
+FFrameTime(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+void Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>

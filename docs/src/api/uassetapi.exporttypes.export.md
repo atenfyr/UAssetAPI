@@ -481,24 +481,26 @@ public FName GetExportClassType()
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **GetClassTypeForAncestry(UnrealPackage)**
+### **GetClassTypeForAncestry(UnrealPackage, FName&)**
 
 ```csharp
-public FName GetClassTypeForAncestry(UnrealPackage asset)
+public FName GetClassTypeForAncestry(UnrealPackage asset, FName& modulePath)
 ```
 
 #### Parameters
 
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
 
+`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
+
 #### Returns
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **GetClassTypeForAncestry(FPackageIndex, UnrealPackage)**
+### **GetClassTypeForAncestry(FPackageIndex, UnrealPackage, FName&)**
 
 ```csharp
-public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset)
+public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset, FName& modulePath)
 ```
 
 #### Parameters
@@ -506,6 +508,8 @@ public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPack
 `classIndex` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
 `asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+
+`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 
 #### Returns
 
