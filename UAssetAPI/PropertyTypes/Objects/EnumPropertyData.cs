@@ -160,7 +160,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (d[1] != "null" && d[1] != null)
             {
-                Value = asset.HasUnversionedProperties ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
+                Value = (asset.HasUnversionedProperties && (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "IntProperty")) ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
             }
             else
             {
