@@ -190,6 +190,15 @@ namespace UAssetAPI.PropertyTypes.Objects
         }
 
         /// <summary>
+        /// Initialize this property when serialized as zero.
+        /// </summary>
+        /// <param name="reader">The BinaryReader to read from.</param>
+        public virtual void InitializeZero(AssetBinaryReader reader)
+        {
+
+        }
+
+        /// <summary>
         /// Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.
         /// </summary>
         /// <param name="asset">The asset to test serialization within.</param>

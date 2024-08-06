@@ -21,7 +21,6 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public EnumPropertyData(FName name) : base(name)
         {
-
         }
 
         public EnumPropertyData()
@@ -140,6 +139,35 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
             writer.Write(Value);
             return sizeof(int) * 2;
+        }
+
+        public override void InitializeZero(AssetBinaryReader reader)
+        {
+            if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
+            {
+                EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
+                InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
+            }
+
+            // fill in data for enumIndice = 0 to provide clarity for end-user
+            if (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "IntProperty")
+            {
+                long enumIndice = 0;
+                var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
+                if (enumIndice == byte.MaxValue)
+                {
+                    Value = null;
+                }
+                else if (enumIndice < listOfValues.Count)
+                {
+                    Value = FName.DefineDummy(reader.Asset, listOfValues[enumIndice]);
+                }
+                else
+                {
+                    // fallback
+                    Value = FName.DefineDummy(reader.Asset, InvalidEnumIndexFallbackPrefix + enumIndice.ToString());
+                }
+            }
         }
 
         public override string ToString()

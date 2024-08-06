@@ -363,6 +363,10 @@ namespace UAssetAPI
                 }
                 if (data.Offset == 0) data.Offset = startingOffset; // fallback
             }
+            else if (reader != null && isZero)
+            {
+                data.InitializeZero(reader);
+            }
 
             return data;
         }
