@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -89,6 +90,7 @@ namespace UAssetAPI.FieldTypes
             return (T)RawValue;
         }
 
+        [JsonIgnore]
         public IDictionary<string, EPropertyType> UsmapPropertyTypeOverrides = new Dictionary<string, EPropertyType>()
         {
             { "MulticastInlineDelegateProperty", EPropertyType.MulticastDelegateProperty },
