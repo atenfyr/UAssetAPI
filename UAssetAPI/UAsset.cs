@@ -480,9 +480,11 @@ namespace UAssetAPI
         public FString LocalizationId;
 
         /// <summary>Number of names used in this package</summary>
+        [JsonProperty]
         internal int SoftObjectPathsCount = 0;
 
         /// <summary>Location into the file on disk for the name data</summary>
+        [JsonProperty]
         internal int SoftObjectPathsOffset = 0;
 
         /// <summary>Number of gatherable text data items in this package</summary>
