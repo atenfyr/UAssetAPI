@@ -646,16 +646,17 @@ namespace UAssetAPI
             NameCount = reader.ReadInt32();
             NameOffset = reader.ReadInt32();
 
-            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
-            {
-                LocalizationId = reader.ReadFString();
-            }
-
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 SoftObjectPathsCount = reader.ReadInt32();
                 SoftObjectPathsOffset = reader.ReadInt32();
             }
+
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                LocalizationId = reader.ReadFString();
+            }
+
             if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {
                 GatherableTextDataCount = reader.ReadInt32();
