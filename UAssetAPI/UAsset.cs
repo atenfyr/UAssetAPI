@@ -754,7 +754,7 @@ namespace UAssetAPI
 
             AssetRegistryDataOffset = reader.ReadInt32();
             BulkDataStartOffset = reader.ReadInt64();
-            if (BulkDataStartOffset > 1e14)
+            if (BulkDataStartOffset < 1e14 || BulkDataStartOffset > 1e14)
             {
                 // probably Sea of Thieves, etc.
                 reader.BaseStream.Position -= sizeof(long);
