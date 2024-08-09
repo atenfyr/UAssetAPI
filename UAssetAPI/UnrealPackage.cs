@@ -676,7 +676,17 @@ namespace UAssetAPI
 #pragma warning disable CS0168 // Variable is declared but never used
             try
             {
-                long nextStarting = (Exports.Count - 1) > i ? Exports[i + 1].SerialOffset : ((UAsset)reader.Asset).BulkDataStartOffset;
+                long nextStarting = -1;
+                if ((Exports.Count - 1) > i)
+                {
+                    nextStarting = Exports[i + 1].SerialOffset;
+                }
+                else
+                {
+                    var uas = (UAsset)reader.Asset;
+                    nextStarting = uas.BulkDataStartOffset;
+                    if (uas.SeaOfThievesGarbageData != null) nextStarting -= uas.SeaOfThievesGarbageData.Length;
+                }
 
                 FName exportClassTypeName = Exports[i].GetExportClassType();
                 string exportClassType = exportClassTypeName.Value.Value;

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -422,8 +421,20 @@ namespace UAssetAPI
 
         /// <summary>
         /// Some garbage data that appears to be present in certain games (e.g. Sea of Thieves)
+        /// null = not present
+        /// empty array = present, but serialize as offset = 0, length = 0
         /// </summary>
-        public byte[] SeaOfThievesGarbageData;
+        public byte[] SeaOfThievesGarbageData = null;
+
+        /// <summary>
+        /// Sea of Thieves garbage data offset
+        /// </summary>
+        internal int SeaOfThievesGarbageDataOffset = -1;
+
+        /// <summary>
+        /// Sea of Thieves garbage data length
+        /// </summary>
+        internal short SeaOfThievesGarbageDataLength = -1;
 
         /// <summary>
         /// Data about previous versions of this package.
@@ -758,7 +769,8 @@ namespace UAssetAPI
             {
                 // probably Sea of Thieves, etc.
                 reader.BaseStream.Position -= sizeof(long);
-                SeaOfThievesGarbageData = reader.ReadBytes(6);
+                SeaOfThievesGarbageDataOffset = reader.ReadInt32();
+                SeaOfThievesGarbageDataLength = reader.ReadInt16();
                 BulkDataStartOffset = reader.ReadInt64();
             }
 
@@ -962,6 +974,17 @@ namespace UAssetAPI
             else
             {
                 doWeHaveAssetRegistryData = false;
+            }
+
+            // SeaOfThievesGarbageData
+            if (SeaOfThievesGarbageDataOffset > 0 && SeaOfThievesGarbageDataLength > 0)
+            {
+                reader.BaseStream.Seek(SeaOfThievesGarbageDataOffset, SeekOrigin.Begin);
+                SeaOfThievesGarbageData = reader.ReadBytes(SeaOfThievesGarbageDataLength);
+            }
+            else if (SeaOfThievesGarbageDataOffset == 0 || SeaOfThievesGarbageDataLength == 0)
+            {
+                SeaOfThievesGarbageData = Array.Empty<byte>();
             }
 
             BulkData = [];
@@ -1276,7 +1299,19 @@ namespace UAssetAPI
             }
 
             writer.Write(AssetRegistryDataOffset);
-            if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
+            if (SeaOfThievesGarbageData != null)
+            {
+                if (SeaOfThievesGarbageData.Length == 0)
+                {
+                    writer.Write((int)0);
+                    writer.Write((short)0);
+                }
+                else
+                {
+                    writer.Write((int)(BulkDataStartOffset - SeaOfThievesGarbageData.Length));
+                    writer.Write((short)SeaOfThievesGarbageData.Length);
+                }
+            }
             writer.Write(BulkDataStartOffset);
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
@@ -1620,7 +1655,10 @@ namespace UAssetAPI
                         writer.Write(us.Extras);
                     }
                 }
-                
+
+                // SeaOfThievesGarbageData
+                if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
+
                 this.BulkDataStartOffset = (int)writer.BaseStream.Position;
                 writer.Write(BulkData);
 
@@ -1631,11 +1669,20 @@ namespace UAssetAPI
                     for (int i = 0; i < this.Exports.Count; i++)
                     {
                         Export us = this.Exports[i];
-                        long nextLoc = this.BulkDataStartOffset;
-                        if ((this.Exports.Count - 1) > i) nextLoc = categoryStarts[i + 1];
+
+                        long nextStarting = -1;
+                        if ((Exports.Count - 1) > i)
+                        {
+                            nextStarting = categoryStarts[i + 1];
+                        }
+                        else
+                        {
+                            nextStarting = this.BulkDataStartOffset;
+                            if (this.SeaOfThievesGarbageData != null) nextStarting -= this.SeaOfThievesGarbageData.Length;
+                        }
 
                         us.SerialOffset = categoryStarts[i];
-                        us.SerialSize = nextLoc - categoryStarts[i];
+                        us.SerialSize = nextStarting - categoryStarts[i];
 
                         us.WriteExportMapEntry(writer);
                     }
