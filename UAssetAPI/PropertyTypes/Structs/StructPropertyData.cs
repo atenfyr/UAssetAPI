@@ -95,7 +95,6 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (structTypeVal == "MovieSceneFloatValue" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
         if (structTypeVal == "MovieSceneTangentData" && reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannel) hasCustomStructSerialization = false;
         if (structTypeVal == "FontData" && reader.Asset.GetCustomVersion<FEditorObjectVersion>() < FEditorObjectVersion.AddedFontFaceAssets) hasCustomStructSerialization = false;
-        if (structTypeVal == "P2Attribute") throw new NotImplementedException("P2Attribute struct type not currently implemented"); // throw here so we become a RawStructPropertyData
 
         if (leng1 == 0)
         {
