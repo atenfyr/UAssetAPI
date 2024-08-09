@@ -341,16 +341,18 @@ namespace UAssetAPI
             data.DuplicationIndex = duplicationIndex;
             if (reader != null && !isZero)
             {
+                long posBefore = reader.BaseStream.Position;
                 try
                 {
                     data.Read(reader, includeHeader, leng);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // if asset is unversioned, bubble the error up to make the whole export fail
                     // because unversioned headers aren't properly reconstructed currently
                     if (data is StructPropertyData && !reader.Asset.HasUnversionedProperties)
                     {
+                        reader.BaseStream.Position = posBefore;
                         data = new RawStructPropertyData(name);
                         data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
                         data.DuplicationIndex = duplicationIndex;
@@ -358,7 +360,7 @@ namespace UAssetAPI
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
                 if (data.Offset == 0) data.Offset = startingOffset; // fallback

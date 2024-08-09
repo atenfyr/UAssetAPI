@@ -1,10 +1,19 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+﻿using Newtonsoft.Json;
+using System;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
 
 public class RawStructPropertyData : PropertyData<byte[]>
 {
+    [JsonProperty]
+    public FName StructType = null;
+    [JsonProperty]
+    public bool SerializeNone = true;
+    [JsonProperty]
+    public Guid StructGUID = Guid.Empty; // usually set to 0
+
     public RawStructPropertyData(FName name) : base(name) { }
 
     public RawStructPropertyData() { }
@@ -15,8 +24,10 @@ public class RawStructPropertyData : PropertyData<byte[]>
 
     public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        if (includeHeader)
+        if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
+            StructType = reader.ReadFName();
+            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
             PropertyGuid = reader.ReadPropertyGuid();
         }
 
@@ -25,8 +36,10 @@ public class RawStructPropertyData : PropertyData<byte[]>
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        if (includeHeader)
+        if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
+            writer.Write(StructType);
+            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
             writer.WritePropertyGuid(PropertyGuid);
         }
 
