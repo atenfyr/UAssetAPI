@@ -421,6 +421,11 @@ namespace UAssetAPI
         public byte[] ValorantGarbageData;
 
         /// <summary>
+        /// Some garbage data that appears to be present in certain games (e.g. Sea of Thieves)
+        /// </summary>
+        public byte[] SeaOfThievesGarbageData;
+
+        /// <summary>
         /// Data about previous versions of this package.
         /// </summary>
         public List<FGenerationInfo> Generations;
@@ -749,6 +754,13 @@ namespace UAssetAPI
 
             AssetRegistryDataOffset = reader.ReadInt32();
             BulkDataStartOffset = reader.ReadInt64();
+            if (BulkDataStartOffset > 1e14)
+            {
+                // probably Sea of Thieves, etc.
+                reader.BaseStream.Position -= sizeof(long);
+                SeaOfThievesGarbageData = reader.ReadBytes(6);
+                BulkDataStartOffset = reader.ReadInt64();
+            }
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
             {
@@ -1264,6 +1276,7 @@ namespace UAssetAPI
             }
 
             writer.Write(AssetRegistryDataOffset);
+            if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
             writer.Write(BulkDataStartOffset);
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
