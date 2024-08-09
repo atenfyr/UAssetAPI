@@ -765,7 +765,7 @@ namespace UAssetAPI
 
             AssetRegistryDataOffset = reader.ReadInt32();
             BulkDataStartOffset = reader.ReadInt64();
-            if (BulkDataStartOffset < 1e14 || BulkDataStartOffset > 1e14)
+            if (BulkDataStartOffset < -1e14 || BulkDataStartOffset > 1e14)
             {
                 // probably Sea of Thieves, etc.
                 reader.BaseStream.Position -= sizeof(long);
@@ -985,6 +985,10 @@ namespace UAssetAPI
             else if (SeaOfThievesGarbageDataOffset == 0 || SeaOfThievesGarbageDataLength == 0)
             {
                 SeaOfThievesGarbageData = Array.Empty<byte>();
+            }
+            else
+            {
+                SeaOfThievesGarbageData = null;
             }
 
             BulkData = [];
