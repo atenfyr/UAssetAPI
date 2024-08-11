@@ -1785,10 +1785,10 @@ namespace UAssetAPI
         /// Deserializes an object from JSON.
         /// </summary>
         /// <param name="json">A serialized JSON string to parse.</param>
-        public object DeserializeJsonObject(string json)
+        public T DeserializeJsonObject<T>(string json)
         {
             Dictionary<FName, string> toBeFilled = new Dictionary<FName, string>();
-            object res = JsonConvert.DeserializeObject(json, new JsonSerializerSettings
+            T res = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 NullValueHandling = NullValueHandling.Include,
