@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -93,6 +94,12 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
+                if (writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapEnumData enumDat1))
+                {
+                    EnumType = FName.DefineDummy(writer.Asset, enumDat1.Name);
+                    InnerType = FName.DefineDummy(writer.Asset, enumDat1.InnerType.Type.ToString());
+                }
+
                 if (InnerType?.Value?.Value == "ByteProperty" || InnerType?.Value?.Value == "IntProperty")
                 {
                     long enumIndice = 0;
