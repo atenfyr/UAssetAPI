@@ -30,6 +30,73 @@ namespace UAssetAPI.ExportTypes
     /// </summary>
     public class DataTableExport : NormalExport
     {
+        /// <summary>
+        /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+        /// </summary>
+        /// <param name="key">The key associated with the value to get or set.</param>
+        public override PropertyData this[FName key]
+        {
+            get
+            {
+                for (int i = 0; i < Data.Count; i++)
+                {
+                    if (Data[i].Name == key) return Data[i];
+                }
+                for (int i = 0; i < Table.Data.Count; i++)
+                {
+                    if (Table.Data[i].Name == key) return Table.Data[i];
+                }
+                return null;
+            }
+            set
+            {
+                value.Name = key;
+
+                for (int i = 0; i < Data.Count; i++)
+                {
+                    if (Data[i].Name == key)
+                    {
+                        Data[i] = value;
+                        return;
+                    }
+                }
+
+                if (value is StructPropertyData)
+                {
+                    for (int i = 0; i < Table.Data.Count; i++)
+                    {
+                        if (Table.Data[i].Name == key)
+                        {
+                            Table.Data[i] = (StructPropertyData)value;
+                            return;
+                        }
+                    }
+
+                    Table.Data.Add((StructPropertyData)value);
+                }
+                else
+                {
+                    Data.Add(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+        /// </summary>
+        /// <param name="key">The key associated with the value to get or set.</param>
+        public override PropertyData this[string key]
+        {
+            get
+            {
+                return this[FName.FromString(Asset, key)];
+            }
+            set
+            {
+                this[FName.FromString(Asset, key)] = value;
+            }
+        }
+
         public UDataTable Table;
 
         public DataTableExport(Export super) : base(super)

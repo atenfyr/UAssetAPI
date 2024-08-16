@@ -220,17 +220,24 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             MapPropertyData cloningProperty = (MapPropertyData)res;
 
-            var newDict = new TMap<PropertyData, PropertyData>();
-            foreach (var entry in this.Value)
+            if (this.Value != null)
             {
-                newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
+                var newDict = new TMap<PropertyData, PropertyData>();
+                foreach (var entry in this.Value)
+                {
+                    newDict[(PropertyData)entry.Key.Clone()] = (PropertyData)entry.Value.Clone();
+                }
+                cloningProperty.Value = newDict;
             }
-            cloningProperty.Value = newDict;
+            else
+            {
+                cloningProperty.Value = null;
+            }
 
-            cloningProperty.KeysToRemove = (PropertyData[])this.KeysToRemove.Clone();
+            cloningProperty.KeysToRemove = (PropertyData[])this.KeysToRemove?.Clone();
 
-            cloningProperty.KeyType = (FName)this.KeyType.Clone();
-            cloningProperty.ValueType = (FName)this.ValueType.Clone();
+            cloningProperty.KeyType = (FName)this.KeyType?.Clone();
+            cloningProperty.ValueType = (FName)this.ValueType?.Clone();
         }
     }
 }

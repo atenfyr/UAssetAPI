@@ -207,6 +207,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             EnumPropertyData cloningProperty = (EnumPropertyData)res;
             cloningProperty.EnumType = (FName)this.EnumType?.Clone();
+            cloningProperty.InnerType = (FName)this.InnerType?.Clone();
         }
     }
 }

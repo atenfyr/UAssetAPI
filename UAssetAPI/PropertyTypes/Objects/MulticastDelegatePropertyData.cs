@@ -72,13 +72,20 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             MulticastDelegatePropertyData cloningProperty = (MulticastDelegatePropertyData)res;
 
-            FDelegate[] newData = new FDelegate[Value.Length];
-            for (int i = 0; i < Value.Length; i++)
+            if (Value != null)
             {
-                newData[i] = new FDelegate(Value[i].Object, (FName)Value[i].Delegate.Clone());
-            }
+                FDelegate[] newData = new FDelegate[Value.Length];
+                for (int i = 0; i < Value.Length; i++)
+                {
+                    newData[i] = new FDelegate(Value[i].Object, (FName)Value[i].Delegate.Clone());
+                }
 
-            cloningProperty.Value = newData;
+                cloningProperty.Value = newData;
+            }
+            else
+            {
+                cloningProperty.Value = null;
+            }
         }
     }
 

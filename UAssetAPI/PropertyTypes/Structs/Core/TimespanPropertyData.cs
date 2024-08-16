@@ -59,6 +59,6 @@ public class TimespanPropertyData : PropertyData<TimeSpan>
     protected override void HandleCloned(PropertyData res)
     {
         TimespanPropertyData cloningProperty = (TimespanPropertyData)res;
-        cloningProperty.Value = new TimeSpan(cloningProperty.Value.Ticks);
+        cloningProperty.Value = new TimeSpan(this.Value.Ticks);
     }
 }

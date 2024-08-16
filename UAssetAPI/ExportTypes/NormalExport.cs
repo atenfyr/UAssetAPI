@@ -17,7 +17,7 @@ namespace UAssetAPI.ExportTypes
         /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
-        public PropertyData this[FName key]
+        public virtual PropertyData this[FName key]
         {
             get
             {
@@ -29,15 +29,18 @@ namespace UAssetAPI.ExportTypes
             }
             set
             {
+                value.Name = key;
+
                 for (int i = 0; i < Data.Count; i++)
                 {
                     if (Data[i].Name == key)
                     {
                         Data[i] = value;
-                        Data[i].Name = key;
-                        break;
+                        return;
                     }
                 }
+
+                Data.Add(value);
             }
         }
 
@@ -45,7 +48,7 @@ namespace UAssetAPI.ExportTypes
         /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
         /// </summary>
         /// <param name="key">The key associated with the value to get or set.</param>
-        public PropertyData this[string key]
+        public virtual PropertyData this[string key]
         {
             get
             {

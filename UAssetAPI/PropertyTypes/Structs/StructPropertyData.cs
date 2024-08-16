@@ -17,6 +17,56 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     [JsonProperty]
     public Guid StructGUID = Guid.Empty; // usually set to 0
 
+    /// <summary>
+    /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+    /// </summary>
+    /// <param name="key">The key associated with the value to get or set.</param>
+    public virtual PropertyData this[FName key]
+    {
+        get
+        {
+            if (Value == null) return null;
+
+            for (int i = 0; i < Value.Count; i++)
+            {
+                if (Value[i].Name == key) return Value[i];
+            }
+            return null;
+        }
+        set
+        {
+            if (Value == null) Value = [];
+            value.Name = key;
+
+            for (int i = 0; i < Value.Count; i++)
+            {
+                if (Value[i].Name == key)
+                {
+                    Value[i] = value;
+                    return;
+                }
+            }
+
+            Value.Add(value);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+    /// </summary>
+    /// <param name="key">The key associated with the value to get or set.</param>
+    public virtual PropertyData this[string key]
+    {
+        get
+        {
+            return this[FName.DefineDummy(null, key)];
+        }
+        set
+        {
+            this[FName.DefineDummy(null, key)] = value;
+        }
+    }
+
     public StructPropertyData(FName name) : base(name)
     {
         Value = [];
@@ -214,14 +264,21 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     protected override void HandleCloned(PropertyData res)
     {
         StructPropertyData cloningProperty = (StructPropertyData)res;
-        cloningProperty.StructType = (FName)this.StructType.Clone();
+        cloningProperty.StructType = (FName)this.StructType?.Clone();
         cloningProperty.StructGUID = new Guid(this.StructGUID.ToByteArray());
 
-        List<PropertyData> newData = new List<PropertyData>(this.Value.Count);
-        for (int i = 0; i < this.Value.Count; i++)
+        if (this.Value != null)
         {
-            newData.Add((PropertyData)this.Value[i].Clone());
+            List<PropertyData> newData = new List<PropertyData>(this.Value.Count);
+            for (int i = 0; i < this.Value.Count; i++)
+            {
+                newData.Add((PropertyData)this.Value[i].Clone());
+            }
+            cloningProperty.Value = newData;
         }
-        cloningProperty.Value = newData;
+        else
+        {
+            cloningProperty.Value = null;
+        }
     }
 }

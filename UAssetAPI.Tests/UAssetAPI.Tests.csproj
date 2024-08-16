@@ -275,6 +275,15 @@
     <None Update="TestAssets\TestUE5_3\Engine\OpenWorld.umap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_3\RON\AmmoDataTable.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\RON\AmmoDataTable.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_3\RON\ReadyOrNot.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

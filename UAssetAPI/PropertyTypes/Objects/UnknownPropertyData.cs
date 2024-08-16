@@ -62,7 +62,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             UnknownPropertyData cloningProperty = (UnknownPropertyData)res;
 
-            cloningProperty.SerializingPropertyType = (FString)SerializingPropertyType.Clone();
+            cloningProperty.SerializingPropertyType = (FString)SerializingPropertyType?.Clone();
         }
     }
 }

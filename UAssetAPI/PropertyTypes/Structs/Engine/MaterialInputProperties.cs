@@ -98,9 +98,9 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     protected override void HandleCloned(PropertyData res)
     {
         MaterialInputPropertyData<T> cloningProperty = (MaterialInputPropertyData<T>)res;
-        cloningProperty.InputName = (FName)this.InputName.Clone();
-        cloningProperty.InputNameOld = (FString)this.InputNameOld.Clone();
-        cloningProperty.ExpressionName = (FName)this.ExpressionName.Clone();
+        cloningProperty.InputName = (FName)this.InputName?.Clone();
+        cloningProperty.InputNameOld = (FString)this.InputNameOld?.Clone();
+        cloningProperty.ExpressionName = (FName)this.ExpressionName?.Clone();
     }
 }
 

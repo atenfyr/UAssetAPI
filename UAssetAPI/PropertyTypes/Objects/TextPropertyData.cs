@@ -456,8 +456,8 @@ public class TextPropertyData : PropertyData<FString>
     {
         TextPropertyData cloningProperty = (TextPropertyData)res;
 
-        cloningProperty.TableId = (FName)TableId.Clone();
-        cloningProperty.Namespace = (FString)Namespace.Clone();
-        cloningProperty.Namespace = (FString)CultureInvariantString.Clone();
+        cloningProperty.TableId = (FName)TableId?.Clone();
+        cloningProperty.Namespace = (FString)Namespace?.Clone();
+        cloningProperty.CultureInvariantString = (FString)CultureInvariantString?.Clone();
     }
 }

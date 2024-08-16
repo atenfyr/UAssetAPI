@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
@@ -358,6 +357,51 @@ namespace UAssetAPI
         public AssetBinaryReader PathToReader(string p)
         {
             return new AssetBinaryReader(PathToStream(p), this);
+        }
+
+        /// <summary>
+        /// Gets or sets the export associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+        /// </summary>
+        /// <param name="key">The key associated with the export to get or set.</param>
+        public virtual Export this[FName key]
+        {
+            get
+            {
+                for (int i = 0; i < Exports.Count; i++)
+                {
+                    if (Exports[i].ObjectName == key) return Exports[i];
+                }
+                return null;
+            }
+            set
+            {
+                for (int i = 0; i < Exports.Count; i++)
+                {
+                    if (Exports[i].ObjectName == key)
+                    {
+                        Exports[i] = value;
+                        return;
+                    }
+                }
+
+                Exports.Add(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the export associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+        /// </summary>
+        /// <param name="key">The key associated with the export to get or set.</param>
+        public virtual Export this[string key]
+        {
+            get
+            {
+                return this[FName.FromString(this, key)];
+            }
+            set
+            {
+                this[FName.FromString(this, key)] = value;
+            }
         }
 
         /// <summary>

@@ -82,11 +82,18 @@ public class SetPropertyData : ArrayPropertyData
         base.HandleCloned(res);
         SetPropertyData cloningProperty = (SetPropertyData)res;
 
-        PropertyData[] newData = new PropertyData[this.ElementsToRemove.Length];
-        for (int i = 0; i < this.Value.Length; i++)
+        if (this.ElementsToRemove != null)
         {
-            newData[i] = (PropertyData)this.Value[i].Clone();
+            PropertyData[] newData = new PropertyData[this.ElementsToRemove.Length];
+            for (int i = 0; i < this.Value.Length; i++)
+            {
+                newData[i] = (PropertyData)this.Value[i].Clone();
+            }
+            cloningProperty.ElementsToRemove = newData;
         }
-        cloningProperty.ElementsToRemove = newData;
+        else
+        {
+            cloningProperty.ElementsToRemove = null;
+        }
     }
 }

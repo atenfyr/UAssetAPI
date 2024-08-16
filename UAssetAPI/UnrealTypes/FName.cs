@@ -216,6 +216,7 @@ namespace UAssetAPI.UnrealTypes
         {
             if (!(obj is FName name)) return false;
             if (this is null || obj is null) return this is null && obj is null;
+            if (this.Asset != name.Asset) return this.Value.ToString().Equals(name.Value.ToString()); // if assets aren't the same, compare string values
             return (this.Value == name.Value || this.Value.Value == name.Value.Value) && this.Number == name.Number;
         }
 
@@ -238,6 +239,7 @@ namespace UAssetAPI.UnrealTypes
 
         public object Clone()
         {
+            if (this.IsDummy) return DefineDummy(Asset, (FString)Value.Clone(), Number);
             return new FName(Asset, (FString)Value.Clone(), Number);
         }
 

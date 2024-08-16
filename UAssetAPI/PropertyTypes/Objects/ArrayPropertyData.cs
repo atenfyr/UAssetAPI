@@ -24,6 +24,59 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         return Value.Length == 0;
     }
 
+    /// <summary>
+    /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+    /// </summary>
+    /// <param name="key">The key associated with the value to get or set.</param>
+    public virtual PropertyData this[FName key]
+    {
+        get
+        {
+            if (Value == null) return null;
+
+            for (int i = 0; i < Value.Length; i++)
+            {
+                if (Value[i].Name == key) return Value[i];
+            }
+            return null;
+        }
+        set
+        {
+            if (Value == null) Value = [];
+            value.Name = key;
+
+            for (int i = 0; i < Value.Length; i++)
+            {
+                if (Value[i].Name == key)
+                {
+                    Value[i] = value;
+                    return;
+                }
+            }
+
+            var newValue = new PropertyData[Value.Length + 1];
+            Array.Copy(Value, newValue, Value.Length);
+            newValue[newValue.Length - 1] = value;
+            Value = newValue;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
+    /// </summary>
+    /// <param name="key">The key associated with the value to get or set.</param>
+    public virtual PropertyData this[string key]
+    {
+        get
+        {
+            return this[FName.DefineDummy(null, key)];
+        }
+        set
+        {
+            this[FName.DefineDummy(null, key)] = value;
+        }
+    }
+
     public ArrayPropertyData(FName name) : base(name)
     {
         Value = [];

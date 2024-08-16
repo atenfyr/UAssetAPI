@@ -59,6 +59,6 @@ public class DateTimePropertyData : PropertyData<DateTime>
     protected override void HandleCloned(PropertyData res)
     {
         DateTimePropertyData cloningProperty = (DateTimePropertyData)res;
-        cloningProperty.Value = new DateTime(cloningProperty.Value.Ticks);
+        cloningProperty.Value = new DateTime(this.Value.Ticks);
     }
 }

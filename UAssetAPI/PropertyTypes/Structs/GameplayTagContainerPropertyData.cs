@@ -67,11 +67,18 @@ public class GameplayTagContainerPropertyData : PropertyData<FName[]>
     {
         GameplayTagContainerPropertyData cloningProperty = (GameplayTagContainerPropertyData)res;
 
-        FName[] newData = new FName[this.Value.Length];
-        for (int i = 0; i < this.Value.Length; i++)
+        if (this.Value != null)
         {
-            newData[i] = (FName)this.Value[i].Clone();
+            FName[] newData = new FName[this.Value.Length];
+            for (int i = 0; i < this.Value.Length; i++)
+            {
+                newData[i] = (FName)this.Value[i].Clone();
+            }
+            cloningProperty.Value = newData;
         }
-        cloningProperty.Value = newData;
+        else
+        {
+            cloningProperty.Value = null;
+        }
     }
 }

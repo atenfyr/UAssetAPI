@@ -555,6 +555,57 @@ namespace UAssetAPI.Tests
         public void TestTraditionalUE5_3()
         {
             TestUE5_3Subsection("Engine", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "Engine", "Engine.usmap")));
+            TestUE5_3Subsection("RON", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "RON", "ReadyOrNot.usmap")));
+        }
+
+        /// <summary>
+        /// In this test, we test the Clone function, along with indexers for assets and exports.
+        /// </summary>
+        [TestMethod]
+        public void TestClone()
+        {
+            var mappings = new Usmap(Path.Combine("TestAssets", "TestUE5_3", "RON", "ReadyOrNot.usmap"));
+
+            // clone everything and check for binary equality
+            var blueprint = new UAsset(Path.Combine("TestAssets", "TestUE5_3", "RON", "AmmoDataTable.uasset"), EngineVersion.VER_UE5_3, mappings);
+            for (int i = 0; i < blueprint.Exports.Count; i++)
+            {
+                Export curExp = blueprint.Exports[i];
+                if (curExp is NormalExport nExp)
+                {
+                    for (int j = 0; j < nExp.Data.Count; j++)
+                    {
+                        nExp.Data[j] = (PropertyData)nExp.Data[j].Clone();
+                    }
+                }
+                if (curExp is DataTableExport dtExp)
+                {
+                    for (int j = 0; j < dtExp.Table.Data.Count; j++)
+                    {
+                        dtExp.Table.Data[j] = (StructPropertyData)dtExp.Table.Data[j].Clone();
+                    }
+                }
+            }
+            Assert.IsTrue(blueprint.VerifyBinaryEquality());
+
+            // some basic tests with the indexers
+            DataTableExport exp = (DataTableExport)blueprint["AmmoDataTable"];
+            StructPropertyData struc = (StructPropertyData)exp["556x45JHP"];
+            StructPropertyData nuevo = (StructPropertyData)struc.Clone();
+            nuevo["Damage"] = new FloatPropertyData() { Value = 60 };
+            exp["556x45JHP_MODIFIED"] = nuevo;
+
+            // save, read again, and verify
+            blueprint.Write(blueprint.FilePath);
+
+            var blueprint2 = new UAsset(blueprint.FilePath, EngineVersion.VER_UE5_3, mappings);
+            Assert.IsTrue(blueprint2.VerifyBinaryEquality());
+
+            DataTableExport exp2 = (DataTableExport)blueprint["AmmoDataTable"];
+            StructPropertyData struc2 = (StructPropertyData)exp["556x45JHP"];
+            StructPropertyData struc2_2 = (StructPropertyData)exp["556x45JHP_MODIFIED"];
+            Assert.IsTrue(struc2["Damage"] is FloatPropertyData blah2 && blah2.Value == 30);
+            Assert.IsTrue(struc2_2["Damage"] is FloatPropertyData blah3 && blah3.Value == 60);
         }
 
         /// <summary>
