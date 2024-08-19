@@ -21,7 +21,7 @@ Once we have entered Visual Studio, we must add a new reference to our UAssetAPI
 
 Once you've referenced the UAssetAPI assembly in your project, you're ready to start parsing assets!
 
-## Using UAssetAPI with UE4 Assets
+## Using UAssetAPI with Unreal Assets
 ### Modifying a specific property
 
 Every Unreal Engine 4 asset parsed with UAssetAPI is represented by the [UAsset](../api/uassetapi.uasset.md#constructors) class. The simplest way to construct a UAsset is to initialize it with the path to the asset on disk (note that if your asset has a paired .uexp file, both files must be located in the same directory, and the path should point to the .uasset file) and an [EngineVersion](../api/uassetapi.unrealtypes.engineversion.html#fields).
@@ -47,6 +47,9 @@ UAsset myAsset = new UAsset("C:\\plwp_6aam_a0.uasset", EngineVersion.VER_UE4_18)
 // We want the 2nd export, so we reference the export at index 1.
 // There are many types, but any export that has regular "tagged" data like you see as properties in UAssetGUI can be cast to a NormalExport, like this one.
 NormalExport myExport = (NormalExport)myAsset.Exports[1];
+// Alternatively, we can reference exports by ObjectName:
+// NormalExport myExport = (NormalExport)myAsset.Exports["Default__plwp_6aam_a0_C"];
+// we implement the general algorithm used by UAssetAPI here later in the guide
 
 // myExport.Data will give us a List<PropertyData> which you can enumerate if you like, but we can reference a property by name or index with the export directly.
 // We know this is a FloatPropertyData because it is serialized as a FloatProperty. BoolPropertyData is a BoolProperty, ObjectPropertyData is an ObjectProperty, etc.
@@ -107,4 +110,4 @@ At the end of the day, we have made no assumptions about the ordering of the exp
 
 UAssetAPI is only one layer of abstraction above the raw binary format, which means that it essentially gives you full access to every single aspect of a .uasset file. This means that performing very complex operations can be quite a challenge, so keep experimenting!
 
-You may find it useful while learning to export assets into JSON through the `.SerializeJSON()` method or through UAssetGUI, as the JSON format very closely mirrors the way that assets are laid out in UAssetAPI. You can also find lots of examples for UAssetAPI syntax and usage in the [unit tests](https://github.com/atenfyr/UAssetAPI/blob/master/UAssetAPI.Tests/AssetUnitTests.cs).
+You may find it useful while learning to export assets into JSON through the `.SerializeJSON()` method or through UAssetGUI, as the JSON format very closely mirrors the way that assets are laid out in UAssetAPI. You can also find some more examples for UAssettAPI syntax and usage under the [More Examples](extras.md) page, and even more examples in the [unit tests](https://github.com/atenfyr/UAssetAPI/blob/master/UAssetAPI.Tests/AssetUnitTests.cs).

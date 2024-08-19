@@ -59,11 +59,11 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     {
         get
         {
-            return this[FName.DefineDummy(null, key)];
+            return this[FName.FromString(Name?.Asset, key)];
         }
         set
         {
-            this[FName.DefineDummy(null, key)] = value;
+            this[FName.FromString(Name?.Asset, key)] = value;
         }
     }
 

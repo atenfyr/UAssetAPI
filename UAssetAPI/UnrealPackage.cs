@@ -375,6 +375,7 @@ namespace UAssetAPI
             }
             set
             {
+                value.ObjectName = key;
                 for (int i = 0; i < Exports.Count; i++)
                 {
                     if (Exports[i].ObjectName == key)
