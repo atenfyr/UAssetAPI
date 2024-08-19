@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class FontDataPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFontData, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class FontDataPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFontData]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FFontData&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [FontDataPropertyData](./uassetapi.propertytypes.structs.fontdatapropertydata.md)<br>

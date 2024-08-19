@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class FrameNumberPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFrameNumber, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class FrameNumberPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFrameNumber]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FFrameNumber&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [FrameNumberPropertyData](./uassetapi.propertytypes.structs.framenumberpropertydata.md)<br>

@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class FontCharacterPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFontCharacter, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class FontCharacterPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FFontCharacter]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FFontCharacter&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [FontCharacterPropertyData](./uassetapi.propertytypes.structs.fontcharacterpropertydata.md)<br>

@@ -6,7 +6,7 @@ Floating point quaternion that can represent a rotation about an axis in 3-D spa
  The X, Y, Z, W components also double as the Axis/Angle format.
 
 ```csharp
-public class QuatPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FQuat, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class QuatPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FQuat]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FQuat&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [QuatPropertyData](./uassetapi.propertytypes.structs.quatpropertydata.md)<br>

@@ -6,7 +6,7 @@ Implements a container for rotation information.
  All rotation values are stored in degrees.
 
 ```csharp
-public class RotatorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FRotator, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class RotatorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FRotator]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FRotator&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [RotatorPropertyData](./uassetapi.propertytypes.structs.rotatorpropertydata.md)<br>

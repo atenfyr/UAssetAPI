@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MatrixPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FMatrix, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class MatrixPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FMatrix]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FMatrix&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MatrixPropertyData](./uassetapi.propertytypes.structs.matrixpropertydata.md)<br>

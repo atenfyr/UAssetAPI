@@ -113,6 +113,16 @@ Some garbage data that appears to be present in certain games (e.g. Valorant)
 public Byte[] ValorantGarbageData;
 ```
 
+### **SeaOfThievesGarbageData**
+
+Some garbage data that appears to be present in certain games (e.g. Sea of Thieves)
+ null = not present
+ empty array = present, but serialize as offset = 0, length = 0
+
+```csharp
+public Byte[] SeaOfThievesGarbageData;
+```
+
 ### **Generations**
 
 Data about previous versions of this package.
@@ -891,13 +901,17 @@ The formatting to use for the returned JSON string.
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 A serialized JSON string that represents the object.
 
-### **DeserializeJsonObject(String)**
+### **DeserializeJsonObject&lt;T&gt;(String)**
 
 Deserializes an object from JSON.
 
 ```csharp
-public object DeserializeJsonObject(string json)
+public T DeserializeJsonObject<T>(string json)
 ```
+
+#### Type Parameters
+
+`T`<br>
 
 #### Parameters
 
@@ -906,7 +920,7 @@ A serialized JSON string to parse.
 
 #### Returns
 
-[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+T<br>
 
 ### **DeserializeJson(String)**
 

@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class NavAgentSelectorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FNavAgentSelector, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class NavAgentSelectorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FNavAgentSelector]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FNavAgentSelector&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [NavAgentSelectorPropertyData](./uassetapi.propertytypes.structs.navagentselectorpropertydata.md)<br>

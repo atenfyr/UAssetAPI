@@ -5,7 +5,7 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 Describes a 128-bit [Guid](https://docs.microsoft.com/en-us/dotnet/api/system.guid).
 
 ```csharp
-public class GuidPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class GuidPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Guid]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Guid&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [GuidPropertyData](./uassetapi.propertytypes.structs.guidpropertydata.md)<br>

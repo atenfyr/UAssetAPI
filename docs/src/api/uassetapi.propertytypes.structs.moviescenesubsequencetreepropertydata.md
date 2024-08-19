@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MovieSceneSubSequenceTreePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FMovieSceneSubSequenceTree, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class MovieSceneSubSequenceTreePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Structs.FMovieSceneSubSequenceTree]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FMovieSceneSubSequenceTree&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneSubSequenceTreePropertyData](./uassetapi.propertytypes.structs.moviescenesubsequencetreepropertydata.md)<br>

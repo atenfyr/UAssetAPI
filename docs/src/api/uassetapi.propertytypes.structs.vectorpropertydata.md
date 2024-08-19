@@ -5,7 +5,7 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 A vector in 3-D space composed of components (X, Y, Z) with floating/double point precision.
 
 ```csharp
-public class VectorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FVector, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class VectorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FVector]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FVector&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [VectorPropertyData](./uassetapi.propertytypes.structs.vectorpropertydata.md)<br>

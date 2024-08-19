@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.StructTypes
 
 ```csharp
-public class SkeletalMeshSamplingRegionBuiltDataPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FSkeletalMeshSamplingRegionBuiltData, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class SkeletalMeshSamplingRegionBuiltDataPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FSkeletalMeshSamplingRegionBuiltData]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSkeletalMeshSamplingRegionBuiltData&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [SkeletalMeshSamplingRegionBuiltDataPropertyData](./uassetapi.structtypes.skeletalmeshsamplingregionbuiltdatapropertydata.md)<br>

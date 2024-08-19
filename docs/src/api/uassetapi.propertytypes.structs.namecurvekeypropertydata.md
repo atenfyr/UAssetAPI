@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class NameCurveKeyPropertyData : UAssetAPI.PropertyTypes.Objects.BasePropertyData`1[[UAssetAPI.PropertyTypes.Structs.FNameCurveKey, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class NameCurveKeyPropertyData : UAssetAPI.PropertyTypes.Objects.BasePropertyData`1[[UAssetAPI.PropertyTypes.Structs.FNameCurveKey]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FNameCurveKey&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BasePropertyData&lt;FNameCurveKey&gt;](./uassetapi.propertytypes.objects.basepropertydata-1.md) → [NameCurveKeyPropertyData](./uassetapi.propertytypes.structs.namecurvekeypropertydata.md)<br>

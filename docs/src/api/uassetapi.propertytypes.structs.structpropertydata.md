@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class StructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Collections.Generic.List`1[[UAssetAPI.PropertyTypes.Objects.PropertyData, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class StructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Collections.Generic.List`1[[UAssetAPI.PropertyTypes.Objects.PropertyData]]]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>

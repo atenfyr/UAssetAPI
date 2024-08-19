@@ -7,4 +7,5 @@ rd /S /Q "%startdir%\src\api"
 cd %startdir%
 move ".\src\api\index.md" .
 python correct_summary.py
+python correct_pages.py
 del index.md

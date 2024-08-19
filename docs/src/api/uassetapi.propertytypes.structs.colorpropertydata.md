@@ -5,7 +5,7 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 Describes a color with 8 bits of precision per channel.
 
 ```csharp
-public class ColorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Drawing.Color, System.Drawing.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a]], System.ICloneable
+public class ColorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Drawing.Color]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Color&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [ColorPropertyData](./uassetapi.propertytypes.structs.colorpropertydata.md)<br>

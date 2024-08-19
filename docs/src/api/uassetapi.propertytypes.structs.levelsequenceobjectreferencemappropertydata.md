@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class LevelSequenceObjectReferenceMapPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.TMap`2[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[UAssetAPI.PropertyTypes.Structs.FLevelSequenceLegacyObjectReference, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class LevelSequenceObjectReferenceMapPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.TMap`2[[System.Guid],[UAssetAPI.PropertyTypes.Structs.FLevelSequenceLegacyObjectReference]]]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TMap&lt;Guid, FLevelSequenceLegacyObjectReference&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [LevelSequenceObjectReferenceMapPropertyData](./uassetapi.propertytypes.structs.levelsequenceobjectreferencemappropertydata.md)<br>

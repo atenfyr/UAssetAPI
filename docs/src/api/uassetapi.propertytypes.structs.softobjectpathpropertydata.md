@@ -7,7 +7,7 @@ A struct that contains a string reference to an object, either a top level asset
  This is stored internally as an FName pointing to the top level asset (/package/path.assetname) and an option a string subobject path.
 
 ```csharp
-public class SoftObjectPathPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class SoftObjectPathPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.PropertyTypes.Objects.FSoftObjectPath]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSoftObjectPath&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [SoftObjectPathPropertyData](./uassetapi.propertytypes.structs.softobjectpathpropertydata.md)<br>

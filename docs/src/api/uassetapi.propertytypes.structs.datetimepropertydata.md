@@ -13,7 +13,7 @@ Implements a date and time.
  or adding a certain amount of time to a given date.
 
 ```csharp
-public class DateTimePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class DateTimePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.DateTime]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;DateTime&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [DateTimePropertyData](./uassetapi.propertytypes.structs.datetimepropertydata.md)<br>

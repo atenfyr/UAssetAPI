@@ -235,36 +235,6 @@ public UnrealPackage Asset;
 
 ## Properties
 
-### **Item**
-
-```csharp
-public PropertyData Item { get; set; }
-```
-
-#### Property Value
-
-[PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
-
-### **Item**
-
-```csharp
-public PropertyData Item { get; set; }
-```
-
-#### Property Value
-
-[PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
-
-### **Item**
-
-```csharp
-public PropertyData Item { get; set; }
-```
-
-#### Property Value
-
-[PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
-
 ### **OuterIndex**
 
 Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage

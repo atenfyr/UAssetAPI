@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class WeightedRandomSamplerPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FWeightedRandomSampler, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class WeightedRandomSamplerPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FWeightedRandomSampler]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FWeightedRandomSampler&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [WeightedRandomSamplerPropertyData](./uassetapi.propertytypes.structs.weightedrandomsamplerpropertydata.md)<br>

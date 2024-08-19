@@ -13,7 +13,7 @@ Implements a time span.
  difference between two dates or adding a certain amount of time to a given date.
 
 ```csharp
-public class TimespanPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.TimeSpan, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class TimespanPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.TimeSpan]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TimeSpan&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [TimespanPropertyData](./uassetapi.propertytypes.structs.timespanpropertydata.md)<br>

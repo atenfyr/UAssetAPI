@@ -12,4 +12,5 @@ startdir="$(pwd)"
 )
 mv src/api/index.md .
 python correct_summary.py
+python correct_pages.py
 rm index.md

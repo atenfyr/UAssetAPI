@@ -3,13 +3,31 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class RawStructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Byte[], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.ICloneable
+public class RawStructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[System.Byte[]]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Byte[]&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [RawStructPropertyData](./uassetapi.propertytypes.structs.rawstructpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
+
+### **StructType**
+
+```csharp
+public FName StructType;
+```
+
+### **SerializeNone**
+
+```csharp
+public bool SerializeNone;
+```
+
+### **StructGUID**
+
+```csharp
+public Guid StructGUID;
+```
 
 ### **Name**
 

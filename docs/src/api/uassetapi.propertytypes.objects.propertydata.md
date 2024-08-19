@@ -240,6 +240,19 @@ The context in which this property is being written.
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length in bytes of the data that was written.
 
+### **InitializeZero(AssetBinaryReader)**
+
+Initialize this property when serialized as zero.
+
+```csharp
+public void InitializeZero(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+The BinaryReader to read from.
+
 ### **CanBeZero(UnrealPackage)**
 
 Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.

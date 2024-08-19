@@ -3,7 +3,7 @@
 Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
-public class MovieSceneFrameRangePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.TRange`1[[UAssetAPI.UnrealTypes.FFrameNumber, UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], UAssetAPI, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null]], System.ICloneable
+public class MovieSceneFrameRangePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.TRange`1[[UAssetAPI.UnrealTypes.FFrameNumber]]]], System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;TRange&lt;FFrameNumber&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MovieSceneFrameRangePropertyData](./uassetapi.propertytypes.structs.moviesceneframerangepropertydata.md)<br>
