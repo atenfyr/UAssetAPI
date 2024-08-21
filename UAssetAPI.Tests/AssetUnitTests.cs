@@ -511,12 +511,6 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestMaterials()
         {
-            // Create copies of original files
-            foreach (var path in Directory.GetFiles(Path.Combine("TestAssets", "TestMaterials"), "*.*"))
-            {
-                File.Copy(path, path + ".bak", true);
-            }
-
             // Verify the files can be parsed
             var tester = new UAsset(Path.Combine("TestAssets", "TestMaterials", "M_COM_DetailMaster_B.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());

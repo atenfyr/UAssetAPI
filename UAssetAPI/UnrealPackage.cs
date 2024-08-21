@@ -887,6 +887,18 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Serializes and writes an asset to two split streams (.uasset and .uexp) from memory.
+        /// </summary>
+        /// <param name="uassetStream">A stream containing the contents of the .uasset file.</param>
+        /// <param name="uexpStream">A stream containing the contents of the .uexp file, if needed, otherwise null.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
+        public virtual void Write(out MemoryStream uassetStream, out MemoryStream uexpStream)
+        {
+            uassetStream = null;
+            uexpStream = null;
+        }
+
+        /// <summary>
         /// Serializes and writes an asset to disk from memory.
         /// </summary>
         /// <param name="outputPath">The path on disk to write the asset to.</param>

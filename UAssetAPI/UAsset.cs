@@ -1706,6 +1706,34 @@ namespace UAssetAPI
         }
 
         /// <summary>
+        /// Serializes and writes an asset to two split streams (.uasset and .uexp) from memory.
+        /// </summary>
+        /// <param name="uassetStream">A stream containing the contents of the .uasset file.</param>
+        /// <param name="uexpStream">A stream containing the contents of the .uexp file, if needed, otherwise null.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when <see cref="ObjectVersion"/> is unspecified.</exception>
+        public override void Write(out MemoryStream uassetStream, out MemoryStream uexpStream)
+        {
+            if (ObjectVersion == ObjectVersion.UNKNOWN) throw new UnknownEngineVersionException("Cannot begin serialization before an object version is specified");
+
+            MemoryStream newData = WriteData();
+
+            if (this.UseSeparateBulkDataFiles && this.Exports.Count > 0)
+            {
+                long breakingOffPoint = this.Exports[0].SerialOffset;
+                uassetStream = new MemoryStream((int)breakingOffPoint);
+                uexpStream = new MemoryStream((int)(newData.Length - breakingOffPoint));
+                CopySplitUp(newData, uassetStream, 0, (int)breakingOffPoint);
+                CopySplitUp(newData, uexpStream, (int)breakingOffPoint, (int)(newData.Length - breakingOffPoint));
+            }
+            else
+            {
+                uassetStream = newData;
+                uexpStream = null;
+                // uexpStream is left empty
+            }
+        }
+
+        /// <summary>
         /// Serializes and writes an asset to disk from memory.
         /// </summary>
         /// <param name="outputPath">The path on disk to write the asset to.</param>
