@@ -74,7 +74,7 @@ namespace UAssetAPI
 
         public string ReadString(int fixedLength = -1)
         {
-            int length = fixedLength > 0 ? fixedLength : this.ReadByte();
+            int length = fixedLength > -1 ? fixedLength : this.ReadByte();
             switch (length)
             {
                 case 0:
