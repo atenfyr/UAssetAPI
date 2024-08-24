@@ -569,15 +569,9 @@ namespace UAssetAPI
         internal int DataResourceOffset;
 
         [JsonProperty]
-        internal bool doWeHaveDependsMap = true;
-        [JsonProperty]
-        internal bool doWeHaveSoftPackageReferences = true;
-        [JsonProperty]
         internal bool doWeHaveAssetRegistryData = true;
         [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
-        [JsonProperty]
-        internal bool doWeHaveDataResources = true;
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
@@ -914,9 +908,10 @@ namespace UAssetAPI
             }
 
             // DependsMap
-            DependsMap = new List<int[]>();
+            DependsMap = null;
             if (DependsOffset > 0 || (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)) // 4.14-4.15 the depends offset wasnt updated so always serialized as 0
             {
+                DependsMap = new List<int[]>();
                 if (DependsOffset > 0) reader.BaseStream.Seek(DependsOffset, SeekOrigin.Begin);
                 for (int i = 0; i < ExportCount; i++)
                 {
@@ -929,26 +924,19 @@ namespace UAssetAPI
                     DependsMap.Add(data);
                 }
             }
-            else
-            {
-                doWeHaveDependsMap = false;
-            }
 
             // SoftPackageReferenceList
-            SoftPackageReferenceList = new List<FString>();
+            SoftPackageReferenceList = null;
             if (SoftPackageReferencesOffset > 0)
             {
                 reader.BaseStream.Seek(SoftPackageReferencesOffset, SeekOrigin.Begin);
+                SoftPackageReferenceList = new List<FString>();
                 for (int i = 0; i < SoftPackageReferencesCount; i++)
                 {
                     SoftPackageReferenceList.Add(ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH
                         ? FString.FromString(reader.ReadFName().ToString())
                         : reader.ReadFString());
                 }
-            }
-            else
-            {
-                doWeHaveSoftPackageReferences = false;
             }
 
             // AssetRegistryData
@@ -1034,9 +1022,10 @@ namespace UAssetAPI
             }
 
             // DataResources (5.3+)
-            DataResources = new List<FObjectDataResource>();
+            DataResources = null;
             if (DataResourceOffset > 0)
             {
+                DataResources = new List<FObjectDataResource>();
                 reader.BaseStream.Seek(DataResourceOffset, SeekOrigin.Begin);
                 DataResourceVersion = (EObjectDataResourceVersion)reader.ReadUInt32();
 
@@ -1053,10 +1042,6 @@ namespace UAssetAPI
 
                     DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags));
                 }
-            }
-            else
-            {
-                doWeHaveDataResources = false;
             }
 
             // load dependencies, if needed and available
@@ -1468,7 +1453,7 @@ namespace UAssetAPI
                 }
 
                 // DependsMap
-                if (this.doWeHaveDependsMap)
+                if (DependsMap != null)
                 {
                     this.DependsOffset = (ObjectVersion > ObjectVersion.VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS && ObjectVersion < ObjectVersion.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES) ? 0 : (int)writer.BaseStream.Position;
                     for (int i = 0; i < this.Exports.Count; i++)
@@ -1490,7 +1475,7 @@ namespace UAssetAPI
                 }
 
                 // SoftPackageReferenceList
-                if (this.doWeHaveSoftPackageReferences)
+                if (SoftPackageReferenceList != null)
                 {
                     this.SoftPackageReferencesOffset = (int)writer.BaseStream.Position;
                     this.SoftPackageReferencesCount = this.SoftPackageReferenceList.Count;
@@ -1620,9 +1605,8 @@ namespace UAssetAPI
                     for (int i = 0; i < this.Exports.Count; i++) Exports[i].FirstExportDependencyOffset = -1;
                 }
 
-                // DataResources
                 // DataResources (5.3+)
-                if (this.doWeHaveDataResources)
+                if (DataResources != null)
                 {
                     this.DataResourceOffset = (int)writer.BaseStream.Position;
                     writer.Write((uint)DataResourceVersion);
@@ -1639,10 +1623,6 @@ namespace UAssetAPI
                         writer.Write(dataResource.OuterIndex?.Index ?? 0);
                         writer.Write(dataResource.LegacyBulkDataFlags);
                     }
-                }
-                else
-                {
-                    doWeHaveDataResources = false;
                 }
 
                 // Export data
