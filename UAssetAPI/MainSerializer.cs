@@ -51,12 +51,13 @@ namespace UAssetAPI
         /// </summary>
         internal static IDictionary<string, RegistryEntry> PropertyTypeRegistry
         {
-            get
-            {
-                InitializePropertyTypeRegistry();
-                return _propertyTypeRegistry;
-            }
+            get => _propertyTypeRegistry;
             set => _propertyTypeRegistry = value; // I hope you know what you're doing!
+        }
+
+        static MainSerializer()
+        {
+            InitializePropertyTypeRegistry();
         }
 
         private static IEnumerable<Assembly> GetDependentAssemblies(Assembly analyzedAssembly)
