@@ -17,7 +17,7 @@ public class FrameNumberPropertyData : PropertyData<FFrameNumber>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FFrameNumber(reader.ReadInt32());
@@ -27,7 +27,7 @@ public class FrameNumberPropertyData : PropertyData<FFrameNumber>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Value);

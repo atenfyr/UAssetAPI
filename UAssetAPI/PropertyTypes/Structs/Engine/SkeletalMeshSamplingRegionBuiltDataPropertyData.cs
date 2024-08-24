@@ -19,7 +19,7 @@ public class SkeletalMeshSamplingRegionBuiltDataPropertyData : PropertyData<FSke
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FSkeletalMeshSamplingRegionBuiltData(reader);
@@ -29,7 +29,7 @@ public class SkeletalMeshSamplingRegionBuiltDataPropertyData : PropertyData<FSke
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

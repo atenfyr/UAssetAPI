@@ -17,7 +17,7 @@ public class TwoVectorsPropertyData : PropertyData<FTwoVectors>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FTwoVectors(reader);
@@ -27,7 +27,7 @@ public class TwoVectorsPropertyData : PropertyData<FTwoVectors>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

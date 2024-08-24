@@ -54,11 +54,7 @@ public long SerialOffset;
 ### **ScriptSerializationStartOffset**
 
 The location (relative to SerialOffset) of the beginning of the portion of this export's data that is serialized using tagged property serialization.
- Serialized into versioned packages as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4).
-
-
-
-Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+ Serialized into packages using tagged property serialization as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4).
 
 ```csharp
 public long ScriptSerializationStartOffset;
@@ -67,11 +63,7 @@ public long ScriptSerializationStartOffset;
 ### **ScriptSerializationEndOffset**
 
 The location (relative to SerialOffset) of the end of the portion of this export's data that is serialized using tagged property serialization.
- Serialized into versioned packages as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4)
-
-
-
-Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+ Serialized into packages using tagged property serialization as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4)
 
 ```csharp
 public long ScriptSerializationEndOffset;

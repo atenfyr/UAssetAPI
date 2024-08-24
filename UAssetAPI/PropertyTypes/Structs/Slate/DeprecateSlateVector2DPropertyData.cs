@@ -17,7 +17,7 @@ public class DeprecateSlateVector2DPropertyData : PropertyData<FVector2f>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FVector2f(reader);
@@ -27,7 +27,7 @@ public class DeprecateSlateVector2DPropertyData : PropertyData<FVector2f>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

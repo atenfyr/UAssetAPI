@@ -26,7 +26,7 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         //if (reader.Asset.GetCustomVersion<FCoreObjectVersion>() < FCoreObjectVersion.MaterialInputNativeSerialize)
@@ -53,7 +53,7 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return WriteExpressionInput(writer, false);
@@ -185,7 +185,7 @@ public class ScalarMaterialInputPropertyData : MaterialInputPropertyData<float>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int expLength = WriteExpressionInput(writer, false);
@@ -228,7 +228,7 @@ public class VectorMaterialInputPropertyData : MaterialInputPropertyData<VectorP
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int expLength = WriteExpressionInput(writer, false);
@@ -270,7 +270,7 @@ public class Vector2MaterialInputPropertyData : MaterialInputPropertyData<Vector
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int expLength = WriteExpressionInput(writer, false);

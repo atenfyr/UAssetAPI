@@ -29,7 +29,7 @@ public class DateTimePropertyData : PropertyData<DateTime>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new DateTime(reader.ReadInt64()); // number of ticks since January 1, 0001
@@ -39,7 +39,7 @@ public class DateTimePropertyData : PropertyData<DateTime>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Ticks);

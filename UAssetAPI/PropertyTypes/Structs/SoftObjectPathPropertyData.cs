@@ -27,7 +27,7 @@ public class SoftObjectPathPropertyData : PropertyData<FSoftObjectPath>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         if (reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
@@ -44,7 +44,7 @@ public class SoftObjectPathPropertyData : PropertyData<FSoftObjectPath>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int here = (int)writer.BaseStream.Position;

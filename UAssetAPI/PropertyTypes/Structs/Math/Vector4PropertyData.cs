@@ -20,7 +20,7 @@ public class Vector4PropertyData : PropertyData<FVector4>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FVector4(reader);
@@ -30,7 +30,7 @@ public class Vector4PropertyData : PropertyData<FVector4>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

@@ -14,6 +14,49 @@ namespace UAssetAPI.PropertyTypes.Objects
         StructFallback // a StructPropertyData with custom struct serialization falling back to standard serialization before/after reading custom data
     }
 
+    [Flags]
+    public enum EPropertyTagFlags
+    {
+        None						= 0x00,
+	    HasArrayIndex				= 0x01,
+	    HasPropertyGuid				= 0x02,
+	    HasPropertyExtensions		= 0x04,
+	    HasBinaryOrNativeSerialize	= 0x08,
+	    BoolTrue					= 0x10,
+    }
+
+    [Flags]
+    public enum EPropertyTagExtension : byte
+    {
+        NoExtension = 0x00,
+        ReserveForFutureUse = 0x01,
+        OverridableInformation = 0x02,
+    }
+
+    public enum EOverriddenPropertyOperation
+    {
+        /// <summary>
+        /// no overridden operation was recorded on this property
+        /// </summary>
+        None =	0,
+        /// <summary>
+        /// some sub property has recorded overridden operation
+        /// </summary>
+	    Modified,
+        /// <summary>
+        /// everything has been overridden from this property down to every sub property/sub object
+        /// </summary>
+	    Replace,
+        /// <summary>
+        /// this element was added in the container
+        /// </summary>
+	    Add,
+        /// <summary>
+        /// this element was removed from the container
+        /// </summary>
+	    Remove
+    };
+
     public class AncestryInfo : ICloneable
     {
         public List<FName> Ancestors = new List<FName>(5);
@@ -76,10 +119,10 @@ namespace UAssetAPI.PropertyTypes.Objects
         public AncestryInfo Ancestry = new AncestryInfo();
 
         /// <summary>
-        /// The duplication index of this property. Used to distinguish properties with the same name in the same struct.
+        /// The array index of this property. Used to distinguish properties with the same name in the same struct.
         /// </summary>
         [JsonProperty]
-        public int DuplicationIndex = 0;
+        public int ArrayIndex = 0;
 
         /// <summary>
         /// An optional property GUID. Nearly always null.
@@ -92,6 +135,29 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         [JsonProperty]
         public bool IsZero;
+
+        [JsonProperty]
+        public EPropertyTagFlags PropertyTagFlags;
+
+        /// <summary>
+        /// Optional extensions to serialize with this property.
+        /// </summary>
+        [JsonProperty]
+        public EPropertyTagExtension PropertyTagExtensions; // always serialize just cuz we cant guarantee access to Asset here to check for versions between PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION and PROPERTY_TAG_COMPLETE_TYPE_NAME
+
+        [JsonProperty]
+        public EOverriddenPropertyOperation OverrideOperation;
+        [JsonProperty]
+        public bool bExperimentalOverridableLogic;
+        public bool ShouldSerializeOverrideOperation()
+        {
+            return PropertyTagExtensions.HasFlag(EPropertyTagExtension.OverridableInformation);
+        }
+        public bool ShouldSerializebExperimentalOverridableLogic()
+        {
+            return PropertyTagExtensions.HasFlag(EPropertyTagExtension.OverridableInformation);
+        }
+
 
         /// <summary>
         /// The offset of this property on disk. This is for the user only, and has no bearing in the API itself.
@@ -178,6 +244,37 @@ namespace UAssetAPI.PropertyTypes.Objects
         }
 
         /// <summary>
+        /// Complete reading the property tag of this property.
+        /// </summary>
+        protected virtual void ReadEndPropertyTag(AssetBinaryReader reader)
+        {
+            if (reader.Asset.HasUnversionedProperties) return;
+
+            if (reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                PropertyGuid = reader.ReadPropertyGuid();
+            }
+            else if (PropertyTagFlags.HasFlag(EPropertyTagFlags.HasPropertyGuid))
+            {
+                PropertyGuid = new Guid(reader.ReadBytes(16));
+            }
+
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
+            {
+                if (reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME || PropertyTagFlags.HasFlag(EPropertyTagFlags.HasPropertyExtensions))
+                {
+                    PropertyTagExtensions = (EPropertyTagExtension)reader.ReadByte();
+
+                    if (PropertyTagExtensions.HasFlag(EPropertyTagExtension.OverridableInformation))
+                    {
+                        OverrideOperation = (EOverriddenPropertyOperation)reader.ReadByte();
+                        bExperimentalOverridableLogic = reader.ReadBooleanInt();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Writes a property to a BinaryWriter.
         /// </summary>
         /// <param name="writer">The BinaryWriter to write from.</param>
@@ -193,9 +290,32 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// Initialize this property when serialized as zero.
         /// </summary>
         /// <param name="reader">The BinaryReader to read from.</param>
-        public virtual void InitializeZero(AssetBinaryReader reader)
+        internal virtual void InitializeZero(AssetBinaryReader reader)
         {
 
+        }
+
+        /// <summary>
+        /// Complete writing the property tag of this property.
+        /// </summary>
+        protected virtual void WriteEndPropertyTag(AssetBinaryWriter writer)
+        {
+            if (writer.Asset.HasUnversionedProperties) return;
+
+            writer.WritePropertyGuid(PropertyGuid);
+            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
+            {
+                if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME || PropertyTagFlags.HasFlag(EPropertyTagFlags.HasPropertyExtensions))
+                {
+                    writer.Write((byte)PropertyTagExtensions);
+
+                    if (PropertyTagExtensions.HasFlag(EPropertyTagExtension.OverridableInformation))
+                    {
+                        writer.Write((byte)OverrideOperation);
+                        writer.Write(bExperimentalOverridableLogic ? 1 : 0);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -279,7 +399,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             Value = T.Read(reader);
@@ -290,7 +410,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (includeHeader)
             {
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             Value ??= new T();

@@ -21,7 +21,7 @@ public class GuidPropertyData : PropertyData<Guid>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new Guid(reader.ReadBytes(16));
@@ -31,7 +31,7 @@ public class GuidPropertyData : PropertyData<Guid>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.ToByteArray());

@@ -37,7 +37,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             Value = reader.ReadSingle();
@@ -47,7 +47,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             writer.Write(Value);

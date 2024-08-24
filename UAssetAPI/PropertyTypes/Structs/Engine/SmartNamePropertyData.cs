@@ -37,7 +37,7 @@ public class SmartNamePropertyData : PropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         DisplayName = reader.ReadFName();
@@ -55,7 +55,7 @@ public class SmartNamePropertyData : PropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         long here = writer.BaseStream.Position;

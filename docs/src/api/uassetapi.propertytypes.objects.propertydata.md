@@ -29,12 +29,12 @@ The ancestry of this property. Contains information about all the classes/struct
 public AncestryInfo Ancestry;
 ```
 
-### **DuplicationIndex**
+### **ArrayIndex**
 
-The duplication index of this property. Used to distinguish properties with the same name in the same struct.
+The array index of this property. Used to distinguish properties with the same name in the same struct.
 
 ```csharp
-public int DuplicationIndex;
+public int ArrayIndex;
 ```
 
 ### **PropertyGuid**
@@ -55,6 +55,32 @@ This field will always be treated as if it is false if [PropertyData.CanBeZero(U
 
 ```csharp
 public bool IsZero;
+```
+
+### **PropertyTagFlags**
+
+```csharp
+public EPropertyTagFlags PropertyTagFlags;
+```
+
+### **PropertyTagExtensions**
+
+Optional extensions to serialize with this property.
+
+```csharp
+public EPropertyTagExtension PropertyTagExtensions;
+```
+
+### **OverrideOperation**
+
+```csharp
+public EOverriddenPropertyOperation OverrideOperation;
+```
+
+### **bExperimentalOverridableLogic**
+
+```csharp
+public bool bExperimentalOverridableLogic;
 ```
 
 ### **Offset**
@@ -153,6 +179,26 @@ public PropertyData()
 
 ## Methods
 
+### **ShouldSerializeOverrideOperation()**
+
+```csharp
+public bool ShouldSerializeOverrideOperation()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **ShouldSerializebExperimentalOverridableLogic()**
+
+```csharp
+public bool ShouldSerializebExperimentalOverridableLogic()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **SetObject(Object)**
 
 ```csharp
@@ -216,6 +262,18 @@ public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
+### **ReadEndPropertyTag(AssetBinaryReader)**
+
+Complete reading the property tag of this property.
+
+```csharp
+protected void ReadEndPropertyTag(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
 ### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
 
 Writes a property to a BinaryWriter.
@@ -245,13 +303,25 @@ The length in bytes of the data that was written.
 Initialize this property when serialized as zero.
 
 ```csharp
-public void InitializeZero(AssetBinaryReader reader)
+internal void InitializeZero(AssetBinaryReader reader)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 The BinaryReader to read from.
+
+### **WriteEndPropertyTag(AssetBinaryWriter)**
+
+Complete writing the property tag of this property.
+
+```csharp
+protected void WriteEndPropertyTag(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
 
 ### **CanBeZero(UnrealPackage)**
 

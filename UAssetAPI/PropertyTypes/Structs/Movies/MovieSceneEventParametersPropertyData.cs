@@ -49,7 +49,7 @@ public class MovieSceneEventParametersPropertyData : PropertyData<FMovieSceneEve
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneEventParameters(reader); 
@@ -59,7 +59,7 @@ public class MovieSceneEventParametersPropertyData : PropertyData<FMovieSceneEve
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

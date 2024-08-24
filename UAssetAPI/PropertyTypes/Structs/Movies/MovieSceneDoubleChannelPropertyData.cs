@@ -17,7 +17,7 @@ public class MovieSceneDoubleChannelPropertyData : PropertyData<FMovieSceneDoubl
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneDoubleChannel(reader);
@@ -27,7 +27,7 @@ public class MovieSceneDoubleChannelPropertyData : PropertyData<FMovieSceneDoubl
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
         
         var offset = writer.BaseStream.Position;

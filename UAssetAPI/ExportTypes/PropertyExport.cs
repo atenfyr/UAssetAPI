@@ -30,7 +30,6 @@ namespace UAssetAPI.ExportTypes
         public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
-            reader.ReadInt32();
 
             FName exportClassType = this.GetExportClassType();
             Property = MainSerializer.ReadUProperty(reader, exportClassType);
@@ -39,7 +38,6 @@ namespace UAssetAPI.ExportTypes
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write((int)0);
 
             MainSerializer.WriteUProperty(Property, writer);
         }

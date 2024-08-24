@@ -17,7 +17,7 @@ public class IntVectorPropertyData : PropertyData<FIntVector>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FIntVector(reader);
@@ -27,7 +27,7 @@ public class IntVectorPropertyData : PropertyData<FIntVector>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

@@ -54,7 +54,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             Value = new FDelegate(reader.XFER_OBJECT_POINTER(), reader.ReadFName());
@@ -64,7 +64,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             if (Value == null) Value = new FDelegate(FPackageIndex.FromRawIndex(0), null);

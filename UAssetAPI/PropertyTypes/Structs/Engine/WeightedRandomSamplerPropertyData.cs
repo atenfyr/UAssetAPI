@@ -19,7 +19,7 @@ public class WeightedRandomSamplerPropertyData : PropertyData<FWeightedRandomSam
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FWeightedRandomSampler(reader);
@@ -29,7 +29,7 @@ public class WeightedRandomSamplerPropertyData : PropertyData<FWeightedRandomSam
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = new FWeightedRandomSampler();

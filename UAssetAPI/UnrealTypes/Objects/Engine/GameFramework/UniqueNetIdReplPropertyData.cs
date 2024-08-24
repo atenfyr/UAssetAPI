@@ -66,7 +66,7 @@ public class UniqueNetIdReplPropertyData : PropertyData<FUniqueNetId>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FUniqueNetId(reader);
@@ -76,7 +76,7 @@ public class UniqueNetIdReplPropertyData : PropertyData<FUniqueNetId>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value is null)

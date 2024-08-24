@@ -19,7 +19,7 @@ public class RichCurveKeyPropertyData : PropertyData<FRichCurveKey>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FRichCurveKey(reader);
@@ -29,7 +29,7 @@ public class RichCurveKeyPropertyData : PropertyData<FRichCurveKey>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

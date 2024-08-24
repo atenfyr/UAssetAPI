@@ -42,7 +42,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
             ArrayType = reader.ReadFName();
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         FName arrayStructType = null;
@@ -196,7 +196,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
             writer.Write(ArrayType);
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int here = (int)writer.BaseStream.Position;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UAssetAPI.CustomVersions;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -16,6 +17,10 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     public bool SerializeNone = true;
     [JsonProperty]
     public Guid StructGUID = Guid.Empty; // usually set to 0
+    [JsonProperty]
+    public EClassSerializationControlExtension SerializationControl;
+    [JsonProperty]
+    public EOverriddenPropertyOperation Operation;
 
     /// <summary>
     /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
@@ -98,6 +103,15 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         PropertyData data = null;
 
         var unversionedHeader = new FUnversionedHeader(reader);
+        if (!reader.Asset.HasUnversionedProperties && reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
+        {
+            SerializationControl = (EClassSerializationControlExtension)reader.ReadByte();
+
+            if (SerializationControl.HasFlag(EClassSerializationControlExtension.OverridableSerializationInformation))
+            {
+                Operation = (EOverriddenPropertyOperation)reader.ReadByte();
+            }
+        }
         while ((data = MainSerializer.Read(reader, Ancestry, StructType, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), unversionedHeader, true)) != null)
         {
             resultingList.Add(data);
@@ -112,7 +126,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         {
             StructType = reader.ReadFName();
             if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         if (reader.Asset.Mappings != null && (StructType == null || StructType.Value.Value == "Generic") && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapStructData strucDat1))
@@ -184,7 +198,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
             // populate fallback zero entry 
             if (Value == null) Value = new List<PropertyData>();
             Value.Clear();
-            Value.Add(MainSerializer.TypeToClass(StructType, Name, Ancestry, Name, null, writer.Asset, null, 0, 0, false));
+            Value.Add(MainSerializer.TypeToClass(StructType, Name, Ancestry, Name, null, writer.Asset, null, 0, EPropertyTagFlags.None, 0, false));
         }
         Value[0].Offset = writer.BaseStream.Position;
         return Value[0].Write(writer, false);
@@ -233,7 +247,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         {
             writer.Write(StructType);
             if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = [];

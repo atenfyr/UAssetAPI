@@ -15,7 +15,7 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         StrPropertyData type = new StrPropertyData(FName.DefineDummy(reader.Asset, "TypeName"));
@@ -35,7 +35,7 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var offset = writer.BaseStream.Position;

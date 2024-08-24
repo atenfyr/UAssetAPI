@@ -17,7 +17,7 @@ public class MovieSceneSubSectionFieldDataPropertyData : PropertyData<FMovieScen
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneSubSectionFieldData(reader);
@@ -27,7 +27,7 @@ public class MovieSceneSubSectionFieldDataPropertyData : PropertyData<FMovieScen
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);
@@ -48,7 +48,7 @@ public class MovieSceneEvaluationFieldEntityTreePropertyData : PropertyData<FMov
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneEvaluationFieldEntityTree(reader);
@@ -58,7 +58,7 @@ public class MovieSceneEvaluationFieldEntityTreePropertyData : PropertyData<FMov
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);
@@ -79,7 +79,7 @@ public class MovieSceneSubSequenceTreePropertyData : PropertyData<FMovieSceneSub
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneSubSequenceTree(reader);
@@ -88,7 +88,7 @@ public class MovieSceneSubSequenceTreePropertyData : PropertyData<FMovieSceneSub
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
         if (includeHeader) {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);
@@ -109,7 +109,7 @@ public class MovieSceneSequenceInstanceDataPtrPropertyData : PropertyData<FPacka
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
         Value = new FPackageIndex(reader);
     }
@@ -118,7 +118,7 @@ public class MovieSceneSequenceInstanceDataPtrPropertyData : PropertyData<FPacka
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Index);
@@ -140,7 +140,7 @@ public class SectionEvaluationDataTreePropertyData : PropertyData<FSectionEvalua
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FSectionEvaluationDataTree(reader);
@@ -150,7 +150,7 @@ public class SectionEvaluationDataTreePropertyData : PropertyData<FSectionEvalua
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);
@@ -171,7 +171,7 @@ public class MovieSceneTrackFieldDataPropertyData : PropertyData<FMovieSceneTrac
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneTrackFieldData(reader);
@@ -180,7 +180,7 @@ public class MovieSceneTrackFieldDataPropertyData : PropertyData<FMovieSceneTrac
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
         if (includeHeader) {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

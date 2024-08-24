@@ -17,7 +17,7 @@ public class MovieSceneTrackIdentifierPropertyData : PropertyData<uint>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = reader.ReadUInt32();
@@ -27,7 +27,7 @@ public class MovieSceneTrackIdentifierPropertyData : PropertyData<uint>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value);
@@ -49,7 +49,7 @@ public class MovieSceneSequenceIDPropertyData : PropertyData<uint>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = reader.ReadUInt32();
@@ -59,7 +59,7 @@ public class MovieSceneSequenceIDPropertyData : PropertyData<uint>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value);
@@ -81,7 +81,7 @@ public class MovieSceneEvaluationKeyPropertyData : PropertyData<FMovieSceneEvalu
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneEvaluationKey(reader);
@@ -91,7 +91,7 @@ public class MovieSceneEvaluationKeyPropertyData : PropertyData<FMovieSceneEvalu
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
         
         return Value.Write(writer);

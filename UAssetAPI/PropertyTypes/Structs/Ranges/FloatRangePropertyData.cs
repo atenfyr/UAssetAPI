@@ -20,7 +20,7 @@ public class FloatRangePropertyData : PropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         LowerBound = reader.ReadSingle();
@@ -31,7 +31,7 @@ public class FloatRangePropertyData : PropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(LowerBound);

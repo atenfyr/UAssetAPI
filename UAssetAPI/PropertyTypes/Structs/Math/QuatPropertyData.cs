@@ -21,7 +21,7 @@ public class QuatPropertyData : PropertyData<FQuat>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FQuat(reader);
@@ -31,7 +31,7 @@ public class QuatPropertyData : PropertyData<FQuat>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

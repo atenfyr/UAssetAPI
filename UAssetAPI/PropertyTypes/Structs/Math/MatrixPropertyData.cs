@@ -17,7 +17,7 @@ public class MatrixPropertyData : PropertyData<FMatrix>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMatrix(reader);
@@ -27,7 +27,7 @@ public class MatrixPropertyData : PropertyData<FMatrix>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

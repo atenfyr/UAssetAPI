@@ -17,7 +17,7 @@ public class LinearColorPropertyData : PropertyData<FLinearColor> // R, G, B, A
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FLinearColor(reader);
@@ -27,7 +27,7 @@ public class LinearColorPropertyData : PropertyData<FLinearColor> // R, G, B, A
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

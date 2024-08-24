@@ -24,7 +24,7 @@ public class PerQualityLevelFloatPropertyData : TPerQualityLevelPropertyData<flo
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new(reader, reader.ReadSingle);
@@ -34,7 +34,7 @@ public class PerQualityLevelFloatPropertyData : TPerQualityLevelPropertyData<flo
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer, writer.Write);
@@ -55,7 +55,7 @@ public class PerQualityLevelIntPropertyData : TPerQualityLevelPropertyData<int>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new(reader, reader.ReadInt32);
@@ -65,7 +65,7 @@ public class PerQualityLevelIntPropertyData : TPerQualityLevelPropertyData<int>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer, writer.Write);

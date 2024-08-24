@@ -24,7 +24,7 @@ UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly vie
 ## Contributing
 All contributions, whether through pull requests or issues, that you may make are greatly appreciated.
 
-I am particularly interested in Unreal Engine 4 .uasset files that have their `VerifyBinaryEquality()` method return false (or display "failed to maintain binary equality" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)); if you encounter such an asset, feel free to submit an issue here with a copy of the asset in question along with the name of the game and the Unreal version that it was cooked with.
+I am particularly interested in .uasset files that have their `VerifyBinaryEquality()` method return false (or display "failed to maintain binary equality" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)); if you encounter such an asset, feel free to submit an issue here with a copy of the asset in question along with the name of the game and the Unreal version that it was cooked with.
 
 ## License
 UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](LICENSE).

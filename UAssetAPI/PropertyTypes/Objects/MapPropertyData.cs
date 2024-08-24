@@ -128,7 +128,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             {
                 type1 = reader.ReadFName();
                 type2 = reader.ReadFName();
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             if (reader.Asset.Mappings != null && type1 == null && type2 == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapMapData strucDat1))
@@ -196,7 +196,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     writer.Write(KeyType);
                     writer.Write(ValueType);
                 }
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             int here = (int)writer.BaseStream.Position;

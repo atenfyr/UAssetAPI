@@ -81,8 +81,6 @@ public class LevelExport : NormalExport
     {
         base.Read(reader, nextStarting);
 
-        reader.ReadInt32();
-
         if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.LevelTransArrayConvertedToTArray)
             Owner = new FPackageIndex(reader);
 
@@ -114,8 +112,6 @@ public class LevelExport : NormalExport
     public override void Write(AssetBinaryWriter writer)
     {
         base.Write(writer);
-
-        writer.Write((int)0);
 
         if (writer.Asset.GetCustomVersion<FReleaseObjectVersion>() < FReleaseObjectVersion.LevelTransArrayConvertedToTArray)
             Owner.Write(writer);

@@ -17,7 +17,7 @@ public class NiagaraDataInterfaceGPUParamInfoPropertyData : PropertyData<FNiagar
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FNiagaraDataInterfaceGPUParamInfo(reader);
@@ -27,7 +27,7 @@ public class NiagaraDataInterfaceGPUParamInfoPropertyData : PropertyData<FNiagar
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = new FNiagaraDataInterfaceGPUParamInfo();

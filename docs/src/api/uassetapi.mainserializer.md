@@ -60,12 +60,12 @@ The UnrealPackage which the properties are contained within.
 
 [FUnversionedHeader](./uassetapi.unversioned.funversionedheader.md)<br>
 
-### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UnrealPackage, AssetBinaryReader, Int32, Int32, Boolean, Boolean)**
+### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UnrealPackage, AssetBinaryReader, Int32, EPropertyTagFlags, Int32, Boolean, Boolean)**
 
 Initializes the correct PropertyData class based off of serialized name, type, etc.
 
 ```csharp
-public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader, int leng, int duplicationIndex, bool includeHeader, bool isZero)
+public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader, int leng, EPropertyTagFlags propertyTagFlags, int ArrayIndex, bool includeHeader, bool isZero)
 ```
 
 #### Parameters
@@ -94,7 +94,10 @@ The BinaryReader to read from. If left unspecified, you must call the [PropertyD
 `leng` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length of this property on disk in bytes.
 
-`duplicationIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+`propertyTagFlags` [EPropertyTagFlags](./uassetapi.propertytypes.objects.epropertytagflags.md)<br>
+Property tag flags, if available.
+
+`ArrayIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The duplication index of this property.
 
 `includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>

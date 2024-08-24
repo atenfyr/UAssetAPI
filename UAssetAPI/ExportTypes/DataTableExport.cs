@@ -142,8 +142,6 @@ namespace UAssetAPI.ExportTypes
                 }
             }
 
-            reader.ReadInt32();
-
             Table = new UDataTable();
 
             int numEntries = reader.ReadInt32();
@@ -205,8 +203,6 @@ namespace UAssetAPI.ExportTypes
                         break;
                 }
             }
-
-            writer.Write((int)0);
 
             writer.Write(Table.Data.Count);
             for (int i = 0; i < Table.Data.Count; i++)

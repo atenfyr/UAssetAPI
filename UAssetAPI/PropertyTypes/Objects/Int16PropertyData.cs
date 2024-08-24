@@ -28,7 +28,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             Value = (reader.Asset.HasUnversionedProperties && serializationContext != PropertySerializationContext.Normal) ? (short)reader.ReadInt64() : reader.ReadInt16();
@@ -38,7 +38,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (includeHeader)
             {
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             if (writer.Asset.HasUnversionedProperties && serializationContext != PropertySerializationContext.Normal)

@@ -23,7 +23,7 @@ public class MovieSceneGenerationLedgerPropertyData : PropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         var NumReferenceCounts = reader.ReadInt32();
@@ -54,7 +54,7 @@ public class MovieSceneGenerationLedgerPropertyData : PropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var offset = writer.BaseStream.Position;

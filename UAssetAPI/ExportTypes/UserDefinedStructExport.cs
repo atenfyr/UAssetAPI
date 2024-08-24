@@ -11,6 +11,8 @@ public class UserDefinedStructExport : StructExport
 {
     public uint StructFlags;
     public List<PropertyData> StructData = [];
+    public EClassSerializationControlExtension SerializationControl2;
+    public EOverriddenPropertyOperation Operation2;
 
     public UserDefinedStructExport(Export super) : base(super) { }
 
@@ -38,6 +40,15 @@ public class UserDefinedStructExport : StructExport
 
         PropertyData bit;
         var unversionedHeader = new FUnversionedHeader(reader);
+        if (!reader.Asset.HasUnversionedProperties && reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
+        {
+            SerializationControl2 = (EClassSerializationControlExtension)reader.ReadByte();
+
+            if (SerializationControl2.HasFlag(EClassSerializationControlExtension.OverridableSerializationInformation))
+            {
+                Operation2 = (EOverriddenPropertyOperation)reader.ReadByte();
+            }
+        }
         while ((bit = MainSerializer.Read(reader, null, this.ObjectName, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath), unversionedHeader, true)) != null)
         {
             StructData.Add(bit);

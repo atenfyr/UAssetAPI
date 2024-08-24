@@ -28,7 +28,7 @@ public class RawStructPropertyData : PropertyData<byte[]>
         {
             StructType = reader.ReadFName();
             if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = reader.ReadBytes((int)leng1);
@@ -40,7 +40,7 @@ public class RawStructPropertyData : PropertyData<byte[]>
         {
             writer.Write(StructType);
             if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value);

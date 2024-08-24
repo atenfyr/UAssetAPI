@@ -21,7 +21,7 @@ public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = Color.FromArgb(reader.ReadInt32());
@@ -31,7 +31,7 @@ public class ColorPropertyData : PropertyData<Color> // R, G, B, A
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.ToArgb());

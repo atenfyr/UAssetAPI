@@ -18,7 +18,7 @@ public class FontDataPropertyData : PropertyData<FFontData>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FFontData(reader);
@@ -28,7 +28,7 @@ public class FontDataPropertyData : PropertyData<FFontData>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = new FFontData();

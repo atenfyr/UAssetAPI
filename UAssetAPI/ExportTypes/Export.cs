@@ -149,15 +149,13 @@ namespace UAssetAPI.ExportTypes
 
         /// <summary>
         /// The location (relative to SerialOffset) of the beginning of the portion of this export's data that is serialized using tagged property serialization.
-        /// Serialized into versioned packages as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4). <para />
-        /// Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+        /// Serialized into packages using tagged property serialization as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4).
         /// </summary>
         [DisplayIndexOrder(8)]
         public long ScriptSerializationStartOffset;
         /// <summary>
         /// The location (relative to SerialOffset) of the end of the portion of this export's data that is serialized using tagged property serialization.
-        /// Serialized into versioned packages as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4) <para />
-        /// Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+        /// Serialized into packages using tagged property serialization as of <see cref="ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET"/> (5.4)
         /// </summary>
         [DisplayIndexOrder(9)]
         public long ScriptSerializationEndOffset;
@@ -320,11 +318,6 @@ namespace UAssetAPI.ExportTypes
                 {
                     this.SerialSize = reader.ReadInt64();
                     this.SerialOffset = reader.ReadInt64();
-                    if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
-                    {
-                        this.ScriptSerializationStartOffset = reader.ReadInt64();
-                        this.ScriptSerializationEndOffset = reader.ReadInt64();
-                    }
                 }
                 this.bForcedExport = ReadBit(reader);
                 this.bNotForClient = ReadBit(reader);
@@ -351,6 +344,11 @@ namespace UAssetAPI.ExportTypes
                     this.CreateBeforeSerializationDependenciesSize = reader.ReadInt32();
                     this.SerializationBeforeCreateDependenciesSize = reader.ReadInt32();
                     this.CreateBeforeCreateDependenciesSize = reader.ReadInt32();
+                }
+                if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                {
+                    this.ScriptSerializationStartOffset = reader.ReadInt64();
+                    this.ScriptSerializationEndOffset = reader.ReadInt64();
                 }
             }
         }
@@ -403,11 +401,6 @@ namespace UAssetAPI.ExportTypes
                 {
                     writer.Write(SerialSize);
                     writer.Write(SerialOffset);
-                    if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
-                    {
-                        writer.Write(ScriptSerializationStartOffset);
-                        writer.Write(ScriptSerializationEndOffset);
-                    }
                 }
                 WriteBit(writer, bForcedExport);
                 WriteBit(writer, bNotForClient);
@@ -434,6 +427,11 @@ namespace UAssetAPI.ExportTypes
                     writer.Write(CreateBeforeSerializationDependenciesSize);
                     writer.Write(SerializationBeforeCreateDependenciesSize);
                     writer.Write(CreateBeforeCreateDependenciesSize);
+                }
+                if (!Asset.HasUnversionedProperties && Asset.ObjectVersionUE5 >= ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET)
+                {
+                    writer.Write(ScriptSerializationStartOffset);
+                    writer.Write(ScriptSerializationEndOffset);
                 }
             }
         }

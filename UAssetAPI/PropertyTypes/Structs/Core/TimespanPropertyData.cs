@@ -29,7 +29,7 @@ public class TimespanPropertyData : PropertyData<TimeSpan>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new TimeSpan(reader.ReadInt64()); // number of ticks
@@ -39,7 +39,7 @@ public class TimespanPropertyData : PropertyData<TimeSpan>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Ticks);

@@ -21,7 +21,7 @@ public class RotatorPropertyData : PropertyData<FRotator>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FRotator(reader);
@@ -31,7 +31,7 @@ public class RotatorPropertyData : PropertyData<FRotator>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

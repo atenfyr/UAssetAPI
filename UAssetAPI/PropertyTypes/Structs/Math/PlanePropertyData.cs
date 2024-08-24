@@ -20,7 +20,7 @@ public class PlanePropertyData : PropertyData<FPlane>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FPlane(reader);
@@ -30,7 +30,7 @@ public class PlanePropertyData : PropertyData<FPlane>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

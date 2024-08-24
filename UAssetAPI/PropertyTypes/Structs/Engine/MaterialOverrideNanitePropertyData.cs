@@ -23,7 +23,7 @@ public class MaterialOverrideNanitePropertyData : StructPropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         if (reader.Asset.GetCustomVersion<FFortniteReleaseBranchCustomObjectVersion>() < FFortniteReleaseBranchCustomObjectVersion.NaniteMaterialOverrideUsesEditorOnly)
@@ -45,7 +45,7 @@ public class MaterialOverrideNanitePropertyData : StructPropertyData
     {
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         int here = (int)writer.BaseStream.Position;

@@ -244,7 +244,7 @@ public class TextPropertyData : PropertyData<FString>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         if (reader.Asset.ObjectVersion < ObjectVersion.VER_UE4_FTEXT_HISTORY)
@@ -336,7 +336,7 @@ public class TextPropertyData : PropertyData<FString>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var here = writer.BaseStream.Position;

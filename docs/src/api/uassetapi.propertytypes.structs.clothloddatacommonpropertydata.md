@@ -45,6 +45,18 @@ public bool SerializeNone;
 public Guid StructGUID;
 ```
 
+### **SerializationControl**
+
+```csharp
+public EClassSerializationControlExtension SerializationControl;
+```
+
+### **Operation**
+
+```csharp
+public EOverriddenPropertyOperation Operation;
+```
+
 ### **Name**
 
 The name of this property.
@@ -61,12 +73,12 @@ The ancestry of this property. Contains information about all the classes/struct
 public AncestryInfo Ancestry;
 ```
 
-### **DuplicationIndex**
+### **ArrayIndex**
 
-The duplication index of this property. Used to distinguish properties with the same name in the same struct.
+The array index of this property. Used to distinguish properties with the same name in the same struct.
 
 ```csharp
-public int DuplicationIndex;
+public int ArrayIndex;
 ```
 
 ### **PropertyGuid**
@@ -87,6 +99,32 @@ This field will always be treated as if it is false if [PropertyData.CanBeZero(U
 
 ```csharp
 public bool IsZero;
+```
+
+### **PropertyTagFlags**
+
+```csharp
+public EPropertyTagFlags PropertyTagFlags;
+```
+
+### **PropertyTagExtensions**
+
+Optional extensions to serialize with this property.
+
+```csharp
+public EPropertyTagExtension PropertyTagExtensions;
+```
+
+### **OverrideOperation**
+
+```csharp
+public EOverriddenPropertyOperation OverrideOperation;
+```
+
+### **bExperimentalOverridableLogic**
+
+```csharp
+public bool bExperimentalOverridableLogic;
 ```
 
 ### **Offset**

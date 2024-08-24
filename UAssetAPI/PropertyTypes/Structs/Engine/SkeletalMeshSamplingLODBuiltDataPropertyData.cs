@@ -17,7 +17,7 @@ public class SkeletalMeshSamplingLODBuiltDataPropertyData : PropertyData<Skeleta
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData(FName.DefineDummy(reader.Asset, "AreaWeightedTriangleSampler"));
@@ -39,7 +39,7 @@ public class SkeletalMeshSamplingLODBuiltDataPropertyData : PropertyData<Skeleta
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = new SkeletalMeshAreaWeightedTriangleSamplerPropertyData();

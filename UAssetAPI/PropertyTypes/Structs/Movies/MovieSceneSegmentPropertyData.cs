@@ -17,7 +17,7 @@ public class MovieSceneSegmentPropertyData : PropertyData<FMovieSceneSegment>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneSegment(reader);
@@ -27,7 +27,7 @@ public class MovieSceneSegmentPropertyData : PropertyData<FMovieSceneSegment>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);
@@ -48,7 +48,7 @@ public class MovieSceneSegmentIdentifierPropertyData : PropertyData<int>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = reader.ReadInt32();
@@ -58,7 +58,7 @@ public class MovieSceneSegmentIdentifierPropertyData : PropertyData<int>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value);

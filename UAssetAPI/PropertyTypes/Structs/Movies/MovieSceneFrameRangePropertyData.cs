@@ -17,7 +17,7 @@ public class MovieSceneFrameRangePropertyData : PropertyData<TRange<FFrameNumber
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new(reader, () => new FFrameNumber(reader));
@@ -27,7 +27,7 @@ public class MovieSceneFrameRangePropertyData : PropertyData<TRange<FFrameNumber
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var offset = writer.BaseStream.Position;

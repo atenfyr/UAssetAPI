@@ -61,7 +61,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 EnumType = reader.ReadFName();
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             bool useFailsafe = true;
@@ -132,7 +132,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(EnumType);
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
 
             switch (ByteType)

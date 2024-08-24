@@ -27,7 +27,6 @@ namespace UAssetAPI.ExportTypes
         public override void Read(AssetBinaryReader reader, int nextStarting)
         {
             base.Read(reader, nextStarting);
-            reader.ReadInt32();
 
             Field = new UField();
             Field.Read(reader);
@@ -36,7 +35,6 @@ namespace UAssetAPI.ExportTypes
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write((int)0);
 
             Field.Write(writer);
         }

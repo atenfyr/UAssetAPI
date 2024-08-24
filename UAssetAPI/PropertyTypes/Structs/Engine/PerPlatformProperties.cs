@@ -35,7 +35,7 @@ public class PerPlatformBoolPropertyData : TPerPlatformPropertyData<bool>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         int numEntries = reader.ReadInt32();
@@ -50,7 +50,7 @@ public class PerPlatformBoolPropertyData : TPerPlatformPropertyData<bool>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Length);
@@ -99,7 +99,7 @@ public class PerPlatformFloatPropertyData : TPerPlatformPropertyData<float>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         int numEntries = reader.ReadInt32();
@@ -114,7 +114,7 @@ public class PerPlatformFloatPropertyData : TPerPlatformPropertyData<float>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Length);
@@ -163,7 +163,7 @@ public class PerPlatformIntPropertyData : TPerPlatformPropertyData<int>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         int numEntries = reader.ReadInt32();
@@ -178,7 +178,7 @@ public class PerPlatformIntPropertyData : TPerPlatformPropertyData<int>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Length);
@@ -227,7 +227,7 @@ public class PerPlatformFrameRatePropertyData : TPerPlatformPropertyData<FFrameR
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         int numEntries = reader.ReadInt32();
@@ -242,7 +242,7 @@ public class PerPlatformFrameRatePropertyData : TPerPlatformPropertyData<FFrameR
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.Length);

@@ -36,14 +36,14 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
+            if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
+            {
+                EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
+                InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
+            }
+
             if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
-                if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
-                {
-                    EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
-                    InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
-                }
-
                 if (InnerType?.Value.Value == "ByteProperty")
                 {
                     long enumIndice = reader.ReadByte();
@@ -84,7 +84,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             if (includeHeader && !reader.Asset.HasUnversionedProperties)
             {
                 EnumType = reader.ReadFName();
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
 
             Value = reader.ReadFName();
@@ -92,14 +92,14 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
+            if (writer.Asset.Mappings != null && writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapEnumData enumDat1))
+            {
+                EnumType = FName.DefineDummy(writer.Asset, enumDat1.Name);
+                InnerType = FName.DefineDummy(writer.Asset, enumDat1.InnerType.Type.ToString());
+            }
+
             if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
-                if (writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapEnumData enumDat1))
-                {
-                    EnumType = FName.DefineDummy(writer.Asset, enumDat1.Name);
-                    InnerType = FName.DefineDummy(writer.Asset, enumDat1.InnerType.Type.ToString());
-                }
-
                 if (InnerType?.Value?.Value == "ByteProperty" || InnerType?.Value?.Value == "IntProperty")
                 {
                     long enumIndice = 0;
@@ -142,13 +142,13 @@ namespace UAssetAPI.PropertyTypes.Objects
             if (includeHeader && !writer.Asset.HasUnversionedProperties)
             {
                 writer.Write(EnumType);
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
             writer.Write(Value);
             return sizeof(int) * 2;
         }
 
-        public override void InitializeZero(AssetBinaryReader reader)
+        internal override void InitializeZero(AssetBinaryReader reader)
         {
             if (reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
             {

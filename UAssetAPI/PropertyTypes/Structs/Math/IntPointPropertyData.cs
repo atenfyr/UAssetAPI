@@ -18,7 +18,7 @@ public class IntPointPropertyData : PropertyData<int[]> // X, Y
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new int[2];
@@ -32,7 +32,7 @@ public class IntPointPropertyData : PropertyData<int[]> // X, Y
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = new int[2];

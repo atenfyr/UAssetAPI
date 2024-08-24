@@ -45,7 +45,7 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         var num = reader.ReadInt32();
@@ -60,7 +60,7 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var offset = writer.BaseStream.Position;

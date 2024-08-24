@@ -23,6 +23,18 @@ public uint StructFlags;
 public List<PropertyData> StructData;
 ```
 
+### **SerializationControl2**
+
+```csharp
+public EClassSerializationControlExtension SerializationControl2;
+```
+
+### **Operation2**
+
+```csharp
+public EOverriddenPropertyOperation Operation2;
+```
+
 ### **SuperStruct**
 
 Struct this inherits from, may be null
@@ -83,6 +95,24 @@ public UField Field;
 public List<PropertyData> Data;
 ```
 
+### **ObjectGuid**
+
+```csharp
+public Nullable<Guid> ObjectGuid;
+```
+
+### **SerializationControl**
+
+```csharp
+public EClassSerializationControlExtension SerializationControl;
+```
+
+### **Operation**
+
+```csharp
+public EOverriddenPropertyOperation Operation;
+```
+
 ### **ObjectName**
 
 The name of the UObject represented by this resource.
@@ -118,11 +148,7 @@ public long SerialOffset;
 ### **ScriptSerializationStartOffset**
 
 The location (relative to SerialOffset) of the beginning of the portion of this export's data that is serialized using tagged property serialization.
- Serialized into versioned packages as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4).
-
-
-
-Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+ Serialized into packages using tagged property serialization as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4).
 
 ```csharp
 public long ScriptSerializationStartOffset;
@@ -131,11 +157,7 @@ public long ScriptSerializationStartOffset;
 ### **ScriptSerializationEndOffset**
 
 The location (relative to SerialOffset) of the end of the portion of this export's data that is serialized using tagged property serialization.
- Serialized into versioned packages as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4)
-
-
-
-Assumed to be always zero for now; if you find an asset where it is not, submit an issue on the UAssetAPI repository
+ Serialized into packages using tagged property serialization as of [ObjectVersionUE5.SCRIPT_SERIALIZATION_OFFSET](./uassetapi.unrealtypes.objectversionue5.md#script_serialization_offset) (5.4)
 
 ```csharp
 public long ScriptSerializationEndOffset;

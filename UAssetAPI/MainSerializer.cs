@@ -153,7 +153,7 @@ namespace UAssetAPI
             HashSet<int> zeroProps = new HashSet<int>();
             foreach (PropertyData entry in data)
             {
-                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.DuplicationIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
+                if (!asset.Mappings.TryGetProperty<UsmapProperty>(entry.Name, entry.Ancestry, entry.ArrayIndex, asset, out _, out int idx)) throw new FormatException("No valid property \"" + entry.Name.ToString() + "\" in class " + entry.Ancestry.Parent.ToString());
                 propMap[idx] = entry;
                 if (entry.CanBeZero(asset) && entry.IsZero) zeroProps.Add(idx);
 
@@ -280,11 +280,12 @@ namespace UAssetAPI
         /// <param name="asset">The UnrealPackage which this property is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long, PropertySerializationContext)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
-        /// <param name="duplicationIndex">The duplication index of this property.</param>
+        /// <param name="propertyTagFlags">Property tag flags, if available.</param>
+        /// <param name="ArrayIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <param name="isZero">Is the body of this property empty?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, int duplicationIndex = 0, bool includeHeader = true, bool isZero = false)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None, int ArrayIndex = 0, bool includeHeader = true, bool isZero = false)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
@@ -338,8 +339,9 @@ namespace UAssetAPI
 #endif
 
             data.IsZero = isZero;
+            data.PropertyTagFlags = propertyTagFlags;
             data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
-            data.DuplicationIndex = duplicationIndex;
+            data.ArrayIndex = ArrayIndex;
             if (reader != null && !isZero)
             {
                 long posBefore = reader.BaseStream.Position;
@@ -356,7 +358,7 @@ namespace UAssetAPI
                         reader.BaseStream.Position = posBefore;
                         data = new RawStructPropertyData(name);
                         data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
-                        data.DuplicationIndex = duplicationIndex;
+                        data.ArrayIndex = ArrayIndex;
                         data.Read(reader, includeHeader, leng);
                     }
                     else
@@ -390,7 +392,8 @@ namespace UAssetAPI
             FName name = null;
             FName type = null;
             int leng = 0;
-            int duplicationIndex = 0;
+            EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None;
+            int ArrayIndex = 0;
             string structType = null;
             bool isZero = false;
 
@@ -422,7 +425,7 @@ namespace UAssetAPI
                 name = FName.DefineDummy(reader.Asset, relevantProperty.Name);
                 type = FName.DefineDummy(reader.Asset, relevantProperty.PropertyData.Type.ToString());
                 leng = 1; // not serialized
-                duplicationIndex = relevantProperty.ArrayIndex;
+                ArrayIndex = relevantProperty.ArrayIndex;
                 if (relevantProperty.PropertyData is UsmapStructData usmapStruc) structType = usmapStruc.StructType;
 
                 // check if property is zero
@@ -432,6 +435,26 @@ namespace UAssetAPI
                     header.ZeroMaskIndex++;
                 }
             }
+            else if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                name = reader.ReadFName();
+                if (name.Value.Value == "None") return null;
+
+                List<FName> types = new List<FName>();
+                int numNamesLeft = 1;
+                while (numNamesLeft > 0)
+                {
+                    types.Add(reader.ReadFName());
+                    numNamesLeft += reader.ReadInt32();
+                    numNamesLeft--;
+                }
+
+                // SUPER DUPER TODO: information is lost by doing this, ideally we should be able to pass a new FPropertyTypeName type into TypeToClass
+                type = types.Count == 0 ? new FName(reader.Asset, "None") : types[0];
+
+                leng = reader.ReadInt32();
+                propertyTagFlags = (EPropertyTagFlags)reader.ReadByte();
+            }
             else
             {
                 name = reader.ReadFName();
@@ -440,10 +463,10 @@ namespace UAssetAPI
                 type = reader.ReadFName();
 
                 leng = reader.ReadInt32();
-                duplicationIndex = reader.ReadInt32();
+                ArrayIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, duplicationIndex, includeHeader, isZero);
+            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero);
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             //Debug.WriteLine(type);
@@ -544,6 +567,48 @@ namespace UAssetAPI
                 if (!property.IsZero || !property.CanBeZero(writer.Asset)) property.Write(writer, includeHeader);
                 return -1; // length is not serialized
             }
+            else if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(property.Name);
+                if (property is UnknownPropertyData unknownProp)
+                {
+                    writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
+                }
+                else if (property is RawStructPropertyData)
+                {
+                    writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
+                }
+                else
+                {
+                    writer.Write(new FName(writer.Asset, property.PropertyType));
+                }
+                writer.Write((int)0); // dummy InnerCount; again super duper todo, should serialize whole FPropertyTypeName tree, be able to reconstruct it with mappings if needed
+
+                // update flags appropriately
+                if (property is BoolPropertyData bProp)
+                {
+                    if (bProp.Value) property.PropertyTagFlags |= EPropertyTagFlags.BoolTrue;
+                    else property.PropertyTagFlags &= ~EPropertyTagFlags.BoolTrue;
+                }
+
+                if (property.ArrayIndex != 0) property.PropertyTagFlags |= EPropertyTagFlags.HasArrayIndex;
+                else property.PropertyTagFlags &= ~EPropertyTagFlags.HasArrayIndex;
+
+                if (property.PropertyGuid != null) property.PropertyTagFlags |= EPropertyTagFlags.HasPropertyGuid;
+                else property.PropertyTagFlags &= ~EPropertyTagFlags.HasPropertyGuid;
+
+                int oldLoc = (int)writer.BaseStream.Position;
+                writer.Write((int)0); // initial length
+                writer.Write((byte)property.PropertyTagFlags);
+                if (property.ArrayIndex != 0) writer.Write(property.ArrayIndex);
+                int realLength = property.Write(writer, includeHeader);
+                int newLoc = (int)writer.BaseStream.Position;
+
+                writer.Seek(oldLoc, SeekOrigin.Begin);
+                writer.Write(realLength);
+                writer.Seek(newLoc, SeekOrigin.Begin);
+                return oldLoc;
+            }
             else
             {
                 writer.Write(property.Name);
@@ -561,7 +626,7 @@ namespace UAssetAPI
                 }
                 int oldLoc = (int)writer.BaseStream.Position;
                 writer.Write((int)0); // initial length
-                writer.Write(property.DuplicationIndex);
+                writer.Write(property.ArrayIndex);
                 int realLength = property.Write(writer, includeHeader);
                 int newLoc = (int)writer.BaseStream.Position;
 

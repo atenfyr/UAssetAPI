@@ -17,7 +17,7 @@ public class KeyHandleMapPropertyData : PropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         // map is only saved to the transaction buffer, otherwise completely empty
@@ -28,7 +28,7 @@ public class KeyHandleMapPropertyData : PropertyData
     {
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         // map is only saved to the transaction buffer, otherwise completely empty

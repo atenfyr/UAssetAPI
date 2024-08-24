@@ -24,7 +24,7 @@ public class BoxPropertyData : TBoxPropertyData<FVector>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new(reader, () => new FVector(reader));
@@ -34,7 +34,7 @@ public class BoxPropertyData : TBoxPropertyData<FVector>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer, entry => entry.Write(writer));
@@ -55,7 +55,7 @@ public class Box2fPropertyData : TBoxPropertyData<FVector2f>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new(reader, () => new FVector2f(reader));
@@ -65,7 +65,7 @@ public class Box2fPropertyData : TBoxPropertyData<FVector2f>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer, entry => entry.Write(writer));
@@ -86,7 +86,7 @@ public class Box2DPropertyData : TBoxPropertyData<FVector2D>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new TBox<FVector2D>(reader, () => new FVector2D(reader));
@@ -96,7 +96,7 @@ public class Box2DPropertyData : TBoxPropertyData<FVector2D>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer, entry => entry.Write(writer));

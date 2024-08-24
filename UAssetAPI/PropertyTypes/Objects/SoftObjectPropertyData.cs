@@ -20,7 +20,7 @@ public class AssetObjectPropertyData : PropertyData<FString>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = reader.ReadFString();
@@ -30,7 +30,7 @@ public class AssetObjectPropertyData : PropertyData<FString>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return writer.Write(Value);
@@ -141,7 +141,7 @@ public class SoftObjectPropertyData : PropertyData<FSoftObjectPath>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FSoftObjectPath(reader);
@@ -151,7 +151,7 @@ public class SoftObjectPropertyData : PropertyData<FSoftObjectPath>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         return Value.Write(writer);

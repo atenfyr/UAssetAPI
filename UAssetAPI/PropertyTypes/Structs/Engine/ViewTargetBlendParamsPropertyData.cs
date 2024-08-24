@@ -52,7 +52,7 @@ public class ViewTargetBlendParamsPropertyData : PropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         BlendTime = reader.ReadSingle();
@@ -65,7 +65,7 @@ public class ViewTargetBlendParamsPropertyData : PropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(BlendTime);

@@ -17,7 +17,7 @@ public class MovieSceneFloatValuePropertyData : PropertyData<FMovieSceneFloatVal
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FMovieSceneFloatValue(reader);
@@ -27,7 +27,7 @@ public class MovieSceneFloatValuePropertyData : PropertyData<FMovieSceneFloatVal
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var offset = writer.BaseStream.Position;

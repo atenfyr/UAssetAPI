@@ -675,6 +675,27 @@ public MemoryStream WriteData()
 [MemoryStream](https://docs.microsoft.com/en-us/dotnet/api/system.io.memorystream)<br>
 A stream that the asset has been serialized to.
 
+### **Write(MemoryStream&, MemoryStream&)**
+
+Serializes and writes an asset to two split streams (.uasset and .uexp) from memory.
+
+```csharp
+public void Write(MemoryStream& uassetStream, MemoryStream& uexpStream)
+```
+
+#### Parameters
+
+`uassetStream` [MemoryStream&](https://docs.microsoft.com/en-us/dotnet/api/system.io.memorystream&)<br>
+A stream containing the contents of the .uasset file.
+
+`uexpStream` [MemoryStream&](https://docs.microsoft.com/en-us/dotnet/api/system.io.memorystream&)<br>
+A stream containing the contents of the .uexp file, if needed, otherwise null.
+
+#### Exceptions
+
+[UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
+Thrown when [UnrealPackage.ObjectVersion](./uassetapi.unrealpackage.md#objectversion) is unspecified.
+
 ### **Write(String)**
 
 Serializes and writes an asset to disk from memory.

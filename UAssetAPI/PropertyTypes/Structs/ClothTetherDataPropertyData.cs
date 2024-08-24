@@ -23,7 +23,7 @@ public class ClothTetherDataPropertyData : StructPropertyData
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         StructType = FName.DefineDummy(reader.Asset, CurrentPropertyType);
@@ -46,7 +46,7 @@ public class ClothTetherDataPropertyData : StructPropertyData
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         StructType = FName.DefineDummy(writer.Asset, CurrentPropertyType);

@@ -33,7 +33,7 @@ public class SetPropertyData : ArrayPropertyData
         if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
             ArrayType = reader.ReadFName();
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         if (reader.Asset.Mappings != null && ArrayType == null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapArrayData strucDat1))
@@ -65,7 +65,7 @@ public class SetPropertyData : ArrayPropertyData
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
             writer.Write(ArrayType);
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         var removedItemsDummy = new ArrayPropertyData(FName.DefineDummy(writer.Asset, "ElementsToRemove"));

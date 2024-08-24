@@ -22,7 +22,7 @@ public class NavAgentSelectorPropertyData : PropertyData<FNavAgentSelector>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         Value = new FNavAgentSelector(reader.ReadUInt32()); 
@@ -32,7 +32,7 @@ public class NavAgentSelectorPropertyData : PropertyData<FNavAgentSelector>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         writer.Write(Value.PackedBits);

@@ -24,7 +24,7 @@ public class GameplayTagContainerPropertyData : PropertyData<FName[]>
     {
         if (includeHeader)
         {
-            PropertyGuid = reader.ReadPropertyGuid();
+            this.ReadEndPropertyTag(reader);
         }
 
         int numEntries = reader.ReadInt32();
@@ -39,7 +39,7 @@ public class GameplayTagContainerPropertyData : PropertyData<FName[]>
     {
         if (includeHeader)
         {
-            writer.WritePropertyGuid(PropertyGuid);
+            this.WriteEndPropertyTag(writer);
         }
 
         if (Value == null) Value = [];

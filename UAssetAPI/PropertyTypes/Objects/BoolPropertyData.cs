@@ -1,6 +1,7 @@
 ﻿using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
+using System.Reflection.PortableExecutable;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -25,19 +26,31 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            Value = reader.ReadBoolean();
+            if (reader.Asset.HasUnversionedProperties || reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                Value = reader.ReadBoolean();
+            }
+            else
+            {
+                Value = this.PropertyTagFlags.HasFlag(EPropertyTagFlags.BoolTrue);
+            }
             if (includeHeader)
             {
-                PropertyGuid = reader.ReadPropertyGuid();
+                this.ReadEndPropertyTag(reader);
             }
         }
 
         public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
         {
-            writer.Write(Value);
+            if (writer.Asset.HasUnversionedProperties || writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(Value);
+            }
+            // else, special case in MainSerializer
+
             if (includeHeader)
             {
-                writer.WritePropertyGuid(PropertyGuid);
+                this.WriteEndPropertyTag(writer);
             }
             return 0;
         }
