@@ -473,7 +473,8 @@ namespace UAssetAPI
         public uint PackageSource;
 
         /// <summary>
-        /// The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
+        /// In UE4: "FolderName": The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
+        /// In UE5: "PackageName": The package name the file was last saved with.
         /// </summary>
         public FString FolderName;
 
