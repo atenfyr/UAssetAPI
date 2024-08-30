@@ -111,12 +111,12 @@ public static class CRCGenerator
             var next = Math.Min(i + 1, text.Length - 1);
             if (char.IsHighSurrogate(text[i]) && next != i && char.IsLowSurrogate(text[next]))
             {
-                rawDataForCharacter = encoding.GetBytes([text[i], text[++i]]);
+                rawDataForCharacter = encoding.GetBytes( new [] { text[i], text[++i] });
             }
             else
             {
                 char B = !version420 ? ToUpper(text[i]) : ToUpperVersion420(text[i]);
-                rawDataForCharacter = encoding.GetBytes([B]);
+                rawDataForCharacter = encoding.GetBytes(new [] { B });
             }
 
             foreach (byte rawByte in rawDataForCharacter)
