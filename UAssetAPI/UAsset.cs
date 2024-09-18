@@ -1118,8 +1118,20 @@ namespace UAssetAPI
                 SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
                 reader.BaseStream.Seek(SearchableNamesOffset, SeekOrigin.Begin);
                 var searchableNamesCount = reader.ReadInt32();
-                if (searchableNamesCount > 0)
-                    throw new NotImplementedException("TODO: read the searchable names");
+                
+                for (int i = 0; i < searchableNamesCount; i++)
+                {
+                    var collectionIndex = reader.ReadInt32();
+                    var collectionCount = reader.ReadInt32();
+                    var searchableCollection = new List<FName>();
+                    for (int j = 0; j < collectionCount; j++)
+                    {
+                        var searchableName = reader.ReadFName();
+                        searchableCollection.Add(searchableName);
+                    }
+
+                    SearchableNames.Add(FPackageIndex.FromRawIndex(collectionIndex), searchableCollection);
+                }
             }
 
             // Thumbnails
@@ -1498,8 +1510,21 @@ namespace UAssetAPI
                     SearchableNamesOffset = (int)writer.BaseStream.Position;
 
                     writer.Write(SearchableNames.Count);
-                    if (SearchableNames.Count > 0)
-                        throw new NotImplementedException("TODO: write the searchable names");
+
+                    for (int i = 0; i < SearchableNames.Count; i++)
+                    {
+                        var searchableNamesCollectionPair = SearchableNames.ElementAt(i);
+                        var searchableNamesCollectionIndex = searchableNamesCollectionPair.Key;
+                        var searchableNamesCollectionContent = searchableNamesCollectionPair.Value;
+
+                        writer.Write(searchableNamesCollectionIndex.Index);
+                        writer.Write(searchableNamesCollectionContent.Count);
+
+                        for (int j = 0; j < searchableNamesCollectionContent.Count; j++)
+                        {
+                            writer.Write(searchableNamesCollectionContent[j]);
+                        }
+                    }
                 }
                 else
                 {
