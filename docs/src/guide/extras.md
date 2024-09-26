@@ -74,7 +74,7 @@ if (exp is NormalExport normalExport)
         {
             for (int j = 0; j < arrProp.Value.Length; j++)
             {
-                PropertyData prop2 = arrProp.Value[i];
+                PropertyData prop2 = arrProp.Value[j];
                 Console.WriteLine(prop2.Name.ToString() + ": " + prop2.PropertyType.ToString());
                 // etc.
                 // note that arrays and structs can contain arrays and structs too...
@@ -85,7 +85,7 @@ if (exp is NormalExport normalExport)
         {
             for (int j = 0; j < structProp.Value.Count; j++)
             {
-                PropertyData prop2 = structProp.Value[i];
+                PropertyData prop2 = structProp.Value[j];
                 Console.WriteLine(prop2.Name.ToString() + ": " + prop2.PropertyType.ToString());
                 // etc.
                 // note that arrays and structs can contain arrays and structs too...
