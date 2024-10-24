@@ -203,9 +203,10 @@ namespace UAssetAPI
                     int fragIdx = 0;
                     while (newFrag.ValueNum > FFragment.ValueMax)
                     {
-                        allFrags.Add(new FFragment(0, FFragment.ValueMax, false, fragmentHasAnyZeros.Contains(fragIdx), firstNum + FFragment.ValueMax * fragIdx));
+                        allFrags.Add(new FFragment(newFrag.SkipNum, FFragment.ValueMax, false, fragmentHasAnyZeros.Contains(fragIdx), firstNum + FFragment.ValueMax * fragIdx));
                         newFrag.ValueNum -= FFragment.ValueMax;
                         newFrag.FirstNum += FFragment.ValueMax;
+                        newFrag.SkipNum = 0;
                         newFrag.bHasAnyZeroes = fragmentHasAnyZeros.Contains(++fragIdx);
                     }
 
