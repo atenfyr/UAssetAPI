@@ -1045,70 +1045,88 @@ namespace UAssetAPI
                 }
             }
 
-            // load dependencies, if needed and available
-            Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
-            for (int i = 0; i < Exports.Count; i++)
+            if (reader.LoadUexp)
             {
-                Export newExport = Exports[i];
-                List<FPackageIndex> deps = new List<FPackageIndex>();
-                deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
-                deps.AddRange(newExport.SerializationBeforeCreateDependencies);
-                //deps.Add(newExport.ClassIndex);
-                //deps.Add(newExport.SuperIndex);
-
-                depsMap[i + 1] = new List<int>();
-                foreach (FPackageIndex dep in deps)
+                // load dependencies, if needed and available
+                Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
+                for (int i = 0; i < Exports.Count; i++)
                 {
-                    if (dep.IsImport())
+                    Export newExport = Exports[i];
+                    List<FPackageIndex> deps = new List<FPackageIndex>();
+                    deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
+                    deps.AddRange(newExport.SerializationBeforeCreateDependencies);
+                    //deps.Add(newExport.ClassIndex);
+                    //deps.Add(newExport.SuperIndex);
+
+                    depsMap[i + 1] = new List<int>();
+                    foreach (FPackageIndex dep in deps)
                     {
-                        Import imp = dep.ToImport(this);
-                        if (imp.OuterIndex.IsImport())
+                        if (dep.IsImport())
                         {
-                            var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
-                            this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                            Import imp = dep.ToImport(this);
+                            if (imp.OuterIndex.IsImport())
+                            {
+                                var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
+                                this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
+                            }
+                        }
+
+                        if (dep.IsExport())
+                        {
+                            depsMap[i + 1].Add(dep.Index);
                         }
                     }
+                }
+                exportLoadOrder.AddRange(Enumerable.Range(1, Exports.Count).SortByDependencies(depsMap));
 
-                    if (dep.IsExport())
+                // Export data
+                if (SectionSixOffset > 0 && Exports.Count > 0)
+                {
+                    foreach (int exportIdx in exportLoadOrder)
                     {
-                        depsMap[i + 1].Add(dep.Index);
+                        int i = exportIdx - 1;
+
+                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
+                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            continue;
+                        }
+
+                        ConvertExportToChildExportAndRead(reader, i);
+                    }
+
+                    // catch any stragglers
+                    for (int i = 0; i < Exports.Count; i++)
+                    {
+                        if (Exports[i].alreadySerialized) continue;
+
+                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
+                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            continue;
+                        }
+
+                        ConvertExportToChildExportAndRead(reader, i);
                     }
                 }
             }
-            exportLoadOrder.AddRange(Enumerable.Range(1, Exports.Count).SortByDependencies(depsMap));
-
-            // Export data
-            if (SectionSixOffset > 0 && Exports.Count > 0)
+            else
             {
-                foreach (int exportIdx in exportLoadOrder)
-                {
-                    int i = exportIdx - 1;
-
-                    reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                    if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
-                    {
-                        Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                        ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
-                        continue;
-                    }
-
-                    ConvertExportToChildExportAndRead(reader, i);
-                }
-
-                // catch any stragglers
+                // skip loading dependencies & parsing export data if we don't load uexp
+                // convert all exports as appropriate, but do no further reading
                 for (int i = 0; i < Exports.Count; i++)
                 {
-                    if (Exports[i].alreadySerialized) continue;
-
-                    reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
                     if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
                     {
                         Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                        ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
                         continue;
                     }
 
-                    ConvertExportToChildExportAndRead(reader, i);
+                    ConvertExportToChildExportAndRead(reader, i, false);
                 }
             }
 
@@ -1990,7 +2008,7 @@ namespace UAssetAPI
         /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
         /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
-        /// <param name="loadUexp">Whether to load the UEXP file. False only reads the UASSET.</param>
+        /// <param name="loadUexp">Whether to load the .uexp file. False only reads the .uasset file.</param>
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
