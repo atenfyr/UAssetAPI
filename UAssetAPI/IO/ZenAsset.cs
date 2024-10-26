@@ -202,7 +202,7 @@ namespace UAssetAPI.IO
         public string GetStringFromCityHash64(ulong val)
         {
             if (CityHash64Map.ContainsKey(val)) return CityHash64Map[val];
-            if (Mappings.CityHash64Map.ContainsKey(val)) return Mappings.CityHash64Map[val];
+            //if (Mappings.CityHash64Map.ContainsKey(val)) return Mappings.CityHash64Map[val];
             return null;
         }
 

@@ -34,7 +34,12 @@ namespace UAssetAPI
         /// <summary>
         /// Skip Kismet bytecode serialization.
         /// </summary>
-        SkipParsingBytecode = 2
+        SkipParsingBytecode = 2,
+
+        /// <summary>
+        /// Skip loading other assets referenced in preload dependencies. You may wish to set this flag when possible in multi-threading applications, since preload dependency loading could lead to file handle race conditions.
+        /// </summary>
+        SkipPreloadDependencyLoading = 4
     }
 
 
@@ -279,6 +284,8 @@ namespace UAssetAPI
 
         public override bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
         {
+            if (CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipPreloadDependencyLoading)) return false;
+
             if (Mappings?.Schemas == null) return false;
             if (path?.Value?.Value == null) return false;
             if (!path.Value.Value.StartsWith("/") || path.Value.Value.StartsWith("/Script")) return false;
@@ -291,7 +298,7 @@ namespace UAssetAPI
             }
 
             // basic circular referencing guard
-            if (Mappings.PathsAlreadyProcessedForSchemas.Contains(assetPath))
+            if (Mappings.PathsAlreadyProcessedForSchemas.ContainsKey(assetPath))
             {
                 return false;
             }
@@ -299,7 +306,7 @@ namespace UAssetAPI
             bool success = false;
             try
             {
-                Mappings.PathsAlreadyProcessedForSchemas.Add(assetPath);
+                Mappings.PathsAlreadyProcessedForSchemas[assetPath] = 1;
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
                 otherAsset.InternalAssetPath = assetPath;
                 otherAsset.FilePath = pathOnDisk;

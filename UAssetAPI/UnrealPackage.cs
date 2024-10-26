@@ -829,7 +829,7 @@ namespace UAssetAPI
                     string enumName = fetchedEnumExp.ObjectName?.ToString();
                     if (Mappings?.EnumMap != null && enumName != null)
                     {
-                        var newEnum = new UsmapEnum(enumName, new Dictionary<long, string>()); 
+                        var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>()); 
                         foreach (Tuple<FName, long> entry in fetchedEnumExp.Enum.Names)
                         {
                             newEnum.Values[entry.Item2] = entry.Item1.ToString();

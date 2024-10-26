@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -248,8 +249,8 @@ namespace UAssetAPI.Unversioned
 
         public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
-        private Dictionary<int, UsmapProperty> properties;
-        private Dictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
+        private ConcurrentDictionary<int, UsmapProperty> properties;
+        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
 
         public UsmapStructKind StructKind;
         public int StructOrClassFlags;
@@ -262,14 +263,14 @@ namespace UAssetAPI.Unversioned
 
         public void ConstructPropertiesMap(bool isCaseInsensitive)
         {
-            propertiesMap = new Dictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
+            propertiesMap = new ConcurrentDictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
             foreach (KeyValuePair<int, UsmapProperty> entry in properties)
             {
                 propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
             }
         }
 
-        public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset = false)
+        public UsmapSchema(string name, string superType, ushort propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset = false)
         {
             Name = name;
             SuperType = superType;
@@ -291,9 +292,9 @@ namespace UAssetAPI.Unversioned
         public string Name;
         public string ModulePath;
         public int EnumFlags;
-        public Dictionary<long, string> Values;
+        public ConcurrentDictionary<long, string> Values;
 
-        public UsmapEnum(string name, Dictionary<long, string> values)
+        public UsmapEnum(string name, ConcurrentDictionary<long, string> values)
         {
             Name = name;
             Values = values;
@@ -390,28 +391,9 @@ namespace UAssetAPI.Unversioned
         public IDictionary<string, UsmapSchema> Schemas;
 
         /// <summary>
-        /// Pre-computed CityHash64 map for all relevant strings
-        /// </summary>
-        public IDictionary<ulong, string> CityHash64Map;
-
-        /// <summary>
         /// List of extensions that failed to parse.
         /// </summary>
         public List<string> FailedExtensions;
-
-        private void AddCityHash64MapEntry(string val)
-        {
-            // for now, we don't actually use this
-            return;
-
-            /*ulong hsh = CRCGenerator.GenerateImportHashFromObjectPath(val);
-            if (CityHash64Map.ContainsKey(hsh))
-            {
-                if (CRCGenerator.ToLower(CityHash64Map[hsh]) == CRCGenerator.ToLower(val)) return;
-                throw new FormatException("CityHash64 hash collision between \"" + CityHash64Map[hsh] + "\" and \"" + val + "\"");
-            }
-            CityHash64Map.Add(hsh, val);*/
-        }
 
         private static UsmapPropertyData ConvertFPropertyToUsmapPropertyData(StructExport exp, FProperty entry)
         {
@@ -621,14 +603,14 @@ namespace UAssetAPI.Unversioned
 
         public static UsmapSchema GetSchemaFromStructExport(StructExport exp, bool isCaseInsensitive)
         {
-            var res = new Dictionary<int, UsmapProperty>();
+            var res = new ConcurrentDictionary<int, UsmapProperty>();
             int idx = 0;
             if (exp.Asset.GetCustomVersion<FCoreObjectVersion>() >= FCoreObjectVersion.FProperties)
             {
                 foreach (FProperty entry in exp.LoadedProperties)
                 {
                     UsmapProperty converted = new UsmapProperty(entry.Name.ToString(), (ushort)idx, 0, 1, ConvertFPropertyToUsmapPropertyData(exp, entry));
-                    res.Add(idx, converted);
+                    res[idx] = converted;
                     idx++;
                 }
             }
@@ -656,7 +638,7 @@ namespace UAssetAPI.Unversioned
                     if (entry.ToExport(exp.Asset) is not PropertyExport field) continue;
 
                     UsmapProperty converted = new UsmapProperty(field.ObjectName.ToString(), (ushort)idx, 0, 1, ConvertUPropertyToUsmapPropertyData(field));
-                    res.Add(idx, converted);
+                    res[idx] = converted;
                     idx++;
                 }
             }
@@ -724,7 +706,8 @@ namespace UAssetAPI.Unversioned
             return string.Join("\n", res.ToArray());
         }
 
-        public ISet<string> PathsAlreadyProcessedForSchemas = new HashSet<string>();
+        // not a set to ensure thread safety
+        public ConcurrentDictionary<string, byte> PathsAlreadyProcessedForSchemas = new ConcurrentDictionary<string, byte>();
         public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, string modulePath = null, bool throwExceptions = true)
         {
             if (string.IsNullOrEmpty(nm)) return null;
@@ -960,7 +943,6 @@ namespace UAssetAPI.Unversioned
         public void Read(UsmapBinaryReader compressedReader)
         {
             var reader = ReadHeader(compressedReader);
-            CityHash64Map = new Dictionary<ulong, string>();
 
             // part 1: names
             //Console.WriteLine(reader.BaseStream.Position);
@@ -975,18 +957,18 @@ namespace UAssetAPI.Unversioned
 
             // part 2: enums
             //Console.WriteLine(reader.BaseStream.Position);
-            EnumMap = new Dictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+            EnumMap = new ConcurrentDictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
             int numEnums = reader.ReadInt32();
             UsmapEnum[] enumIndexMap = new UsmapEnum[numEnums];
             for (int i = 0; i < numEnums; i++)
             {
                 string enumName = reader.ReadName();
 
-                var newEnum = new UsmapEnum(enumName, new Dictionary<long, string>());
+                var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>());
                 int numEnumEntries = Version >= UsmapVersion.LargeEnums ? (int)reader.ReadInt16() : (int)reader.ReadByte();
                 for (int j = 0; j < numEnumEntries; j++)
                 {
-                    newEnum.Values.Add(j, reader.ReadName());
+                    newEnum.Values[j] = reader.ReadName();
                 }
 
                 if (!EnumMap.ContainsKey(enumName))
@@ -998,7 +980,7 @@ namespace UAssetAPI.Unversioned
 
             // part 3: schema
             //Console.WriteLine(reader.BaseStream.Position);
-            Schemas = new Dictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+            Schemas = new ConcurrentDictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
             int numSchema = reader.ReadInt32();
             UsmapSchema[] schemaIndexMap = new UsmapSchema[numSchema];
             for (int i = 0; i < numSchema; i++)
@@ -1007,7 +989,7 @@ namespace UAssetAPI.Unversioned
                 string schemaSuperName = reader.ReadName();
                 ushort numProps = reader.ReadUInt16();
                 ushort serializablePropCount = reader.ReadUInt16();
-                Dictionary<int, UsmapProperty> props = new Dictionary<int, UsmapProperty>();
+                ConcurrentDictionary<int, UsmapProperty> props = new ConcurrentDictionary<int, UsmapProperty>();
                 for (int j = 0; j < serializablePropCount; j++)
                 {
                     ushort SchemaIdx = reader.ReadUInt16();
@@ -1021,7 +1003,7 @@ namespace UAssetAPI.Unversioned
                         var cln = (UsmapProperty)currProp.Clone();
                         cln.SchemaIndex = (ushort)(SchemaIdx + k);
                         cln.ArrayIndex = (ushort)k;
-                        props.Add(SchemaIdx + k, cln);
+                        props[SchemaIdx + k] = cln;
                     }
                 }
 
@@ -1050,14 +1032,12 @@ namespace UAssetAPI.Unversioned
                         for (int i = 0; i < ppthNumEnums; i++)
                         {
                             enumIndexMap[i].ModulePath = reader.ReadName();
-                            AddCityHash64MapEntry(enumIndexMap[i].ModulePath + "." + enumIndexMap[i].Name);
                         }
                         int ppthNumSchemas = reader.ReadInt32();
                         for (int i = 0; i < ppthNumSchemas; i++)
                         {
                             schemaIndexMap[i].ModulePath = reader.ReadName();
                             Schemas[schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name] = schemaIndexMap[i];
-                            AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
                         }
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
@@ -1112,7 +1092,6 @@ namespace UAssetAPI.Unversioned
                         for (int i = 0; i < schemaIndexMap.Length; i++)
                         {
                             schemaIndexMap[i].ModulePath = modulePaths[numModulePaths > byte.MaxValue ? reader.ReadUInt16() : reader.ReadByte()];
-                            AddCityHash64MapEntry(schemaIndexMap[i].ModulePath + "." + schemaIndexMap[i].Name);
                         }
 
                         if (reader.BaseStream.Position != endPos) throw new FormatException("Failed to parse extension " + extId + ": ended at " + reader.BaseStream.Position + ", expected " + endPos);
