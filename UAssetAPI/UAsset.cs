@@ -981,7 +981,7 @@ namespace UAssetAPI
             }
 
             BulkData = [];
-            if (BulkDataStartOffset > 0)
+            if (BulkDataStartOffset > 0 && reader.LoadUexp)
             {
                 reader.BaseStream.Seek(BulkDataStartOffset, SeekOrigin.Begin);
                 BulkData = reader.ReadBytes((int)(reader.BaseStream.Length - BulkDataStartOffset));
@@ -1984,6 +1984,26 @@ namespace UAssetAPI
             SetEngineVersion(engineVersion);
 
             Read(PathToReader(path));
+        }
+        
+        /// <summary>
+        /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
+        /// </summary>
+        /// <param name="path">The path of the asset file on disk that this instance will read from.</param>
+        /// <param name="loadUexp">Whether to load the UEXP file. False only reads the UASSET.</param>
+        /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
+        /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
+        /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
+        /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
+        public UAsset(string path, bool loadUexp, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        {
+            this.FilePath = path;
+            this.Mappings = mappings;
+            this.CustomSerializationFlags = customSerializationFlags;
+            SetEngineVersion(engineVersion);
+
+            Read(PathToReader(path, loadUexp));
         }
 
         /// <summary>

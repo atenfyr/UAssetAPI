@@ -253,10 +253,17 @@ namespace UAssetAPI
     public class AssetBinaryReader : UnrealBinaryReader
     {
         public UnrealPackage Asset;
+        public bool LoadUexp = true;
 
         public AssetBinaryReader(Stream stream, UnrealPackage asset = null) : base(stream)
         {
             Asset = asset;
+        }
+        
+        public AssetBinaryReader(Stream stream, bool inLoadUexp, UnrealPackage asset = null) : base(stream)
+        {
+            Asset = asset;
+            LoadUexp = inLoadUexp;
         }
 
         public virtual Guid? ReadPropertyGuid()

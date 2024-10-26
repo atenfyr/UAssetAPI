@@ -323,11 +323,11 @@ namespace UAssetAPI
         /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
         public MemoryStream PathToStream(string p)
         {
-            using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
+            using (FileStream origStream = File.Open(p, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 MemoryStream completeStream = new MemoryStream();
                 origStream.CopyTo(completeStream);
-
+                
                 UseSeparateBulkDataFiles = false;
                 try
                 {
@@ -343,6 +343,45 @@ namespace UAssetAPI
                     }
                 }
                 catch (FileNotFoundException) { }
+                
+
+                completeStream.Seek(0, SeekOrigin.Begin);
+                return completeStream;
+            }
+        }
+        
+        /// <summary>
+        /// Creates a MemoryStream from an asset path.
+        /// </summary>
+        /// <param name="p">The path to the input file.</param>
+        /// <param name="loadUEXP">Whether to load the UEXP file. False only reads the UASSET.</param>
+        /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
+        public MemoryStream PathToStream(string p, bool loadUEXP = true)
+        {
+            using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
+            {
+                MemoryStream completeStream = new MemoryStream();
+                origStream.CopyTo(completeStream);
+                
+                if (loadUEXP)
+                {
+                    UseSeparateBulkDataFiles = false;
+                    try
+                    {
+                        var targetFile = Path.ChangeExtension(p, "uexp");
+                        if (File.Exists(targetFile))
+                        {
+                            using (FileStream newStream = File.Open(targetFile, FileMode.Open))
+                            {
+                                completeStream.Seek(0, SeekOrigin.End);
+                                newStream.CopyTo(completeStream);
+                                UseSeparateBulkDataFiles = true;
+                            }
+                        }
+                    }
+                    catch (FileNotFoundException) { }
+                }
+                
 
                 completeStream.Seek(0, SeekOrigin.Begin);
                 return completeStream;
@@ -357,6 +396,17 @@ namespace UAssetAPI
         public AssetBinaryReader PathToReader(string p)
         {
             return new AssetBinaryReader(PathToStream(p), this);
+        }
+        
+        /// <summary>
+        /// Creates a BinaryReader from an asset path.
+        /// </summary>
+        /// <param name="p">The path to the input file.</param>
+        /// <param name="loadUEXP">Whether to load the UEXP file. False only reads the UASSET.</param>
+        /// <returns>A new BinaryReader that stores the binary data of the input file.</returns>
+        public AssetBinaryReader PathToReader(string p, bool loadUEXP = true)
+        {
+            return new AssetBinaryReader(PathToStream(p, loadUEXP), loadUEXP, this);
         }
 
         /// <summary>
