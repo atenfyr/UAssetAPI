@@ -315,48 +315,54 @@ namespace UAssetAPI
             if (isSerializationTime) return true;
             return (CustomSerializationFlags & CustomSerializationFlags.NoDummies) == 0;
         }
-
+        
         /// <summary>
         /// Creates a MemoryStream from an asset path.
         /// </summary>
         /// <param name="p">The path to the input file.</param>
+        /// <param name="loadUEXP">Whether to load the UEXP file. False only reads the UASSET.</param>
         /// <returns>A new MemoryStream that stores the binary data of the input file.</returns>
-        public MemoryStream PathToStream(string p)
+        public MemoryStream PathToStream(string p, bool loadUEXP = true)
         {
-            using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
+            using (FileStream origStream = File.Open(p, FileMode.Open, FileAccess.Read))
             {
                 MemoryStream completeStream = new MemoryStream();
                 origStream.CopyTo(completeStream);
 
-                UseSeparateBulkDataFiles = false;
-                try
+                if (loadUEXP)
                 {
-                    var targetFile = Path.ChangeExtension(p, "uexp");
-                    if (File.Exists(targetFile))
+                    UseSeparateBulkDataFiles = false;
+                    try
                     {
-                        using (FileStream newStream = File.Open(targetFile, FileMode.Open))
+                        var targetFile = Path.ChangeExtension(p, "uexp");
+                        if (File.Exists(targetFile))
                         {
-                            completeStream.Seek(0, SeekOrigin.End);
-                            newStream.CopyTo(completeStream);
-                            UseSeparateBulkDataFiles = true;
+                            using (FileStream newStream = File.Open(targetFile, FileMode.Open))
+                            {
+                                completeStream.Seek(0, SeekOrigin.End);
+                                newStream.CopyTo(completeStream);
+                                UseSeparateBulkDataFiles = true;
+                            }
                         }
                     }
+                    catch (FileNotFoundException) { }
                 }
-                catch (FileNotFoundException) { }
+
 
                 completeStream.Seek(0, SeekOrigin.Begin);
                 return completeStream;
             }
         }
-
+        
         /// <summary>
         /// Creates a BinaryReader from an asset path.
         /// </summary>
         /// <param name="p">The path to the input file.</param>
+        /// <param name="loadUEXP">Whether to load the .uexp file. False only reads the .uasset file.</param>
         /// <returns>A new BinaryReader that stores the binary data of the input file.</returns>
-        public AssetBinaryReader PathToReader(string p)
+        public AssetBinaryReader PathToReader(string p, bool loadUEXP = true)
         {
-            return new AssetBinaryReader(PathToStream(p), this);
+            return new AssetBinaryReader(PathToStream(p, loadUEXP), loadUEXP, this);
         }
 
         /// <summary>
@@ -716,7 +722,7 @@ namespace UAssetAPI
                 _internalAssetPath = value;
             }
         }
-        protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i)
+        protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i, bool read = true)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
             try
@@ -739,57 +745,49 @@ namespace UAssetAPI
                 {
                     case "Level":
                         Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
-                        Exports[i].Read(reader, (int)nextStarting);
                         break;
                     case "Enum":
                     case "UserDefinedEnum":
                         Exports[i] = Exports[i].ConvertToChildExport<EnumExport>();
-                        Exports[i].Read(reader, (int)nextStarting);
                         break;
                     case "Function":
                         Exports[i] = Exports[i].ConvertToChildExport<FunctionExport>();
-                        Exports[i].Read(reader, (int)nextStarting);
                         break;
                     case "UserDefinedStruct":
                         Exports[i] = Exports[i].ConvertToChildExport<UserDefinedStructExport>();
-                        Exports[i].Read(reader, (int)nextStarting);
                         break;
                     default:
                         if (exportClassType.EndsWith("DataTable"))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<DataTableExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         else if (exportClassType.EndsWith("StringTable"))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<StringTableExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         else if (exportClassType.EndsWith("BlueprintGeneratedClass"))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<ClassExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         else if (exportClassType == "ScriptStruct")
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<StructExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || MainSerializer.AdditionalPropertyRegistry.Contains(exportClassType))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         else
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<NormalExport>();
-                            Exports[i].Read(reader, (int)nextStarting);
                         }
                         break;
                 }
 
+                if (read) Exports[i].Read(reader, (int)nextStarting);
+
                 // if we got a StructExport, let's modify mappings/MapStructTypeOverride if we can
-                if (Exports[i] is StructExport fetchedStructExp && Exports[i] is not FunctionExport)
+                if (read && Exports[i] is StructExport fetchedStructExp && Exports[i] is not FunctionExport)
                 {
                     // check to see if we can add some new map type overrides
                     if (fetchedStructExp.LoadedProperties != null)
@@ -826,7 +824,7 @@ namespace UAssetAPI
                 }
 
                 // if we got an enum, let's add to mappings enum map if we can
-                if (Exports[i] is EnumExport fetchedEnumExp)
+                if (read && Exports[i] is EnumExport fetchedEnumExp)
                 {
                     string enumName = fetchedEnumExp.ObjectName?.ToString();
                     if (Mappings?.EnumMap != null && enumName != null)
@@ -840,26 +838,29 @@ namespace UAssetAPI
                     }
                 }
 
-                long extrasLen = nextStarting - reader.BaseStream.Position;
-                if (extrasLen < 0)
+                if (read)
                 {
-                    throw new FormatException("Invalid padding at end of export " + (i + 1) + ": " + extrasLen + " bytes");
-                }
-                else
-                {
-                    Exports[i].Extras = reader.ReadBytes((int)extrasLen);
-                }
+                    long extrasLen = nextStarting - reader.BaseStream.Position;
+                    if (extrasLen < 0)
+                    {
+                        throw new FormatException("Invalid padding at end of export " + (i + 1) + ": " + extrasLen + " bytes");
+                    }
+                    else
+                    {
+                        Exports[i].Extras = reader.ReadBytes((int)extrasLen);
+                    }
 
-                Exports[i].alreadySerialized = true;
+                    Exports[i].alreadySerialized = true;
+                }
             }
             catch (Exception ex)
             {
 #if DEBUGVERBOSE
                 Console.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
-                reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                if (read) reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
                 Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                if (read) ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
             }
 #pragma warning restore CS0168 // Variable is declared but never used
         }
