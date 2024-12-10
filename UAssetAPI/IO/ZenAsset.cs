@@ -396,7 +396,7 @@ namespace UAssetAPI.IO
                     switch (entry.CommandType)
                     {
                         case EExportCommandType.ExportCommandType_Serialize:
-                            ConvertExportToChildExportAndRead(reader, (int)entry.LocalExportIndex);
+                            ParseExport(reader, (int)entry.LocalExportIndex);
                             break;
                     }
                 }

@@ -39,7 +39,12 @@ namespace UAssetAPI
         /// <summary>
         /// Skip loading other assets referenced in preload dependencies. You may wish to set this flag when possible in multi-threading applications, since preload dependency loading could lead to file handle race conditions.
         /// </summary>
-        SkipPreloadDependencyLoading = 4
+        SkipPreloadDependencyLoading = 4,
+
+        /// <summary>
+        /// Skip parsing exports at read time. Entries in the export map will still be converted to their respective sub-types. You can manually parse exports with the <see cref="UnrealPackage.ParseExport(AssetBinaryReader, int)"/> method.
+        /// </summary>
+        SkipParsingExports = 8
     }
 
 
@@ -1052,7 +1057,7 @@ namespace UAssetAPI
                 }
             }
 
-            if (reader.LoadUexp)
+            if (reader.LoadUexp && !CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports))
             {
                 // load dependencies, if needed and available
                 Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
@@ -1101,7 +1106,7 @@ namespace UAssetAPI
                             continue;
                         }
 
-                        ConvertExportToChildExportAndRead(reader, i);
+                        ParseExport(reader, i);
                     }
 
                     // catch any stragglers
@@ -1117,13 +1122,13 @@ namespace UAssetAPI
                             continue;
                         }
 
-                        ConvertExportToChildExportAndRead(reader, i);
+                        ParseExport(reader, i);
                     }
                 }
             }
             else
             {
-                // skip loading dependencies & parsing export data if we don't load uexp
+                // skip loading dependencies & parsing export data if we don't load uexp/exports
                 // convert all exports as appropriate, but do no further reading
                 for (int i = 0; i < Exports.Count; i++)
                 {
@@ -1133,7 +1138,7 @@ namespace UAssetAPI
                         continue;
                     }
 
-                    ConvertExportToChildExportAndRead(reader, i, false);
+                    ParseExport(reader, i, false);
                 }
             }
 

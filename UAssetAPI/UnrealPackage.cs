@@ -722,7 +722,14 @@ namespace UAssetAPI
                 _internalAssetPath = value;
             }
         }
-        protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i, bool read = true)
+
+        /// <summary>
+        /// Read an export from disk.
+        /// </summary>
+        /// <param name="reader">The binary reader.</param>
+        /// <param name="i">The index of the export in the export map to read.</param>
+        /// <param name="read">Whether or not to serialize the body of the export. If false, simply convert to the respective sub-type.</param>
+        public void ParseExport(AssetBinaryReader reader, int i, bool read = true)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
             try
