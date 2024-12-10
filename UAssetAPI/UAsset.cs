@@ -42,7 +42,7 @@ namespace UAssetAPI
         SkipPreloadDependencyLoading = 4,
 
         /// <summary>
-        /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UnrealPackage.ParseExport(AssetBinaryReader, int)"/> method.
+        /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UnrealPackage.ConvertExportToChildExportAndRead(AssetBinaryReader, int)"/> method.
         /// </summary>
         SkipParsingExports = 8
     }
@@ -1108,7 +1108,7 @@ namespace UAssetAPI
                             continue;
                         }
 
-                        ParseExport(reader, i);
+                        ConvertExportToChildExportAndRead(reader, i);
                     }
 
                     // catch any stragglers
@@ -1124,7 +1124,7 @@ namespace UAssetAPI
                             continue;
                         }
 
-                        ParseExport(reader, i);
+                        ConvertExportToChildExportAndRead(reader, i);
                     }
                 }
             }
@@ -1140,7 +1140,7 @@ namespace UAssetAPI
                         continue;
                     }
 
-                    ParseExport(reader, i, false);
+                    ConvertExportToChildExportAndRead(reader, i, false);
                 }
             }
 

@@ -723,6 +723,7 @@ namespace UAssetAPI
             }
         }
 
+
         /// <summary>
         /// Read an export from disk.
         /// </summary>
@@ -730,6 +731,12 @@ namespace UAssetAPI
         /// <param name="i">The index of the export in the export map to read.</param>
         /// <param name="read">Whether or not to serialize the body of the export. If false, simply converts to the respective sub-type.</param>
         public void ParseExport(AssetBinaryReader reader, int i, bool read = true)
+        {
+            reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+            ConvertExportToChildExportAndRead(reader, i, read);
+        }
+
+        public void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i, bool read = true)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
             try

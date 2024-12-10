@@ -1,18 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.IO;
-using UAssetAPI.Kismet.Bytecode;
-using UAssetAPI.PropertyTypes.Objects;
-using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -363,32 +358,13 @@ namespace UAssetAPI.Benchmark
                     new AssetBinaryWriter(testStrm, test).WriteNameBatch(test.HashVersion, (IList<FString>)test.GetNameMapIndexList());
                     Console.WriteLine(BitConverter.ToString(testStrm.ToArray()));
                     break;
-                case "abcd":
-                    {
-                        UAsset myAsset = new UAsset("C:\\my_asset.uasset", EngineVersion.VER_UE4_18);
-
-                        // all StructExport exports can contain blueprint bytecode, let's pretend Export 1 is a StructExport
-                        StructExport myStructExport = (StructExport)myAsset.Exports[0];
-
-                        KismetExpression[] bytecode = myStructExport.ScriptBytecode;
-                        if (bytecode != null) // bytecode may fail to parse, in which case it will be null and stored raw in ScriptBytecodeRaw
-                        {
-                            // KismetExpression has many child classes, one child class for each type of instruction
-                            // as with PropertyData, you can access .RawValue for many instruction types, but you'll need to cast for other kinds of instructions to access specific fields
-                            foreach (KismetExpression instruction in bytecode)
-                            {
-                                Console.WriteLine(instruction.Token.ToString() + ": " + instruction.RawValue.ToString());
-                            }
-                        }
-                    }
-                    break;
             }
         }
 
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            //Run(new string[] { "mappings" });
+            Run(new string[] { "abcd" });
 
             while (true)
             {
