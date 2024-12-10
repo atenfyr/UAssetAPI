@@ -42,7 +42,7 @@ namespace UAssetAPI
         SkipPreloadDependencyLoading = 4,
 
         /// <summary>
-        /// Skip parsing exports at read time. Entries in the export map will still be converted to their respective sub-types. You can manually parse exports with the <see cref="UnrealPackage.ParseExport(AssetBinaryReader, int)"/> method.
+        /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UnrealPackage.ParseExport(AssetBinaryReader, int)"/> method.
         /// </summary>
         SkipParsingExports = 8
     }
@@ -1057,8 +1057,10 @@ namespace UAssetAPI
                 }
             }
 
-            if (reader.LoadUexp && !CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports))
+            if (reader.LoadUexp)
             {
+                bool skipParsingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
+
                 // load dependencies, if needed and available
                 Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
                 for (int i = 0; i < Exports.Count; i++)
@@ -1099,7 +1101,7 @@ namespace UAssetAPI
                         int i = exportIdx - 1;
 
                         reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
+                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
                             ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
@@ -1115,7 +1117,7 @@ namespace UAssetAPI
                         if (Exports[i].alreadySerialized) continue;
 
                         reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i)))
+                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
                             ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
