@@ -12,7 +12,7 @@ public class EX_TransformConst : KismetExpression<FTransform>
     /// </summary>
     public override EExprToken Token { get { return EExprToken.EX_TransformConst; } }
 
-    public EX_TransformConst() { }
+    public EX_TransformConst() { Value = new(); }
 
     /// <summary>
     /// Reads out the expression from a BinaryReader.

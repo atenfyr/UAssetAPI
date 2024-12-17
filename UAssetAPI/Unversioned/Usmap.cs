@@ -415,7 +415,7 @@ namespace UAssetAPI.Unversioned
                         else if (enumIndex.IsImport())
                         {
                             string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
-                            if (enumName == null || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
+                            if (string.IsNullOrEmpty(enumName) || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
                             {
                                 if (!exp.Asset.HasUnversionedProperties)
                                 {
@@ -449,7 +449,7 @@ namespace UAssetAPI.Unversioned
                         else if (enumIndex.IsImport())
                         {
                             string enumName = enumIndex.ToImport(exp.Asset).ObjectName?.Value.Value;
-                            if (enumName == null || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
+                            if (string.IsNullOrEmpty(enumName) || !exp.Asset.Mappings.EnumMap.TryGetValue(enumName, out UsmapEnum value))
                             {
                                 if (!exp.Asset.HasUnversionedProperties)
                                 {
