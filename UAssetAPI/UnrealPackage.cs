@@ -566,12 +566,26 @@ namespace UAssetAPI
             return EngineVersion.UNKNOWN;
         }
 
+        private EngineVersion _cachedEngineVersion = EngineVersion.UNKNOWN;
+        private bool _cachedEngineVersionDirty = true; // used only at serialization time to determine if we need to re-evaluate this
+
         /// <summary>
         /// Estimates the retail version of the Unreal Engine based on the object and custom versions.
         /// </summary>
         /// <returns>The estimated retail version of the Unreal Engine.</returns>
         public EngineVersion GetEngineVersion()
         {
+            if (isSerializationTime)
+            {
+                if (_cachedEngineVersionDirty)
+                {
+                    _cachedEngineVersionDirty = false;
+                    _cachedEngineVersion = UnrealPackage.GetEngineVersion(ObjectVersion, ObjectVersionUE5, CustomVersionContainer);
+                }
+                return _cachedEngineVersion;
+            }
+
+            _cachedEngineVersionDirty = true;
             return UnrealPackage.GetEngineVersion(ObjectVersion, ObjectVersionUE5, CustomVersionContainer);
         }
 

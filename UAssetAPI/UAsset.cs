@@ -1739,6 +1739,7 @@ namespace UAssetAPI
             finally
             {
                 isSerializationTime = false;
+                GetEngineVersion(); // update dirty state
             }
             return stre;
         }
