@@ -355,36 +355,42 @@ public bool CanCreateDummies()
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 A boolean.
 
-### **PathToStream(String)**
+### **PathToStream(String, Boolean)**
 
 Creates a MemoryStream from an asset path.
 
 ```csharp
-public MemoryStream PathToStream(string p)
+public MemoryStream PathToStream(string p, bool loadUEXP)
 ```
 
 #### Parameters
 
 `p` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The path to the input file.
+
+`loadUEXP` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether to load the UEXP file. False only reads the UASSET.
 
 #### Returns
 
 [MemoryStream](https://docs.microsoft.com/en-us/dotnet/api/system.io.memorystream)<br>
 A new MemoryStream that stores the binary data of the input file.
 
-### **PathToReader(String)**
+### **PathToReader(String, Boolean)**
 
 Creates a BinaryReader from an asset path.
 
 ```csharp
-public AssetBinaryReader PathToReader(string p)
+public AssetBinaryReader PathToReader(string p, bool loadUEXP)
 ```
 
 #### Parameters
 
 `p` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The path to the input file.
+
+`loadUEXP` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether to load the .uexp file. False only reads the .uasset file.
 
 #### Returns
 
@@ -623,10 +629,29 @@ The version of the engine to check against.
 [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
 A list of all the default custom version values for the given engine version.
 
-### **ConvertExportToChildExportAndRead(AssetBinaryReader, Int32)**
+### **ParseExport(AssetBinaryReader, Int32, Boolean)**
+
+Read an export from disk.
 
 ```csharp
-protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i)
+public void ParseExport(AssetBinaryReader reader, int i, bool read)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+The binary reader.
+
+`i` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+The index of the export in the export map to read.
+
+`read` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not to serialize the body of the export. If false, simply converts to the respective sub-type.
+
+### **ConvertExportToChildExportAndRead(AssetBinaryReader, Int32, Boolean)**
+
+```csharp
+public void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i, bool read)
 ```
 
 #### Parameters
@@ -634,6 +659,8 @@ protected void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
 `i` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+`read` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Read(AssetBinaryReader, Int32[], Int32[])**
 

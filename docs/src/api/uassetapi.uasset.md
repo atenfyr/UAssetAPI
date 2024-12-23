@@ -182,7 +182,8 @@ public uint PackageSource;
 
 ### **FolderName**
 
-The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
+In UE4: "FolderName": The Generic Browser folder name that this package lives in. Usually "None" in cooked assets.
+ In UE5: "PackageName": The package name the file was last saved with.
 
 ```csharp
 public FString FolderName;
@@ -417,6 +418,39 @@ public UAsset(string path, EngineVersion engineVersion, Usmap mappings, CustomSe
 
 `path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The path of the asset file on disk that this instance will read from.
+
+`engineVersion` [EngineVersion](./uassetapi.unrealtypes.engineversion.md)<br>
+The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.
+
+`mappings` [Usmap](./uassetapi.unversioned.usmap.md)<br>
+A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.
+
+`customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
+A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
+#### Exceptions
+
+[UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
+Thrown when this is an unversioned asset and [ObjectVersion](./uassetapi.unrealtypes.objectversion.md) is unspecified.
+
+[FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
+Throw when the asset cannot be parsed correctly.
+
+### **UAsset(String, Boolean, EngineVersion, Usmap, CustomSerializationFlags)**
+
+Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
+
+```csharp
+public UAsset(string path, bool loadUexp, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+```
+
+#### Parameters
+
+`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The path of the asset file on disk that this instance will read from.
+
+`loadUexp` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether to load the .uexp file. False only reads the .uasset file.
 
 `engineVersion` [EngineVersion](./uassetapi.unrealtypes.engineversion.md)<br>
 The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.

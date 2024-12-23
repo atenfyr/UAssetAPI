@@ -68,10 +68,10 @@ public IReadOnlyDictionary<int, UsmapProperty> Properties { get; }
 
 ## Constructors
 
-### **UsmapSchema(String, String, UInt16, Dictionary&lt;Int32, UsmapProperty&gt;, Boolean, Boolean)**
+### **UsmapSchema(String, String, UInt16, ConcurrentDictionary&lt;Int32, UsmapProperty&gt;, Boolean, Boolean)**
 
 ```csharp
-public UsmapSchema(string name, string superType, ushort propCount, Dictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset)
+public UsmapSchema(string name, string superType, ushort propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, bool fromAsset)
 ```
 
 #### Parameters
@@ -82,7 +82,7 @@ public UsmapSchema(string name, string superType, ushort propCount, Dictionary<i
 
 `propCount` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
 
-`props` [Dictionary&lt;Int32, UsmapProperty&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
+`props` ConcurrentDictionary&lt;Int32, UsmapProperty&gt;<br>
 
 `isCaseInsensitive` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 

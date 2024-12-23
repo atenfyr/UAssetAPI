@@ -31,22 +31,22 @@ public int EnumFlags;
 ### **Values**
 
 ```csharp
-public Dictionary<long, string> Values;
+public ConcurrentDictionary<long, string> Values;
 ```
 
 ## Constructors
 
-### **UsmapEnum(String, Dictionary&lt;Int64, String&gt;)**
+### **UsmapEnum(String, ConcurrentDictionary&lt;Int64, String&gt;)**
 
 ```csharp
-public UsmapEnum(string name, Dictionary<long, string> values)
+public UsmapEnum(string name, ConcurrentDictionary<long, string> values)
 ```
 
 #### Parameters
 
 `name` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`values` [Dictionary&lt;Int64, String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
+`values` ConcurrentDictionary&lt;Int64, String&gt;<br>
 
 ### **UsmapEnum()**
 

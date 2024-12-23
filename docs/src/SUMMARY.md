@@ -64,6 +64,7 @@
     - [FunctionExport](api/uassetapi.exporttypes.functionexport.md)
     - [FURL](api/uassetapi.exporttypes.furl.md)
     - [LevelExport](api/uassetapi.exporttypes.levelexport.md)
+    - [MetaDataExport](api/uassetapi.exporttypes.metadataexport.md)
     - [NormalExport](api/uassetapi.exporttypes.normalexport.md)
     - [PropertyExport](api/uassetapi.exporttypes.propertyexport.md)
     - [RawExport](api/uassetapi.exporttypes.rawexport.md)

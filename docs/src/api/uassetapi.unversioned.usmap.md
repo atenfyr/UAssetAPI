@@ -80,14 +80,6 @@ public IDictionary<string, UsmapEnum> EnumMap;
 public IDictionary<string, UsmapSchema> Schemas;
 ```
 
-### **CityHash64Map**
-
-Pre-computed CityHash64 map for all relevant strings
-
-```csharp
-public IDictionary<ulong, string> CityHash64Map;
-```
-
 ### **FailedExtensions**
 
 List of extensions that failed to parse.
@@ -99,7 +91,7 @@ public List<string> FailedExtensions;
 ### **PathsAlreadyProcessedForSchemas**
 
 ```csharp
-public ISet<string> PathsAlreadyProcessedForSchemas;
+public ConcurrentDictionary<string, byte> PathsAlreadyProcessedForSchemas;
 ```
 
 ### **USMAP_MAGIC**
