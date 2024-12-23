@@ -784,6 +784,9 @@ namespace UAssetAPI
                     case "UserDefinedStruct":
                         Exports[i] = Exports[i].ConvertToChildExport<UserDefinedStructExport>();
                         break;
+                    case "MetaData":
+                        Exports[i] = Exports[i].ConvertToChildExport<MetaDataExport>();
+                        break;
                     default:
                         if (exportClassType.EndsWith("DataTable"))
                         {
