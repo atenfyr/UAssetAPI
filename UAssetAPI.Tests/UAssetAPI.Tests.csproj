@@ -443,5 +443,8 @@
     <None Update="TestAssets\TestManyAssets\SnakePass\MP00_Intro.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\BlankGame_Dumper-7.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
