@@ -92,6 +92,9 @@ namespace UAssetAPI.Unversioned
         SetProperty,
         EnumProperty,
         FieldPathProperty,
+        OptionalProperty,
+        Utf8StrProperty,
+        AnsiStrProperty,
 
         Unknown = 0xFF
     };
@@ -906,6 +909,7 @@ namespace UAssetAPI.Unversioned
                     return new UsmapStructData();
                 case EPropertyType.SetProperty:
                 case EPropertyType.ArrayProperty:
+                case EPropertyType.OptionalProperty:
                     return new UsmapArrayData(typ);
                 case EPropertyType.MapProperty:
                     return new UsmapMapData();
@@ -928,6 +932,7 @@ namespace UAssetAPI.Unversioned
                     break;
                 case EPropertyType.SetProperty:
                 case EPropertyType.ArrayProperty:
+                case EPropertyType.OptionalProperty:
                     ((UsmapArrayData)res).InnerType = DeserializePropData(reader);
                     break;
                 case EPropertyType.MapProperty:
