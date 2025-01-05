@@ -38,8 +38,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapEnumData enumDat1))
             {
-                EnumType = FName.DefineDummy(reader.Asset, enumDat1.Name);
-                InnerType = FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString());
+                EnumType = reader.Asset.HasUnversionedProperties ? FName.DefineDummy(reader.Asset, enumDat1.Name) : new FName(reader.Asset, enumDat1.Name);
+                InnerType = reader.Asset.HasUnversionedProperties ? FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString()) : new FName(reader.Asset, enumDat1.Name);
             }
 
             if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
@@ -94,8 +94,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (writer.Asset.Mappings != null && writer.Asset.Mappings.TryGetPropertyData(Name, Ancestry, writer.Asset, out UsmapEnumData enumDat1))
             {
-                EnumType = FName.DefineDummy(writer.Asset, enumDat1.Name);
-                InnerType = FName.DefineDummy(writer.Asset, enumDat1.InnerType.Type.ToString());
+                EnumType = writer.Asset.HasUnversionedProperties ? FName.DefineDummy(writer.Asset, enumDat1.Name) : new FName(writer.Asset, enumDat1.Name);
+                InnerType = writer.Asset.HasUnversionedProperties ? FName.DefineDummy(writer.Asset, enumDat1.InnerType.Type.ToString()) : new FName(writer.Asset, enumDat1.Name);
             }
 
             if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
