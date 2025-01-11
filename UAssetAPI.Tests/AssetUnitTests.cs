@@ -632,6 +632,18 @@ namespace UAssetAPI.Tests
             }
         }
 
+        /// <summary>
+        /// In this test, we parse a .usmap containing an OptionalProperty (as currently produced by Dumper-7) to verify compatibility.
+        /// </summary>
+        [TestMethod]
+        public void TestUsmapWithOptionalProperty()
+        {
+            var usmap = new Usmap(Path.Combine("TestAssets", "TestUE5_4", "BlankGame", "BlankGame_Dumper-7.usmap"));
+            Assert.AreEqual(31948, usmap.NameMap.Count);
+            Assert.AreEqual(1565, usmap.EnumMap.Count);
+            Assert.AreEqual(7657, usmap.Schemas.Count);
+        }
+
         public static MemoryStream PathToStream(string p)
         {
             using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))
