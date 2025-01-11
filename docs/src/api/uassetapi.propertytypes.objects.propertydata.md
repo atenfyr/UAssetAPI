@@ -51,7 +51,7 @@ Whether or not this property is "zero," meaning that its body can be skipped dur
 
 
 
-This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UAsset)](./uassetapi.propertytypes.objects.propertydata.md#canbezerouasset) does not return true.
 
 ```csharp
 public bool IsZero;
@@ -248,17 +248,17 @@ A second estimate for the length of the data being read out.
 `serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
 The context in which this property is being read.
 
-### **ResolveAncestries(UnrealPackage, AncestryInfo)**
+### **ResolveAncestries(UAsset, AncestryInfo)**
 
 Resolves the ancestry of all child properties of this property.
 
 ```csharp
-public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
@@ -323,17 +323,17 @@ protected void WriteEndPropertyTag(AssetBinaryWriter writer)
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
 
-### **CanBeZero(UnrealPackage)**
+### **CanBeZero(UAsset)**
 
 Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.
 
 ```csharp
-public bool CanBeZero(UnrealPackage asset)
+public bool CanBeZero(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 The asset to test serialization within.
 
 #### Returns

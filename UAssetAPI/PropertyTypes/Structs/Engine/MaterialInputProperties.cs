@@ -146,7 +146,7 @@ public class ColorMaterialInputPropertyData : MaterialInputPropertyData<ColorPro
         Value.Read(reader, false, 0);
     }
 
-    public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+    public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(Name);
@@ -215,7 +215,7 @@ public class VectorMaterialInputPropertyData : MaterialInputPropertyData<VectorP
         Value.Read(reader, false, 0);
     }
 
-    public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+    public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(Name);
@@ -257,7 +257,7 @@ public class Vector2MaterialInputPropertyData : MaterialInputPropertyData<Vector
         Value.Read(reader, false, 0);
     }
 
-    public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+    public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(Name);

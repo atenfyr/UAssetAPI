@@ -3,14 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using UAssetAPI.ExportTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using System.IO;
-using System.Text;
-using UAssetAPI.IO;
 
 namespace UAssetAPI
 {

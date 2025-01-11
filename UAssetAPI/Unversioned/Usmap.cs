@@ -591,7 +591,7 @@ namespace UAssetAPI.Unversioned
             return converted;
         }
 
-        public static UsmapSchema GetSchemaFromStructExport(string exportName, UnrealPackage asset)
+        public static UsmapSchema GetSchemaFromStructExport(string exportName, UAsset asset)
         {
             if (asset == null) throw new InvalidOperationException("Cannot evaluate struct export without package reference");
             foreach (var exp in asset.Exports)
@@ -653,7 +653,7 @@ namespace UAssetAPI.Unversioned
         /// <param name="modulePath">Module path of the schema of interest.</param>
         /// <param name="asset">An asset to also search for schemas within.</param>
         /// <returns>All the properties that the schema can reference.</returns>
-        public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath = null, UnrealPackage asset = null)
+        public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath = null, UAsset asset = null)
         {
             List<UsmapProperty> res = new List<UsmapProperty>();
             UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset, modulePath);
@@ -676,7 +676,7 @@ namespace UAssetAPI.Unversioned
         /// <param name="headerPrefix">The prefix of the subheader for each relevant schema.</param>
         /// <param name="headerSuffix">The suffix of the subheader for each relevant schema.</param>
         /// <returns>An annotated, human-readable text file containing the properties that the schema can reference.</returns>
-        public string GetAllPropertiesAnnotated(string schemaName, UnrealPackage asset, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
+        public string GetAllPropertiesAnnotated(string schemaName, UAsset asset, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
         {
             List<string> res = new List<string>();
             bool hasDoneFirst = false;
@@ -708,7 +708,7 @@ namespace UAssetAPI.Unversioned
 
         // not a set to ensure thread safety
         public ConcurrentDictionary<string, byte> PathsAlreadyProcessedForSchemas = new ConcurrentDictionary<string, byte>();
-        public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset = null, string modulePath = null, bool throwExceptions = true)
+        public UsmapSchema GetSchemaFromName(string nm, UAsset asset = null, string modulePath = null, bool throwExceptions = true)
         {
             if (string.IsNullOrEmpty(nm)) return null;
 
@@ -751,7 +751,7 @@ namespace UAssetAPI.Unversioned
         /// <param name="propDat">The property.</param>
         /// <param name="idx">The index of the property.</param>
         /// <returns>Whether or not the property was successfully found.</returns>
-        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, UnrealPackage asset, out T propDat, out int idx) where T : UsmapProperty
+        public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, UAsset asset, out T propDat, out int idx) where T : UsmapProperty
         {
             propDat = null;
 
@@ -784,7 +784,7 @@ namespace UAssetAPI.Unversioned
         /// <param name="asset">An asset to also search for schemas within.</param>
         /// <param name="propDat">The property data.</param>
         /// <returns>Whether or not the property data was successfully found.</returns>
-        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, UnrealPackage asset, out T propDat) where T : UsmapPropertyData
+        public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, UAsset asset, out T propDat) where T : UsmapPropertyData
         {
             propDat = null;
 

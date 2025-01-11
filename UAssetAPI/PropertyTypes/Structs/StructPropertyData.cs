@@ -177,7 +177,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         }
     }
 
-    public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+    public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(StructType, FName.DefineDummy(asset, asset.InternalAssetPath + (ancestrySoFar.Ancestors.Count == 0 ? string.Empty : ("." + ancestrySoFar.Parent))));
@@ -218,7 +218,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         return (int)writer.BaseStream.Position - here;
     }
 
-    internal bool DetermineIfSerializeWithCustomStructSerialization(UnrealPackage Asset, PropertySerializationContext serializationContext, out RegistryEntry targetEntry)
+    internal bool DetermineIfSerializeWithCustomStructSerialization(UAsset Asset, PropertySerializationContext serializationContext, out RegistryEntry targetEntry)
     {
         targetEntry = null;
         string structTypeVal = StructType?.Value?.Value;
@@ -260,7 +260,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
     // removed; we'll actually just use default PropertyData alg
 
-    /*public override bool CanBeZero(UnrealPackage asset)
+    /*public override bool CanBeZero(UAsset asset)
     {
         if (StructType?.Value?.Value == "Guid")
         {

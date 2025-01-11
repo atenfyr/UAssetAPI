@@ -51,7 +51,7 @@ Whether or not this property is "zero," meaning that its body can be skipped dur
 
 
 
-This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UAsset)](./uassetapi.propertytypes.objects.propertydata.md#canbezerouasset) does not return true.
 
 ```csharp
 public bool IsZero;
@@ -225,15 +225,15 @@ public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializa
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-### **CanBeZero(UnrealPackage)**
+### **CanBeZero(UAsset)**
 
 ```csharp
-public bool CanBeZero(UnrealPackage asset)
+public bool CanBeZero(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 

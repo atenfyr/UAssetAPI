@@ -187,18 +187,6 @@ public int Write(FString value)
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-### **WriteNameBatch(UInt64, IList&lt;FString&gt;)**
-
-```csharp
-public void WriteNameBatch(ulong HashVersion, IList<FString> nameMap)
-```
-
-#### Parameters
-
-`HashVersion` [UInt64](https://docs.microsoft.com/en-us/dotnet/api/system.uint64)<br>
-
-`nameMap` [IList&lt;FString&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ilist-1)<br>
-
 ### **WriteCustomVersionContainer(ECustomVersionSerializationFormat, List&lt;CustomVersion&gt;)**
 
 ```csharp

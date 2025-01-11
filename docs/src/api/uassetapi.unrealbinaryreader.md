@@ -151,49 +151,29 @@ public string ReadString()
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-### **ReadFString(FSerializedNameHeader)**
+### **ReadFString()**
 
 ```csharp
-public FString ReadFString(FSerializedNameHeader nameHeader)
+public FString ReadFString()
 ```
-
-#### Parameters
-
-`nameHeader` [FSerializedNameHeader](./uassetapi.io.fserializednameheader.md)<br>
 
 #### Returns
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
-### **ReadNameMapString(FSerializedNameHeader, UInt32&)**
+### **ReadNameMapString(UInt32&)**
 
 ```csharp
-public FString ReadNameMapString(FSerializedNameHeader nameHeader, UInt32& hashes)
+public FString ReadNameMapString(UInt32& hashes)
 ```
 
 #### Parameters
-
-`nameHeader` [FSerializedNameHeader](./uassetapi.io.fserializednameheader.md)<br>
 
 `hashes` [UInt32&](https://docs.microsoft.com/en-us/dotnet/api/system.uint32&)<br>
 
 #### Returns
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
-
-### **ReadNameBatch(Boolean, UInt64&, List`1&)**
-
-```csharp
-public void ReadNameBatch(bool VerifyHashes, UInt64& HashVersion, List`1& nameMap)
-```
-
-#### Parameters
-
-`VerifyHashes` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-`HashVersion` [UInt64&](https://docs.microsoft.com/en-us/dotnet/api/system.uint64&)<br>
-
-`nameMap` [List`1&](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1&)<br>
 
 ### **ReadCustomVersionContainer(ECustomVersionSerializationFormat, List&lt;CustomVersion&gt;, Usmap)**
 

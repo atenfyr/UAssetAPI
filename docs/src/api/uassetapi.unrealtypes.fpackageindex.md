@@ -157,17 +157,17 @@ An FPackageIndex created from the export index.
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
 Thrown when the provided export index is less than zero.
 
-### **ToImport(UnrealPackage)**
+### **ToImport(UAsset)**
 
 Check that this is an import index and return the corresponding import.
 
 ```csharp
-public Import ToImport(UnrealPackage asset)
+public Import ToImport(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 The asset that this index is used in.
 
 #### Returns
@@ -180,17 +180,17 @@ The import that this index represents in the import map.
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
 Thrown when this is not an index into the import map.
 
-### **ToExport(UnrealPackage)**
+### **ToExport(UAsset)**
 
 Check that this is an export index and return the corresponding export.
 
 ```csharp
-public Export ToExport(UnrealPackage asset)
+public Export ToExport(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 The asset that this index is used in.
 
 #### Returns
@@ -203,10 +203,10 @@ The export that this index represents in the the export map.
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
 Thrown when this is not an index into the export map.
 
-### **ToExport&lt;T&gt;(UnrealPackage)**
+### **ToExport&lt;T&gt;(UAsset)**
 
 ```csharp
-public T ToExport<T>(UnrealPackage asset)
+public T ToExport<T>(UAsset asset)
 ```
 
 #### Type Parameters
@@ -215,7 +215,7 @@ public T ToExport<T>(UnrealPackage asset)
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 

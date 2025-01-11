@@ -51,7 +51,7 @@ Whether or not this property is "zero," meaning that its body can be skipped dur
 
 
 
-This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UAsset)](./uassetapi.propertytypes.objects.propertydata.md#canbezerouasset) does not return true.
 
 ```csharp
 public bool IsZero;
@@ -226,17 +226,17 @@ public bool IsNull()
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Does this ObjectProperty represent null?
 
-### **ToImport(UnrealPackage)**
+### **ToImport(UAsset)**
 
 Check that this ObjectProperty is an import index and return the corresponding import.
 
 ```csharp
-public Import ToImport(UnrealPackage asset)
+public Import ToImport(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 
@@ -248,17 +248,17 @@ The import that this ObjectProperty represents in the import map.
 [InvalidOperationException](https://docs.microsoft.com/en-us/dotnet/api/system.invalidoperationexception)<br>
 Thrown when this is not an index into the import map.
 
-### **ToExport(UnrealPackage)**
+### **ToExport(UAsset)**
 
 Check that this ObjectProperty is an export index and return the corresponding export.
 
 ```csharp
-public Export ToExport(UnrealPackage asset)
+public Export ToExport(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 

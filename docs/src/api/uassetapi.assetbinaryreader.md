@@ -16,7 +16,7 @@ Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idis
 ### **Asset**
 
 ```csharp
-public UnrealPackage Asset;
+public UAsset Asset;
 ```
 
 ### **LoadUexp**
@@ -39,22 +39,22 @@ public Stream BaseStream { get; }
 
 ## Constructors
 
-### **AssetBinaryReader(Stream, UnrealPackage)**
+### **AssetBinaryReader(Stream, UAsset)**
 
 ```csharp
-public AssetBinaryReader(Stream stream, UnrealPackage asset)
+public AssetBinaryReader(Stream stream, UAsset asset)
 ```
 
 #### Parameters
 
 `stream` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **AssetBinaryReader(Stream, Boolean, UnrealPackage)**
+### **AssetBinaryReader(Stream, Boolean, UAsset)**
 
 ```csharp
-public AssetBinaryReader(Stream stream, bool inLoadUexp, UnrealPackage asset)
+public AssetBinaryReader(Stream stream, bool inLoadUexp, UAsset asset)
 ```
 
 #### Parameters
@@ -63,7 +63,7 @@ public AssetBinaryReader(Stream stream, bool inLoadUexp, UnrealPackage asset)
 
 `inLoadUexp` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 ## Methods
 

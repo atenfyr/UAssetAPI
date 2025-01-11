@@ -41,7 +41,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             return sizeof(int) * 2;
         }
 
-        public override bool CanBeZero(UnrealPackage asset)
+        public override bool CanBeZero(UAsset asset)
         {
             return Value?.Value?.Value == null; // if the index is 0, we need to serialize it anyways
         }

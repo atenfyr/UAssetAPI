@@ -21,6 +21,38 @@ The name of the UObject represented by this resource.
 public FName ObjectName;
 ```
 
+### **OuterIndex**
+
+Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage
+
+```csharp
+public FPackageIndex OuterIndex;
+```
+
+### **ClassIndex**
+
+Location of this export's class (import/other export). 0 = this export is a UClass
+
+```csharp
+public FPackageIndex ClassIndex;
+```
+
+### **SuperIndex**
+
+Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct
+
+```csharp
+public FPackageIndex SuperIndex;
+```
+
+### **TemplateIndex**
+
+Location of this export's template (import/other export). 0 = there is some problem
+
+```csharp
+public FPackageIndex TemplateIndex;
+```
+
 ### **ObjectFlags**
 
 The object flags for the UObject represented by this resource. Only flags that match the RF_Load combination mask will be loaded from disk and applied to the UObject.
@@ -159,44 +191,6 @@ public List<FPackageIndex> SerializationBeforeCreateDependencies;
 public List<FPackageIndex> CreateBeforeCreateDependencies;
 ```
 
-### **Zen_OuterIndex**
-
-```csharp
-public FPackageObjectIndex Zen_OuterIndex;
-```
-
-### **Zen_ClassIndex**
-
-```csharp
-public FPackageObjectIndex Zen_ClassIndex;
-```
-
-### **Zen_SuperIndex**
-
-```csharp
-public FPackageObjectIndex Zen_SuperIndex;
-```
-
-### **Zen_TemplateIndex**
-
-```csharp
-public FPackageObjectIndex Zen_TemplateIndex;
-```
-
-### **PublicExportHash**
-
-PublicExportHash. Interpreted as a global import FPackageObjectIndex in UE4 assets.
-
-```csharp
-public ulong PublicExportHash;
-```
-
-### **Padding**
-
-```csharp
-public Byte[] Padding;
-```
-
 ### **Extras**
 
 Miscellaneous, unparsed export data, stored as a byte array.
@@ -210,70 +204,20 @@ public Byte[] Extras;
 The asset that this export is parsed with.
 
 ```csharp
-public UnrealPackage Asset;
+public UAsset Asset;
 ```
-
-## Properties
-
-### **OuterIndex**
-
-Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage
-
-```csharp
-public FPackageIndex OuterIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **ClassIndex**
-
-Location of this export's class (import/other export). 0 = this export is a UClass
-
-```csharp
-public FPackageIndex ClassIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **SuperIndex**
-
-Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct
-
-```csharp
-public FPackageIndex SuperIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **TemplateIndex**
-
-Location of this export's template (import/other export). 0 = there is some problem
-
-```csharp
-public FPackageIndex TemplateIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
 ## Constructors
 
-### **Export(UnrealPackage, Byte[])**
+### **Export(UAsset, Byte[])**
 
 ```csharp
-public Export(UnrealPackage asset, Byte[] extras)
+public Export(UAsset asset, Byte[] extras)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `extras` [Byte[]](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
 
@@ -284,86 +228,6 @@ public Export()
 ```
 
 ## Methods
-
-### **ShouldSerializeOuterIndex()**
-
-```csharp
-public bool ShouldSerializeOuterIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeClassIndex()**
-
-```csharp
-public bool ShouldSerializeClassIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeSuperIndex()**
-
-```csharp
-public bool ShouldSerializeSuperIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeTemplateIndex()**
-
-```csharp
-public bool ShouldSerializeTemplateIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeZen_OuterIndex()**
-
-```csharp
-public bool ShouldSerializeZen_OuterIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeZen_ClassIndex()**
-
-```csharp
-public bool ShouldSerializeZen_ClassIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeZen_SuperIndex()**
-
-```csharp
-public bool ShouldSerializeZen_SuperIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **ShouldSerializeZen_TemplateIndex()**
-
-```csharp
-public bool ShouldSerializeZen_TemplateIndex()
-```
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Read(AssetBinaryReader, Int32)**
 
@@ -377,17 +241,17 @@ public void Read(AssetBinaryReader reader, int nextStarting)
 
 `nextStarting` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-### **ResolveAncestries(UnrealPackage, AncestryInfo)**
+### **ResolveAncestries(UAsset, AncestryInfo)**
 
 Resolves the ancestry of all child properties of this export.
 
 ```csharp
-public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 
@@ -411,15 +275,15 @@ public void ReadExportMapEntry(AssetBinaryReader reader)
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-### **GetExportMapEntrySize(UnrealPackage)**
+### **GetExportMapEntrySize(UAsset)**
 
 ```csharp
-public static long GetExportMapEntrySize(UnrealPackage asset)
+public static long GetExportMapEntrySize(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 
@@ -435,29 +299,29 @@ public void WriteExportMapEntry(AssetBinaryWriter writer)
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
 
-### **GetAllObjectExportFields(UnrealPackage)**
+### **GetAllObjectExportFields(UAsset)**
 
 ```csharp
-public static MemberInfo[] GetAllObjectExportFields(UnrealPackage asset)
+public static MemberInfo[] GetAllObjectExportFields(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 
 [MemberInfo[]](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.memberinfo)<br>
 
-### **GetAllFieldNames(UnrealPackage)**
+### **GetAllFieldNames(UAsset)**
 
 ```csharp
-public static String[] GetAllFieldNames(UnrealPackage asset)
+public static String[] GetAllFieldNames(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 
@@ -473,15 +337,15 @@ public FName GetExportClassType()
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **GetClassTypeForAncestry(UnrealPackage, FName&)**
+### **GetClassTypeForAncestry(UAsset, FName&)**
 
 ```csharp
-public FName GetClassTypeForAncestry(UnrealPackage asset, FName& modulePath)
+public FName GetClassTypeForAncestry(UAsset asset, FName& modulePath)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 
@@ -489,17 +353,17 @@ public FName GetClassTypeForAncestry(UnrealPackage asset, FName& modulePath)
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
-### **GetClassTypeForAncestry(FPackageIndex, UnrealPackage, FName&)**
+### **GetClassTypeForAncestry(FPackageIndex, UAsset, FName&)**
 
 ```csharp
-public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UnrealPackage asset, FName& modulePath)
+public static FName GetClassTypeForAncestry(FPackageIndex classIndex, UAsset asset, FName& modulePath)
 ```
 
 #### Parameters
 
 `classIndex` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 

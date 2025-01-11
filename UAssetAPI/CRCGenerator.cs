@@ -6,44 +6,6 @@ namespace UAssetAPI;
 
 public static class CRCGenerator
 {
-    public static unsafe ulong GenerateImportHashFromObjectPath(FString text)
-    {
-        return GenerateImportHashFromObjectPath(text?.Value);
-    }
-
-    public static unsafe ulong GenerateImportHashFromObjectPath(string text)
-    {
-        return CityHash64(Encoding.Unicode.GetBytes(ToLower(text, true))) & FPackageObjectIndex.IndexMask;
-    }
-
-    public static unsafe ulong CityHash64WithLower(FString text)
-    {
-        return CityHash64WithLower(text?.Value, text?.Encoding);
-    }
-
-    public static unsafe ulong CityHash64WithLower(string text, Encoding encoding)
-    {
-        return CityHash64(encoding.GetBytes(ToLower(text)));
-    }
-
-    public static unsafe ulong CityHash64(FString text)
-    {
-        return CityHash64(text?.Value, text?.Encoding);
-    }
-
-    public static unsafe ulong CityHash64(string text, Encoding encoding)
-    {
-        return CityHash64(encoding.GetBytes(text));
-    }
-
-    public static unsafe ulong CityHash64(byte[] data)
-    {
-        fixed (byte* arr = data)
-        {
-            return CityHash.CityHash64(arr, (uint)data.Length);
-        }
-    }
-
     public static uint GenerateHash(FString text, bool disableCasePreservingHash, bool version420 = false)
     {
         return GenerateHash(text?.Value, text?.Encoding, disableCasePreservingHash, version420);

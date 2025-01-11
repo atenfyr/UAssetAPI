@@ -131,7 +131,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         /// <summary>
         /// Whether or not this property is "zero," meaning that its body can be skipped during unversioned property serialization because it consists solely of null bytes. <para/>
-        /// This field will always be treated as if it is false if <see cref="CanBeZero(UnrealPackage)"/> does not return true.
+        /// This field will always be treated as if it is false if <see cref="CanBeZero(UAsset)"/> does not return true.
         /// </summary>
         [JsonProperty]
         public bool IsZero;
@@ -238,7 +238,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>
         /// Resolves the ancestry of all child properties of this property.
         /// </summary>
-        public virtual void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+        public virtual void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
         {
             Ancestry = ancestrySoFar;
         }
@@ -323,7 +323,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// </summary>
         /// <param name="asset">The asset to test serialization within.</param>
         /// <returns>Whether or not the property can be serialized as zero.</returns>
-        public virtual bool CanBeZero(UnrealPackage asset)
+        public virtual bool CanBeZero(UAsset asset)
         {
             MemoryStream testStrm = new MemoryStream(32); this.Write(new AssetBinaryWriter(testStrm, asset), false); byte[] testByteArray = testStrm.ToArray();
             foreach (byte entry in testByteArray)

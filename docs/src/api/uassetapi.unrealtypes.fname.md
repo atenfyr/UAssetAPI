@@ -83,7 +83,7 @@ public FName(INameMap asset, string value, int number)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 `value` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
@@ -102,7 +102,7 @@ public FName(INameMap asset, FString value, int number)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 `value` [FString](./uassetapi.unrealtypes.fstring.md)<br>
@@ -121,7 +121,7 @@ public FName(INameMap asset, int index, int number)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 `index` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
@@ -140,7 +140,7 @@ public FName(INameMap asset)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 ### **FName()**
@@ -174,7 +174,7 @@ internal static void FromStringFragments(INameMap asset, string val, String& str
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 
 `val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
@@ -190,7 +190,7 @@ public static bool IsFromStringValid(INameMap asset, string val)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 
 `val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
@@ -208,7 +208,7 @@ public static FName FromString(INameMap asset, string val)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that the new FName will be bound to.
 
 `val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
@@ -229,7 +229,7 @@ public FName Transfer(INameMap newAsset)
 
 #### Parameters
 
-`newAsset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`newAsset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset to bound the new FName to.
 
 #### Returns
@@ -252,7 +252,7 @@ public static FName DefineDummy(INameMap asset, FString val, int number)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 `val` [FString](./uassetapi.unrealtypes.fstring.md)<br>
@@ -281,7 +281,7 @@ public static FName DefineDummy(INameMap asset, string val, int number)
 
 #### Parameters
 
-`asset` [INameMap](./uassetapi.io.inamemap.md)<br>
+`asset` [INameMap](./uassetapi.inamemap.md)<br>
 The asset that this FName is bound to.
 
 `val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

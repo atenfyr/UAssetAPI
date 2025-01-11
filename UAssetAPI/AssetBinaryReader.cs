@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UAssetAPI.CustomVersions;
-using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -82,47 +81,31 @@ namespace UAssetAPI
             return ReadFString()?.Value;
         }
 
-        public virtual FString ReadFString(FSerializedNameHeader nameHeader = null)
+        public virtual FString ReadFString()
         {
-            if (nameHeader == null)
+            int length = this.ReadInt32();
+            switch (length)
             {
-                int length = this.ReadInt32();
-                switch (length)
-                {
-                    case 0:
-                        return null;
-                    default:
-                        if (length < 0)
-                        {
-                            byte[] data = this.ReadBytes(-length * 2);
-                            return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
-                        }
-                        else
-                        {
-                            byte[] data = this.ReadBytes(length);
-                            return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
-                        }
-                }
-            }
-            else
-            {
-                if (nameHeader.bIsWide)
-                {
-                    byte[] data = this.ReadBytes(nameHeader.Len * 2); // TODO: are we actually supposed to divide by two?
-                    return new FString(Encoding.Unicode.GetString(data, 0, data.Length), Encoding.Unicode);
-                }
-                else
-                {
-                    byte[] data = this.ReadBytes(nameHeader.Len);
-                    return new FString(Encoding.ASCII.GetString(data, 0, data.Length), Encoding.ASCII);
-                }
+                case 0:
+                    return null;
+                default:
+                    if (length < 0)
+                    {
+                        byte[] data = this.ReadBytes(-length * 2);
+                        return new FString(Encoding.Unicode.GetString(data, 0, data.Length - 2), Encoding.Unicode);
+                    }
+                    else
+                    {
+                        byte[] data = this.ReadBytes(length);
+                        return new FString(Encoding.ASCII.GetString(data, 0, data.Length - 1), Encoding.ASCII);
+                    }
             }
         }
 
-        public virtual FString ReadNameMapString(FSerializedNameHeader nameHeader, out uint hashes)
+        public virtual FString ReadNameMapString(out uint hashes)
         {
             hashes = 0;
-            FString str = this.ReadFString(nameHeader);
+            FString str = this.ReadFString();
             if (this is AssetBinaryReader abr)
             {
                 if (abr.Asset is UAsset abrUa && abrUa.WillSerializeNameHashes != false && !string.IsNullOrEmpty(str.Value))
@@ -141,59 +124,6 @@ namespace UAssetAPI
                 }
             }
             return str;
-        }
-
-        internal const ulong CityHash64 = 0x00000000C1640000;
-        public void ReadNameBatch(bool VerifyHashes, out ulong HashVersion, out List<FString> nameMap)
-        {
-            // TODO: implement pre-ue5 serialization
-
-            HashVersion = 0;
-            nameMap = new List<FString>();
-
-            int numStrings = ReadInt32();
-            if (numStrings == 0) return;
-            ReadInt32(); // length of strings in bytes
-
-            // read hashes
-            HashVersion = ReadUInt64();
-            ulong[] hashes = new ulong[numStrings];
-            switch (HashVersion)
-            {
-                case UnrealBinaryReader.CityHash64:
-                    for (int i = 0; i < numStrings; i++) hashes[i] = ReadUInt64(); // CityHash64 of str.ToLowerCase();
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-            }
-
-            // read headers
-            FSerializedNameHeader[] nameHeaders = new FSerializedNameHeader[numStrings];
-            for (int i = 0; i < numStrings; i++) nameHeaders[i] = FSerializedNameHeader.Read(this);
-
-            // read strings
-            for (int i = 0; i < numStrings; i++)
-            {
-                FString newStr = ReadNameMapString(nameHeaders[i], out _);
-                nameMap.Add(newStr);
-            }
-
-            // verify hashes if requested
-            if (VerifyHashes)
-            {
-                for (int i = 0; i < nameMap.Count; i++)
-                {
-                    switch (HashVersion)
-                    {
-                        case UnrealBinaryReader.CityHash64:
-                            ulong expectedHash = CRCGenerator.CityHash64WithLower(nameMap[i]);
-                            if (expectedHash != hashes[i]) throw new IOException("Expected hash \"" + expectedHash + "\", received \"" + hashes[i] + "\" for string " + nameMap[i].Value + " in name map; corrupt data?");
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-                    }
-                }
-            }
         }
 
         public List<CustomVersion> ReadCustomVersionContainer(ECustomVersionSerializationFormat format, List<CustomVersion> oldCustomVersionContainer = null, Usmap Mappings = null)
@@ -252,15 +182,15 @@ namespace UAssetAPI
     /// </summary>
     public class AssetBinaryReader : UnrealBinaryReader
     {
-        public UnrealPackage Asset;
+        public UAsset Asset;
         public bool LoadUexp = true;
 
-        public AssetBinaryReader(Stream stream, UnrealPackage asset = null) : base(stream)
+        public AssetBinaryReader(Stream stream, UAsset asset = null) : base(stream)
         {
             Asset = asset;
         }
         
-        public AssetBinaryReader(Stream stream, bool inLoadUexp, UnrealPackage asset = null) : base(stream)
+        public AssetBinaryReader(Stream stream, bool inLoadUexp, UAsset asset = null) : base(stream)
         {
             Asset = asset;
             LoadUexp = inLoadUexp;
@@ -279,21 +209,9 @@ namespace UAssetAPI
 
         public virtual FName ReadFName()
         {
-            if (Asset is ZenAsset)
-            {
-                uint Index = this.ReadUInt32();
-                uint Number = this.ReadUInt32();
-
-                var res = new FName(Asset, (int)(Index & FName.IndexMask), (int)Number);
-                res.Type = (EMappedNameType)((Index & FName.TypeMask) >> FName.TypeShift);
-                return res;
-            }
-            else
-            {
-                int nameMapPointer = this.ReadInt32();
-                int number = this.ReadInt32();
-                return new FName(Asset, nameMapPointer, number);
-            }
+            int nameMapPointer = this.ReadInt32();
+            int number = this.ReadInt32();
+            return new FName(Asset, nameMapPointer, number);
         }
 
         public FObjectThumbnail ReadObjectThumbnail()

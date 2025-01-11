@@ -1,6 +1,6 @@
 # INameMap
 
-Namespace: UAssetAPI.IO
+Namespace: UAssetAPI
 
 ```csharp
 public interface INameMap

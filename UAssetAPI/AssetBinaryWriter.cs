@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UAssetAPI.CustomVersions;
-using UAssetAPI.IO;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
@@ -102,47 +101,6 @@ namespace UAssetAPI
             }
         }
 
-        public void WriteNameBatch(ulong HashVersion, IList<FString> nameMap)
-        {
-            Write(nameMap.Count);
-            if (nameMap.Count == 0) return;
-            long numBytesOfStringsPos = this.BaseStream.Position;
-            Write((int)0);
-
-            // write hashes
-            Write(HashVersion);
-            switch (HashVersion)
-            {
-                case UnrealBinaryReader.CityHash64:
-                    for (int i = 0; i < nameMap.Count; i++)
-                    {
-                        Write(CRCGenerator.CityHash64(CRCGenerator.ToLower(nameMap[i].Value), nameMap[i].Encoding));
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown algorithm ID " + HashVersion);
-            }
-
-            // write headers
-            for (int i = 0; i < nameMap.Count; i++)
-            {
-                FSerializedNameHeader.Write(this, nameMap[i].Encoding is UnicodeEncoding, nameMap[i].Value.Length);
-            }
-
-            // write strings
-            long stringsStartPos = BaseStream.Position;
-            for (int i = 0; i < nameMap.Count; i++)
-            {
-                Write(nameMap[i].Encoding.GetBytes(nameMap[i].Value));
-            }
-            long stringsEndPos = BaseStream.Position;
-
-            // fix length
-            Seek((int)numBytesOfStringsPos, SeekOrigin.Begin);
-            Write((int)(stringsEndPos - stringsStartPos));
-            Seek((int)stringsEndPos, SeekOrigin.Begin);
-        }
-
         public void WriteCustomVersionContainer(ECustomVersionSerializationFormat format, List<CustomVersion> CustomVersionContainer)
         {
             // TODO: support for enum-based custom versions
@@ -198,24 +156,24 @@ namespace UAssetAPI
     /// </summary>
     public class AssetBinaryWriter : UnrealBinaryWriter
     {
-        public UnrealPackage Asset;
+        public UAsset Asset;
 
-        public AssetBinaryWriter(UnrealPackage asset) : base()
+        public AssetBinaryWriter(UAsset asset) : base()
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, UnrealPackage asset) : base(stream)
+        public AssetBinaryWriter(Stream stream, UAsset asset) : base(stream)
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset) : base(stream, encoding)
+        public AssetBinaryWriter(Stream stream, Encoding encoding, UAsset asset) : base(stream, encoding)
         {
             Asset = asset;
         }
 
-        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UnrealPackage asset) : base(stream, encoding, leaveOpen)
+        public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UAsset asset) : base(stream, encoding, leaveOpen)
         {
             Asset = asset;
         }
@@ -223,16 +181,8 @@ namespace UAssetAPI
         public virtual void Write(FName name)
         {
             if (name == null) name = new FName(Asset, 0, 0);
-            if (Asset is ZenAsset)
-            {
-                this.Write(((uint)name.Type << FName.TypeShift) | (uint)name.Index);
-                this.Write(name.Number);
-            }
-            else
-            {
-                this.Write(name.Index);
-                this.Write(name.Number);
-            }
+            this.Write(name.Index);
+            this.Write(name.Number);
         }
 
         public virtual void WritePropertyGuid(Guid? guid)

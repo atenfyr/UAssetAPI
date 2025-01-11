@@ -144,7 +144,7 @@ namespace UAssetAPI.ExportTypes
             if (!this.ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && reader.ReadBooleanInt()) ObjectGuid = new Guid(reader.ReadBytes(16));
         }
 
-        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             ancestryNew.SetAsParent(GetClassTypeForAncestry(asset, out FName modulePath), modulePath);

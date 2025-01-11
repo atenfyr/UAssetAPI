@@ -38,26 +38,26 @@ public UEnum()
 
 ## Methods
 
-### **Read(AssetBinaryReader, UnrealPackage)**
+### **Read(AssetBinaryReader, UAsset)**
 
 ```csharp
-public void Read(AssetBinaryReader reader, UnrealPackage asset)
+public void Read(AssetBinaryReader reader, UAsset asset)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **Write(AssetBinaryWriter, UnrealPackage)**
+### **Write(AssetBinaryWriter, UAsset)**
 
 ```csharp
-public void Write(AssetBinaryWriter writer, UnrealPackage asset)
+public void Write(AssetBinaryWriter writer, UAsset asset)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>

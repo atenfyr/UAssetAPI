@@ -155,7 +155,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         }
     }
 
-    public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+    public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
     {
         var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
         ancestryNew.SetAsParent(Name);

@@ -90,15 +90,15 @@ public void Read(AssetBinaryReader reader, UAsset asset)
 
 `asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **ResolveAncestries(UnrealPackage, AncestryInfo)**
+### **ResolveAncestries(UAsset, AncestryInfo)**
 
 ```csharp
-public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 

@@ -81,7 +81,7 @@ Whether or not this property is "zero," meaning that its body can be skipped dur
 
 
 
-This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UAsset)](./uassetapi.propertytypes.objects.propertydata.md#canbezerouasset) does not return true.
 
 ```csharp
 public bool IsZero;
@@ -245,15 +245,15 @@ public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long 
 
 `serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
 
-### **ResolveAncestries(UnrealPackage, AncestryInfo)**
+### **ResolveAncestries(UAsset, AncestryInfo)**
 
 ```csharp
-public void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 

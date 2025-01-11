@@ -16,7 +16,7 @@ Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idis
 ### **Asset**
 
 ```csharp
-public UnrealPackage Asset;
+public UAsset Asset;
 ```
 
 ## Properties
@@ -33,32 +33,32 @@ public Stream BaseStream { get; }
 
 ## Constructors
 
-### **AssetBinaryWriter(UnrealPackage)**
+### **AssetBinaryWriter(UAsset)**
 
 ```csharp
-public AssetBinaryWriter(UnrealPackage asset)
+public AssetBinaryWriter(UAsset asset)
 ```
 
 #### Parameters
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **AssetBinaryWriter(Stream, UnrealPackage)**
+### **AssetBinaryWriter(Stream, UAsset)**
 
 ```csharp
-public AssetBinaryWriter(Stream stream, UnrealPackage asset)
+public AssetBinaryWriter(Stream stream, UAsset asset)
 ```
 
 #### Parameters
 
 `stream` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **AssetBinaryWriter(Stream, Encoding, UnrealPackage)**
+### **AssetBinaryWriter(Stream, Encoding, UAsset)**
 
 ```csharp
-public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset)
+public AssetBinaryWriter(Stream stream, Encoding encoding, UAsset asset)
 ```
 
 #### Parameters
@@ -67,12 +67,12 @@ public AssetBinaryWriter(Stream stream, Encoding encoding, UnrealPackage asset)
 
 `encoding` [Encoding](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
-### **AssetBinaryWriter(Stream, Encoding, Boolean, UnrealPackage)**
+### **AssetBinaryWriter(Stream, Encoding, Boolean, UAsset)**
 
 ```csharp
-public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UnrealPackage asset)
+public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, UAsset asset)
 ```
 
 #### Parameters
@@ -83,7 +83,7 @@ public AssetBinaryWriter(Stream stream, Encoding encoding, bool leaveOpen, Unrea
 
 `leaveOpen` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 ## Methods
 

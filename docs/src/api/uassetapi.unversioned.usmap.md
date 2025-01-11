@@ -164,17 +164,17 @@ public Usmap()
 
 ## Methods
 
-### **GetSchemaFromStructExport(String, UnrealPackage)**
+### **GetSchemaFromStructExport(String, UAsset)**
 
 ```csharp
-public static UsmapSchema GetSchemaFromStructExport(string exportName, UnrealPackage asset)
+public static UsmapSchema GetSchemaFromStructExport(string exportName, UAsset asset)
 ```
 
 #### Parameters
 
 `exportName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 #### Returns
 
@@ -196,12 +196,12 @@ public static UsmapSchema GetSchemaFromStructExport(StructExport exp, bool isCas
 
 [UsmapSchema](./uassetapi.unversioned.usmapschema.md)<br>
 
-### **GetAllProperties(String, String, UnrealPackage)**
+### **GetAllProperties(String, String, UAsset)**
 
 Retrieve all the properties that a particular schema can reference.
 
 ```csharp
-public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath, UnrealPackage asset)
+public IList<UsmapProperty> GetAllProperties(string schemaName, string modulePath, UAsset asset)
 ```
 
 #### Parameters
@@ -212,7 +212,7 @@ The name of the schema of interest.
 `modulePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 Module path of the schema of interest.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 An asset to also search for schemas within.
 
 #### Returns
@@ -220,12 +220,12 @@ An asset to also search for schemas within.
 [IList&lt;UsmapProperty&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ilist-1)<br>
 All the properties that the schema can reference.
 
-### **GetAllPropertiesAnnotated(String, UnrealPackage, IDictionary&lt;String, String&gt;, Boolean, String, String)**
+### **GetAllPropertiesAnnotated(String, UAsset, IDictionary&lt;String, String&gt;, Boolean, String, String)**
 
 Retrieve all the properties that a particular schema can reference as an annotated, human-readable text file.
 
 ```csharp
-public string GetAllPropertiesAnnotated(string schemaName, UnrealPackage asset, IDictionary<string, string> customAnnotations, bool recursive, string headerPrefix, string headerSuffix)
+public string GetAllPropertiesAnnotated(string schemaName, UAsset asset, IDictionary<string, string> customAnnotations, bool recursive, string headerPrefix, string headerSuffix)
 ```
 
 #### Parameters
@@ -233,7 +233,7 @@ public string GetAllPropertiesAnnotated(string schemaName, UnrealPackage asset, 
 `schemaName` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The name of the schema of interest.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 An asset to also search for schemas within.
 
 `customAnnotations` [IDictionary&lt;String, String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.idictionary-2)<br>
@@ -253,17 +253,17 @@ The suffix of the subheader for each relevant schema.
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 An annotated, human-readable text file containing the properties that the schema can reference.
 
-### **GetSchemaFromName(String, UnrealPackage, String, Boolean)**
+### **GetSchemaFromName(String, UAsset, String, Boolean)**
 
 ```csharp
-public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset, string modulePath, bool throwExceptions)
+public UsmapSchema GetSchemaFromName(string nm, UAsset asset, string modulePath, bool throwExceptions)
 ```
 
 #### Parameters
 
 `nm` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `modulePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
@@ -273,12 +273,12 @@ public UsmapSchema GetSchemaFromName(string nm, UnrealPackage asset, string modu
 
 [UsmapSchema](./uassetapi.unversioned.usmapschema.md)<br>
 
-### **TryGetProperty&lt;T&gt;(FName, AncestryInfo, Int32, UnrealPackage, T&, Int32&)**
+### **TryGetProperty&lt;T&gt;(FName, AncestryInfo, Int32, UAsset, T&, Int32&)**
 
 Attempts to retrieve the corresponding .usmap property, given its ancestry.
 
 ```csharp
-public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, UnrealPackage asset, T& propDat, Int32& idx)
+public bool TryGetProperty<T>(FName propertyName, AncestryInfo ancestry, int dupIndex, UAsset asset, T& propDat, Int32& idx)
 ```
 
 #### Type Parameters
@@ -297,7 +297,7 @@ The ancestry of the property to search for.
 `dupIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The duplication index of the property to search for. If unknown, set to 0.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 An asset to also search for schemas within.
 
 `propDat` T&<br>
@@ -311,12 +311,12 @@ The index of the property.
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Whether or not the property was successfully found.
 
-### **TryGetPropertyData&lt;T&gt;(FName, AncestryInfo, UnrealPackage, T&)**
+### **TryGetPropertyData&lt;T&gt;(FName, AncestryInfo, UAsset, T&)**
 
 Attempts to retrieve the corresponding .usmap property data corresponding to a specific property, given its ancestry.
 
 ```csharp
-public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, UnrealPackage asset, T& propDat)
+public bool TryGetPropertyData<T>(FName propertyName, AncestryInfo ancestry, UAsset asset, T& propDat)
 ```
 
 #### Type Parameters
@@ -332,7 +332,7 @@ The name of the property to search for.
 `ancestry` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
 The ancestry of the property to search for.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
+`asset` [UAsset](./uassetapi.uasset.md)<br>
 An asset to also search for schemas within.
 
 `propDat` T&<br>

@@ -172,6 +172,38 @@ The name of the UObject represented by this resource.
 public FName ObjectName;
 ```
 
+### **OuterIndex**
+
+Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage
+
+```csharp
+public FPackageIndex OuterIndex;
+```
+
+### **ClassIndex**
+
+Location of this export's class (import/other export). 0 = this export is a UClass
+
+```csharp
+public FPackageIndex ClassIndex;
+```
+
+### **SuperIndex**
+
+Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct
+
+```csharp
+public FPackageIndex SuperIndex;
+```
+
+### **TemplateIndex**
+
+Location of this export's template (import/other export). 0 = there is some problem
+
+```csharp
+public FPackageIndex TemplateIndex;
+```
+
 ### **ObjectFlags**
 
 The object flags for the UObject represented by this resource. Only flags that match the RF_Load combination mask will be loaded from disk and applied to the UObject.
@@ -310,44 +342,6 @@ public List<FPackageIndex> SerializationBeforeCreateDependencies;
 public List<FPackageIndex> CreateBeforeCreateDependencies;
 ```
 
-### **Zen_OuterIndex**
-
-```csharp
-public FPackageObjectIndex Zen_OuterIndex;
-```
-
-### **Zen_ClassIndex**
-
-```csharp
-public FPackageObjectIndex Zen_ClassIndex;
-```
-
-### **Zen_SuperIndex**
-
-```csharp
-public FPackageObjectIndex Zen_SuperIndex;
-```
-
-### **Zen_TemplateIndex**
-
-```csharp
-public FPackageObjectIndex Zen_TemplateIndex;
-```
-
-### **PublicExportHash**
-
-PublicExportHash. Interpreted as a global import FPackageObjectIndex in UE4 assets.
-
-```csharp
-public ulong PublicExportHash;
-```
-
-### **Padding**
-
-```csharp
-public Byte[] Padding;
-```
-
 ### **Extras**
 
 Miscellaneous, unparsed export data, stored as a byte array.
@@ -361,58 +355,10 @@ public Byte[] Extras;
 The asset that this export is parsed with.
 
 ```csharp
-public UnrealPackage Asset;
+public UAsset Asset;
 ```
 
 ## Properties
-
-### **OuterIndex**
-
-Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage
-
-```csharp
-public FPackageIndex OuterIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **ClassIndex**
-
-Location of this export's class (import/other export). 0 = this export is a UClass
-
-```csharp
-public FPackageIndex ClassIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **SuperIndex**
-
-Location of this export's parent class (import/other export). 0 = this export is not derived from UStruct
-
-```csharp
-public FPackageIndex SuperIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
-
-### **TemplateIndex**
-
-Location of this export's template (import/other export). 0 = there is some problem
-
-```csharp
-public FPackageIndex TemplateIndex { get; set; }
-```
-
-#### Property Value
-
-[FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
 ## Constructors
 

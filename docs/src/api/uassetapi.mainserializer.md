@@ -34,12 +34,12 @@ public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly asse
 
 [IEnumerable&lt;String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
-### **GenerateUnversionedHeader(List`1&, FName, FName, UnrealPackage)**
+### **GenerateUnversionedHeader(List`1&, FName, FName, UAsset)**
 
 Generates an unversioned header based on a list of properties, and sorts the list in the correct order to be serialized.
 
 ```csharp
-public static FUnversionedHeader GenerateUnversionedHeader(List`1& data, FName parentName, FName parentModulePath, UnrealPackage asset)
+public static FUnversionedHeader GenerateUnversionedHeader(List`1& data, FName parentName, FName parentModulePath, UAsset asset)
 ```
 
 #### Parameters
@@ -53,19 +53,19 @@ The name of the parent of all the properties.
 `parentModulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
 The path to the module that the parent class/struct of this property is contained within.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
-The UnrealPackage which the properties are contained within.
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+The UAsset which the properties are contained within.
 
 #### Returns
 
 [FUnversionedHeader](./uassetapi.unversioned.funversionedheader.md)<br>
 
-### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UnrealPackage, AssetBinaryReader, Int32, EPropertyTagFlags, Int32, Boolean, Boolean)**
+### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UAsset, AssetBinaryReader, Int32, EPropertyTagFlags, Int32, Boolean, Boolean)**
 
 Initializes the correct PropertyData class based off of serialized name, type, etc.
 
 ```csharp
-public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader, int leng, EPropertyTagFlags propertyTagFlags, int ArrayIndex, bool includeHeader, bool isZero)
+public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader, int leng, EPropertyTagFlags propertyTagFlags, int ArrayIndex, bool includeHeader, bool isZero)
 ```
 
 #### Parameters
@@ -85,8 +85,8 @@ The name of the parent class/struct of this property.
 `parentModulePath` [FName](./uassetapi.unrealtypes.fname.md)<br>
 The path to the module that the parent class/struct of this property is contained within.
 
-`asset` [UnrealPackage](./uassetapi.unrealpackage.md)<br>
-The UnrealPackage which this property is contained within.
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+The UAsset which this property is contained within.
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 The BinaryReader to read from. If left unspecified, you must call the [PropertyData.Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)](./uassetapi.propertytypes.objects.propertydata.md#readassetbinaryreader-boolean-int64-int64-propertyserializationcontext) method manually.

@@ -139,8 +139,8 @@ namespace UAssetAPI
         /// <param name="data">The list of properties to sort and generate an unversioned header from.</param>
         /// <param name="parentName">The name of the parent of all the properties.</param>
         /// <param name="parentModulePath">The path to the module that the parent class/struct of this property is contained within.</param>
-        /// <param name="asset">The UnrealPackage which the properties are contained within.</param>
-        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, FName parentModulePath, UnrealPackage asset)
+        /// <param name="asset">The UAsset which the properties are contained within.</param>
+        public static FUnversionedHeader GenerateUnversionedHeader(ref List<PropertyData> data, FName parentName, FName parentModulePath, UAsset asset)
         {
             var sortedProps = new List<PropertyData>();
             if (!asset.HasUnversionedProperties) return null; // no point in wasting time generating it
@@ -278,7 +278,7 @@ namespace UAssetAPI
         /// <param name="ancestry">The ancestry of the parent of this property.</param>
         /// <param name="parentName">The name of the parent class/struct of this property.</param>
         /// <param name="parentModulePath">The path to the module that the parent class/struct of this property is contained within.</param>
-        /// <param name="asset">The UnrealPackage which this property is contained within.</param>
+        /// <param name="asset">The UAsset which this property is contained within.</param>
         /// <param name="reader">The BinaryReader to read from. If left unspecified, you must call the <see cref="PropertyData.Read(AssetBinaryReader, bool, long, long, PropertySerializationContext)"/> method manually.</param>
         /// <param name="leng">The length of this property on disk in bytes.</param>
         /// <param name="propertyTagFlags">Property tag flags, if available.</param>
@@ -286,7 +286,7 @@ namespace UAssetAPI
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <param name="isZero">Is the body of this property empty?</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UnrealPackage asset, AssetBinaryReader reader = null, int leng = 0, EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None, int ArrayIndex = 0, bool includeHeader = true, bool isZero = false)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader = null, int leng = 0, EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None, int ArrayIndex = 0, bool includeHeader = true, bool isZero = false)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;

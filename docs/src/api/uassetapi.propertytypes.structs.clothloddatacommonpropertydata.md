@@ -95,7 +95,7 @@ Whether or not this property is "zero," meaning that its body can be skipped dur
 
 
 
-This field will always be treated as if it is false if [PropertyData.CanBeZero(UnrealPackage)](./uassetapi.propertytypes.objects.propertydata.md#canbezerounrealpackage) does not return true.
+This field will always be treated as if it is false if [PropertyData.CanBeZero(UAsset)](./uassetapi.propertytypes.objects.propertydata.md#canbezerouasset) does not return true.
 
 ```csharp
 public bool IsZero;

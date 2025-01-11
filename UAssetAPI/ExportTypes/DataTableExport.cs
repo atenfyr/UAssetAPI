@@ -159,7 +159,7 @@ namespace UAssetAPI.ExportTypes
             }
         }
 
-        public override void ResolveAncestries(UnrealPackage asset, AncestryInfo ancestrySoFar)
+        public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
         {
             var ancestryNew = (AncestryInfo)ancestrySoFar.Clone();
             FName pcen = asset.GetParentClassExportName(out FName pcen2);

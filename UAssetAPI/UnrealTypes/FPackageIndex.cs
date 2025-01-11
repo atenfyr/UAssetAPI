@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using UAssetAPI.ExportTypes;
-using UAssetAPI.IO;
 using UAssetAPI.JSON;
 
 namespace UAssetAPI.UnrealTypes
@@ -94,19 +93,13 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this index is used in.</param>
         /// <returns>The import that this index represents in the import map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the import map.</exception>
-        public Import ToImport(UnrealPackage asset)
+        public Import ToImport(UAsset asset)
         {
             if (!IsImport()) throw new InvalidOperationException("Index = " + Index + "; cannot call ToImport()");
 
             int newIndex = -Index - 1;
 
-            if (asset is ZenAsset za)
-            {
-                if (newIndex < 0 || newIndex >= za.Imports.Count) return null;
-                FPackageObjectIndex poi = za.Imports[newIndex];
-                return poi.ToImport(za);
-            }
-            else if (asset is UAsset uas)
+            if (asset is UAsset uas)
             {
                 if (newIndex < 0 || newIndex >= uas.Imports.Count) return null;
                 return uas.Imports[newIndex];
@@ -120,13 +113,13 @@ namespace UAssetAPI.UnrealTypes
         /// <param name="asset">The asset that this index is used in.</param>
         /// <returns>The export that this index represents in the the export map.</returns>
         /// <exception cref="System.InvalidOperationException">Thrown when this is not an index into the export map.</exception>
-        public Export ToExport(UnrealPackage asset)
+        public Export ToExport(UAsset asset)
         {
             if (!IsExport() || Index > asset.Exports.Count) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
             return asset.Exports[Index - 1];
         }
 
-        public T ToExport<T>(UnrealPackage asset) where T : Export
+        public T ToExport<T>(UAsset asset) where T : Export
         {
             if (!IsExport() || Index > asset.Exports.Count) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
             return (T)asset.Exports[Index-1];
