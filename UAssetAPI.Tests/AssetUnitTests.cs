@@ -71,8 +71,8 @@ namespace UAssetAPI.Tests
         /// <returns>An array of paths to assets that should be tested.</returns>
         public string[] GetAllTestAssets(string folder)
         {
-            List<string> allFilesToTest = Directory.GetFiles(folder, "*.uasset").ToList();
-            allFilesToTest.AddRange(Directory.GetFiles(folder, "*.umap"));
+            List<string> allFilesToTest = Directory.GetFiles(folder, "*.uasset", SearchOption.AllDirectories).ToList();
+            allFilesToTest.AddRange(Directory.GetFiles(folder, "*.umap", SearchOption.AllDirectories));
             return allFilesToTest.ToArray();
         }
 
@@ -293,6 +293,19 @@ namespace UAssetAPI.Tests
         private void TestUE5_3Subsection(string game, EngineVersion version, Usmap mappings = null)
         {
             string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_3", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
+
+        private void TestUE5_4Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_4", game));
             foreach (string assetPath in allTestingAssets)
             {
                 Console.WriteLine(assetPath);
@@ -550,6 +563,18 @@ namespace UAssetAPI.Tests
         {
             TestUE5_3Subsection("Engine", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "Engine", "Engine.usmap")));
             TestUE5_3Subsection("RON", EngineVersion.VER_UE5_3, new Usmap(Path.Combine("TestAssets", "TestUE5_3", "RON", "ReadyOrNot.usmap")));
+        }
+
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_4()
+        {
+            TestUE5_4Subsection("BlankGame", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "BlankGame", "BlankGame_Dumper-7.usmap")));
+            TestUE5_4Subsection("Bellwright", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Bellwright", "Bellwright.usmap")));
+            TestUE5_4Subsection("TheForeverWinter", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "TheForeverWinter", "TheForeverWinter.usmap")));
         }
 
         /// <summary>

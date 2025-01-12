@@ -284,6 +284,198 @@
     <None Update="TestAssets\TestUE5_3\RON\ReadyOrNot.usmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Bellwright.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeBlacksmithNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeBlacksmithNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeCarpenterNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeCarpenterNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeEngineerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeEngineerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeFarmerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeFarmerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeHealerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeHealerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeInkeeperNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeInkeeperNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeLabourerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeLabourerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeWeaverNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeWeaverNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeWoodsmanNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\ApprenticeWoodsmanNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\HighNoTraitsVillagerIdleNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\HighNoTraitsVillagerIdleNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\HighVillagerIdleNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\HighSkill\HighVillagerIdleNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowBeggarNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowBeggarNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowVillagerIdleNoTraitsNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowVillagerIdleNoTraitsNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowVillagerIdleNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\LowSkill\LowVillagerIdleNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\MediumNoTraitsVillagerIdleNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\MediumNoTraitsVillagerIdleNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\MediumVillagerIdleNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\MediumVillagerIdleNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceBlacksmithNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceBlacksmithNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceCarpenterNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceCarpenterNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceEngineerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceEngineerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceFarmerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceFarmerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceHealerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceHealerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceInkeeperNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceInkeeperNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceLabourerNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceLabourerNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceWeaverNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceWeaverNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceWoodsmanNPCTemplate.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\Content\Mist\Characters\NPC\Villager\MediumSkill\NoviceWoodsmanNPCTemplate.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Bellwright\UMG_TreeViewDemo.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\BP_CubePawn.combined">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\BP_CubePawn.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\BP_CubePawn.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\MI_BlueCube.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\MI_BlueCube.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\M_Cube.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\M_Cube.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\SM_BlueCube.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\BlankGame\SM_BlueCube.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\TheForeverWinter\DA_DailyGiftList.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\TheForeverWinter\DA_DailyGiftList.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\TheForeverWinter\TheForeverWinter.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -446,5 +638,8 @@
     <None Update="TestAssets\TestUE5_4\BlankGame\BlankGame_Dumper-7.usmap">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestAssets\TestUE5_4\Bellwright\" />
   </ItemGroup>
 </Project>

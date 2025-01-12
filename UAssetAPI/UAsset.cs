@@ -1539,6 +1539,12 @@ namespace UAssetAPI
             }
             if (ObjectVersionUE5 == ObjectVersionUE5.UNKNOWN && Mappings != null && Mappings.FileVersionUE5 > 0) ObjectVersionUE5 = Mappings.FileVersionUE5;
 
+            // if wasn't unversioned, we'll ignore the current custom version container and just read it from disk
+            if (!IsUnversioned)
+            {
+                CustomVersionContainer = null;
+            }
+
             FileVersionLicenseeUE = reader.ReadInt32();
 
             // Custom versions container
