@@ -228,11 +228,11 @@ namespace UAssetAPI
                 int numSkip = 0;
                 if (asset.ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
                 {
-                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString()).Count, FFragment.SkipMax);
+                    numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString(), asset).Count, FFragment.SkipMax);
                 }
                 else
                 {
-                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString()).Count, FFragment.SkipMax);
+                    numSkip = asset.Mappings.Schemas[highestSchema].Properties.Count == 0 ? 0 : Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString(), asset).Count, FFragment.SkipMax);
                 }
                 allFrags.Add(new FFragment(numSkip, 0, true, false));
             }
