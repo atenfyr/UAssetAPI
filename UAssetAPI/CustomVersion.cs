@@ -59,6 +59,7 @@ public class CustomVersion : ICloneable
         { UAPUtils.GUID(0xE7086368, 0x6B234C58, 0x84391B70, 0x16265E91), "FFortniteReleaseBranchCustomObjectVersion" },
         { UAPUtils.GUID(0xD89B5E42, 0x24BD4D46, 0x8412ACA8, 0xDF641779), "FUE5ReleaseStreamObjectVersion" },
         { UAPUtils.GUID(0xFCF57AFA, 0x50764283, 0xB9A9E658, 0xFFA02D32), "FNiagaraCustomVersion" },
+        { UAPUtils.GUID(0x697DD581, 0xE64f41AB, 0xAA4A51EC, 0xBEB7B628), "FUE5MainStreamObjectVersion" }
 
         // etc.
     };
