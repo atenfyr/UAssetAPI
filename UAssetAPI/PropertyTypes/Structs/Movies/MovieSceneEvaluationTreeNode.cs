@@ -79,10 +79,13 @@ public class FMovieSceneEvaluationTreeNode
 
     public FMovieSceneEvaluationTreeNode(AssetBinaryReader reader)
     {
-        Range = new(reader, () => new FFrameNumber(reader));
-        Parent = new FMovieSceneEvaluationTreeNodeHandle(reader.ReadInt32(), reader.ReadInt32());
-        ChildrenID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
-        DataID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
+        if (reader != null)
+        {
+            Range = new(reader, () => new FFrameNumber(reader));
+            Parent = new FMovieSceneEvaluationTreeNodeHandle(reader.ReadInt32(), reader.ReadInt32());
+            ChildrenID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
+            DataID = new FEvaluationTreeEntryHandle(reader.ReadInt32());
+        }
     }
 
     public void Write(AssetBinaryWriter writer)

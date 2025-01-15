@@ -19,9 +19,12 @@ public struct FMovieSceneEventParameters
 
     public FMovieSceneEventParameters(AssetBinaryReader reader)
     {
-        StructType = new FSoftObjectPath(reader);
-        var length = reader.ReadInt32();
-        StructBytes = reader.ReadBytes(length);
+        if (reader != null)
+        {
+            StructType = new FSoftObjectPath(reader);
+            var length = reader.ReadInt32();
+            StructBytes = reader.ReadBytes(length);
+        }
     }
 
     public int Write(AssetBinaryWriter writer)

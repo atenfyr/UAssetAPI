@@ -13,23 +13,31 @@ public class FMovieSceneTangentData
     public ERichCurveTangentWeightMode TangentWeightMode;
     public byte[] padding;
 
+    public FMovieSceneTangentData()
+    {
+
+    }
+
     public FMovieSceneTangentData(AssetBinaryReader reader)
     {
-        ArriveTangent = reader.ReadSingle();
-        LeaveTangent = reader.ReadSingle();
-        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        if (reader != null)
         {
-            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-            ArriveTangentWeight = reader.ReadSingle();
-            LeaveTangentWeight = reader.ReadSingle();
-            padding = [];
-        }
-        else
-        {
-            ArriveTangentWeight = reader.ReadSingle();
-            LeaveTangentWeight = reader.ReadSingle();
-            TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
-            padding = reader.ReadBytes(3);
+            ArriveTangent = reader.ReadSingle();
+            LeaveTangent = reader.ReadSingle();
+            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+            {
+                TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
+                ArriveTangentWeight = reader.ReadSingle();
+                LeaveTangentWeight = reader.ReadSingle();
+                padding = [];
+            }
+            else
+            {
+                ArriveTangentWeight = reader.ReadSingle();
+                LeaveTangentWeight = reader.ReadSingle();
+                TangentWeightMode = (ERichCurveTangentWeightMode)reader.ReadByte();
+                padding = reader.ReadBytes(3);
+            }
         }
     }
 
@@ -64,19 +72,22 @@ public class FMovieSceneValue<T>
     public FMovieSceneValue(AssetBinaryReader reader, T value)
     {
         Value = value;
-        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+        if (reader != null)
         {
-            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
-            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-            Tangent = new FMovieSceneTangentData(reader);
-            padding = [];
-        }
-        else
-        {
-            Tangent = new FMovieSceneTangentData(reader);
-            InterpMode = (ERichCurveInterpMode)reader.ReadByte();
-            TangentMode = (ERichCurveTangentMode)reader.ReadByte();
-            padding = reader.ReadBytes(2);
+            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.SerializeFloatChannelCompletely)
+            {
+                InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+                TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+                Tangent = new FMovieSceneTangentData(reader);
+                padding = [];
+            }
+            else
+            {
+                Tangent = new FMovieSceneTangentData(reader);
+                InterpMode = (ERichCurveInterpMode)reader.ReadByte();
+                TangentMode = (ERichCurveTangentMode)reader.ReadByte();
+                padding = reader.ReadBytes(2);
+            }
         }
     }
 
@@ -99,6 +110,6 @@ public class FMovieSceneValue<T>
     }
 }
 
-public class FMovieSceneFloatValue(AssetBinaryReader reader) : FMovieSceneValue<float>(reader, reader.ReadSingle()) { }
+public class FMovieSceneFloatValue(AssetBinaryReader reader) : FMovieSceneValue<float>(reader, reader?.ReadSingle() ?? 0) { }
 
-public class FMovieSceneDoubleValue(AssetBinaryReader reader) : FMovieSceneValue<double>(reader, reader.ReadDouble()) { }
+public class FMovieSceneDoubleValue(AssetBinaryReader reader) : FMovieSceneValue<double>(reader, reader?.ReadDouble() ?? 0) { }

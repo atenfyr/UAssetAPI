@@ -34,9 +34,12 @@ public struct FMovieSceneEvaluationKey
 
     public FMovieSceneEvaluationKey(AssetBinaryReader reader)
     {
-        SequenceID = reader.ReadUInt32();
-        TrackIdentifier = reader.ReadUInt32();
-        SectionIndex = reader.ReadUInt32();
+        if (reader != null)
+        {
+            SequenceID = reader.ReadUInt32();
+            TrackIdentifier = reader.ReadUInt32();
+            SectionIndex = reader.ReadUInt32();
+        }
     }
 
     public int Write(AssetBinaryWriter writer)
@@ -69,9 +72,12 @@ public struct FMovieSceneSubSectionData
 
     public FMovieSceneSubSectionData(AssetBinaryReader reader)
     {
-        Section = new FPackageIndex(reader);
-        ObjectBindingId = new Guid(reader.ReadBytes(16));
-        Flags = (ESectionEvaluationFlags)reader.ReadByte();
+        if (reader != null)
+        {
+            Section = new FPackageIndex(reader);
+            ObjectBindingId = new Guid(reader.ReadBytes(16));
+            Flags = (ESectionEvaluationFlags)reader.ReadByte();
+        }
     }
 
     public int Write(AssetBinaryWriter writer)
@@ -96,8 +102,11 @@ public struct FEntityAndMetaDataIndex
 
     public FEntityAndMetaDataIndex(AssetBinaryReader reader)
     {
-        EntityIndex = reader.ReadInt32();
-        MetaDataIndex = reader.ReadInt32();
+        if (reader != null)
+        {
+            EntityIndex = reader.ReadInt32();
+            MetaDataIndex = reader.ReadInt32();
+        }
     }
 
     public void Write(AssetBinaryWriter writer)
@@ -122,14 +131,17 @@ public struct FMovieSceneSubSequenceTreeEntry
 
     public FMovieSceneSubSequenceTreeEntry(AssetBinaryReader reader)
     {
-        SequenceID = reader.ReadUInt32();
-        Flags = (ESectionEvaluationFlags)reader.ReadByte();
-        if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter ||
-            reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.AddedSubSequenceEntryWarpCounter)
+        if (reader != null)
         {
-            var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "RootToSequenceWarpCounter"), FName.DefineDummy(reader.Asset, "MovieSceneWarpCounter"));
-            data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
-            RootToSequenceWarpCounter = data;
+            SequenceID = reader.ReadUInt32();
+            Flags = (ESectionEvaluationFlags)reader.ReadByte();
+            if (reader.Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.AddedSubSequenceEntryWarpCounter ||
+                reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.AddedSubSequenceEntryWarpCounter)
+            {
+                var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "RootToSequenceWarpCounter"), FName.DefineDummy(reader.Asset, "MovieSceneWarpCounter"));
+                data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
+                RootToSequenceWarpCounter = data;
+            }
         }
     }
 
@@ -193,13 +205,16 @@ public struct FSectionEvaluationDataTree
 
     public FSectionEvaluationDataTree(AssetBinaryReader reader)
     {
-        Tree = new(reader, () => ReadTree(reader));
-
-        static StructPropertyData ReadTree(AssetBinaryReader reader)
+        if (reader != null)
         {
-            var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "Tree"), FName.DefineDummy(reader.Asset, "SectionEvaluationDataTree"));
-            data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
-            return data;
+            Tree = new(reader, () => ReadTree(reader));
+
+            static StructPropertyData ReadTree(AssetBinaryReader reader)
+            {
+                var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "Tree"), FName.DefineDummy(reader.Asset, "SectionEvaluationDataTree"));
+                data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
+                return data;
+            }
         }
     }
 

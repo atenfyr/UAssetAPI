@@ -34,6 +34,11 @@ public struct TRangeBound<T>
     public ERangeBoundTypes Type;
     public T Value;
 
+    public TRangeBound()
+    {
+
+    }
+
     public TRangeBound(ERangeBoundTypes type, T value)
     {
         Type = type;
@@ -42,7 +47,7 @@ public struct TRangeBound<T>
 
     public TRangeBound(AssetBinaryReader reader, Func<T> valueReader)
     {
-        Type = (ERangeBoundTypes)reader.ReadByte();
+        Type = reader == null ? ERangeBoundTypes.Exclusive : (ERangeBoundTypes)reader.ReadByte();
         Value = valueReader();
     }
 
@@ -57,6 +62,11 @@ public struct FFrameNumber
 {
     public int Value;
 
+    public FFrameNumber()
+    {
+
+    }
+
     public FFrameNumber(int value)
     {
         Value = value;
@@ -64,7 +74,7 @@ public struct FFrameNumber
 
     public FFrameNumber(AssetBinaryReader reader)
     {
-        Value = reader.ReadInt32();
+        Value = reader?.ReadInt32() ?? 0;
     }
     
     public void Write(AssetBinaryWriter writer)

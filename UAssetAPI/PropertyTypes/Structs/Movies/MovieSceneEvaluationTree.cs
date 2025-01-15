@@ -26,9 +26,12 @@ public struct FEntry
 
     public FEntry(AssetBinaryReader reader)
     {
-        StartIndex = reader.ReadInt32();
-        Size = reader.ReadInt32();
-        Capacity = reader.ReadInt32();
+        if (reader != null)
+        {
+            StartIndex = reader.ReadInt32();
+            Size = reader.ReadInt32();
+            Capacity = reader.ReadInt32();
+        }
     }
 
     public void Write(AssetBinaryWriter writer)
@@ -58,18 +61,21 @@ public struct TEvaluationTreeEntryContainer<T>
 
     public TEvaluationTreeEntryContainer(AssetBinaryReader reader, Func<T> valueReader)
     {
-        var entriesamount = reader.ReadInt32();
-        Entries = new FEntry[entriesamount];
-        for (int i = 0; i < entriesamount; i++)
+        if (reader != null)
         {
-            Entries[i] = new FEntry(reader);
-        }
+            var entriesamount = reader.ReadInt32();
+            Entries = new FEntry[entriesamount];
+            for (int i = 0; i < entriesamount; i++)
+            {
+                Entries[i] = new FEntry(reader);
+            }
 
-        int itemsamount = reader.ReadInt32();
-        Items = new T[itemsamount];
-        for (int i = 0; i < itemsamount; i++)
-        {
-            Items[i] = valueReader();
+            int itemsamount = reader.ReadInt32();
+            Items = new T[itemsamount];
+            for (int i = 0; i < itemsamount; i++)
+            {
+                Items[i] = valueReader();
+            }
         }
     }
 
@@ -116,7 +122,7 @@ public class TMovieSceneEvaluationTree<T> : FMovieSceneEvaluationTree
 
     public TMovieSceneEvaluationTree(AssetBinaryReader reader, Func<T> valueReader) : base(reader)
     {
-        Data = new(reader, valueReader);
+        if (reader != null) Data = new(reader, valueReader);
     }
 
     public void Write(AssetBinaryWriter writer, Action<T> valueWriter)

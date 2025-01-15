@@ -18,30 +18,38 @@ public class FMovieSceneSegment
     /// <summary> Array of implementations that reside at the segment's range </summary>
     public StructPropertyData[] Impls;
 
+    public FMovieSceneSegment()
+    {
+
+    }
+
     public FMovieSceneSegment(AssetBinaryReader reader)
     {
-        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
+        if (reader != null)
         {
-            RangeOld = new TRange<float>(reader, reader.ReadSingle);
-        }
-        else
-        {
-            Range = new(reader, () => new FFrameNumber(reader));
-        }
+            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() < FSequencerObjectVersion.FloatToIntConversion)
+            {
+                RangeOld = new TRange<float>(reader, reader.ReadSingle);
+            }
+            else
+            {
+                Range = new(reader, () => new FFrameNumber(reader));
+            }
 
-        if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() > FSequencerObjectVersion.EvaluationTree)
-        {
-            ID = reader.ReadInt32();
-            bAllowEmpty = reader.ReadBooleanInt();
-        }
+            if (reader.Asset.GetCustomVersion<FSequencerObjectVersion>() > FSequencerObjectVersion.EvaluationTree)
+            {
+                ID = reader.ReadInt32();
+                bAllowEmpty = reader.ReadBooleanInt();
+            }
 
-        int length = reader.ReadInt32();
-        Impls = new StructPropertyData[length];
-        for (int i = 0; i < length; i++)
-        {
-            var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "Impls"), FName.DefineDummy(reader.Asset, "SectionEvaluationData"));
-            data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
-            Impls[i] = data;
+            int length = reader.ReadInt32();
+            Impls = new StructPropertyData[length];
+            for (int i = 0; i < length; i++)
+            {
+                var data = new StructPropertyData(FName.DefineDummy(reader.Asset, "Impls"), FName.DefineDummy(reader.Asset, "SectionEvaluationData"));
+                data.Read(reader, false, 1, 0, PropertySerializationContext.StructFallback);
+                Impls[i] = data;
+            }
         }
     }
 
