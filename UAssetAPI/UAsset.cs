@@ -1011,6 +1011,7 @@ namespace UAssetAPI
             NullValueHandling = NullValueHandling.Include,
             FloatParseHandling = FloatParseHandling.Double,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
             ContractResolver = new UAssetContractResolver(null),
             Converters = new List<JsonConverter>()
             {
@@ -1021,6 +1022,7 @@ namespace UAssetAPI
                 new FPackageIndexJsonConverter(),
                 new StringEnumConverter(),
                 new GuidJsonConverter(),
+                new ByteArrayJsonConverter()
             }
         };
 
@@ -2751,6 +2753,7 @@ namespace UAssetAPI
                 NullValueHandling = NullValueHandling.Include,
                 FloatParseHandling = FloatParseHandling.Double,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
                 ContractResolver = new UAssetContractResolver(toBeFilled),
                 Converters = new List<JsonConverter>()
                 {
@@ -2761,6 +2764,7 @@ namespace UAssetAPI
                     new FPackageIndexJsonConverter(),
                     new StringEnumConverter(),
                     new GuidJsonConverter(),
+                    new ByteArrayJsonConverter()
                 }
             });
 
@@ -2797,6 +2801,7 @@ namespace UAssetAPI
                 NullValueHandling = NullValueHandling.Include,
                 FloatParseHandling = FloatParseHandling.Double,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
                 ContractResolver = new UAssetContractResolver(toBeFilled),
                 Converters = new List<JsonConverter>()
                 {
@@ -2807,6 +2812,7 @@ namespace UAssetAPI
                     new FPackageIndexJsonConverter(),
                     new StringEnumConverter(),
                     new GuidJsonConverter(),
+                    new ByteArrayJsonConverter()
                 }
             });
 
@@ -2846,6 +2852,7 @@ namespace UAssetAPI
                 NullValueHandling = NullValueHandling.Include,
                 FloatParseHandling = FloatParseHandling.Double,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                MetadataPropertyHandling = MetadataPropertyHandling.ReadAhead,
                 ContractResolver = new UAssetContractResolver(toBeFilled),
                 Converters = new List<JsonConverter>()
                 {
@@ -2856,6 +2863,7 @@ namespace UAssetAPI
                     new FPackageIndexJsonConverter(),
                     new StringEnumConverter(),
                     new GuidJsonConverter(),
+                    new ByteArrayJsonConverter()
                 }
             });
 
