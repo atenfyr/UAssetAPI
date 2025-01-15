@@ -32,29 +32,32 @@ public class FMovieSceneChannel<T>
 
     public FMovieSceneChannel(AssetBinaryReader reader, Func<T> valueReader)
     {
-        PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
-        PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
-
-        TimesStructLength = reader.ReadInt32();
-        var TimesLength = reader.ReadInt32();
-        Times = new FFrameNumber[TimesLength];
-        for (int i = 0; i < TimesLength; i++)
+        if (reader != null && valueReader != null)
         {
-            Times[i] = new FFrameNumber(reader);
-        }
+            PreInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
+            PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
 
-        ValuesStructLength = reader.ReadInt32();
-        var ValuesLength = reader.ReadInt32();
-        Values = new FMovieSceneValue<T>[ValuesLength];
-        for (int i = 0; i < ValuesLength; i++)
-        {
-            Values[i] = new FMovieSceneValue<T>(reader, valueReader());
-        }
+            TimesStructLength = reader.ReadInt32();
+            var TimesLength = reader.ReadInt32();
+            Times = new FFrameNumber[TimesLength];
+            for (int i = 0; i < TimesLength; i++)
+            {
+                Times[i] = new FFrameNumber(reader);
+            }
 
-        DefaultValue = valueReader();
-        bHasDefaultValue = reader.ReadBooleanInt();
-        TickResolution = new FFrameRate(reader);
-        bShowCurve = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve && reader.ReadBooleanInt();
+            ValuesStructLength = reader.ReadInt32();
+            var ValuesLength = reader.ReadInt32();
+            Values = new FMovieSceneValue<T>[ValuesLength];
+            for (int i = 0; i < ValuesLength; i++)
+            {
+                Values[i] = new FMovieSceneValue<T>(reader, valueReader());
+            }
+
+            DefaultValue = valueReader();
+            bHasDefaultValue = reader.ReadBooleanInt();
+            TickResolution = new FFrameRate(reader);
+            bShowCurve = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve && reader.ReadBooleanInt();
+        }
     }
 
     public void Write(AssetBinaryWriter writer, Action<T> valueWriter)
@@ -84,6 +87,6 @@ public class FMovieSceneChannel<T>
     }
 }
 
-public class FMovieSceneFloatChannel(AssetBinaryReader reader) : FMovieSceneChannel<float>(reader, reader.ReadSingle) { }
+public class FMovieSceneFloatChannel(AssetBinaryReader reader) : FMovieSceneChannel<float>(reader, reader == null ? null : reader.ReadSingle) { }
 
-public class FMovieSceneDoubleChannel(AssetBinaryReader reader) : FMovieSceneChannel<double>(reader, reader.ReadDouble) { }
+public class FMovieSceneDoubleChannel(AssetBinaryReader reader) : FMovieSceneChannel<double>(reader, reader == null ? null : reader.ReadDouble) { }
