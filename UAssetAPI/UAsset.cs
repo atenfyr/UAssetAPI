@@ -56,7 +56,7 @@ namespace UAssetAPI
         SkipPreloadDependencyLoading = 4,
 
         /// <summary>
-        /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UAsset.ConvertExportToChildExportAndRead(AssetBinaryReader, int, bool)"/> method.
+        /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UAsset.ParseExport(AssetBinaryReader, int, bool)"/> method.
         /// </summary>
         SkipParsingExports = 8
     }
