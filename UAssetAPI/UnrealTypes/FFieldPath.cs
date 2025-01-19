@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using System;
 
 namespace UAssetAPI.UnrealTypes
@@ -20,10 +18,13 @@ namespace UAssetAPI.UnrealTypes
         [JsonProperty]
         public FPackageIndex ResolvedOwner;
 
-        public FFieldPath(FName[] path, FPackageIndex resolvedOwner)
+        public FFieldPath(FName[] path, FPackageIndex resolvedOwner, int numExports = -1)
         {
             Path = path;
             ResolvedOwner = resolvedOwner;
+
+            // sanity check: throw if makes no sense
+            if (numExports > 0 && ResolvedOwner.Index > numExports) throw new FormatException("Received nonsensical FFieldPath ResolvedOwner: " + ResolvedOwner.Index);
         }
 
         public FFieldPath()

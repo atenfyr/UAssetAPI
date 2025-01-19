@@ -176,7 +176,19 @@
 		/// <summary>Sparse data variable</summary>
 		EX_ClassSparseDataVariable = 0x6C,
 		EX_FieldPathConst = 0x6D,
-		EX_Max = 0x100,
+        /// <summary>
+        /// AutoRTFM: run following code in a transaction
+        /// </summary>
+        EX_AutoRtfmTransact = 0x70,
+        /// <summary>
+        /// AutoRTFM: if in a transaction, abort or break, otherwise no operation
+        /// </summary>
+        EX_AutoRtfmStopTransact = 0x71,
+        /// <summary>
+        /// AutoRTFM: evaluate bool condition, abort transaction on false
+        /// </summary>
+        EX_AutoRtfmAbortIfNot = 0x72,
+        EX_Max = 0xFF
 	};
 
 	public enum ECastToken {

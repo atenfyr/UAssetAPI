@@ -299,7 +299,7 @@ namespace UAssetAPI
                     allNames[i] = this.ReadFName();
                 }
                 FPackageIndex owner = this.XFER_OBJECT_POINTER();
-                return new KismetPropertyPointer(new FFieldPath(allNames, owner));
+                return new KismetPropertyPointer(new FFieldPath(allNames, owner, this.Asset.Exports.Count));
             }
             else
             {
