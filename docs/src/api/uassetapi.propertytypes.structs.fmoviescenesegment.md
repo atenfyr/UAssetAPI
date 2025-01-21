@@ -50,6 +50,12 @@ public StructPropertyData[] Impls;
 
 ## Constructors
 
+### **FMovieSceneSegment()**
+
+```csharp
+public FMovieSceneSegment()
+```
+
 ### **FMovieSceneSegment(AssetBinaryReader)**
 
 ```csharp

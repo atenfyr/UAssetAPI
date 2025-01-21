@@ -134,6 +134,7 @@
     - [UUInt64Property](api/uassetapi.fieldtypes.uuint64property.md)
     - [UWeakObjectProperty](api/uassetapi.fieldtypes.uweakobjectproperty.md)
   - [UAssetAPI.JSON]()
+    - [ByteArrayJsonConverter](api/uassetapi.json.bytearrayjsonconverter.md)
     - [FNameJsonConverter](api/uassetapi.json.fnamejsonconverter.md)
     - [FPackageIndexJsonConverter](api/uassetapi.json.fpackageindexjsonconverter.md)
     - [FSignedZeroJsonConverter](api/uassetapi.json.fsignedzerojsonconverter.md)

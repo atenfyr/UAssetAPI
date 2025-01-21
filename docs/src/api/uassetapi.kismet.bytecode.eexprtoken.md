@@ -92,3 +92,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_CallMath | 104 | static pure function from on local call space |
 | EX_InstrumentationEvent | 106 | Instrumentation event |
 | EX_ClassSparseDataVariable | 108 | Sparse data variable |
+| EX_AutoRtfmTransact | 112 | AutoRTFM: run following code in a transaction |
+| EX_AutoRtfmStopTransact | 113 | AutoRTFM: if in a transaction, abort or break, otherwise no operation |
+| EX_AutoRtfmAbortIfNot | 114 | AutoRTFM: evaluate bool condition, abort transaction on false |

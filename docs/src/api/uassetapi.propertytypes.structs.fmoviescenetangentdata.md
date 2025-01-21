@@ -48,6 +48,12 @@ public Byte[] padding;
 
 ## Constructors
 
+### **FMovieSceneTangentData()**
+
+```csharp
+public FMovieSceneTangentData()
+```
+
 ### **FMovieSceneTangentData(AssetBinaryReader)**
 
 ```csharp

@@ -96,4 +96,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | SimCache_BulkDataVersion1 | 84 | Sim Cache moved to bulk data by default |
 | InheritanceUxRefactor | 85 | Decoupling of 'Template' and 'Inheritance' |
 | NDCSpawnGroupOverrideDisabledByDefault | 86 | NDC Read DIs will not override spawn group by default when spawning particles. Old content will remain unchanged. |
-| VersionPlusOne | 87 | DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously. -----new versions can be added above this line------------------------------------------------- |
+| CustomSortingBindingToAge | 87 | Before it was normalized age which can introduce flickering with sorting and random lifetimes |
+| StatelessInitialMeshOrientationV1 | 88 | Update Initial Mesh Orientation Module |
+| HierarchyEditorScriptSupport | 89 | Hierarchy Editor was implemented |
+| EmitterStateAddLoopDelayEnabled | 90 | Added loop delay enabled to emitter state |
+| VersionPlusOne | 91 | DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously. -----new versions can be added above this line------------------------------------------------- |

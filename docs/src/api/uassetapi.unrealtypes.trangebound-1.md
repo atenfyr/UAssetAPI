@@ -30,6 +30,12 @@ public T Value;
 
 ## Constructors
 
+### **TRangeBound()**
+
+```csharp
+TRangeBound()
+```
+
 ### **TRangeBound(ERangeBoundTypes, T)**
 
 ```csharp

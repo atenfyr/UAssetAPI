@@ -28,10 +28,10 @@ public FPackageIndex ResolvedOwner;
 
 ## Constructors
 
-### **FFieldPath(FName[], FPackageIndex)**
+### **FFieldPath(FName[], FPackageIndex, Int32)**
 
 ```csharp
-public FFieldPath(FName[] path, FPackageIndex resolvedOwner)
+public FFieldPath(FName[] path, FPackageIndex resolvedOwner, int numExports)
 ```
 
 #### Parameters
@@ -39,6 +39,8 @@ public FFieldPath(FName[] path, FPackageIndex resolvedOwner)
 `path` [FName[]](./uassetapi.unrealtypes.fname.md)<br>
 
 `resolvedOwner` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
+
+`numExports` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ### **FFieldPath()**
 

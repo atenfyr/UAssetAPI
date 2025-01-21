@@ -18,6 +18,12 @@ public int Value;
 
 ## Constructors
 
+### **FFrameNumber()**
+
+```csharp
+FFrameNumber()
+```
+
 ### **FFrameNumber(Int32)**
 
 ```csharp
