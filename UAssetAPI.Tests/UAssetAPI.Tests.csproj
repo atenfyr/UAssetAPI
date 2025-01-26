@@ -440,6 +440,15 @@
     <None Update="TestAssets\TestUE5_4\Bellwright\UMG_TreeViewDemo.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_4\Billiards\5.4.3-34507850+++UE5+Release-5.4-DeepSpace7.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Billiards\BP_Table_Lamp.uasset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_4\Billiards\BP_Table_Lamp.uexp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUE5_4\BlankGame\BP_CubePawn.combined">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

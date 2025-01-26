@@ -575,6 +575,7 @@ namespace UAssetAPI.Tests
             TestUE5_4Subsection("BlankGame", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "BlankGame", "BlankGame_Dumper-7.usmap")));
             TestUE5_4Subsection("Bellwright", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Bellwright", "Bellwright.usmap")));
             TestUE5_4Subsection("TheForeverWinter", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "TheForeverWinter", "TheForeverWinter.usmap")));
+            TestUE5_4Subsection("Billiards", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Billiards", "5.4.3-34507850+++UE5+Release-5.4-DeepSpace7.usmap")));
         }
 
         /// <summary>
