@@ -35,7 +35,8 @@
         VER_UE5_1 = 522,
         VER_UE5_2 = 522,
         VER_UE5_3 = 522,
-        VER_UE5_4 = 522
+        VER_UE5_4 = 522,
+        VER_UE5_5 = 522
     }
 
     public enum UE5VersionToObjectVersion

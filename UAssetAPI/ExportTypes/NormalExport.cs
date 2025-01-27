@@ -122,7 +122,7 @@ namespace UAssetAPI.ExportTypes
         public override void Read(AssetBinaryReader reader, int nextStarting = 0)
         {
             // 5.4-specific problem; unclear why this occurs
-            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+            if (reader.Asset.ObjectVersionUE5 > ObjectVersionUE5.DATA_RESOURCES && reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
             {
                 int dummy = reader.ReadInt32();
                 if (dummy != 0) throw new FormatException("Expected 4 null bytes at start of NormalExport; got " + dummy);
@@ -166,7 +166,7 @@ namespace UAssetAPI.ExportTypes
         public override void Write(AssetBinaryWriter writer)
         {
             // 5.4-specific problem; unclear why this occurs
-            if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+            if (writer.Asset.ObjectVersionUE5 > ObjectVersionUE5.DATA_RESOURCES && writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
             {
                 writer.Write((int)0); // "false" bool?
             }
@@ -174,6 +174,17 @@ namespace UAssetAPI.ExportTypes
             FName parentName = GetClassTypeForAncestry(writer.Asset, out FName parentModulePath);
 
             MainSerializer.GenerateUnversionedHeader(ref Data, parentName, parentModulePath, writer.Asset)?.Write(writer);
+
+            if (!writer.Asset.HasUnversionedProperties && writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
+            {
+                writer.Write((byte)SerializationControl);
+
+                if (SerializationControl.HasFlag(EClassSerializationControlExtension.OverridableSerializationInformation))
+                {
+                    writer.Write((byte)Operation);
+                }
+            }
+
             for (int j = 0; j < Data.Count; j++)
             {
                 PropertyData current = Data[j];

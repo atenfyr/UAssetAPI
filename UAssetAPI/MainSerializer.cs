@@ -455,6 +455,11 @@ namespace UAssetAPI
 
                 leng = reader.ReadInt32();
                 propertyTagFlags = (EPropertyTagFlags)reader.ReadByte();
+
+                if (propertyTagFlags.HasFlag(EPropertyTagFlags.HasArrayIndex))
+                {
+                    ArrayIndex = reader.ReadInt32();
+                }
             }
             else
             {
