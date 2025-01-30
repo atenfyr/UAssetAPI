@@ -95,14 +95,16 @@ public struct FSoftObjectPath
         SubPathString = subPathString;
     }
 
-    public FSoftObjectPath(AssetBinaryReader reader)
+    public FSoftObjectPath(AssetBinaryReader reader, bool allowIndex = true)
     {
-        // ObjectVersionUE5.DATA_RESOURCES empirical
-        if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES && reader.Asset.SoftPackageReferenceList != null && reader.Asset.SoftPackageReferenceList.Count > 0)
+        if (allowIndex && reader.Asset.SoftObjectPathList != null && reader.Asset.SoftObjectPathList.Count > 0)
         {
             // serialize as idx
             int idx = reader.ReadInt32();
-            AssetPath = new FTopLevelAssetPath(FName.DefineDummy(reader.Asset, reader.Asset.SoftPackageReferenceList[idx]), null);
+
+            FSoftObjectPath target = reader.Asset.SoftObjectPathList[idx];
+            this.AssetPath = target.AssetPath;
+            this.SubPathString = target.SubPathString;
         }
         else
         {
@@ -123,27 +125,22 @@ public struct FSoftObjectPath
         }
     }
 
-    public int Write(AssetBinaryWriter writer)
+    public int Write(AssetBinaryWriter writer, bool allowIndex = true)
     {
-        // ObjectVersionUE5.DATA_RESOURCES empirical
-        if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES && writer.Asset.SoftPackageReferenceList != null && writer.Asset.SoftPackageReferenceList.Count > 0)
+        if (allowIndex && writer.Asset.SoftObjectPathList != null && writer.Asset.SoftObjectPathList.Count > 0)
         {
             // serialize as idx
-            // don't automatically add to soft package reference list
-            FString softName = AssetPath.PackageName?.Value;
-            if (softName == null) throw new FormatException("Attempt to serialize invalid AssetPath as index");
-
             int idx = -1;
-            for (int i = 0; i < writer.Asset.SoftPackageReferenceList.Count; i++)
+            for (int i = 0; i < writer.Asset.SoftObjectPathList.Count; i++)
             {
-                FString testingEntry = writer.Asset.SoftPackageReferenceList[i];
-                if (testingEntry == softName)
+                FSoftObjectPath testingEntry = writer.Asset.SoftObjectPathList[i];
+                if (testingEntry == this)
                 {
                     idx = i;
                     break;
                 }
             }
-            if (idx < 0) throw new FormatException("Failed to find AssetPath in soft package references list");
+            if (idx < 0) throw new FormatException("Failed to find AssetPath in SoftObjectPathList");
 
             writer.Write(idx);
             return sizeof(int);
@@ -157,6 +154,16 @@ public struct FSoftObjectPath
         writer.Write(AssetPath.AssetName);
         writer.Write(SubPathString);
         return (int)(writer.BaseStream.Position - offset);
+    }
+
+    public static bool operator ==(FSoftObjectPath lhs, FSoftObjectPath rhs)
+    {
+        return lhs.Equals(rhs);
+    }
+
+    public static bool operator !=(FSoftObjectPath lhs, FSoftObjectPath rhs)
+    {
+        return !lhs.Equals(rhs);
     }
 }
 

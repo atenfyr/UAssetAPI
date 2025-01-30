@@ -263,6 +263,11 @@ namespace UAssetAPI
         internal Dictionary<string, int> nameMapLookup = new Dictionary<string, int>();
 
         /// <summary>
+        /// List of SoftObjectPath contained in this package.
+        /// </summary>
+        public List<FSoftObjectPath> SoftObjectPathList;
+
+        /// <summary>
         /// Map of the gatherable text data.
         /// </summary>
         public List<FGatherableTextData> GatherableTextData;
@@ -1746,6 +1751,17 @@ namespace UAssetAPI
                 AddNameReference(nameInMap, true);
             }
 
+            SoftObjectPathList = null;
+            if (SoftObjectPathsOffset > 0 && SoftObjectPathsCount > 0)
+            {
+                reader.BaseStream.Seek(SoftObjectPathsOffset, SeekOrigin.Begin);
+                SoftObjectPathList = new List<FSoftObjectPath>();
+                for (int i = 0; i < SoftObjectPathsCount; i++)
+                {
+                    SoftObjectPathList.Add(new FSoftObjectPath(reader, false));
+                }
+            }
+
             // Gatherable text
             if (GatherableTextDataOffset > 0 && GatherableTextDataCount > 0)
             {
@@ -2349,6 +2365,22 @@ namespace UAssetAPI
                             writer.Write(CRCGenerator.GenerateHash(nameMapIndexList[i], disableCasePreservingHash, writer.Asset.GetEngineVersion() == EngineVersion.VER_UE4_20));
                         }
                     }
+                }
+
+                // soft object paths
+                if (SoftObjectPathList != null)
+                {
+                    this.SoftObjectPathsOffset = (int)writer.BaseStream.Position;
+                    this.SoftObjectPathsCount = SoftObjectPathList.Count;
+
+                    for (int i = 0; i < SoftObjectPathList.Count; i++)
+                    {
+                        SoftObjectPathList[i].Write(writer, false);
+                    }
+                }
+                else
+                {
+                    this.SoftObjectPathsOffset = 0;
                 }
 
                 // Gatherable text
