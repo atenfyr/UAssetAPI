@@ -1752,7 +1752,7 @@ namespace UAssetAPI
             }
 
             SoftObjectPathList = null;
-            if (SoftObjectPathsOffset > 0 && SoftObjectPathsCount > 0)
+            if (SoftObjectPathsOffset > 0)
             {
                 reader.BaseStream.Seek(SoftObjectPathsOffset, SeekOrigin.Begin);
                 SoftObjectPathList = new List<FSoftObjectPath>();
