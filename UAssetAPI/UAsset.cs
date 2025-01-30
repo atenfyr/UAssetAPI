@@ -2168,14 +2168,14 @@ namespace UAssetAPI
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
             writer.Write(NameOffset);
-            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
-            {
-                writer.Write(LocalizationId);
-            }
             if (ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
             {
                 writer.Write(SoftObjectPathsCount);
                 writer.Write(SoftObjectPathsOffset);
+            }
+            if (!IsFilterEditorOnly && ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_SUMMARY_LOCALIZATION_ID)
+            {
+                writer.Write(LocalizationId);
             }
             if (ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
             {

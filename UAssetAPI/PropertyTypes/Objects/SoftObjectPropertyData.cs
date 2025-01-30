@@ -1,4 +1,5 @@
-﻿using UAssetAPI.UnrealTypes;
+﻿using System;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects;
 
@@ -96,24 +97,58 @@ public struct FSoftObjectPath
 
     public FSoftObjectPath(AssetBinaryReader reader)
     {
-        if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES)
+        // ObjectVersionUE5.DATA_RESOURCES empirical
+        if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES && reader.Asset.SoftPackageReferenceList != null && reader.Asset.SoftPackageReferenceList.Count > 0)
         {
-            AssetPath = new FTopLevelAssetPath(reader.ReadFName(), reader.ReadFName());
-        }
-        else if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
-        {
-            AssetPath = new FTopLevelAssetPath(null, reader.ReadFName());
+            // serialize as idx
+            int idx = reader.ReadInt32();
+            AssetPath = new FTopLevelAssetPath(FName.DefineDummy(reader.Asset, reader.Asset.SoftPackageReferenceList[idx]), null);
         }
         else
         {
-            AssetPath = new FTopLevelAssetPath(null, null);
-        }
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES)
+            {
+                AssetPath = new FTopLevelAssetPath(reader.ReadFName(), reader.ReadFName());
+            }
+            else if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
+            {
+                AssetPath = new FTopLevelAssetPath(null, reader.ReadFName());
+            }
+            else
+            {
+                AssetPath = new FTopLevelAssetPath(null, null);
+            }
 
-        SubPathString = reader.ReadFString();
+            SubPathString = reader.ReadFString();
+        }
     }
 
     public int Write(AssetBinaryWriter writer)
     {
+        // ObjectVersionUE5.DATA_RESOURCES empirical
+        if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.DATA_RESOURCES && writer.Asset.SoftPackageReferenceList != null && writer.Asset.SoftPackageReferenceList.Count > 0)
+        {
+            // serialize as idx
+            // don't automatically add to soft package reference list
+            FString softName = AssetPath.PackageName?.Value;
+            if (softName == null) throw new FormatException("Attempt to serialize invalid AssetPath as index");
+
+            int idx = -1;
+            for (int i = 0; i < writer.Asset.SoftPackageReferenceList.Count; i++)
+            {
+                FString testingEntry = writer.Asset.SoftPackageReferenceList[i];
+                if (testingEntry == softName)
+                {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx < 0) throw new FormatException("Failed to find AssetPath in soft package references list");
+
+            writer.Write(idx);
+            return sizeof(int);
+        }
+
         if (writer.Asset.ObjectVersion < ObjectVersion.VER_UE4_ADDED_SOFT_OBJECT_PATH)
             return writer.Write(SubPathString);
 
