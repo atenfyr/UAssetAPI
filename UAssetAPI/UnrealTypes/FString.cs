@@ -75,7 +75,7 @@ namespace UAssetAPI.UnrealTypes
 
         public FString(string value, Encoding encoding = null)
         {
-            if (encoding == null) encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
+            if (encoding == null && value != null) encoding = Encoding.UTF8.GetByteCount(value) == value.Length ? Encoding.ASCII : Encoding.Unicode;
 
             Value = value;
             Encoding = encoding;
