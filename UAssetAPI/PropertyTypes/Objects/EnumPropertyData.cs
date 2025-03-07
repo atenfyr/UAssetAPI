@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
+using System.Collections.Generic;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -29,6 +30,8 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         }
 
+        private static readonly List<string> ValidEnumInnerTypeList = ["ByteProperty", "UInt16Property", "UInt32Property", "Int8Property", "Int16Property", "IntProperty", "Int64Property"];
+
         private static readonly FString CurrentPropertyType = new FString("EnumProperty");
         public override FString PropertyType { get { return CurrentPropertyType; } }
 
@@ -44,15 +47,28 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
-                if (InnerType?.Value.Value == "ByteProperty")
+                if (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "UInt16Property" || InnerType?.Value.Value == "UInt32Property")
                 {
-                    long enumIndice = reader.ReadByte();
-                    var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
-                    if (enumIndice == byte.MaxValue)
+                    long enumIndice = 0;
+
+                    switch (InnerType?.Value.Value)
                     {
-                        Value = null;
+                        case "ByteProperty":
+                            enumIndice = reader.ReadByte();
+                            if (enumIndice == byte.MaxValue) return;
+                            break;
+                        case "UInt16Property":
+                            enumIndice = reader.ReadUInt16();
+                            if (enumIndice == ushort.MaxValue) return;
+                            break;
+                        case "UInt32Property":
+                            enumIndice = reader.ReadUInt32();
+                            if (enumIndice == uint.MaxValue) return;
+                            break;
                     }
-                    else if (enumIndice < listOfValues.Count)
+
+                    var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
+                    if (enumIndice < listOfValues.Count)
                     {
                         Value = FName.DefineDummy(reader.Asset, listOfValues[enumIndice]);
                     }
@@ -64,9 +80,27 @@ namespace UAssetAPI.PropertyTypes.Objects
                     return;
                 }
 
-                if (InnerType?.Value.Value == "IntProperty")
+                if (InnerType?.Value.Value == "Int8Property" || InnerType?.Value.Value == "Int16Property" || 
+                    InnerType?.Value.Value == "IntProperty" || InnerType?.Value.Value == "Int64Property")
                 {
-                    long enumIndice = reader.ReadInt32();
+                    long enumIndice = 0;
+
+                    switch (InnerType?.Value.Value)
+                    {
+                        case "Int8Property":
+                            enumIndice = reader.ReadSByte();
+                            break;
+                        case "Int16Property":
+                            enumIndice = reader.ReadInt16();
+                            break;
+                        case "IntProperty":
+                            enumIndice = reader.ReadInt32();
+                            break;
+                        case "Int64Property":
+                            enumIndice = reader.ReadInt64();
+                            break;
+                    }
+
                     var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
                     if (enumIndice < listOfValues.Count)
                     {
@@ -100,7 +134,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
-                if (InnerType?.Value?.Value == "ByteProperty" || InnerType?.Value?.Value == "IntProperty")
+                if (ValidEnumInnerTypeList.Contains(InnerType?.Value?.Value))
                 {
                     long enumIndice = 0;
                     var listOfEnums = writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
@@ -132,9 +166,24 @@ namespace UAssetAPI.PropertyTypes.Objects
                         case "ByteProperty":
                             writer.Write((byte)enumIndice);
                             return sizeof(byte);
+                        case "UInt16Property":
+                            writer.Write((ushort)enumIndice);
+                            return sizeof(ushort);
+                        case "UInt32Property":
+                            writer.Write((uint)enumIndice);
+                            return sizeof(uint);
+                        case "Int8Property":
+                            writer.Write((sbyte)enumIndice);
+                            return sizeof(sbyte);
+                        case "Int16Property":
+                            writer.Write((short)enumIndice);
+                            return sizeof(short);
                         case "IntProperty":
                             writer.Write((int)enumIndice);
                             return sizeof(int);
+                        case "Int64Property":
+                            writer.Write((long)enumIndice);
+                            return sizeof(long);
                     }
                 }
             }
@@ -157,7 +206,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
 
             // fill in data for enumIndice = 0 to provide clarity for end-user
-            if (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "IntProperty")
+            if (ValidEnumInnerTypeList.Contains(InnerType?.Value?.Value))
             {
                 long enumIndice = 0;
                 var listOfValues = reader.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;
@@ -195,7 +244,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (d[1] != "null" && d[1] != null)
             {
-                Value = (asset.HasUnversionedProperties && (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "IntProperty")) ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
+                Value = (asset.HasUnversionedProperties && (ValidEnumInnerTypeList.Contains(InnerType?.Value?.Value))) ? FName.DefineDummy(asset, d[1]) : FName.FromString(asset, d[1]);
             }
             else
             {

@@ -670,6 +670,62 @@ namespace UAssetAPI.Tests
             Assert.AreEqual(7657, usmap.Schemas.Count);
         }
 
+        /// <summary>
+        /// In this test, we do tests for various underlying enum types within a DataTable row to ensure that it parses correctly and maintains binary equality.
+        /// </summary>
+        [TestMethod]
+        public void TestUnderlyingEnumTypes()
+        {
+            var usmap = new Usmap(Path.Combine("TestAssets", "TestUE5_1", "UnderlyingEnumTypes", "UnderlyingEnumTypes.usmap"));
+            var assetPath = Path.Combine("TestAssets", "TestUE5_1", "UnderlyingEnumTypes", "NewDataTable.uasset");
+            var tester = new UAsset(assetPath, EngineVersion.VER_UE5_1, usmap);
+            Assert.IsTrue(tester.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            Assert.IsTrue(tester.Exports.Count == 1);
+
+            var ourDataTableExport = tester.Exports[0] as DataTableExport;
+            var ourTable = ourDataTableExport?.Table;
+            Assert.IsNotNull(ourTable);
+
+            // Check out the first entry to make sure it's parsing alright
+            StructPropertyData firstEntry = ourTable.Data[1];
+            for (int i = 0; i < firstEntry.Value.Count; i++)
+            {
+                var propData = firstEntry.Value[i];
+                if (propData is EnumPropertyData enumProp && enumProp.InnerType?.Value?.Value != "Int64Property") enumProp.Value = FName.DefineDummy(tester, "Two");
+                if (propData is EnumPropertyData enumProp64 && enumProp64.InnerType?.Value?.Value == "Int64Property") enumProp64.Value = FName.DefineDummy(tester, "None");
+            }
+
+            // Save the modified table
+            tester.Write(Path.Combine("TestAssets", "MODIFIED.uasset"));
+
+            // Load the modified table back in and make sure we're good
+            var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE5_1, usmap);
+            Assert.IsTrue(tester2.VerifyBinaryEquality());
+            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            Assert.IsTrue(tester2.Exports.Count == 1);
+
+            firstEntry = (tester2.Exports[0] as DataTableExport)?.Table?.Data?[1];
+            Assert.IsNotNull(firstEntry);
+            Console.WriteLine($"{"#",-2} {"Name",-20} {"Type",-15} {"Sub Type",-15} {"Value",-10} Offset");
+            Console.WriteLine("-------------------------------------------------------------------------");
+            for (int i = 0; i < firstEntry.Value.Count; i++)
+            {
+                var propData = firstEntry.Value[i];
+                if (propData is EnumPropertyData enumProp) {
+                    Console.WriteLine($"{i}: {propData.Name,-20} {propData.PropertyType,-15} {enumProp.InnerType?.Value?.Value,-15} {propData.RawValue,-10} {propData.Offset}");
+                }
+                else
+                {
+                    Console.WriteLine($"{i}: {propData.Name,-20} {propData.PropertyType,-15} {"None",-15} {propData.RawValue,-10} {propData.Offset}");
+                }
+            }
+
+            // Save and check that it's binary equal to what we originally had
+            tester2.Write(tester2.FilePath);
+            Assert.IsTrue(File.ReadAllBytes(assetPath).SequenceEqual(File.ReadAllBytes(Path.Combine("TestAssets", "MODIFIED.uasset"))));
+        }
+
         public static MemoryStream PathToStream(string p)
         {
             using (FileStream origStream = File.Open(p, FileMode.Open, new FileInfo(p).IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite))

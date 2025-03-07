@@ -254,6 +254,15 @@
     <None Update="TestAssets\TestManyAssets\VERSIONED\Assault_M1A1Thompson_WW2_DrumSuppressor.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_1\UnderlyingEnumTypes\UnderlyingEnumTypes.usmap">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_1\UnderlyingEnumTypes\NewDataTable.uasset">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAssets\TestUE5_1\UnderlyingEnumTypes\NewDataTable.uexp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUE5_3\Engine\DefaultRecorderBoneCompression.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
