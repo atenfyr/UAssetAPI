@@ -1,17 +1,29 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.IO;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
-using System;
 using UAssetAPI.CustomVersions;
-using System.Reflection.PortableExecutable;
+using UAssetAPI.JSON;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.ExportTypes
 {
+    public struct ObjectMetaDataEntry
+    {
+        public int Import;
+        [JsonConverter(typeof(TMapJsonConverter<FName, FString>))]
+        public TMap<FName, FString> MetaData;
+        
+        public ObjectMetaDataEntry(int import, TMap<FName, FString> metaData)
+        {
+            Import = import;
+            MetaData = metaData;
+        }
+    }
+
     public class MetaDataExport : NormalExport
     {
-        public List<(int, Dictionary<FName, FString>)> ObjectMetaData;
-        public Dictionary<FName, FString> RootMetaData;
+        public List<ObjectMetaDataEntry> ObjectMetaData;
+        [JsonConverter(typeof(TMapJsonConverter<FName, FString>))]
+        public TMap<FName, FString> RootMetaData;
 
         public MetaDataExport(Export super) : base(super)
         {
@@ -38,14 +50,14 @@ namespace UAssetAPI.ExportTypes
                 {
                     var import = reader.ReadInt32();
                     var metaDataCount = reader.ReadInt32();
-                    var metaData = new Dictionary<FName, FString>();
+                    var metaData = new TMap<FName, FString>();
                     for (var j = 0; j < metaDataCount; j++)
                     {
                         var key = reader.ReadFName();
                         var value = reader.ReadFString();
                         metaData.Add(key, value);
                     }
-                    ObjectMetaData.Add((import, metaData));
+                    ObjectMetaData.Add(new ObjectMetaDataEntry(import, metaData));
                 }
             }
 
@@ -67,14 +79,14 @@ namespace UAssetAPI.ExportTypes
             base.Write(writer);
 
             writer.Write(ObjectMetaData.Count);
-            foreach ((var import, var metaData) in ObjectMetaData)
+            foreach (var entry in ObjectMetaData)
             {
-                writer.Write(import);
-                writer.Write(metaData.Count);
-                foreach ((var key, var value) in metaData)
+                writer.Write(entry.Import);
+                writer.Write(entry.MetaData.Count);
+                foreach (var entry2 in entry.MetaData)
                 {
-                    writer.Write(key);
-                    writer.Write(value);
+                    writer.Write(entry2.Key);
+                    writer.Write(entry2.Value);
                 }
             }
 
