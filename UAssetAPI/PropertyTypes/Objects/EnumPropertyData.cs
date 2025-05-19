@@ -47,6 +47,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
+                Value = null;
                 if (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "UInt16Property" || InnerType?.Value.Value == "UInt32Property")
                 {
                     long enumIndice = 0;
