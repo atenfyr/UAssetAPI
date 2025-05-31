@@ -232,6 +232,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             return Value.ToString();
         }
 
+        // note: Value must be overridden manually after this is called in cases where serializationContext != PropertySerializationContext.Normal, to ensure not dummy
         public override void FromString(string[] d, UAsset asset)
         {
             if (d[0] != "null" && d[0] != null)
