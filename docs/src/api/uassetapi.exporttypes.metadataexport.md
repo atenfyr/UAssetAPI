@@ -14,13 +14,13 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 ### **ObjectMetaData**
 
 ```csharp
-public List<ValueTuple<int, Dictionary<FName, FString>>> ObjectMetaData;
+public List<ObjectMetaDataEntry> ObjectMetaData;
 ```
 
 ### **RootMetaData**
 
 ```csharp
-public Dictionary<FName, FString> RootMetaData;
+public TMap<FName, FString> RootMetaData;
 ```
 
 ### **Data**

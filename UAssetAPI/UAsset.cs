@@ -28,7 +28,7 @@ namespace UAssetAPI
         FString GetNameReference(int index);
         bool ContainsNameReference(FString search);
         int SearchNameReference(FString search);
-        int AddNameReference(FString name, bool forceAddDuplicates = false);
+        int AddNameReference(FString name, bool forceAddDuplicates = false, bool skipFixes = false);
         bool CanCreateDummies();
     }
 
@@ -434,9 +434,10 @@ namespace UAssetAPI
         /// </summary>
         /// <param name="name">The value to add to the name map.</param>
         /// <param name="forceAddDuplicates">Whether or not to add a new entry if the value provided already exists in the name map.</param>
+        /// <param name="skipFixes">Whether or not to skip other additional fixes made upon adding new entries to the name map. In nearly all cases, this should be false.</param>
         /// <returns>The index of the new value in the name map. If the value already existed in the name map beforehand, that index will be returned instead.</returns>
         /// <exception cref="ArgumentException">Thrown when forceAddDuplicates is false and the value provided is null or empty.</exception>
-        public int AddNameReference(FString name, bool forceAddDuplicates = false)
+        public int AddNameReference(FString name, bool forceAddDuplicates = false, bool skipFixes = false)
         {
             FixNameMapLookupIfNeeded();
 
@@ -450,6 +451,7 @@ namespace UAssetAPI
             if (isSerializationTime) throw new InvalidOperationException("Attempt to add name \"" + name + "\" to name map during serialization time");
             nameMapIndexList.Add(name);
             nameMapLookup[name.Value] = nameMapIndexList.Count - 1;
+            if (!skipFixes) NamesReferencedFromExportDataCount = nameMapIndexList.Count; // needed for conversion to zen to include new names added by modders
             return nameMapIndexList.Count - 1;
         }
 
@@ -1748,7 +1750,7 @@ namespace UAssetAPI
                 {
                     nameInMap.IsCasePreserving = false;
                 }
-                AddNameReference(nameInMap, true);
+                AddNameReference(nameInMap, true, true);
             }
 
             SoftObjectPathList = null;

@@ -56,27 +56,31 @@ FSoftObjectPath(FTopLevelAssetPath assetPath, FString subPathString)
 
 `subPathString` [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
-### **FSoftObjectPath(AssetBinaryReader)**
+### **FSoftObjectPath(AssetBinaryReader, Boolean)**
 
 ```csharp
-FSoftObjectPath(AssetBinaryReader reader)
+FSoftObjectPath(AssetBinaryReader reader, bool allowIndex)
 ```
 
 #### Parameters
 
 `reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
 
+`allowIndex` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Methods
 
-### **Write(AssetBinaryWriter)**
+### **Write(AssetBinaryWriter, Boolean)**
 
 ```csharp
-int Write(AssetBinaryWriter writer)
+int Write(AssetBinaryWriter writer, bool allowIndex)
 ```
 
 #### Parameters
 
 `writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+`allowIndex` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 #### Returns
 

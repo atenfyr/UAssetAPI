@@ -78,10 +78,10 @@ int SearchNameReference(FString search)
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-### **AddNameReference(FString, Boolean)**
+### **AddNameReference(FString, Boolean, Boolean)**
 
 ```csharp
-int AddNameReference(FString name, bool forceAddDuplicates)
+int AddNameReference(FString name, bool forceAddDuplicates, bool skipFixes)
 ```
 
 #### Parameters
@@ -89,6 +89,8 @@ int AddNameReference(FString name, bool forceAddDuplicates)
 `name` [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
 `forceAddDuplicates` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+`skipFixes` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 #### Returns
 
