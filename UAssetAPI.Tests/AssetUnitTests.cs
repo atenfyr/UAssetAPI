@@ -77,6 +77,81 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// Tests <see cref="FSoftObjectPath"/> equality functionality including IEquatable implementation.
+        /// </summary>
+        [TestMethod]
+        public void TestFSoftObjectPathEquality()
+        {
+            // Create a dummy asset for FName construction
+            var dummyAsset = new UAsset(Path.Combine("TestAssets", "TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
+            
+            // Create test instances
+            var packageName1 = new FName(dummyAsset, "TestPackage");
+            var assetName1 = new FName(dummyAsset, "TestAsset");
+            var subPath1 = new FString("SubPath1");
+            
+            var packageName2 = new FName(dummyAsset, "TestPackage");
+            var assetName2 = new FName(dummyAsset, "TestAsset");
+            var subPath2 = new FString("SubPath1");
+            
+            var packageName3 = new FName(dummyAsset, "DifferentPackage");
+            var assetName3 = new FName(dummyAsset, "DifferentAsset");
+            var subPath3 = new FString("SubPath2");
+
+            var path1 = new FSoftObjectPath(packageName1, assetName1, subPath1);
+            var path2 = new FSoftObjectPath(packageName2, assetName2, subPath2); // Same values
+            var path3 = new FSoftObjectPath(packageName3, assetName3, subPath3); // Different values
+            var path4 = new FSoftObjectPath(packageName1, assetName1, null); // Null subpath
+
+            // Test IEquatable<FSoftObjectPath>.Equals
+            Assert.IsTrue(path1.Equals(path2), "Equal paths should return true with typed Equals");
+            Assert.IsTrue(path2.Equals(path1), "Equal paths should return true with typed Equals (symmetry)");
+            Assert.IsFalse(path1.Equals(path3), "Different paths should return false with typed Equals");
+            Assert.IsFalse(path1.Equals(path4), "Paths with different subpaths should return false with typed Equals");
+
+            // Test object.Equals
+            Assert.IsTrue(path1.Equals((object)path2), "Equal paths should return true with object Equals");
+            Assert.IsFalse(path1.Equals((object)path3), "Different paths should return false with object Equals");
+            Assert.IsFalse(path1.Equals(null), "Path should not equal null");
+            Assert.IsFalse(path1.Equals("string"), "Path should not equal different type");
+
+            // Test == operator
+            Assert.IsTrue(path1 == path2, "Equal paths should return true with == operator");
+            Assert.IsFalse(path1 == path3, "Different paths should return false with == operator");
+
+            // Test != operator
+            Assert.IsFalse(path1 != path2, "Equal paths should return false with != operator");
+            Assert.IsTrue(path1 != path3, "Different paths should return true with != operator");
+
+            // Test GetHashCode consistency
+            Assert.IsTrue(path1.GetHashCode() == path2.GetHashCode(), "Equal paths should have equal hash codes");
+            
+            // Test with null values
+            var pathWithNullPackage = new FSoftObjectPath(new FTopLevelAssetPath(null, assetName1), subPath1);
+            var pathWithNullAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, null), subPath1);
+            var pathWithNullSubPath = new FSoftObjectPath(packageName1, assetName1, null);
+            
+            Assert.IsFalse(path1.Equals(pathWithNullPackage), "Paths with null package should not equal non-null");
+            Assert.IsFalse(path1.Equals(pathWithNullAsset), "Paths with null asset should not equal non-null");
+            Assert.IsFalse(path1.Equals(pathWithNullSubPath), "Paths with null subpath should not equal non-null");
+            
+            // Test null equality
+            var pathAllNull = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
+            var pathAllNull2 = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
+            Assert.IsTrue(pathAllNull.Equals(pathAllNull2), "Paths with all null values should be equal");
+            
+            // Test partial equality scenarios
+            var pathSamePackageAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName1), subPath3);
+            Assert.IsFalse(path1.Equals(pathSamePackageAsset), "Paths with same package/asset but different subpath should not be equal");
+            
+            var pathSamePackageSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName3), subPath1);
+            Assert.IsFalse(path1.Equals(pathSamePackageSubPath), "Paths with same package/subpath but different asset should not be equal");
+            
+            var pathSameAssetSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName3, assetName1), subPath1);
+            Assert.IsFalse(path1.Equals(pathSameAssetSubPath), "Paths with same asset/subpath but different package should not be equal");
+        }
+
+        /// <summary>
         /// Tests <see cref="FName.ToString"/> and <see cref="FName.FromString"/>.
         /// </summary>
         [TestMethod]
