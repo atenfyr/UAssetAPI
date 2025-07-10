@@ -624,7 +624,7 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE5_5)]
         LandscapeTargetLayersInLandscapeActor,
 
-        /// <summary>Fix to get full name of templated type ( Tarray > TArray<Float> for example )</summary>
+        /// <summary>Fix to get full name of templated type ( Tarray > TArray{Float} for example )</summary>
         [Introduced(EngineVersion.VER_UE5_5)]
         DataflowTemplatedTypeFix,
 
@@ -688,8 +688,10 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE5_5)]
         PCGApplyOnActorNodeMoveTargetActorEdgeToInput,
 
-        /// <summary>Deprecation of the bPlaying flag on FTimeline struct types in favor of a better</summary>
-        /// <summary>PlayingStateTracker type to improve replication reliability </summary>
+        /// <summary>
+        /// Deprecation of the bPlaying flag on FTimeline struct types in favor of a better
+        /// PlayingStateTracker type to improve replication reliability
+        /// </summary>
         [Introduced(EngineVersion.VER_UE5_5)]
         TimelinePlayingStateTrackerDeprecation,
 
