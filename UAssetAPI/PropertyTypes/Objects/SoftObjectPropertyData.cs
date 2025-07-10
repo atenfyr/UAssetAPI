@@ -72,7 +72,7 @@ public struct FTopLevelAssetPath
 /// <summary>
 /// A reference variable to another object which may be null, and may become valid or invalid at any point.
 /// </summary>
-public struct FSoftObjectPath
+public struct FSoftObjectPath : IEquatable<FSoftObjectPath>
 {
     /// <summary>
     /// Asset path, patch to a top level object in a package. This is /package/path.assetname/
@@ -164,6 +164,23 @@ public struct FSoftObjectPath
     public static bool operator !=(FSoftObjectPath lhs, FSoftObjectPath rhs)
     {
         return !lhs.Equals(rhs);
+    }
+
+    public bool Equals(FSoftObjectPath other)
+    {
+        return AssetPath.PackageName == other.AssetPath.PackageName &&
+               AssetPath.AssetName == other.AssetPath.AssetName &&
+               SubPathString == other.SubPathString;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is FSoftObjectPath other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(AssetPath.PackageName, AssetPath.AssetName, SubPathString);
     }
 }
 
