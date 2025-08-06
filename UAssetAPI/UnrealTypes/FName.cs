@@ -70,11 +70,25 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>
         /// Index into the name map of <see cref="Asset"/> that this FName points to.
         /// </summary>
+        public sealed class DummyFNameSerializationException : InvalidOperationException
+        {
+            public readonly FString Dummy;
+            public readonly INameMap NameMap;
+
+            public DummyFNameSerializationException(FString dummy, INameMap map)
+                : base($"Attempt to serialize dummy FName '{dummy?.Value ?? "<null>"}' - this name was never added to the NameMap.")
+            {
+                Dummy   = dummy;
+                NameMap = map;
+            }
+        }
+
         internal int Index
         {
             get
             {
-                if (IsDummy) throw new InvalidOperationException("Attempt to retrieve index of dummy FName");
+                if (IsDummy)
+                    throw new DummyFNameSerializationException(DummyValue, Asset);
                 return _index;
             }
             set
@@ -308,3 +322,4 @@ namespace UAssetAPI.UnrealTypes
         }
     }
 }
+
