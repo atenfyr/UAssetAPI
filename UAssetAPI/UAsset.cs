@@ -1461,6 +1461,11 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the asset registry tag data</summary>
         internal int AssetRegistryDataOffset;
 
+        /// <summary>
+        /// Difference between AssetRegistryDataOffset and AssetRegistryDependencyDataOffset.
+        /// </summary>
+        internal int DiffBetweenArdoAndArddo;
+
         /// <summary>Offset to the location in the file where the bulkdata starts</summary>
         internal long BulkDataStartOffset;
 
@@ -1872,6 +1877,9 @@ namespace UAssetAPI
             AssetRegistryData = [];
             if (AssetRegistryDataOffset > 0)
             {
+                reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
+                long AssetRegistryDependencyDataOffset = reader.ReadInt64();
+                DiffBetweenArdoAndArddo = (int)(AssetRegistryDataOffset - AssetRegistryDependencyDataOffset);
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
                 /*
                 int numAssets = reader.ReadInt32();
@@ -2559,6 +2567,12 @@ namespace UAssetAPI
                     {
                         throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
                     }*/
+                    long NewAssetRegistryDataDependencyDataOffset = AssetRegistryDataOffset - DiffBetweenArdoAndArddo;
+                    byte[] Bytes = BitConverter.GetBytes(NewAssetRegistryDataDependencyDataOffset);
+                    for (int i = 0; i < Bytes.Length; ++i)
+                    {
+                        AssetRegistryData[i] = Bytes[i];
+                    }
 
                     writer.Write(AssetRegistryData);
                 }
