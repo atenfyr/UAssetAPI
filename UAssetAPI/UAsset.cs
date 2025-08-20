@@ -1877,9 +1877,12 @@ namespace UAssetAPI
             AssetRegistryData = [];
             if (AssetRegistryDataOffset > 0)
             {
-                reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                long AssetRegistryDependencyDataOffset = reader.ReadInt64();
-                DiffBetweenArdoAndArddo = (int)(AssetRegistryDataOffset - AssetRegistryDependencyDataOffset);
+                if (!PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+                {
+                    reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
+                    long AssetRegistryDependencyDataOffset = reader.ReadInt64();
+                    DiffBetweenArdoAndArddo = (int)(AssetRegistryDataOffset - AssetRegistryDependencyDataOffset);
+                }
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
                 /*
                 int numAssets = reader.ReadInt32();
@@ -2567,11 +2570,14 @@ namespace UAssetAPI
                     {
                         throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
                     }*/
-                    long NewAssetRegistryDataDependencyDataOffset = AssetRegistryDataOffset - DiffBetweenArdoAndArddo;
-                    byte[] Bytes = BitConverter.GetBytes(NewAssetRegistryDataDependencyDataOffset);
-                    for (int i = 0; i < Bytes.Length; ++i)
+                    if (!PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
                     {
-                        AssetRegistryData[i] = Bytes[i];
+                        long NewAssetRegistryDataDependencyDataOffset = AssetRegistryDataOffset - DiffBetweenArdoAndArddo;
+                        byte[] Bytes = BitConverter.GetBytes(NewAssetRegistryDataDependencyDataOffset);
+                        for (int i = 0; i < Bytes.Length; ++i)
+                        {
+                            AssetRegistryData[i] = Bytes[i];
+                        }
                     }
 
                     writer.Write(AssetRegistryData);
