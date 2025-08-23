@@ -29,5 +29,4 @@ jobs:
         mv ../book/* .
         git add .
         git commit -m "Deploy $GITHUB_SHA to gh-pages"
-
         git push --force --set-upstream origin gh-pages

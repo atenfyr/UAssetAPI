@@ -22,4 +22,3 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Unit tests
         run: dotnet test --no-restore --verbosity normal
-
