@@ -1968,6 +1968,13 @@ namespace UAssetAPI
                 for (int i = 0; i < count; i++)
                 {
                     EObjectDataResourceFlags Flags = (EObjectDataResourceFlags)reader.ReadUInt32();
+
+                    byte CookedIndex = 0;
+                    if (DataResourceVersion >= EObjectDataResourceVersion.AddedCookedIndex)
+                    {
+                        CookedIndex = reader.ReadByte();
+                    }
+
                     long SerialOffset = reader.ReadInt64();
                     long DuplicateSerialOffset = reader.ReadInt64();
                     long SerialSize = reader.ReadInt64();
@@ -1975,7 +1982,7 @@ namespace UAssetAPI
                     FPackageIndex OuterIndex = FPackageIndex.FromRawIndex(reader.ReadInt32());
                     uint LegacyBulkDataFlags = reader.ReadUInt32();
 
-                    DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags));
+                    DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags, CookedIndex));
                 }
             }
 
@@ -2626,6 +2633,12 @@ namespace UAssetAPI
                     {
                         FObjectDataResource dataResource = DataResources[i];
                         writer.Write((uint)dataResource.Flags);
+
+                        if (DataResourceVersion >= EObjectDataResourceVersion.AddedCookedIndex)
+                        {
+                            writer.Write(dataResource.CookedIndex);
+                        }
+
                         writer.Write(dataResource.SerialOffset);
                         writer.Write(dataResource.DuplicateSerialOffset);
                         writer.Write(dataResource.SerialSize);

@@ -316,6 +316,19 @@ namespace UAssetAPI.Tests
             }
         }
 
+        private void TestUE5_5Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_5", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
+
         /// <summary>
         /// Tests the GUID/string conversion operations to ensure that they match the Unreal implementation.
         /// </summary>
@@ -566,7 +579,7 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.4 games.
         /// Binary equality is expected.
         /// </summary>
         [TestMethod]
@@ -576,6 +589,16 @@ namespace UAssetAPI.Tests
             TestUE5_4Subsection("Bellwright", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Bellwright", "Bellwright.usmap")));
             TestUE5_4Subsection("TheForeverWinter", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "TheForeverWinter", "TheForeverWinter.usmap")));
             TestUE5_4Subsection("Billiards", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Billiards", "5.4.3-34507850+++UE5+Release-5.4-DeepSpace7.usmap")));
+        }
+
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.5 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_5()
+        {
+            TestUE5_5Subsection("BlankGame", EngineVersion.VER_UE5_5, new Usmap(Path.Combine("TestAssets", "TestUE5_5", "BlankGame", "BlankUE5_5.usmap")));
         }
 
         /// <summary>
