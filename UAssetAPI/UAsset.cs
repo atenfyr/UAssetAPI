@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -147,6 +148,16 @@ namespace UAssetAPI
             ExportCount = exportCount;
             NameCount = nameCount;
         }
+    }
+
+    public class FAssetRegistryRecord
+    {
+        /// <summary> Path relative to the package. </summary>
+        public string Path;
+        /// <summary> Asset object name. </summary>
+        public string ClassName;
+        /// <summary> Asset registry tags. </summary>
+        public Dictionary<string, string> TagMap;
     }
 
     /// <summary>
@@ -1316,9 +1327,34 @@ namespace UAssetAPI
         public List<FString> SoftPackageReferenceList;
 
         /// <summary>
-        /// Uncertain
+        /// Offset to dependencies. This only appears in uncooked asset.
         /// </summary>
-        public byte[] AssetRegistryData;
+        public long AssetRegistryDependencyDataOffset = -1;
+
+        /// <summary>
+        /// Asset registry data.
+        /// </summary>
+        public List<FAssetRegistryRecord> AssetRegistryRecords;
+
+        /// <summary>
+        /// Number of valid bits in `ImportBits'. This only appears in uncooked asset.
+        /// </summary>
+        public int ImportBitsCount = 0;
+
+        /// <summary>
+        /// Bits indicating if imports used in game are contained in import map. This only appears in uncooked asset.
+        /// </summary>
+        public BitArray ImportBits;
+
+        /// <summary>
+        /// Number of valid bits in `SoftPackageBits'. This only appears in uncooked asset.
+        /// </summary>
+        public int SoftPackageBitsCount = 0;
+
+        /// <summary>
+        /// Bits indicating if soft packages used in game are contained in soft package reference list. This only appears in uncooked asset.
+        /// </summary>
+        public BitArray SoftPackageBits;
 
         /// <summary>
         /// Any bulk data that is not stored in the export map.
@@ -1460,11 +1496,6 @@ namespace UAssetAPI
 
         /// <summary>Location into the file on disk for the asset registry tag data</summary>
         internal int AssetRegistryDataOffset;
-
-        /// <summary>
-        /// Difference between AssetRegistryDataOffset and AssetRegistryDependencyDataOffset.
-        /// </summary>
-        internal int DiffBetweenArdoAndArddo;
 
         /// <summary>Offset to the location in the file where the bulkdata starts</summary>
         internal long BulkDataStartOffset;
@@ -1873,31 +1904,41 @@ namespace UAssetAPI
                 }
             }
 
-            // AssetRegistryData
-            AssetRegistryData = [];
             if (AssetRegistryDataOffset > 0)
             {
-                if (!PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
-                {
-                    reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                    long AssetRegistryDependencyDataOffset = reader.ReadInt64();
-                    DiffBetweenArdoAndArddo = (int)(AssetRegistryDataOffset - AssetRegistryDependencyDataOffset);
-                }
+                bool isCooked = PackageFlags.HasFlag(EPackageFlags.PKG_Cooked);
+                AssetRegistryDependencyDataOffset = -1;
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                /*
+                if (!isCooked)
+                {
+                    AssetRegistryDependencyDataOffset = reader.ReadInt64();
+                }
+
                 int numAssets = reader.ReadInt32();
+                AssetRegistryRecords = [];
                 for (int i = 0; i < numAssets; i++)
                 {
-                    throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
-                }
-                */
+                    FAssetRegistryRecord record = new FAssetRegistryRecord();
 
-                // For now: read binary data until next offset
-                int nextOffset = this.WorldTileInfoDataOffset;
-                if (this.PreloadDependencyOffset >= 0 && nextOffset <= 0) nextOffset = this.PreloadDependencyOffset;
-                if (SectionSixOffset > 0 && Exports.Count > 0 && nextOffset <= 0) nextOffset = (int)Exports[0].SerialOffset;
-                if (nextOffset <= 0) nextOffset = (int)this.BulkDataStartOffset;
-                AssetRegistryData = reader.ReadBytes(nextOffset - AssetRegistryDataOffset);
+                    record.Path = reader.ReadString();
+                    record.ClassName = reader.ReadString();
+
+                    int tagNum = reader.ReadInt32();
+                    record.TagMap = [];
+                    for (int j = 0; j < tagNum; ++j)
+                    {
+                        string key = reader.ReadString();
+                        string value = reader.ReadString();
+                        record.TagMap.Add(key, value);
+                    }
+                    AssetRegistryRecords.Add(record);
+                }
+
+                if (!isCooked)
+                {
+                    ImportBits = ReadBitArray(reader, out ImportBitsCount);
+                    SoftPackageBits = ReadBitArray(reader, out SoftPackageBitsCount);
+                }
             }
             else
             {
@@ -2140,6 +2181,22 @@ namespace UAssetAPI
                     Thumbnails[kv.Key] = reader.ReadObjectThumbnail();
                 }
             }
+        }
+
+        private static BitArray ReadBitArray(AssetBinaryReader reader, out int bitCount)
+        {
+            bitCount = reader.ReadInt32();
+            int length = ComputeBitArrayDataLenth(bitCount);
+            return new BitArray(reader.ReadBytes(length));
+        }
+        private static int BitsToNumWords(int bitCount)
+        {
+            return (int)Math.Ceiling(bitCount / 32.0);
+        }
+
+        private static int ComputeBitArrayDataLenth(int bitCount)
+        {
+            return sizeof(Int32) * BitsToNumWords(bitCount);
         }
 
         /// <summary>
@@ -2565,22 +2622,37 @@ namespace UAssetAPI
                 {
                     this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
 
-                    /*writer.Write(this.AssetRegistryData.Count);
-                    for (int i = 0; i < this.AssetRegistryData.Count; i++)
+                    bool isCooked = PackageFlags.HasFlag(EPackageFlags.PKG_Cooked);
+                    if (!isCooked)
                     {
-                        throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
-                    }*/
-                    if (!PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+                        writer.Write(AssetRegistryDependencyDataOffset);
+                    }
+
+                    writer.Write(AssetRegistryRecords.Count);
+                    foreach (FAssetRegistryRecord record in AssetRegistryRecords)
                     {
-                        long NewAssetRegistryDataDependencyDataOffset = AssetRegistryDataOffset - DiffBetweenArdoAndArddo;
-                        byte[] Bytes = BitConverter.GetBytes(NewAssetRegistryDataDependencyDataOffset);
-                        for (int i = 0; i < Bytes.Length; ++i)
+                        writer.Write(record.Path);
+                        writer.Write(record.ClassName);
+
+                        writer.Write(record.TagMap.Count);
+                        foreach (KeyValuePair<string, string> pair in record.TagMap)
                         {
-                            AssetRegistryData[i] = Bytes[i];
+                            writer.Write(pair.Key);
+                            writer.Write(pair.Value);
                         }
                     }
 
-                    writer.Write(AssetRegistryData);
+                    if (!isCooked)
+                    {
+                        AssetRegistryDependencyDataOffset = writer.BaseStream.Position;
+                        writer.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
+                        writer.Write(AssetRegistryDependencyDataOffset);
+                        writer.BaseStream.Seek(AssetRegistryDependencyDataOffset, SeekOrigin.Begin);
+
+                        WriteBitArray(writer, ImportBitsCount, ImportBits);
+
+                        WriteBitArray(writer, SoftPackageBitsCount, SoftPackageBits);
+                    }
                 }
                 else
                 {
@@ -2720,6 +2792,14 @@ namespace UAssetAPI
                 GetEngineVersion(); // update dirty state
             }
             return stre;
+        }
+
+        private static void WriteBitArray(AssetBinaryWriter writer, int count, BitArray bitArray)
+        {
+            writer.Write(count);
+            byte[] data = new byte[ComputeBitArrayDataLenth(count)];
+            bitArray.CopyTo(data, 0);
+            writer.Write(data);
         }
 
         /// <summary>
