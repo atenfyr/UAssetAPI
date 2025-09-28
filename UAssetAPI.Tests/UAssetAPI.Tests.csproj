@@ -533,6 +533,9 @@
     <None Update="TestAssets\TestUE5_5\BlankGame\WBP_Hello.uexp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestAssets\TestUE5_6\BpThirdPerson\ExplicitEnumValuesExample.usmap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestAssets\TestUnknownProperties\BP_DetPack_Charge.uasset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

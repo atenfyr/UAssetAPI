@@ -694,6 +694,18 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// In this test, we parse a .usmap with explicit enum values.
+        /// </summary>
+        [TestMethod]
+        public void TestUsmapWithExplicitEnumValues()
+        {
+            var usmap = new Usmap(Path.Combine("TestAssets", "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap"));
+            Assert.AreEqual(36767, usmap.NameMap.Count);
+            Assert.AreEqual(1739, usmap.EnumMap.Count);
+            Assert.AreEqual(9230, usmap.Schemas.Count);
+        }
+
+        /// <summary>
         /// In this test, we do tests for various underlying enum types within a DataTable row to ensure that it parses correctly and maintains binary equality.
         /// </summary>
         [TestMethod]

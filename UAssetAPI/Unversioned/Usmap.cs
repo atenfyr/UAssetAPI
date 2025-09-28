@@ -33,6 +33,11 @@ namespace UAssetAPI.Unversioned
         /// </summary>
         LargeEnums,
 
+        /// <summary>
+        /// Adds enum values (instead of assuming ordinal)
+        /// </summary>
+        ExplicitEnumValues,
+
         LatestPlusOne,
         Latest = LatestPlusOne - 1
     }
@@ -971,9 +976,22 @@ namespace UAssetAPI.Unversioned
 
                 var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>());
                 int numEnumEntries = Version >= UsmapVersion.LargeEnums ? (int)reader.ReadInt16() : (int)reader.ReadByte();
-                for (int j = 0; j < numEnumEntries; j++)
+
+                if (Version >= UsmapVersion.ExplicitEnumValues)
                 {
-                    newEnum.Values[j] = reader.ReadName();
+                    for (int j = 0; j < numEnumEntries; j++)
+                    {
+                        var value = reader.ReadInt64();
+                        var name = reader.ReadName();
+                        newEnum.Values[value] = name;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < numEnumEntries; j++)
+                    {
+                        newEnum.Values[j] = reader.ReadName();
+                    }
                 }
 
                 if (!EnumMap.ContainsKey(enumName))
