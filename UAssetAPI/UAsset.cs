@@ -1361,6 +1361,10 @@ namespace UAssetAPI
         /// </summary>
         public byte[] BulkData;
 
+        public byte[] AdditionalFiles;
+
+        public byte[] Trailer;
+
         /// <summary>
         /// Some garbage data that appears to be present in certain games (e.g. Valorant)
         /// </summary>
@@ -1962,12 +1966,18 @@ namespace UAssetAPI
                 SeaOfThievesGarbageData = null;
             }
 
-            BulkData = [];
+            AdditionalFiles = [];
             if (BulkDataStartOffset > 0 && reader.LoadUexp)
             {
                 long before = reader.BaseStream.Position;
                 reader.BaseStream.Seek(BulkDataStartOffset, SeekOrigin.Begin);
-                BulkData = reader.ReadBytes((int)(reader.BaseStream.Length - BulkDataStartOffset));
+                bool hasPayload = PayloadTocOffset > 0;
+                long end = hasPayload ? PayloadTocOffset : reader.BaseStream.Length;
+                AdditionalFiles = reader.ReadBytes((int)(end - BulkDataStartOffset));
+                if (hasPayload)
+                {
+                    Trailer = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+                }
                 reader.BaseStream.Seek(before, SeekOrigin.Begin);
             }
 
@@ -2752,7 +2762,12 @@ namespace UAssetAPI
                 if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
 
                 this.BulkDataStartOffset = (int)writer.BaseStream.Position;
-                writer.Write(BulkData);
+                writer.Write(AdditionalFiles);
+                if (PayloadTocOffset > 0)
+                {
+                    this.PayloadTocOffset = writer.BaseStream.Position;
+                    writer.Write(Trailer);
+                }
 
                 // Rewrite Section 3
                 if (this.Exports.Count > 0)
