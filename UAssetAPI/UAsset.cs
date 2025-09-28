@@ -2797,9 +2797,12 @@ namespace UAssetAPI
         private static void WriteBitArray(AssetBinaryWriter writer, int count, BitArray bitArray)
         {
             writer.Write(count);
-            byte[] data = new byte[ComputeBitArrayDataLenth(count)];
-            bitArray.CopyTo(data, 0);
-            writer.Write(data);
+            if (count > 0)
+            {
+                byte[] data = new byte[ComputeBitArrayDataLenth(count)];
+                bitArray.CopyTo(data, 0);
+                writer.Write(data);
+            }
         }
 
         /// <summary>
