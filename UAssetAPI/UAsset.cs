@@ -1264,6 +1264,10 @@ namespace UAssetAPI
         ///             <version>-8</version>
         ///             <description>indicates that the UE5 version has been added to the summary</description>
         ///         </item>
+        ///         <item>
+        ///             <version>-9</version>
+        ///             <description>indicates a contractual change in when early exits are required based on FileVersionTooNew. At or after this LegacyFileVersion, we support changing the PackageFileSummary serialization format for all bytes serialized after FileVersionLicensee, and that format change can be conditional on any of the versions parsed before that point. All packageloaders that understand the -9 legacyfileformat are required to early exit without further serialization at that point if FileVersionTooNew is true.</description>
+        ///         </item>
         ///     </list>
         /// </remarks>
         public int LegacyFileVersion;
@@ -1421,6 +1425,9 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the gatherable text data items</summary>
         internal int GatherableTextDataOffset;
 
+        /// <summary>Location into the file on disk for the MetaData data</summary>
+        internal int MetaDataOffset;
+
         /// <summary>Number of exports contained in this package</summary>
         internal int ExportCount = 0;
 
@@ -1432,6 +1439,18 @@ namespace UAssetAPI
 
         /// <summary>Location into the file on disk for the ImportMap data</summary>
         internal int ImportOffset = 0;
+
+        /// <summary>Number of cells contained in this package</summary>
+        internal int CellExportCount;
+
+        /// <summary>Location into the file on disk for the CellExportMap data</summary>
+        internal int CellExportOffset;
+
+        /// <summary>Number of cell imports contained in this package</summary>
+        internal int CellImportCount;
+
+        /// <summary>Location into the file on disk for the CellImportMap data</summary>
+        internal int CellImportOffset;
 
         /// <summary>Location into the file on disk for the DependsMap data</summary>
         internal int DependsOffset = 0;
@@ -1449,6 +1468,10 @@ namespace UAssetAPI
         /// <summary>Thumbnail table offset</summary>
         [JsonProperty]
         internal int ThumbnailTableOffset;
+
+        /// <summary>Hash of the Package's bytes when it was saved to disk.</summary>
+        [JsonProperty]
+        internal byte[] SavedHash;
 
         /// <summary>Should be zero</summary>
         [JsonProperty]
@@ -1562,13 +1585,23 @@ namespace UAssetAPI
 
             FileVersionLicenseeUE = reader.ReadInt32();
 
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                SavedHash = reader.ReadBytes(20);
+                SectionSixOffset = reader.ReadInt32();
+            }
+
             // Custom versions container
             if (LegacyFileVersion <= -2)
             {
                 CustomVersionContainer = reader.ReadCustomVersionContainer(CustomVersionSerializationFormat, CustomVersionContainer, Mappings);
             }
 
-            SectionSixOffset = reader.ReadInt32(); // 24
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            { 
+                SectionSixOffset = reader.ReadInt32(); // 24
+            }
+
             FolderName = reader.ReadFString();
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
@@ -1595,6 +1628,20 @@ namespace UAssetAPI
             ExportOffset = reader.ReadInt32(); // 61
             ImportCount = reader.ReadInt32(); // 65
             ImportOffset = reader.ReadInt32(); // 69 (haha funny)
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            {
+                CellExportCount = reader.ReadInt32();
+                CellExportOffset = reader.ReadInt32();
+                CellImportCount = reader.ReadInt32();
+                CellImportOffset = reader.ReadInt32();
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.METADATA_SERIALIZATION_OFFSET)
+            {
+                MetaDataOffset = reader.ReadInt32();
+            }
+
             DependsOffset = reader.ReadInt32(); // 73
             if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
@@ -1609,7 +1656,10 @@ namespace UAssetAPI
 
             // valorant garbage data is here
 
-            PackageGuid = new Guid(reader.ReadBytes(16));
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                PackageGuid = new Guid(reader.ReadBytes(16));
+            }
 
             if (!IsFilterEditorOnly)
             {
@@ -2176,6 +2226,13 @@ namespace UAssetAPI
             }
 
             writer.Write(FileVersionLicenseeUE);
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(SavedHash);
+                writer.Write(SectionSixOffset);
+            }
+
             if (LegacyFileVersion <= -2)
             {
                 if (IsUnversioned)
@@ -2188,7 +2245,11 @@ namespace UAssetAPI
                 }
             }
 
-            writer.Write(SectionSixOffset);
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(SectionSixOffset);
+            }
+
             writer.Write(FolderName);
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
@@ -2211,6 +2272,20 @@ namespace UAssetAPI
             writer.Write(ExportOffset); // 61
             writer.Write(ImportCount); // 65
             writer.Write(ImportOffset); // 69 (haha funny)
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            {
+                writer.Write(CellExportCount);
+                writer.Write(CellExportOffset);
+                writer.Write(CellImportCount);
+                writer.Write(CellImportOffset);
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.METADATA_SERIALIZATION_OFFSET)
+            {
+                writer.Write(MetaDataOffset);
+            }
+
             writer.Write(DependsOffset); // 73
             if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
@@ -2225,7 +2300,11 @@ namespace UAssetAPI
 
             if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
-            writer.Write(PackageGuid.ToByteArray());
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(PackageGuid.ToByteArray());
+            }
+
             if (!IsFilterEditorOnly)
             {
                 if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER)

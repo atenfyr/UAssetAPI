@@ -328,6 +328,19 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
+        
+        private void TestUE5_6Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_6", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
 
         /// <summary>
         /// Tests the GUID/string conversion operations to ensure that they match the Unreal implementation.
@@ -600,6 +613,16 @@ namespace UAssetAPI.Tests
         {
             TestUE5_5Subsection("BlankGame", EngineVersion.VER_UE5_5, new Usmap(Path.Combine("TestAssets", "TestUE5_5", "BlankGame", "BlankUE5_5.usmap")));
         }
+        
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.6 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_6()
+        {
+            TestUE5_6Subsection("BpThirdPerson", EngineVersion.VER_UE5_6, new Usmap(Path.Combine("TestAssets", "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap")));
+        }
 
         /// <summary>
         /// In this test, we test the Clone function, along with indexers for assets and exports.
@@ -691,6 +714,18 @@ namespace UAssetAPI.Tests
             Assert.AreEqual(31948, usmap.NameMap.Count);
             Assert.AreEqual(1565, usmap.EnumMap.Count);
             Assert.AreEqual(7657, usmap.Schemas.Count);
+        }
+
+        /// <summary>
+        /// In this test, we parse a .usmap with explicit enum values.
+        /// </summary>
+        [TestMethod]
+        public void TestUsmapWithExplicitEnumValues()
+        {
+            var usmap = new Usmap(Path.Combine("TestAssets", "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap"));
+            Assert.AreEqual(36767, usmap.NameMap.Count);
+            Assert.AreEqual(1739, usmap.EnumMap.Count);
+            Assert.AreEqual(9230, usmap.Schemas.Count);
         }
 
         /// <summary>

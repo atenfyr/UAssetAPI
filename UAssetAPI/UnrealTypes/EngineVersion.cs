@@ -79,6 +79,8 @@
         VER_UE5_4,
         /// <summary>5.5</summary>
         VER_UE5_5,
+        /// <summary>5.6</summary>
+        VER_UE5_6,
 
         VER_UE4_AUTOMATIC_VERSION_PLUS_ONE,
         /// <summary>The newest specified version of the Unreal Engine.</summary>
