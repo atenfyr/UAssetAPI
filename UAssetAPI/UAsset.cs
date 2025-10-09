@@ -259,6 +259,8 @@ namespace UAssetAPI
         /// </summary>
         public bool IsFilterEditorOnly => PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly);
 
+        public bool IsPreDependencyFormat => IsFilterEditorOnly || ObjectVersion < ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
+
         [JsonIgnore]
         internal volatile bool isSerializationTime = false;
 
@@ -1910,10 +1912,9 @@ namespace UAssetAPI
 
             if (AssetRegistryDataOffset > 0)
             {
-                bool hasAssetRegistryDependencyFlags = ObjectVersion >= ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
                 AssetRegistryDependencyDataOffset = -1;
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                if (hasAssetRegistryDependencyFlags)
+                if (!IsPreDependencyFormat)
                 {
                     AssetRegistryDependencyDataOffset = reader.ReadInt64();
                 }
@@ -1938,7 +1939,7 @@ namespace UAssetAPI
                     AssetRegistryRecords.Add(record);
                 }
 
-                if (hasAssetRegistryDependencyFlags)
+                if (!IsPreDependencyFormat)
                 {
                     ImportBits = ReadBitArray(reader, out ImportBitsCount);
                     SoftPackageBits = ReadBitArray(reader, out SoftPackageBitsCount);
@@ -2632,8 +2633,7 @@ namespace UAssetAPI
                 {
                     this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
 
-                    bool hasAssetRegistryDependencyFlags = ObjectVersion >= ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
-                    if (hasAssetRegistryDependencyFlags)
+                    if (!IsPreDependencyFormat)
                     {
                         writer.Write(AssetRegistryDependencyDataOffset);
                     }
@@ -2652,7 +2652,7 @@ namespace UAssetAPI
                         }
                     }
 
-                    if (hasAssetRegistryDependencyFlags)
+                    if (!IsPreDependencyFormat)
                     {
                         AssetRegistryDependencyDataOffset = writer.BaseStream.Position;
                         writer.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
