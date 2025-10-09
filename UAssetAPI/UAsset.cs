@@ -1910,10 +1910,10 @@ namespace UAssetAPI
 
             if (AssetRegistryDataOffset > 0)
             {
-                bool isCooked = PackageFlags.HasFlag(EPackageFlags.PKG_Cooked);
+                bool hasAssetRegistryDependencyFlags = ObjectVersion >= ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
                 AssetRegistryDependencyDataOffset = -1;
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                if (!isCooked)
+                if (hasAssetRegistryDependencyFlags)
                 {
                     AssetRegistryDependencyDataOffset = reader.ReadInt64();
                 }
@@ -1938,7 +1938,7 @@ namespace UAssetAPI
                     AssetRegistryRecords.Add(record);
                 }
 
-                if (!isCooked)
+                if (hasAssetRegistryDependencyFlags)
                 {
                     ImportBits = ReadBitArray(reader, out ImportBitsCount);
                     SoftPackageBits = ReadBitArray(reader, out SoftPackageBitsCount);
@@ -2632,8 +2632,8 @@ namespace UAssetAPI
                 {
                     this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
 
-                    bool isCooked = PackageFlags.HasFlag(EPackageFlags.PKG_Cooked);
-                    if (!isCooked)
+                    bool hasAssetRegistryDependencyFlags = ObjectVersion >= ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
+                    if (hasAssetRegistryDependencyFlags)
                     {
                         writer.Write(AssetRegistryDependencyDataOffset);
                     }
@@ -2652,7 +2652,7 @@ namespace UAssetAPI
                         }
                     }
 
-                    if (!isCooked)
+                    if (hasAssetRegistryDependencyFlags)
                     {
                         AssetRegistryDependencyDataOffset = writer.BaseStream.Position;
                         writer.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
