@@ -11,7 +11,7 @@ namespace UAssetAPI.ExportTypes
     public class FunctionExport : StructExport
     {
         public EFunctionFlags FunctionFlags;
-		public int RepOffset;
+		public short RepOffset;
 		public FPackageIndex EventGraphFunction;
 		public int EventGraphCallOffset;
 
@@ -38,7 +38,7 @@ namespace UAssetAPI.ExportTypes
             
 			if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
 			{
-				RepOffset = reader.ReadInt32();
+				RepOffset = reader.ReadInt16();
 			}
 			else
 			{
