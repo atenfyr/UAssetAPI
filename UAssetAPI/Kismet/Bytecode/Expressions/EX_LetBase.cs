@@ -7,7 +7,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// <summary>
     /// Base class for several Let (assignment) expressions
     /// </summary>
-    public class EX_LetBase : KismetExpression
+    public abstract class EX_LetBase : KismetExpression
     {
         /// <summary>
         /// The token of this expression.
