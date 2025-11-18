@@ -41,7 +41,7 @@ public struct FIntVector2 : ICloneable
     public int X;
     public int Y;
 
-    public FIntVector2(int x, int y, int z)
+    public FIntVector2(int x, int y)
     {
         X = x;
         Y = y;
