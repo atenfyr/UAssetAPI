@@ -33,3 +33,34 @@ public class IntVectorPropertyData : PropertyData<FIntVector>
         return Value.Write(writer);
     }
 }
+
+public class IntVector2PropertyData : PropertyData<FIntVector2>
+{
+    public IntVector2PropertyData(FName name) : base(name) { }
+
+    public IntVector2PropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("IntVector2");
+    public override bool HasCustomStructSerialization => true;
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            this.ReadEndPropertyTag(reader);
+        }
+
+        Value = new FIntVector2(reader);
+    }
+
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            this.WriteEndPropertyTag(writer);
+        }
+
+        return Value.Write(writer);
+    }
+}
