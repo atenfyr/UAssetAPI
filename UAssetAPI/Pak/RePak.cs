@@ -70,11 +70,11 @@ public class PakBuilder : SafeHandleZeroOrMinusOneIsInvalid
             if (ex is DllNotFoundException || ex is BadImageFormatException)
             {
                 // extract dll if needed
-                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream("UAssetAPI.repak_bind.dll"))
+                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "UAssetAPI.repak_bind.so" : "UAssetAPI.repak_bind.dll"))
                 {
                     if (resource != null)
                     {
-                        using (var file = new FileStream("repak_bind.dll", FileMode.Create, FileAccess.Write))
+                        using (var file = new FileStream(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "repak_bind.so" : "repak_bind.dll", FileMode.Create, FileAccess.Write))
                         {
                             resource.CopyTo(file);
                         }
