@@ -291,7 +291,7 @@ namespace UAssetAPI
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
 
-            if (type.Value.Value == "None") return null;
+            if (type.Value?.Value is null or "None") return null;
 
             PropertyData data = null;
             if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
@@ -439,7 +439,7 @@ namespace UAssetAPI
             else if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
             {
                 name = reader.ReadFName();
-                if (name.Value.Value == "None") return null;
+                if (name.Value?.Value is null or "None") return null;
 
                 List<FName> types = new List<FName>();
                 int numNamesLeft = 1;
@@ -464,15 +464,17 @@ namespace UAssetAPI
             else
             {
                 name = reader.ReadFName();
-                if (name.Value.Value == "None") return null;
+				if (name.Value?.Value is null or "None") return null;
 
-                type = reader.ReadFName();
+				type = reader.ReadFName();
 
                 leng = reader.ReadInt32();
                 ArrayIndex = reader.ReadInt32();
             }
 
             PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero);
+            if (result == null) return null;
+
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             //Debug.WriteLine(type);
