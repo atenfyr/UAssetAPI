@@ -1,60 +1,51 @@
-﻿using System.IO;
 using System.Text;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
-namespace UAssetAPI.PropertyTypes.Objects
+namespace UAssetAPI.PropertyTypes.Objects;
+
+/// <summary>
+/// Describes an <see cref="FString"/>.
+/// </summary>
+public class StrPropertyData : PropertyData<FString>
 {
-    /// <summary>
-    /// Describes an <see cref="FString"/>.
-    /// </summary>
-    public class StrPropertyData : PropertyData<FString>
+    public StrPropertyData(FName name) : base(name) { }
+
+    public StrPropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("StrProperty");
+    public override FString PropertyType => CurrentPropertyType;
+
+    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
-        public StrPropertyData(FName name) : base(name)
+        if (includeHeader)
         {
-
+            this.ReadEndPropertyTag(reader);
         }
 
-        public StrPropertyData()
-        {
+        Value = reader.ReadFString();
+    }
 
+    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
+    {
+        if (includeHeader)
+        {
+            this.WriteEndPropertyTag(writer);
         }
 
-        private static readonly FString CurrentPropertyType = new FString("StrProperty");
-        public override FString PropertyType { get { return CurrentPropertyType; } }
+        int here = (int)writer.BaseStream.Position;
+        writer.Write(Value);
+        return (int)writer.BaseStream.Position - here;
+    }
 
-        public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                this.ReadEndPropertyTag(reader);
-            }
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 
-            Value = reader.ReadFString();
-        }
-
-        public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-        {
-            if (includeHeader)
-            {
-                this.WriteEndPropertyTag(writer);
-            }
-
-            int here = (int)writer.BaseStream.Position;
-            writer.Write(Value);
-            return (int)writer.BaseStream.Position - here;
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-
-        public override void FromString(string[] d, UAsset asset)
-        {
-            var encoding = Encoding.ASCII;
-            if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
-            Value = FString.FromString(d[0], encoding);
-        }
+    public override void FromString(string[] d, UAsset asset)
+    {
+        var encoding = Encoding.ASCII;
+        if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
+        Value = FString.FromString(d[0], encoding);
     }
 }

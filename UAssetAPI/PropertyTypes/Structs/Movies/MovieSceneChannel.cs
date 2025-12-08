@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.UnrealTypes.EngineEnums;
 using UAssetAPI.UnrealTypes;
@@ -38,20 +38,10 @@ public class FMovieSceneChannel<T>
             PostInfinityExtrap = (ERichCurveExtrapolation)reader.ReadByte();
 
             TimesStructLength = reader.ReadInt32();
-            var TimesLength = reader.ReadInt32();
-            Times = new FFrameNumber[TimesLength];
-            for (int i = 0; i < TimesLength; i++)
-            {
-                Times[i] = new FFrameNumber(reader);
-            }
+            Times = reader.ReadArray(() => new FFrameNumber(reader));
 
             ValuesStructLength = reader.ReadInt32();
-            var ValuesLength = reader.ReadInt32();
-            Values = new FMovieSceneValue<T>[ValuesLength];
-            for (int i = 0; i < ValuesLength; i++)
-            {
-                Values[i] = new FMovieSceneValue<T>(reader, valueReader());
-            }
+            Values = reader.ReadArray(() => new FMovieSceneValue<T>(reader, valueReader()));
 
             DefaultValue = valueReader();
             bHasDefaultValue = reader.ReadBooleanInt();

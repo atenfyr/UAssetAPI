@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -285,8 +285,9 @@ namespace UAssetAPI
         /// <param name="ArrayIndex">The duplication index of this property.</param>
         /// <param name="includeHeader">Does this property serialize its header in the current context?</param>
         /// <param name="isZero">Is the body of this property empty?</param>
+        /// <param name="propertyTypeName">The complete property type name, if available.</param>
         /// <returns>A new PropertyData instance based off of the passed parameters.</returns>
-        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader = null, int leng = 0, EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None, int ArrayIndex = 0, bool includeHeader = true, bool isZero = false)
+        public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader = null, int leng = 0, EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None, int ArrayIndex = 0, bool includeHeader = true, bool isZero = false, FPropertyTypeName propertyTypeName = null)
         {
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
@@ -343,6 +344,7 @@ namespace UAssetAPI
             data.PropertyTagFlags = propertyTagFlags;
             data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
             data.ArrayIndex = ArrayIndex;
+            data.PropertyTypeName = propertyTypeName;
             if (reader != null && !isZero)
             {
                 long posBefore = reader.BaseStream.Position;
@@ -360,6 +362,7 @@ namespace UAssetAPI
                         data = new RawStructPropertyData(name);
                         data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
                         data.ArrayIndex = ArrayIndex;
+                        data.PropertyTypeName = propertyTypeName;
                         data.Read(reader, includeHeader, leng);
                     }
                     else
@@ -394,6 +397,7 @@ namespace UAssetAPI
             FName type = null;
             int leng = 0;
             EPropertyTagFlags propertyTagFlags = EPropertyTagFlags.None;
+            FPropertyTypeName typeName = null;
             int ArrayIndex = 0;
             string structType = null;
             bool isZero = false;
@@ -441,18 +445,8 @@ namespace UAssetAPI
                 name = reader.ReadFName();
                 if (name.Value.Value == "None") return null;
 
-                List<FName> types = new List<FName>();
-                int numNamesLeft = 1;
-                while (numNamesLeft > 0)
-                {
-                    types.Add(reader.ReadFName());
-                    numNamesLeft += reader.ReadInt32();
-                    numNamesLeft--;
-                }
-
-                // SUPER DUPER TODO: information is lost by doing this, ideally we should be able to pass a new FPropertyTypeName type into TypeToClass
-                type = types.Count == 0 ? new FName(reader.Asset, "None") : types[0];
-
+                typeName = new FPropertyTypeName(reader);
+                type = typeName.GetName();
                 leng = reader.ReadInt32();
                 propertyTagFlags = (EPropertyTagFlags)reader.ReadByte();
 
@@ -472,7 +466,7 @@ namespace UAssetAPI
                 ArrayIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero);
+            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero, typeName);
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             //Debug.WriteLine(type);
@@ -579,16 +573,12 @@ namespace UAssetAPI
                 if (property is UnknownPropertyData unknownProp)
                 {
                     writer.Write(new FName(writer.Asset, unknownProp.SerializingPropertyType));
-                }
-                else if (property is RawStructPropertyData)
-                {
-                    writer.Write(new FName(writer.Asset, FString.FromString("StructProperty")));
+                    writer.Write((int)0);
                 }
                 else
                 {
-                    writer.Write(new FName(writer.Asset, property.PropertyType));
+                    property.PropertyTypeName.Write(writer);
                 }
-                writer.Write((int)0); // dummy InnerCount; again super duper todo, should serialize whole FPropertyTypeName tree, be able to reconstruct it with mappings if needed
 
                 // update flags appropriately
                 if (property is BoolPropertyData bProp)

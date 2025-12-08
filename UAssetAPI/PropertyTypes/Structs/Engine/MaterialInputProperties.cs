@@ -1,4 +1,3 @@
-﻿using Newtonsoft.Json;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.CustomVersions;

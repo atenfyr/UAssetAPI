@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -96,6 +96,21 @@ namespace UAssetAPI
                     string nullTerminatedStr = value.Value + "\0";
                     this.Write(value.Encoding is UnicodeEncoding ? -nullTerminatedStr.Length : nullTerminatedStr.Length);
                     byte[] actualStrData = value.Encoding.GetBytes(nullTerminatedStr);
+                    this.Write(actualStrData);
+                    return actualStrData.Length + 4;
+            }
+        }
+
+        public int WriteUtf8String(FString value)
+        {
+            switch (value?.Value)
+            {
+                case null:
+                    this.Write((int)0);
+                    return sizeof(int);
+                default:
+                    this.Write(value.Value.Length);
+                    byte[] actualStrData = value.Encoding.GetBytes(value.Value);
                     this.Write(actualStrData);
                     return actualStrData.Length + 4;
             }
