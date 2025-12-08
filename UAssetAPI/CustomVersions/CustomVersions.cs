@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.CustomVersions
@@ -714,6 +714,226 @@ namespace UAssetAPI.CustomVersions
         /// <summary>Added support for to record the new solver iteration settings in CVD</summary>
         [Introduced(EngineVersion.VER_UE5_5)]
         SolverIterationsDataSupportInChaosVisualDebugger,
+
+        /// <summary>Updated FColorMaterialInput to use FLinearColor instead of FColor</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        MaterialInputUsesLinearColor,
+
+        /// <summary>Updated editor only AFunctionalTest running logic to run tests editor world if the actors don't support PIE</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        FunctionalTestCanRunInEditorWorld,
+
+        /// <summary>Added support for display name in the Visual Logger</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        VisualLoggerSupportDisplayName,
+
+        /// <summary>Added support for the GyroscopicTorque flag in CVD</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        GyroscopicTorquesSupportInChaosVisualDebugger,
+
+        /// <summary>Added managed array property serialization</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddManagedArrayCollectionPropertySerialization,
+
+        /// <summary>Landscape texture patches in Texture Asset source mode now use proper resolution when calculating transform</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        LandscapeTexturePatchUsesTextureAssetResolution,
+
+        /// <summary>Added support for relative transform in WorldPartitionActorDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        WorldPartitionActorDescSerializeRelativeTransform,
+
+        /// <summary>Make sure scene graph entities are not public by default</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SceneGraphEntitiesPrivateByDefault,
+
+        /// <summary>Added debug color for physical materials</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        DebugColorForPhysicalMaterials,
+
+        /// <summary>Added PreprocessedFontGeometry to FFontFaceData</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddedPreprocessedFontGeometry,
+
+        /// <summary>Added Dynamic Mesh Sculpt Layer serialization</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        DynamicMeshSerializeSculptLayers,
+
+        /// <summary>Fix reachable garbage object warnings from some legacy ASpatialHashRuntimeGridInfo actors</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SpatialHashRuntimeGridInfoSpriteFixup,
+
+        /// <summary>Removed UAnimSequence::bUseRawDataOnly flag alongside compression refactor</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AnimSequenceRawDataOnlyFlagRemoval,
+
+        /// <summary>HLOD relevancy of Level Instances was previously ignored, now taken into account. Reset to the default behavior.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        ResetLevelInstanceHLODRelevancy,
+
+        /// <summary>Updated default scene capture post-processing settings to reflect the underlying implementation overrides</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SceneCaptureDefaultSettings,
+
+        /// <summary>Add Cloth Asset Base class serialization</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddClothAssetBase,
+
+        /// <summary>Add inline constant default values to the PCG graph nodes.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        PCGInlineConstantDefaultValues,
+
+        /// <summary>Add MaterialSubstrateSubsurfaceType type to UMaterialExpressionSubstrateSlabBSDF for replacing bUseSSSDifffusion</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddMaterialSubstrateSubsurfaceType,
+
+        /// <summary>Added option to visualize runtime virtual textures' streamed mips only in PIE </summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddedRuntimeVirtualTextureUseStreamingMipsInEditorMode,
+
+        /// <summary>Media plate holdout composite components have been replaced by a checkbox</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        MediaPlateHoldoutComponentRemoval,
+
+        /// <summary>Changed PCG landscape cache default from "serialize at cook" to "never serialize"</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        PCGLandscapeCacheDefaultSerializationChanged,
+
+        /// <summary>FSoftObjectPath::SubPathString changed to FUtf8String</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SoftObjectPathUtf8SubPaths,
+
+        /// <summary>FSoftObjectPath::SubPathString could be saved with trailing NULs and need truncating</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SoftObjectPathTrailingNULsMaintained,
+
+        /// <summary>Water body components no longer need to maintain their own PhysicalMaterial property since they are primitive components. After this version, leverage that one instead.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        WaterBodyPhysicalMaterialPropertyRemoval,
+
+        /// <summary>PCG fixed attribute set -> point conversion passing through empty point data as-is and violating output pin type.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        PCGAttributeSetToPointAlwaysConverts,
+
+        //Add per material slot overlay material data
+        [Introduced(EngineVersion.VER_UE5_6)]
+        MeshMaterialSlotOverlayMaterialAdded,
+
+        /// <summary>Convert Sustrate glint density properly</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        ConvertGlintDensity,
+
+        /// <summary>Introduced skinweight validation to avoid render crashes and disappearing simulation meshes</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        ClothAssetSkinweightsValidation,
+
+        /// <summary>Switching verse from right handed to left handed</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        VerseRightToLeftHandedness,
+
+        /// <summary>Added additional data required to record and represent particle data from the game thread (Kinematic targets, and SQ rejection reasons)</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AdditionalGameThreadDataSupportInChaosVisualDebugger,
+
+        /// <summary>Upgrade UMG widget blueprints using legacy animation API</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        UpgradeWidgetBlueprintLegacySequencePlayer,
+
+        /// <summary>Changed clockwise detection algorithm for PCGSplineDirection node with the correct one, but add a version to not break previous nodes.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        PCGSplineDirectionClockwiseFix,
+
+        /// <summary>Rect Lights set in EV units had the wrong intensity (older files need a flag set to keep the old look)</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        RectLightFixedEVUnitConversion,
+
+        /// <summary>Add particle bounds to data exported to CVD</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        ParticleInflatedBoundsInChaosVisualDebugger,
+
+        /// <summary>Migrate properties from FLandscapeLayer to ULandscapeEditLayer</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        MigrateLandscapeEditLayerProperties,
+
+        /// <summary>Added more context data to CVD's traced shapes so we can play it back at the solver stage level (not just game thread frames) </summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        ThreadContextDataInChaosVisualDebuggerDebugDrawData,
+
+        /// <summary>Changed default grid mode in surface sampler to a version that's more intuitive and less error-prone</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        PCGChangedSurfaceSamplerDefaultGridCreationMode,
+
+        /// <summary>Media plate overlay composite technique replacement with holdout composite</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        MediaPlateOverlayTechniqueRemoval,
+
+        /// <summary>Added particle flag to allow/disallow partial island sleeping in the island the particle is in</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        PerParticleFlagToAllowPartialIslandSleepInConnectedIsland,
+
+        /// <summary>Material Function Blend Deserialize Top/Bottom input nodes with clearer enum marker.</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        MaterialFunctionBlendTopBottomInputEnum,
+
+        /// <summary>Cooked CPU-side morph target points are now stored internally in the same compressed format as the GPU morph data. </summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        MorphTargetCookedCPUDataCompressed,
+
+        /// <summary>AnimNext variables converted to references</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        AnimNextVariableReferences,
+
+        /// <summary>The default distortion rendering mode used by the Lens Component is now the Lens Distortion Scene View Extension</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        LensComponentDefaultToDistortionSVE,
+
+        /// <summary>Animation default blend option changed from Linear to HermiteCubic (aka SmoothStep, ease in / ease out)</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        ChangeDefaultAlphaBlendType,
+
+        /// <summary>Moved Position/Velocity/Projection Iteration Counts from FChaosVDFRigidParticleControlFlags to FChaosVDParticleDynamicMisc</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        PerParticleIterationCountMovedToDynamicMisc,
+
+        /// <summary>Added missing custom serialization for some properties in the ParticleDynamicMisc structure used by the Chaos Visual Debugger</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        AddedMissingSerializationForPropertiesInDynamicMisc,
+
+        /// <summary>Change default value for deprecated bEnableWorldPartitionGenerationSources</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        PCGDeprecateWorldPartitionGenerationSources,
+
+        /// <summary>Refactored the composite (plugin) actor scene capture management.</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        CompositeActorSceneCaptureRefactor,
+
+        /// <summary>Moved HLOD Layer properties to an editor only optional object</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        HLODLayerEditorOnlyObject,
+
+        /// <summary>Deduplicated particle debug names serialization in the Chaos Visual Debugger</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        DeduplicatedDebugNameSerializationInCVD,
+
+        /// <summary>Add BloomGaussianIntensity and BloomConvolutionIntensity</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        SpecializeBloomIntensity,
+
+        /// <summary>Add support for world partition actor component descriptors</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        WorldPartitionActorComponentDesc,
+
+        /// <summary>Migrate Non-Edit layer landscapes to use the edit layer (ULandscapeEditLayer) system</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        MigrateLandscapeNonEditLayerToEditLayer,
+
+        /// <summary>FDynamicMeshAttributeSet has Morph Targets.</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        DynamicMeshAttributesMorphTargets,
+
+        /// <summary>Introduce landscape advanced weight blending </summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        LandscapeAdvancedWeightBlending,
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
@@ -2177,6 +2397,18 @@ namespace UAssetAPI.CustomVersions
         /// <summary>Added loop delay enabled to emitter state</summary>
         [Introduced(EngineVersion.VER_UE5_5)]
         EmitterStateAddLoopDelayEnabled,
+
+        /// <summary>Make sure that we serialize the UsageBitMask with the GPUFunctionInfo</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        SerializeUsageBitMaskToGPUFunctionInfo,
+
+        /// <summary>Changed the interpolated spawn property into an enum</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AddedNewInterpolatedSpawnMode,
+
+        /// <summary>Adding user asset tag storage in UMetaData for all UPackages</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        UserAssetTagStorageInMetaData,
 
         /// <summary>
         /// DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously.
