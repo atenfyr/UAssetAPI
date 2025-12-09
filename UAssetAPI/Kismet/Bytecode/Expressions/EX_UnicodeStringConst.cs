@@ -1,4 +1,7 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using System;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_UnicodeStringConst"/> instruction.
@@ -32,6 +35,12 @@
         public override int Write(AssetBinaryWriter writer)
         {
             return writer.XFERUNICODESTRING(Value);
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 2 * ((uint)Value.Length + 1); // Unicode string + null terminator (2 bytes per char)
         }
     }
 }

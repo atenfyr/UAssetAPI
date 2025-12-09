@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 
@@ -51,6 +52,12 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             writer.Write(Y);
             writer.Write(Z);
             return sizeof(float) * 3;
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 12; // 3 floats
         }
     }
 }

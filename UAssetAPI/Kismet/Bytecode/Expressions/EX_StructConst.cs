@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UAssetAPI.UnrealTypes;
@@ -63,6 +64,17 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             // Write end expression
             offset += ExpressionSerializer.WriteExpression(new EX_EndStructConst(), writer);
             return offset;
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 12; // Struct (8) + StructSize (4)
+            foreach (var v in Value)
+            {
+                v.Visit(asset, ref offset, visitor);
+            }
+            offset += 1; // EX_EndStructConst
         }
     }
 }

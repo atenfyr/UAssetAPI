@@ -1,3 +1,6 @@
+using System;
+using UAssetAPI.UnrealTypes;
+
 namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
@@ -34,6 +37,12 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         {
             writer.Write(Value);
             return sizeof(int);
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 4; // Value
         }
     }
 }
