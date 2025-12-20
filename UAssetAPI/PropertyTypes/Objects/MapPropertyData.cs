@@ -59,7 +59,7 @@ public class MapPropertyData : PropertyData
             case "StructProperty":
                 FName strucType = null;
                 FPropertyTypeName propertyTypeNameLocal = PropertyTypeName?.GetParameter(isKey ? 0 : 1);
-                if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+                if (!reader.Asset.HasUnversionedProperties && reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
                 {
                     strucType = propertyTypeNameLocal?.GetParameter(0).GetName();
                 }

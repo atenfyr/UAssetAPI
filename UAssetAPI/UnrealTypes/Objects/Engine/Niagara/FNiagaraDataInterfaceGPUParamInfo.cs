@@ -2,7 +2,6 @@ using System;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.PropertyTypes.Objects;
 
-
 namespace UAssetAPI.UnrealTypes;
 
 public struct FNiagaraVariableCommonReference(AssetBinaryReader reader)
@@ -31,6 +30,8 @@ public class FNiagaraDataInterfaceGeneratedFunction
     public FNiagaraVariableCommonReference[] VariadicInputs = [];
     public FNiagaraVariableCommonReference[] VariadicOutputs = [];
     public ushort MiscUsageBitMask;
+
+    public FNiagaraDataInterfaceGeneratedFunction() { }
 
     public FNiagaraDataInterfaceGeneratedFunction(AssetBinaryReader reader)
     {
