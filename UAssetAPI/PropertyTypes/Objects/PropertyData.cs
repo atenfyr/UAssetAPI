@@ -97,7 +97,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         public void SetAsParent(FName dad, FName modulePath = null)
         {
-            if (dad != null) Ancestors.Add(string.IsNullOrEmpty(modulePath?.Value?.Value) ? dad : FName.DefineDummy(null, modulePath.Value.Value + "." + dad.Value.Value));
+            if (dad?.Value != null) Ancestors.Add(string.IsNullOrEmpty(modulePath?.Value?.Value) ? dad : FName.DefineDummy(null, modulePath.Value.Value + "." + dad.Value.Value));
         }
     }
 

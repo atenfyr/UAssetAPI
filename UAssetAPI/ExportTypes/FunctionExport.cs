@@ -1,6 +1,7 @@
 using System.IO;
-using UAssetAPI.UnrealTypes;
+using System.Reflection.PortableExecutable;
 using UAssetAPI.ExportTypes;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.ExportTypes
 {
@@ -10,6 +11,10 @@ namespace UAssetAPI.ExportTypes
     public class FunctionExport : StructExport
     {
         public EFunctionFlags FunctionFlags;
+		public short RepOffset;
+		public FPackageIndex EventGraphFunction;
+		public int EventGraphCallOffset;
+
         public FunctionExport(Export super) : base(super)
         {
             Asset = super.Asset;
@@ -30,14 +35,43 @@ namespace UAssetAPI.ExportTypes
         {
             base.Read(reader, nextStarting);
             FunctionFlags = (EFunctionFlags)reader.ReadUInt32();
-            // TODO
+            
+			if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
+			{
+				RepOffset = reader.ReadInt16();
+			}
+			else
+			{
+				RepOffset = 0;
+			}
+
+			if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+			{
+				EventGraphFunction = new(reader.ReadInt32());
+				EventGraphCallOffset = reader.ReadInt32();
+			}
+			else
+			{
+				EventGraphFunction = null;
+				EventGraphCallOffset = 0;
+			}
         }
 
         public override void Write(AssetBinaryWriter writer)
         {
             base.Write(writer);
             writer.Write((uint)FunctionFlags);
-            // TODO
-        }
+
+			if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
+			{
+				writer.Write(RepOffset);
+			}
+
+			if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)
+			{
+				writer.Write(EventGraphFunction.Index);
+				writer.Write(EventGraphCallOffset);
+			}
+		}
     }
 }
