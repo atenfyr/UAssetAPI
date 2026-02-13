@@ -15,7 +15,11 @@ public class FloatPropertyData : PropertyData
     /// </summary>
     [JsonProperty]
     [JsonConverter(typeof(FSignedZeroJsonConverter))]
-    public float Value;
+    public float Value
+    {
+        get => GetObject<float>();
+        set => SetObject(value);
+    }
 
     public FloatPropertyData(FName name) : base(name) { }
 

@@ -15,7 +15,11 @@ public class DoublePropertyData : PropertyData
     /// </summary>
     [JsonProperty]
     [JsonConverter(typeof(FSignedZeroJsonConverter))]
-    public double Value;
+    public double Value
+    {
+        get => GetObject<double>();
+        set => SetObject(value);
+    }
 
     public DoublePropertyData(FName name) : base(name) { }
 
