@@ -1226,6 +1226,15 @@ namespace UAssetAPI
                 otherAsset.Read(otherReader);
 
                 // loading the asset will automatically add any new schemas to the mappings in-situ
+
+                // add to failed map
+                if (otherAsset.OtherAssetsFailedToAccess != null && OtherAssetsFailedToAccess != null)
+                {
+                    foreach (var entry in otherAsset.OtherAssetsFailedToAccess)
+                    {
+                        OtherAssetsFailedToAccess.Add(entry);
+                    }
+                }
             }
             catch
             {
