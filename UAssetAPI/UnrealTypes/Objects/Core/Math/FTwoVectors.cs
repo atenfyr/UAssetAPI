@@ -1,8 +1,8 @@
-﻿using UAssetAPI.UnrealTypes;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
-public struct FTwoVectors
+public struct FTwoVectors : IStruct<FTwoVectors>
 {
     public FVector V1;
     public FVector V2;
@@ -24,5 +24,17 @@ public struct FTwoVectors
         var size = V1.Write(writer);
         size += V2.Write(writer);
         return size;
+    }
+
+    public static FTwoVectors Read(AssetBinaryReader reader) => new FTwoVectors(reader);
+
+    public override string ToString()
+    {
+        return $"({V1}, {V2})";
+    }
+
+    public static FTwoVectors FromString(string[] d, UAsset asset)
+    {
+        throw new System.NotImplementedException();
     }
 }

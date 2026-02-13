@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +13,27 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
+    public class UsmapSchemaPropertiesJsonConverter : JsonConverter<IReadOnlyDictionary<int, UsmapProperty>>
+    {
+        public override IReadOnlyDictionary<int, UsmapProperty> ReadJson(JsonReader reader, Type objectType, IReadOnlyDictionary<int, UsmapProperty> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            return null;
+        }
+
+        public override void WriteJson(JsonWriter writer, IReadOnlyDictionary<int, UsmapProperty> value, JsonSerializer serializer)
+        {
+            writer.WriteStartObject();
+            foreach (KeyValuePair<int, UsmapProperty> entry in value)
+            {
+                if (entry.Value == null) continue;
+                writer.WritePropertyName(entry.Value.Name);
+                serializer.Serialize(writer, entry.Value.PropertyData?.ToString() ?? "null");
+            }
+            writer.WriteEndObject();
+        }
+    }
+
+
     public enum UsmapVersion : byte
     {
         /// <summary>
@@ -115,7 +138,7 @@ namespace UAssetAPI.Unversioned
         }
         public override string ToString()
         {
-            return base.ToString() + " : (" + InnerType.ToString() + ") : (" + ValueType.ToString() + ")";
+            return base.ToString() + "<" + InnerType.ToString() + ", " + ValueType.ToString() + ">";
         }
 
     }
@@ -131,7 +154,7 @@ namespace UAssetAPI.Unversioned
 
         public override string ToString()
         {
-            return base.ToString() + " : (" + InnerType.ToString() + ")";
+            return base.ToString() + "<" + InnerType.ToString() + ">";
         }
     }
 
@@ -152,7 +175,7 @@ namespace UAssetAPI.Unversioned
 
         public override string ToString()
         {
-            return base.ToString() + " : " + StructType;
+            return base.ToString() + "<" + StructType + ">";
         }
     }
 
@@ -176,7 +199,7 @@ namespace UAssetAPI.Unversioned
 
         public override string ToString()
         {
-            return base.ToString() + " : " + Name + " : " + string.Join(", ", Values ?? new List<string>()) + " : (" + InnerType.ToString() + ")";
+            return base.ToString() + "<" + Name + "<" + InnerType.ToString() + ">>";
         }
     }
 
@@ -206,6 +229,7 @@ namespace UAssetAPI.Unversioned
         public ushort SchemaIndex;
         public ushort ArrayIndex; // not serialized
         public byte ArraySize;
+        [JsonConverter(typeof(StringEnumConverter))]
         public EPropertyFlags PropertyFlags;
         public UsmapPropertyData PropertyData;
 
@@ -248,18 +272,24 @@ namespace UAssetAPI.Unversioned
     {
         public string Name;
         public string SuperType;
+        [JsonIgnore]
         public ushort PropCount;
         public string ModulePath;
         /// <summary>
         /// Whether or not this schema was retrieved from a .uasset file.
         /// </summary>
+        [JsonIgnore]
         public bool FromAsset = false;
 
+        [JsonConverter(typeof(UsmapSchemaPropertiesJsonConverter))]
         public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
 
+        [JsonIgnore]
         private ConcurrentDictionary<int, UsmapProperty> properties;
+        [JsonIgnore]
         private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public UsmapStructKind StructKind;
         public int StructOrClassFlags;
 
@@ -320,17 +350,20 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// The path of the file on disk. This does not need to be specified for regular parsing.
         /// </summary>
+        [JsonIgnore]
         public string FilePath;
 
         /// <summary>
         /// Magic number for the .usmap format
         /// </summary>
+        [JsonIgnore]
         public static readonly ushort USMAP_MAGIC = 0x30C4;
 
         /// <summary>
         /// .usmap file version
         /// </summary>
-        internal UsmapVersion Version;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public UsmapVersion Version;
 
         /// <summary>
         /// Game UE4 object version
@@ -381,11 +414,13 @@ namespace UAssetAPI.Unversioned
         /// <summary>
         /// Whether or not to skip blueprint schemas serialized in this mappings file. Only useful for testing.
         /// </summary>
+        [JsonIgnore]
         public bool SkipBlueprintSchemas = false;
 
         /// <summary>
         /// .usmap name map
         /// </summary>
+        [JsonIgnore]
         public List<string> NameMap;
 
         /// <summary>
@@ -402,6 +437,17 @@ namespace UAssetAPI.Unversioned
         /// List of extensions that failed to parse.
         /// </summary>
         public List<string> FailedExtensions;
+
+        /// <summary>
+        /// Serialize this usmap as JSON. This should only be used for debugging or visualization.
+        /// <para/>
+        /// The serialized JSON is lossy and cannot be converted back into a complete .usmap file.
+        /// </summary>
+        /// <returns>The serialized JSON as a string.</returns>
+        public string SerializeJSON(Formatting jsonFormatting = Formatting.None)
+        {
+            return JsonConvert.SerializeObject(this, jsonFormatting);
+        }
 
         private static UsmapPropertyData ConvertFPropertyToUsmapPropertyData(StructExport exp, FProperty entry)
         {

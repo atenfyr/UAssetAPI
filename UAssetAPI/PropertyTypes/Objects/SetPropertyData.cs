@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -32,7 +32,15 @@ public class SetPropertyData : ArrayPropertyData
 
         if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
-            ArrayType = reader.ReadFName();
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                if (PropertyTypeName is null) throw new FormatException("PropertyTypeName is required to read SetProperty with complete type names.");
+                ArrayType = PropertyTypeName.GetParameter(0).GetName();
+            }
+            else
+            {
+                ArrayType = reader.ReadFName();
+            }
             this.ReadEndPropertyTag(reader);
         }
 
@@ -50,6 +58,7 @@ public class SetPropertyData : ArrayPropertyData
         removedItemsDummy.Ancestry.Initialize(Ancestry, Name);
         removedItemsDummy.ShouldSerializeStructsDifferently = false;
         removedItemsDummy.ArrayType = ArrayType;
+        removedItemsDummy.PropertyTypeName = PropertyTypeName;
         removedItemsDummy.Read(reader, false, leng1, leng2);
         ElementsToRemove = removedItemsDummy.Value;
 
@@ -64,7 +73,10 @@ public class SetPropertyData : ArrayPropertyData
 
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.Write(ArrayType);
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(ArrayType);
+            }
             this.WriteEndPropertyTag(writer);
         }
 

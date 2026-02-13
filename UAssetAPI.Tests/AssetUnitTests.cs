@@ -51,17 +51,19 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// Determines whether or not all exports in an asset have parsed correctly.
+        /// Asserts that all exports in an asset have parsed correctly.
         /// </summary>
         /// <param name="tester">The asset to test.</param>
-        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
-        public bool CheckAllExportsParsedCorrectly(UAsset tester)
+        public void AssertAllExportsParsedCorrectly(UAsset tester)
         {
             foreach (Export testExport in tester.Exports)
             {
-                if (testExport is RawExport) return false;
+                Assert.IsFalse(testExport is RawExport, $"Export '{testExport.ObjectName}' in '{tester.FilePath}' was not parsed correctly (RawExport)");
+                if (testExport is FunctionExport funcExport)
+                {
+                    Assert.IsNotNull(funcExport.ScriptBytecode, $"FunctionExport '{testExport.ObjectName}' in '{tester.FilePath}' has null ScriptBytecode (failed to parse Kismet bytecode)");
+                }
             }
-            return true;
         }
 
         /// <summary>
@@ -310,7 +312,7 @@ namespace UAssetAPI.Tests
             Assert.IsTrue(duplicatesExist);
 
             // Make sure all exports parsed correctly
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
         }
 
         /// <summary>
@@ -322,7 +324,7 @@ namespace UAssetAPI.Tests
         {
             var tester = new UAsset(Path.Combine("TestAssets", "TestUnknownProperties", "BP_DetPack_Charge.uasset"), EngineVersion.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Check that only the expected unknown properties are present
             Dictionary<string, bool> newUnknownProperties = new Dictionary<string, bool>();
@@ -360,7 +362,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -373,7 +375,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -386,7 +388,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -399,7 +401,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -412,7 +414,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -468,7 +470,7 @@ namespace UAssetAPI.Tests
             var assetPath = Path.Combine("TestAssets", "TestManyAssets", "Bloodstained", "PB_DT_RandomizerRoomCheck.uasset");
             var tester = new UAsset(assetPath, EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
             Assert.IsTrue(tester.Exports.Count == 1);
 
             var ourDataTableExport = tester.Exports[0] as DataTableExport;
@@ -494,7 +496,7 @@ namespace UAssetAPI.Tests
             // Load the modified table back in and make sure we're good
             var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester2.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            AssertAllExportsParsedCorrectly(tester2);
             Assert.IsTrue(tester2.Exports.Count == 1);
 
             // Flip the flags back to what they originally were
@@ -517,7 +519,7 @@ namespace UAssetAPI.Tests
             Console.WriteLine(file);
             var tester = new UAsset(Path.Combine("TestAssets", subFolder, file), version, mappings);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             string jsonSerializedAsset = tester.SerializeJson();
             File.WriteAllText(Path.Combine("TestAssets", subFolder, "raw.json"), jsonSerializedAsset);
@@ -558,7 +560,7 @@ namespace UAssetAPI.Tests
         {
             var tester = new UAsset(Path.Combine("TestAssets", "TestCustomProperty", "AlternateStartActor.uasset"), EngineVersion.VER_UE4_23);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Make sure that there are no unknown properties, and that there is at least one CoolProperty with a value of 72
             bool hasCoolProperty = false;
@@ -601,11 +603,11 @@ namespace UAssetAPI.Tests
             // Verify the files can be parsed
             var tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Encrypt them
             decrypter.Encrypt(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"));
@@ -628,11 +630,11 @@ namespace UAssetAPI.Tests
             // Verify the files can be parsed
             var tester = new UAsset(Path.Combine("TestAssets", "TestMaterials", "M_COM_DetailMaster_B.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             tester = new UAsset(Path.Combine("TestAssets", "TestMaterials", "as_mt_base.uasset"), EngineVersion.VER_UE4_20);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
         }
 
         /// <summary>
@@ -644,15 +646,15 @@ namespace UAssetAPI.Tests
         {
             var soundClass = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(soundClass.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(soundClass));
+            AssertAllExportsParsedCorrectly(soundClass);
 
             var material = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestMaterial.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(material.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(material));
+            AssertAllExportsParsedCorrectly(material);
 
             var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(blueprint.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
+            AssertAllExportsParsedCorrectly(blueprint);
         }
       
         /// <summary>
@@ -677,6 +679,7 @@ namespace UAssetAPI.Tests
             TestUE5_4Subsection("Bellwright", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Bellwright", "Bellwright.usmap")));
             TestUE5_4Subsection("TheForeverWinter", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "TheForeverWinter", "TheForeverWinter.usmap")));
             TestUE5_4Subsection("Billiards", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Billiards", "5.4.3-34507850+++UE5+Release-5.4-DeepSpace7.usmap")));
+            TestUE5_4Subsection("JOY", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "JOY", "5.4.3-34507850+++UE5+Release-5.4-JOY.usmap")));
         }
 
         /// <summary>
@@ -813,7 +816,7 @@ namespace UAssetAPI.Tests
             var assetPath = Path.Combine("TestAssets", "TestUE5_1", "UnderlyingEnumTypes", "NewDataTable.uasset");
             var tester = new UAsset(assetPath, EngineVersion.VER_UE5_1, usmap);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
             Assert.IsTrue(tester.Exports.Count == 1);
 
             var ourDataTableExport = tester.Exports[0] as DataTableExport;
@@ -835,7 +838,7 @@ namespace UAssetAPI.Tests
             // Load the modified table back in and make sure we're good
             var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE5_1, usmap);
             Assert.IsTrue(tester2.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            AssertAllExportsParsedCorrectly(tester2);
             Assert.IsTrue(tester2.Exports.Count == 1);
 
             firstEntry = (tester2.Exports[0] as DataTableExport)?.Table?.Data?[1];
@@ -900,7 +903,7 @@ namespace UAssetAPI.Tests
             Trace.LoggingAspect.Stop();
 
             //Assert.IsTrue(tester.VerifyBinaryEquality());
-            //Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            //CheckAllExportsParsedCorrectly(tester);
         }
 #endif
 

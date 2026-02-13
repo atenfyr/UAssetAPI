@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.JSON;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -8,7 +9,7 @@ namespace UAssetAPI.UnrealTypes;
 /// All rotation values are stored in degrees.
 /// </summary>
 [JsonObject(MemberSerialization.OptIn)]
-public struct FRotator
+public struct FRotator : IStruct<FRotator>
 {
     private float? _pitch1;
     private double _pitch2;
@@ -124,5 +125,17 @@ public struct FRotator
             writer.Write(RollFloat);
             return sizeof(float) * 3;
         }
+    }
+
+    public static FRotator Read(AssetBinaryReader reader) => new FRotator(reader);
+
+    public override string ToString() => $"({Roll}, {Pitch}, {Yaw})";
+
+    public static FRotator FromString(string[] d, UAsset asset)
+    {
+        double.TryParse(d[0], out double Roll);
+        double.TryParse(d[1], out double Pitch);
+        double.TryParse(d[2], out double Yaw);
+        return new FRotator(Pitch, Yaw, Roll);
     }
 }

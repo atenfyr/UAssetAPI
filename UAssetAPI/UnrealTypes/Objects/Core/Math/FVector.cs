@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
+using System;
 using UAssetAPI.JSON;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// A vector in 3-D space composed of components (X, Y, Z) with floating/double point precision.
 /// </summary>
-public struct FVector
+public struct FVector : ICloneable, IStruct<FVector>
 {
     private float? _x1;
     private double _x2;
@@ -106,6 +108,8 @@ public struct FVector
         }
     }
 
+    public static FVector Read(AssetBinaryReader reader) => new FVector(reader);
+
     public int Write(AssetBinaryWriter writer)
     {
         if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES)
@@ -122,5 +126,30 @@ public struct FVector
             writer.Write(ZFloat);
             return sizeof(float) * 3;
         }
+    }
+
+    public object Clone()
+    {
+        if (_x1 != null)
+        {
+            return new FVector((float)_x1, (float)_y1, (float)_z1);
+        }
+        else
+        {
+            return new FVector(_x2, _y2, _z2);
+        }
+    }
+
+    public static FVector FromString(string[] d, UAsset asset)
+    {
+        double.TryParse(d[0], out double X);
+        double.TryParse(d[1], out double Y);
+        double.TryParse(d[2], out double Z);
+        return new FVector(X, Y, Z);
+    }
+
+    public override string ToString()
+    {
+        return "(" + X + ", " + Y + ", " + Z + ")";
     }
 }

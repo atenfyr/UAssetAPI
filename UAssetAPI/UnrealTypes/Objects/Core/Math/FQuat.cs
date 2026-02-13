@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.JSON;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -8,7 +9,7 @@ namespace UAssetAPI.UnrealTypes;
 /// The X, Y, Z, W components also double as the Axis/Angle format.
 /// </summary>
 [JsonObject(MemberSerialization.OptIn)]
-public struct FQuat
+public struct FQuat : IStruct<FQuat>
 {
     private float? _x1;
     private double _x2;
@@ -151,5 +152,18 @@ public struct FQuat
             writer.Write(WFloat);
             return sizeof(float) * 4;
         }
+    }
+
+    public static FQuat Read(AssetBinaryReader reader) => new FQuat(reader);
+
+    public override string ToString() => "(" + X + ", " + Y + ", " + Z + ", " + W + ")";
+
+    public static FQuat FromString(string[] d, UAsset asset)
+    {
+        double.TryParse(d[0], out double X);
+        double.TryParse(d[1], out double Y);
+        double.TryParse(d[2], out double Z);
+        double.TryParse(d[3], out double W);
+        return new FQuat(X, Y, Z, W);
     }
 }

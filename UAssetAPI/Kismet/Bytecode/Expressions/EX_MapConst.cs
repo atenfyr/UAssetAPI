@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 
@@ -31,7 +32,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         /// </summary>
         [JsonProperty]
         public KismetExpression[] Elements;
-        
+
         public EX_MapConst()
         {
 
@@ -66,6 +67,16 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
             }
             offset += ExpressionSerializer.WriteExpression(new EX_EndMapConst(), writer);
             return offset;
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 20; // KeyProperty (8) + ValueProperty (8) + NumElements (4)
+            foreach (var element in Elements)
+            {
+                element.Visit(asset, ref offset, visitor);
+            }
         }
     }
 }

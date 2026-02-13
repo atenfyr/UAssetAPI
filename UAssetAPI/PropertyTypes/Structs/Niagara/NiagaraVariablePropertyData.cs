@@ -1,8 +1,18 @@
-﻿using System;
+using System;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
+
+public class NiagaraDataChannelVariablePropertyData : NiagaraVariableBasePropertyData
+{
+    public NiagaraDataChannelVariablePropertyData(FName name, FName forcedType) : base(name, forcedType) { }
+    public NiagaraDataChannelVariablePropertyData(FName name) : base(name) { }
+    public NiagaraDataChannelVariablePropertyData() { }
+
+    private static readonly FString CurrentPropertyType = new FString("NiagaraDataChannelVariable");
+    public override FString PropertyType => CurrentPropertyType;
+}
 
 public class NiagaraVariableBasePropertyData : StructPropertyData
 {

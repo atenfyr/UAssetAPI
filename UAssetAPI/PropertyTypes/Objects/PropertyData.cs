@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,11 +18,12 @@ namespace UAssetAPI.PropertyTypes.Objects
     public enum EPropertyTagFlags
     {
         None						= 0x00,
-	    HasArrayIndex				= 0x01,
-	    HasPropertyGuid				= 0x02,
-	    HasPropertyExtensions		= 0x04,
-	    HasBinaryOrNativeSerialize	= 0x08,
-	    BoolTrue					= 0x10,
+        HasArrayIndex				= 0x01,
+        HasPropertyGuid				= 0x02,
+        HasPropertyExtensions		= 0x04,
+        HasBinaryOrNativeSerialize	= 0x08,
+        BoolTrue					= 0x10,
+        SkippedSerialize            = 0x20,
     }
 
     [Flags]
@@ -42,19 +43,19 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>
         /// some sub property has recorded overridden operation
         /// </summary>
-	    Modified,
+        Modified,
         /// <summary>
         /// everything has been overridden from this property down to every sub property/sub object
         /// </summary>
-	    Replace,
+        Replace,
         /// <summary>
         /// this element was added in the container
         /// </summary>
-	    Add,
+        Add,
         /// <summary>
         /// this element was removed from the container
         /// </summary>
-	    Remove
+        Remove
     };
 
     public class AncestryInfo : ICloneable
@@ -138,6 +139,9 @@ namespace UAssetAPI.PropertyTypes.Objects
 
         [JsonProperty]
         public EPropertyTagFlags PropertyTagFlags;
+
+        [JsonProperty]
+        public FPropertyTypeName PropertyTypeName = null;
 
         /// <summary>
         /// Optional extensions to serialize with this property.
@@ -302,7 +306,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             if (writer.Asset.HasUnversionedProperties) return;
 
-            writer.WritePropertyGuid(PropertyGuid);
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+                writer.WritePropertyGuid(PropertyGuid);
             if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
             {
                 if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME || PropertyTagFlags.HasFlag(EPropertyTagFlags.HasPropertyExtensions))
@@ -383,6 +388,7 @@ namespace UAssetAPI.PropertyTypes.Objects
     public interface IStruct<T>
     {
         abstract static T Read(AssetBinaryReader reader);
+        abstract static T FromString(string[] d, UAsset asset);
 
         int Write(AssetBinaryWriter writer);
     }
@@ -420,6 +426,11 @@ namespace UAssetAPI.PropertyTypes.Objects
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public override void FromString(string[] d, UAsset asset)
+        {
+            Value = T.FromString(d, asset);
         }
     }
 }

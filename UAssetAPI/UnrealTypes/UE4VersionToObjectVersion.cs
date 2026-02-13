@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI.UnrealTypes
+namespace UAssetAPI.UnrealTypes
 {
     public enum UE4VersionToObjectVersion
     {
@@ -38,6 +38,7 @@
         VER_UE5_4 = 522,
         VER_UE5_5 = 522,
         VER_UE5_6 = 522,
+        VER_UE5_7 = 522,
     }
 
     public enum UE5VersionToObjectVersion
@@ -50,5 +51,6 @@
         VER_UE5_4 = 1012,
         VER_UE5_5 = 1013,
         VER_UE5_6 = 1017,
+        VER_UE5_7 = 1017,
     }
 }

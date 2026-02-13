@@ -55,5 +55,15 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
                 return 1;
             }
         }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 1; // EventType
+            if (EventType.Equals(EScriptInstrumentationType.InlineEvent))
+            {
+                offset += 12; // EventName (FName)
+            }
+        }
     }
 }

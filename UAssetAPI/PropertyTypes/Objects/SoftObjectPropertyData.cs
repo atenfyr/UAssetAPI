@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using UAssetAPI.CustomVersions;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects;
@@ -72,7 +73,7 @@ public struct FTopLevelAssetPath
 /// <summary>
 /// A reference variable to another object which may be null, and may become valid or invalid at any point.
 /// </summary>
-public struct FSoftObjectPath : IEquatable<FSoftObjectPath>
+public struct FSoftObjectPath : IEquatable<FSoftObjectPath>, IStruct<FSoftObjectPath>
 {
     /// <summary>
     /// Asset path, patch to a top level object in a package. This is /package/path.assetname/
@@ -119,11 +120,14 @@ public struct FSoftObjectPath : IEquatable<FSoftObjectPath>
             else
             {
                 AssetPath = new FTopLevelAssetPath(null, null);
-            }
-
-            SubPathString = reader.ReadFString();
+            } 
+            SubPathString = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SoftObjectPathUtf8SubPaths
+                ? reader.ReadFString()
+                : reader.ReadUtf8String();
         }
     }
+
+    public static FSoftObjectPath Read(AssetBinaryReader reader) => new FSoftObjectPath(reader);
 
     public int Write(AssetBinaryWriter writer, bool allowIndex = true)
     {
@@ -152,9 +156,16 @@ public struct FSoftObjectPath : IEquatable<FSoftObjectPath>
         var offset = writer.BaseStream.Position;
         if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES) writer.Write(AssetPath.PackageName);
         writer.Write(AssetPath.AssetName);
-        writer.Write(SubPathString);
+
+        if (writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SoftObjectPathUtf8SubPaths)
+            writer.Write(SubPathString);
+        else
+            writer.WriteUtf8String(SubPathString);
+
         return (int)(writer.BaseStream.Position - offset);
     }
+
+    public int Write(AssetBinaryWriter writer) => Write(writer, true);
 
     public static bool operator ==(FSoftObjectPath lhs, FSoftObjectPath rhs)
     {
@@ -182,51 +193,33 @@ public struct FSoftObjectPath : IEquatable<FSoftObjectPath>
     {
         return HashCode.Combine(AssetPath.PackageName, AssetPath.AssetName, SubPathString);
     }
+
+    public override string ToString()
+    {
+        return $"({AssetPath.PackageName}, {AssetPath.AssetName}, {SubPathString})";
+    }
+
+    public static FSoftObjectPath FromString(string[] d, UAsset asset)
+    {
+        FName one = FName.FromString(asset, d[0]);
+        FName two = FName.FromString(asset, d[1]);
+        FString three = string.IsNullOrEmpty(d[2]) ? null : FString.FromString(d[2]);
+
+        return new FSoftObjectPath(one, two, three);
+    }
 }
 
 /// <summary>
 /// Describes a reference variable to another object which may be null, and may become valid or invalid at any point. Near synonym for <see cref="AssetObjectPropertyData"/>.
 /// </summary>
-public class SoftObjectPropertyData : PropertyData<FSoftObjectPath>
+public class SoftObjectPropertyData : BasePropertyData<FSoftObjectPath>
 {
     public SoftObjectPropertyData(FName name) : base(name) { }
 
     public SoftObjectPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("SoftObjectProperty");
+
+    public override bool HasCustomStructSerialization => false;
     public override FString PropertyType => CurrentPropertyType;
-
-    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-    {
-        if (includeHeader)
-        {
-            this.ReadEndPropertyTag(reader);
-        }
-
-        Value = new FSoftObjectPath(reader);
-    }
-
-    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-    {
-        if (includeHeader)
-        {
-            this.WriteEndPropertyTag(writer);
-        }
-
-        return Value.Write(writer);
-    }
-
-    public override string ToString()
-    {   
-        return "(" + Value.AssetPath.PackageName.ToString() + ", " + Value.AssetPath.AssetName.ToString() + ", " + Value.SubPathString.ToString() + ")";
-    }
-
-    public override void FromString(string[] d, UAsset asset)
-    {
-        FName one = FName.FromString(asset, d[0]);
-        FName two = FName.FromString(asset, d[1]);
-        FString three = string.IsNullOrEmpty(d[2]) ? null : FString.FromString(d[2]);
-
-        Value = new FSoftObjectPath(one, two, three);
-    }
 }
