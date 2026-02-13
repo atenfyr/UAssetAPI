@@ -8,7 +8,8 @@ Namespace: UAssetAPI.UnrealTypes
 public struct FMatrix
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FMatrix](./uassetapi.unrealtypes.fmatrix.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FMatrix](./uassetapi.unrealtypes.fmatrix.md)<br>
+Implements [IStruct&lt;FMatrix&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Fields
 
@@ -66,6 +67,20 @@ FMatrix(AssetBinaryReader reader)
 
 ## Methods
 
+### **Read(AssetBinaryReader)**
+
+```csharp
+FMatrix Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FMatrix](./uassetapi.unrealtypes.fmatrix.md)<br>
+
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
@@ -79,3 +94,19 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FMatrix FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FMatrix](./uassetapi.unrealtypes.fmatrix.md)<br>

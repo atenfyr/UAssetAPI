@@ -8,7 +8,8 @@ A vector in 4-D space composed of components (X, Y, Z, W) with floating/double p
 public struct FVector4
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector4](./uassetapi.unrealtypes.fvector4.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+Implements [IStruct&lt;FVector4&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Properties
 
@@ -159,3 +160,43 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FVector4 Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FVector4](./uassetapi.unrealtypes.fvector4.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FVector4 FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FVector4](./uassetapi.unrealtypes.fvector4.md)<br>

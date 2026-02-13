@@ -28,7 +28,31 @@ public FString InstanceName;
 public ValueTuple`2[] Specifiers;
 ```
 
+### **VariadicInputs**
+
+```csharp
+public FNiagaraVariableCommonReference[] VariadicInputs;
+```
+
+### **VariadicOutputs**
+
+```csharp
+public FNiagaraVariableCommonReference[] VariadicOutputs;
+```
+
+### **MiscUsageBitMask**
+
+```csharp
+public ushort MiscUsageBitMask;
+```
+
 ## Constructors
+
+### **FNiagaraDataInterfaceGeneratedFunction()**
+
+```csharp
+public FNiagaraDataInterfaceGeneratedFunction()
+```
 
 ### **FNiagaraDataInterfaceGeneratedFunction(AssetBinaryReader)**
 

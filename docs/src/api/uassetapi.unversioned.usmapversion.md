@@ -17,3 +17,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | PackageVersioning | 1 | Adds optional asset package versioning |
 | LongFName | 2 | 16-bit wide names in name map |
 | LargeEnums | 3 | 16-bit enum entry count |
+| ExplicitEnumValues | 4 | Adds enum values (instead of assuming ordinal) |

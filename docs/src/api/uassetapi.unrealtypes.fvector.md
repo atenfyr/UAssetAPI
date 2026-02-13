@@ -8,7 +8,8 @@ A vector in 3-D space composed of components (X, Y, Z) with floating/double poin
 public struct FVector
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector](./uassetapi.unrealtypes.fvector.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector](./uassetapi.unrealtypes.fvector.md)<br>
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable), [IStruct&lt;FVector&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Properties
 
@@ -120,6 +121,20 @@ FVector(AssetBinaryReader reader)
 
 ## Methods
 
+### **Read(AssetBinaryReader)**
+
+```csharp
+FVector Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FVector](./uassetapi.unrealtypes.fvector.md)<br>
+
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
@@ -133,3 +148,39 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Clone()**
+
+```csharp
+object Clone()
+```
+
+#### Returns
+
+[Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FVector FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FVector](./uassetapi.unrealtypes.fvector.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

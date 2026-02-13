@@ -161,6 +161,16 @@ public FString ReadFString()
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
 
+### **ReadUtf8String()**
+
+```csharp
+public FString ReadUtf8String()
+```
+
+#### Returns
+
+[FString](./uassetapi.unrealtypes.fstring.md)<br>
+
 ### **ReadNameMapString(UInt32&)**
 
 ```csharp

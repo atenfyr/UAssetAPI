@@ -6,16 +6,16 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ObjToI
  A conversion from an object or interface variable to a native interface variable.
 
 ```csharp
-public class EX_ObjToInterfaceCast : UAssetAPI.Kismet.Bytecode.KismetExpression
+public class EX_ObjToInterfaceCast : EX_CastBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_ObjToInterfaceCast](./uassetapi.kismet.bytecode.expressions.ex_objtointerfacecast.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_CastBase](./uassetapi.kismet.bytecode.expressions.ex_castbase.md) → [EX_ObjToInterfaceCast](./uassetapi.kismet.bytecode.expressions.ex_objtointerfacecast.md)
 
 ## Fields
 
 ### **ClassPtr**
 
-A pointer to the interface class to convert to.
+The interface class to convert to.
 
 ```csharp
 public FPackageIndex ClassPtr;
@@ -76,36 +76,3 @@ public string Inst { get; }
 ```csharp
 public EX_ObjToInterfaceCast()
 ```
-
-## Methods
-
-### **Read(AssetBinaryReader)**
-
-Reads out the expression from a BinaryReader.
-
-```csharp
-public void Read(AssetBinaryReader reader)
-```
-
-#### Parameters
-
-`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-The BinaryReader to read from.
-
-### **Write(AssetBinaryWriter)**
-
-Writes the expression to a BinaryWriter.
-
-```csharp
-public int Write(AssetBinaryWriter writer)
-```
-
-#### Parameters
-
-`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
-The BinaryWriter to write from.
-
-#### Returns
-
-[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The iCode offset of the data that was written.

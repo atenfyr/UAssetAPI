@@ -8,7 +8,8 @@ One key in a rich, editable float curve
 public struct FRichCurveKey
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FRichCurveKey](./uassetapi.unrealtypes.frichcurvekey.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FRichCurveKey](./uassetapi.unrealtypes.frichcurvekey.md)<br>
+Implements [IStruct&lt;FRichCurveKey&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Fields
 
@@ -125,3 +126,43 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FRichCurveKey Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FRichCurveKey](./uassetapi.unrealtypes.frichcurvekey.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FRichCurveKey FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FRichCurveKey](./uassetapi.unrealtypes.frichcurvekey.md)<br>

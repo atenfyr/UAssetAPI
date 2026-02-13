@@ -161,6 +161,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | LumenRayLightingModeOverrideEnum | 146 | Changed HitLighting to HitLightingForReflections, and HitLighting now means hit lighting for entire Lumen |
 | PCGPartitionActorDesc | 147 | PCGPartitionActorDesc |
 | LandscapeTargetLayersInLandscapeActor | 148 | Target layers are now defined in the Landscape actor and not continuously synced from the assigned material. |
+| DataflowTemplatedTypeFix | 149 | Fix to get full name of templated type ( Tarray &gt; TArray{Float} for example ) |
 | LevelInstanceStaticLightingSupport | 150 | Changes for LevelInstance support in StaticLighting |
 | PCGGridDescriptor | 151 | PCGGridDescriptor |
 | AnimNextGraphAccessSpecifiers | 152 | AnimNext graphs now have public/private state |
@@ -175,9 +176,63 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | LevelSequenceUpgradeDynamicBindings | 162 | Upgraded movie scene 'dynamic bindings' to use the new Custom Bindings system |
 | ChaosStoreKinematicTargetRotationAsSinglePrecision | 163 | Changed the precision for the stored rotation on kinematic targets to match the precision used in particles |
 | PCGApplyOnActorNodeMoveTargetActorEdgeToInput | 164 | PCG changes around the ApplyOnActor node, where we collapsed the TargetActor to the input pin. |
-| TimelinePlayingStateTrackerDeprecation | 165 | Deprecation of the bPlaying flag on FTimeline struct types in favor of a better |
+| TimelinePlayingStateTrackerDeprecation | 165 | Deprecation of the bPlaying flag on FTimeline struct types in favor of a better PlayingStateTracker type to improve replication reliability |
 | MeshPaintTextureUsesEditorOnly | 166 | Enable SkipOnlyEditorOnly style cooking of UStaticMeshComponent::MeshPaintTexture |
 | LandscapeBodyInstanceAsSharedProperty | 167 | Fixup and synchronize some landscape properties that have moved to the property sharing/overriding system : |
 | AnimNextModuleRefactor | 168 | Multiple changes to AnimNext modules, variables etc. |
 | SubsurfaceProfileGuid | 169 | Subsurface profile now has a guid to be able to select one of many in a Substrate material. |
 | SolverIterationsDataSupportInChaosVisualDebugger | 170 | Added support for to record the new solver iteration settings in CVD |
+| MaterialInputUsesLinearColor | 171 | Updated FColorMaterialInput to use FLinearColor instead of FColor |
+| FunctionalTestCanRunInEditorWorld | 172 | Updated editor only AFunctionalTest running logic to run tests editor world if the actors don't support PIE |
+| VisualLoggerSupportDisplayName | 173 | Added support for display name in the Visual Logger |
+| GyroscopicTorquesSupportInChaosVisualDebugger | 174 | Added support for the GyroscopicTorque flag in CVD |
+| AddManagedArrayCollectionPropertySerialization | 175 | Added managed array property serialization |
+| LandscapeTexturePatchUsesTextureAssetResolution | 176 | Landscape texture patches in Texture Asset source mode now use proper resolution when calculating transform |
+| WorldPartitionActorDescSerializeRelativeTransform | 177 | Added support for relative transform in WorldPartitionActorDesc |
+| SceneGraphEntitiesPrivateByDefault | 178 | Make sure scene graph entities are not public by default |
+| DebugColorForPhysicalMaterials | 179 | Added debug color for physical materials |
+| AddedPreprocessedFontGeometry | 180 | Added PreprocessedFontGeometry to FFontFaceData |
+| DynamicMeshSerializeSculptLayers | 181 | Added Dynamic Mesh Sculpt Layer serialization |
+| SpatialHashRuntimeGridInfoSpriteFixup | 182 | Fix reachable garbage object warnings from some legacy ASpatialHashRuntimeGridInfo actors |
+| AnimSequenceRawDataOnlyFlagRemoval | 183 | Removed UAnimSequence::bUseRawDataOnly flag alongside compression refactor |
+| ResetLevelInstanceHLODRelevancy | 184 | HLOD relevancy of Level Instances was previously ignored, now taken into account. Reset to the default behavior. |
+| SceneCaptureDefaultSettings | 185 | Updated default scene capture post-processing settings to reflect the underlying implementation overrides |
+| AddClothAssetBase | 186 | Add Cloth Asset Base class serialization |
+| PCGInlineConstantDefaultValues | 187 | Add inline constant default values to the PCG graph nodes. |
+| AddMaterialSubstrateSubsurfaceType | 188 | Add MaterialSubstrateSubsurfaceType type to UMaterialExpressionSubstrateSlabBSDF for replacing bUseSSSDifffusion |
+| AddedRuntimeVirtualTextureUseStreamingMipsInEditorMode | 189 | Added option to visualize runtime virtual textures' streamed mips only in PIE |
+| MediaPlateHoldoutComponentRemoval | 190 | Media plate holdout composite components have been replaced by a checkbox |
+| PCGLandscapeCacheDefaultSerializationChanged | 191 | Changed PCG landscape cache default from "serialize at cook" to "never serialize" |
+| SoftObjectPathUtf8SubPaths | 192 | FSoftObjectPath::SubPathString changed to FUtf8String |
+| SoftObjectPathTrailingNULsMaintained | 193 | FSoftObjectPath::SubPathString could be saved with trailing NULs and need truncating |
+| WaterBodyPhysicalMaterialPropertyRemoval | 194 | Water body components no longer need to maintain their own PhysicalMaterial property since they are primitive components. After this version, leverage that one instead. |
+| PCGAttributeSetToPointAlwaysConverts | 195 | PCG fixed attribute set -&gt; point conversion passing through empty point data as-is and violating output pin type. |
+| ConvertGlintDensity | 197 | Convert Sustrate glint density properly |
+| ClothAssetSkinweightsValidation | 198 | Introduced skinweight validation to avoid render crashes and disappearing simulation meshes |
+| VerseRightToLeftHandedness | 199 | Switching verse from right handed to left handed |
+| AdditionalGameThreadDataSupportInChaosVisualDebugger | 200 | Added additional data required to record and represent particle data from the game thread (Kinematic targets, and SQ rejection reasons) |
+| UpgradeWidgetBlueprintLegacySequencePlayer | 201 | Upgrade UMG widget blueprints using legacy animation API |
+| PCGSplineDirectionClockwiseFix | 202 | Changed clockwise detection algorithm for PCGSplineDirection node with the correct one, but add a version to not break previous nodes. |
+| RectLightFixedEVUnitConversion | 203 | Rect Lights set in EV units had the wrong intensity (older files need a flag set to keep the old look) |
+| ParticleInflatedBoundsInChaosVisualDebugger | 204 | Add particle bounds to data exported to CVD |
+| MigrateLandscapeEditLayerProperties | 205 | Migrate properties from FLandscapeLayer to ULandscapeEditLayer |
+| ThreadContextDataInChaosVisualDebuggerDebugDrawData | 206 | Added more context data to CVD's traced shapes so we can play it back at the solver stage level (not just game thread frames) |
+| PCGChangedSurfaceSamplerDefaultGridCreationMode | 207 | Changed default grid mode in surface sampler to a version that's more intuitive and less error-prone |
+| MediaPlateOverlayTechniqueRemoval | 208 | Media plate overlay composite technique replacement with holdout composite |
+| PerParticleFlagToAllowPartialIslandSleepInConnectedIsland | 209 | Added particle flag to allow/disallow partial island sleeping in the island the particle is in |
+| MaterialFunctionBlendTopBottomInputEnum | 210 | Material Function Blend Deserialize Top/Bottom input nodes with clearer enum marker. |
+| MorphTargetCookedCPUDataCompressed | 211 | Cooked CPU-side morph target points are now stored internally in the same compressed format as the GPU morph data. |
+| AnimNextVariableReferences | 212 | AnimNext variables converted to references |
+| LensComponentDefaultToDistortionSVE | 213 | The default distortion rendering mode used by the Lens Component is now the Lens Distortion Scene View Extension |
+| ChangeDefaultAlphaBlendType | 214 | Animation default blend option changed from Linear to HermiteCubic (aka SmoothStep, ease in / ease out) |
+| PerParticleIterationCountMovedToDynamicMisc | 215 | Moved Position/Velocity/Projection Iteration Counts from FChaosVDFRigidParticleControlFlags to FChaosVDParticleDynamicMisc |
+| AddedMissingSerializationForPropertiesInDynamicMisc | 216 | Added missing custom serialization for some properties in the ParticleDynamicMisc structure used by the Chaos Visual Debugger |
+| PCGDeprecateWorldPartitionGenerationSources | 217 | Change default value for deprecated bEnableWorldPartitionGenerationSources |
+| CompositeActorSceneCaptureRefactor | 218 | Refactored the composite (plugin) actor scene capture management. |
+| HLODLayerEditorOnlyObject | 219 | Moved HLOD Layer properties to an editor only optional object |
+| DeduplicatedDebugNameSerializationInCVD | 220 | Deduplicated particle debug names serialization in the Chaos Visual Debugger |
+| SpecializeBloomIntensity | 221 | Add BloomGaussianIntensity and BloomConvolutionIntensity |
+| WorldPartitionActorComponentDesc | 222 | Add support for world partition actor component descriptors |
+| MigrateLandscapeNonEditLayerToEditLayer | 223 | Migrate Non-Edit layer landscapes to use the edit layer (ULandscapeEditLayer) system |
+| DynamicMeshAttributesMorphTargets | 224 | FDynamicMeshAttributeSet has Morph Targets. |
+| LandscapeAdvancedWeightBlending | 225 | Introduce landscape advanced weight blending |

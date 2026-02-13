@@ -116,3 +116,41 @@ The BinaryWriter to write from.
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The iCode offset of the data that was written.
+
+### **Visit(UAsset, UInt32&, Action&lt;KismetExpression, UInt32&gt;)**
+
+Visits this expression and all child expressions, calling the visitor function for each with the in-memory offset.
+ Note: The offset is the in-memory offset, not the serialization offset.
+
+```csharp
+public void Visit(UAsset asset, UInt32& offset, Action<KismetExpression, uint> visitor)
+```
+
+#### Parameters
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+The asset containing this expression.
+
+`offset` [UInt32&](https://docs.microsoft.com/en-us/dotnet/api/system.uint32&)<br>
+Reference to the current in-memory offset, which is incremented as expressions are visited.
+
+`visitor` [Action&lt;KismetExpression, UInt32&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.action-2)<br>
+The visitor function to call for each expression with the expression and its offset.
+
+### **GetSize(UAsset)**
+
+Gets the in-memory size of this expression and all child expressions.
+
+```csharp
+public uint GetSize(UAsset asset)
+```
+
+#### Parameters
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+The asset containing this expression.
+
+#### Returns
+
+[UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
+The size in bytes of this expression.

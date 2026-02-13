@@ -13,14 +13,6 @@ Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.iclon
 
 ## Fields
 
-### **Value**
-
-The float that this property represents.
-
-```csharp
-public float Value;
-```
-
 ### **Name**
 
 The name of this property.
@@ -71,6 +63,12 @@ public bool IsZero;
 public EPropertyTagFlags PropertyTagFlags;
 ```
 
+### **PropertyTypeName**
+
+```csharp
+public FPropertyTypeName PropertyTypeName;
+```
+
 ### **PropertyTagExtensions**
 
 Optional extensions to serialize with this property.
@@ -108,6 +106,18 @@ public object Tag;
 ```
 
 ## Properties
+
+### **Value**
+
+The float that this property represents.
+
+```csharp
+public float Value { get; set; }
+```
+
+#### Property Value
+
+[Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
 
 ### **PropertyType**
 

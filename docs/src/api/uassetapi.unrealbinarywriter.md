@@ -187,6 +187,20 @@ public int Write(FString value)
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
+### **WriteUtf8String(FString)**
+
+```csharp
+public int WriteUtf8String(FString value)
+```
+
+#### Parameters
+
+`value` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
 ### **WriteCustomVersionContainer(ECustomVersionSerializationFormat, List&lt;CustomVersion&gt;)**
 
 ```csharp

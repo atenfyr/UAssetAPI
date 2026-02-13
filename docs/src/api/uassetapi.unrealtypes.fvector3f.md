@@ -9,7 +9,7 @@ public struct FVector3f
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FVector3f](./uassetapi.unrealtypes.fvector3f.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable), [IStruct&lt;FVector3f&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Fields
 
@@ -82,3 +82,43 @@ object Clone()
 #### Returns
 
 [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FVector3f Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FVector3f](./uassetapi.unrealtypes.fvector3f.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FVector3f FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FVector3f](./uassetapi.unrealtypes.fvector3f.md)<br>

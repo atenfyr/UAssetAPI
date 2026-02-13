@@ -192,7 +192,7 @@ public int LegacyFileVersion;
 **Remarks:**
 
 The lower 16 bits stores the UE3 engine version, while the upper 16 bits stores the UE4/licensee version. For newer packages this is -7.
- VersionDescription-2indicates presence of enum-based custom versions-3indicates guid-based custom versions-4indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions-5indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages-6indicates optimizations to how custom versions are being serialized-7indicates the texture allocation info has been removed from the summary-8indicates that the UE5 version has been added to the summary
+ VersionDescription-2indicates presence of enum-based custom versions-3indicates guid-based custom versions-4indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions-5indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages-6indicates optimizations to how custom versions are being serialized-7indicates the texture allocation info has been removed from the summary-8indicates that the UE5 version has been added to the summary-9indicates a contractual change in when early exits are required based on FileVersionTooNew. At or after this LegacyFileVersion, we support changing the PackageFileSummary serialization format for all bytes serialized after FileVersionLicensee, and that format change can be conditional on any of the versions parsed before that point. All packageloaders that understand the -9 legacyfileformat are required to early exit without further serialization at that point if FileVersionTooNew is true.
 
 ### **DataResourceVersion**
 
@@ -1196,17 +1196,15 @@ The ObjectName that the requested import will have.
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The index of the requested import in the name map, or zero if one could not be found.
 
-### **PullSchemasFromAnotherAsset(FName, FName)**
+### **PullSchemasFromAnotherAsset(FName)**
 
 ```csharp
-public bool PullSchemasFromAnotherAsset(FName path, FName desiredObject)
+public bool PullSchemasFromAnotherAsset(FName path)
 ```
 
 #### Parameters
 
 `path` [FName](./uassetapi.unrealtypes.fname.md)<br>
-
-`desiredObject` [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 #### Returns
 

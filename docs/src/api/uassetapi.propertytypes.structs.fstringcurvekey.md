@@ -25,6 +25,18 @@ public FString Value;
 
 ## Constructors
 
+### **FStringCurveKey(Single, FString)**
+
+```csharp
+FStringCurveKey(float time, FString value)
+```
+
+#### Parameters
+
+`time` [Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
+
+`value` [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
 ### **FStringCurveKey(AssetBinaryReader)**
 
 ```csharp
@@ -64,3 +76,29 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FStringCurveKey FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FStringCurveKey](./uassetapi.propertytypes.structs.fstringcurvekey.md)<br>

@@ -100,4 +100,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | StatelessInitialMeshOrientationV1 | 88 | Update Initial Mesh Orientation Module |
 | HierarchyEditorScriptSupport | 89 | Hierarchy Editor was implemented |
 | EmitterStateAddLoopDelayEnabled | 90 | Added loop delay enabled to emitter state |
-| VersionPlusOne | 91 | DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously. -----new versions can be added above this line------------------------------------------------- |
+| SerializeUsageBitMaskToGPUFunctionInfo | 91 | Make sure that we serialize the UsageBitMask with the GPUFunctionInfo |
+| AddedNewInterpolatedSpawnMode | 92 | Changed the interpolated spawn property into an enum |
+| UserAssetTagStorageInMetaData | 93 | Adding user asset tag storage in UMetaData for all UPackages |
+| VersionPlusOne | 94 | DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously. -----new versions can be added above this line------------------------------------------------- |

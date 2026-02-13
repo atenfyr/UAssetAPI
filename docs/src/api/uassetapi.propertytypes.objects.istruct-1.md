@@ -26,6 +26,22 @@ T Read(AssetBinaryReader reader)
 
 T<br>
 
+### **FromString(String[], UAsset)**
+
+```csharp
+T FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+T<br>
+
 ### **Write(AssetBinaryWriter)**
 
 ```csharp

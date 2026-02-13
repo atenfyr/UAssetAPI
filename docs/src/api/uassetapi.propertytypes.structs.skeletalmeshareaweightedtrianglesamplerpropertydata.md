@@ -6,7 +6,7 @@ Namespace: UAssetAPI.PropertyTypes.Structs
 public class SkeletalMeshAreaWeightedTriangleSamplerPropertyData : WeightedRandomSamplerPropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FWeightedRandomSampler&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [WeightedRandomSamplerPropertyData](./uassetapi.propertytypes.structs.weightedrandomsamplerpropertydata.md) → [SkeletalMeshAreaWeightedTriangleSamplerPropertyData](./uassetapi.propertytypes.structs.skeletalmeshareaweightedtrianglesamplerpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FWeightedRandomSampler&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BasePropertyData&lt;FWeightedRandomSampler&gt;](./uassetapi.propertytypes.objects.basepropertydata-1.md) → [WeightedRandomSamplerPropertyData](./uassetapi.propertytypes.structs.weightedrandomsamplerpropertydata.md) → [SkeletalMeshAreaWeightedTriangleSamplerPropertyData](./uassetapi.propertytypes.structs.skeletalmeshareaweightedtrianglesamplerpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -61,6 +61,12 @@ public bool IsZero;
 public EPropertyTagFlags PropertyTagFlags;
 ```
 
+### **PropertyTypeName**
+
+```csharp
+public FPropertyTypeName PropertyTypeName;
+```
+
 ### **PropertyTagExtensions**
 
 Optional extensions to serialize with this property.
@@ -99,16 +105,6 @@ public object Tag;
 
 ## Properties
 
-### **HasCustomStructSerialization**
-
-```csharp
-public bool HasCustomStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **PropertyType**
 
 ```csharp
@@ -118,6 +114,16 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **HasCustomStructSerialization**
+
+```csharp
+public bool HasCustomStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Value**
 

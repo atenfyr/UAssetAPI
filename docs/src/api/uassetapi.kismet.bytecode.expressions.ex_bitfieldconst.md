@@ -1,0 +1,125 @@
+# EX_BitFieldConst
+
+Namespace: UAssetAPI.Kismet.Bytecode.Expressions
+
+A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_BitFieldConst](./uassetapi.kismet.bytecode.eexprtoken.md#ex_bitfieldconst) instruction.
+ Assigns to a single bit, defined by an FProperty.
+
+```csharp
+public class EX_BitFieldConst : UAssetAPI.Kismet.Bytecode.KismetExpression
+```
+
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_BitFieldConst](./uassetapi.kismet.bytecode.expressions.ex_bitfieldconst.md)
+
+## Fields
+
+### **Property**
+
+A pointer to the bit property.
+
+```csharp
+public KismetPropertyPointer Property;
+```
+
+### **Value**
+
+The bit value.
+
+```csharp
+public byte Value;
+```
+
+### **Tag**
+
+An optional tag which can be set on any expression in memory. This is for the user only, and has no bearing in the API itself.
+
+```csharp
+public object Tag;
+```
+
+### **RawValue**
+
+```csharp
+public object RawValue;
+```
+
+## Properties
+
+### **Token**
+
+The token of this expression.
+
+```csharp
+public EExprToken Token { get; }
+```
+
+#### Property Value
+
+[EExprToken](./uassetapi.kismet.bytecode.eexprtoken.md)<br>
+
+### **Inst**
+
+The token of this instruction expressed as a string.
+
+```csharp
+public string Inst { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+## Constructors
+
+### **EX_BitFieldConst()**
+
+```csharp
+public EX_BitFieldConst()
+```
+
+## Methods
+
+### **Read(AssetBinaryReader)**
+
+Reads out the expression from a BinaryReader.
+
+```csharp
+public void Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+The BinaryReader to read from.
+
+### **Write(AssetBinaryWriter)**
+
+Writes the expression to a BinaryWriter.
+
+```csharp
+public int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+The BinaryWriter to write from.
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+The iCode offset of the data that was written.
+
+### **Visit(UAsset, UInt32&, Action&lt;KismetExpression, UInt32&gt;)**
+
+```csharp
+public void Visit(UAsset asset, UInt32& offset, Action<KismetExpression, uint> visitor)
+```
+
+#### Parameters
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+`offset` [UInt32&](https://docs.microsoft.com/en-us/dotnet/api/system.uint32&)<br>
+
+`visitor` [Action&lt;KismetExpression, UInt32&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.action-2)<br>
