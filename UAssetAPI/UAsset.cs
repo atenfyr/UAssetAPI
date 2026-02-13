@@ -1186,7 +1186,7 @@ namespace UAssetAPI
 
         public ISet<FName> OtherAssetsFailedToAccess = new HashSet<FName>();
 
-        public virtual bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
+        public virtual bool PullSchemasFromAnotherAsset(FName path)
         {
             if (CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipPreloadDependencyLoading)) return false;
 
@@ -1526,6 +1526,57 @@ namespace UAssetAPI
         internal bool doWeHaveAssetRegistryData = true;
         [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
+
+        [JsonIgnore]
+        internal bool haveWeLoadedDependencies = false;
+        private Dictionary<int, IList<int>> LoadDependencies()
+        {
+            haveWeLoadedDependencies = true;
+            if (Exports == null) return null;
+
+            Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
+            for (int i = 0; i < Exports.Count; i++)
+            {
+                Export newExport = Exports[i];
+                List<FPackageIndex> deps = new List<FPackageIndex>();
+                deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
+                deps.AddRange(newExport.SerializationBeforeCreateDependencies);
+                //deps.Add(newExport.ClassIndex);
+                //deps.Add(newExport.SuperIndex);
+
+                depsMap[i + 1] = new List<int>();
+                foreach (FPackageIndex dep in deps)
+                {
+                    if (dep.IsImport())
+                    {
+                        Import imp = dep.ToImport(this);
+                        if (imp?.OuterIndex?.IsImport() ?? false)
+                        {
+                            Import outerIndex1 = imp?.OuterIndex?.ToImport(this);
+                            FName sourcePath = outerIndex1?.ObjectName;
+                            if (sourcePath?.ToString()?.StartsWith('/') ?? false)
+                            {
+                                this.PullSchemasFromAnotherAsset(sourcePath);
+                            }
+                            else if (outerIndex1?.OuterIndex?.IsImport() ?? false)
+                            {
+                                Import outerIndex2 = outerIndex1.OuterIndex.ToImport(this);
+                                if (outerIndex2?.ObjectName?.ToString()?.StartsWith('/') ?? false)
+                                {
+                                    this.PullSchemasFromAnotherAsset(outerIndex2.ObjectName);
+                                }
+                            }
+                        }
+                    }
+
+                    if (dep.IsExport())
+                    {
+                        depsMap[i + 1].Add(dep.Index);
+                    }
+                }
+            }
+            return depsMap;
+        }
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
@@ -2074,35 +2125,7 @@ namespace UAssetAPI
                 bool skipParsingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
 
                 // load dependencies, if needed and available
-                Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
-                for (int i = 0; i < Exports.Count; i++)
-                {
-                    Export newExport = Exports[i];
-                    List<FPackageIndex> deps = new List<FPackageIndex>();
-                    deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
-                    deps.AddRange(newExport.SerializationBeforeCreateDependencies);
-                    //deps.Add(newExport.ClassIndex);
-                    //deps.Add(newExport.SuperIndex);
-
-                    depsMap[i + 1] = new List<int>();
-                    foreach (FPackageIndex dep in deps)
-                    {
-                        if (dep.IsImport())
-                        {
-                            Import imp = dep.ToImport(this);
-                            if (imp.OuterIndex.IsImport())
-                            {
-                                var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
-                                this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
-                            }
-                        }
-
-                        if (dep.IsExport())
-                        {
-                            depsMap[i + 1].Add(dep.Index);
-                        }
-                    }
-                }
+                Dictionary<int, IList<int>> depsMap = LoadDependencies();
                 exportLoadOrder.AddRange(Enumerable.Range(1, Exports.Count).SortByDependencies(depsMap));
 
                 // Export data
@@ -2442,6 +2465,9 @@ namespace UAssetAPI
 
             // resolve ancestries
             ResolveAncestries();
+
+            // load deps if needed (i.e. asset was loaded from json)
+            if (!haveWeLoadedDependencies) LoadDependencies();
 
             var stre = new MemoryStream();
             try

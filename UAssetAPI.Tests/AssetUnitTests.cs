@@ -549,6 +549,7 @@ namespace UAssetAPI.Tests
             TestJsonOnFile("RaceSimDataAsset.uasset", EngineVersion.VER_UE4_27);
             TestJsonOnFile("TurboAcres_Environment.uasset", EngineVersion.VER_UE4_27);
             TestJsonOnFile("MGA_HeavyWeapon_Parent.uasset", EngineVersion.VER_UE4_25, "TestJson", "Outriders.usmap");
+            TestJsonOnFile("Atlas_6x4_Semi.uasset", EngineVersion.VER_UE5_5, "TestJson", "MotorTown.usmap");
         }
 
         /// <summary>
