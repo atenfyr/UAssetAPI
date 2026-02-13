@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -149,6 +150,16 @@ namespace UAssetAPI
         }
     }
 
+    public class FAssetRegistryRecord
+    {
+        /// <summary> Path relative to the package. </summary>
+        public string Path;
+        /// <summary> Asset object name. </summary>
+        public string ClassName;
+        /// <summary> Asset registry tags. </summary>
+        public Dictionary<string, string> TagMap;
+    }
+
     /// <summary>
     /// Represents an Unreal Engine asset.
     /// </summary>
@@ -247,6 +258,8 @@ namespace UAssetAPI
         /// Whether or not this asset has PKG_FilterEditorOnly flag.
         /// </summary>
         public bool IsFilterEditorOnly => PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly);
+
+        public bool IsPreDependencyFormat => IsFilterEditorOnly || ObjectVersion < ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
 
         [JsonIgnore]
         internal volatile bool isSerializationTime = false;
@@ -1339,14 +1352,43 @@ namespace UAssetAPI
         public List<FString> SoftPackageReferenceList;
 
         /// <summary>
-        /// Uncertain
+        /// Offset to dependencies. This only appears in uncooked asset.
         /// </summary>
-        public byte[] AssetRegistryData;
+        public long AssetRegistryDependencyDataOffset = -1;
+
+        /// <summary>
+        /// Asset registry data.
+        /// </summary>
+        public List<FAssetRegistryRecord> AssetRegistryRecords;
+
+        /// <summary>
+        /// Number of valid bits in `ImportBits'. This only appears in uncooked asset.
+        /// </summary>
+        public int ImportBitsCount = 0;
+
+        /// <summary>
+        /// Bits indicating if imports used in game are contained in import map. This only appears in uncooked asset.
+        /// </summary>
+        public BitArray ImportBits;
+
+        /// <summary>
+        /// Number of valid bits in `SoftPackageBits'. This only appears in uncooked asset.
+        /// </summary>
+        public int SoftPackageBitsCount = 0;
+
+        /// <summary>
+        /// Bits indicating if soft packages used in game are contained in soft package reference list. This only appears in uncooked asset.
+        /// </summary>
+        public BitArray SoftPackageBits;
 
         /// <summary>
         /// Any bulk data that is not stored in the export map.
         /// </summary>
         public byte[] BulkData;
+
+        public byte[] AdditionalFiles;
+
+        public byte[] Trailer;
 
         /// <summary>
         /// Some garbage data that appears to be present in certain games (e.g. Valorant)
@@ -1988,25 +2030,40 @@ namespace UAssetAPI
                 }
             }
 
-            // AssetRegistryData
-            AssetRegistryData = [];
             if (AssetRegistryDataOffset > 0)
             {
+                AssetRegistryDependencyDataOffset = -1;
                 reader.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
-                /*
+                if (!IsPreDependencyFormat)
+                {
+                    AssetRegistryDependencyDataOffset = reader.ReadInt64();
+                }
+
                 int numAssets = reader.ReadInt32();
+                AssetRegistryRecords = [];
                 for (int i = 0; i < numAssets; i++)
                 {
-                    throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
-                }
-                */
+                    FAssetRegistryRecord record = new FAssetRegistryRecord();
 
-                // For now: read binary data until next offset
-                int nextOffset = this.WorldTileInfoDataOffset;
-                if (this.PreloadDependencyOffset >= 0 && nextOffset <= 0) nextOffset = this.PreloadDependencyOffset;
-                if (SectionSixOffset > 0 && Exports.Count > 0 && nextOffset <= 0) nextOffset = (int)Exports[0].SerialOffset;
-                if (nextOffset <= 0) nextOffset = (int)this.BulkDataStartOffset;
-                AssetRegistryData = reader.ReadBytes(nextOffset - AssetRegistryDataOffset);
+                    record.Path = reader.ReadString();
+                    record.ClassName = reader.ReadString();
+
+                    int tagNum = reader.ReadInt32();
+                    record.TagMap = [];
+                    for (int j = 0; j < tagNum; ++j)
+                    {
+                        string key = reader.ReadString();
+                        string value = reader.ReadString();
+                        record.TagMap.Add(key, value);
+                    }
+                    AssetRegistryRecords.Add(record);
+                }
+
+                if (!IsPreDependencyFormat)
+                {
+                    ImportBits = ReadBitArray(reader, out ImportBitsCount);
+                    SoftPackageBits = ReadBitArray(reader, out SoftPackageBitsCount);
+                }
             }
             else
             {
@@ -2030,12 +2087,18 @@ namespace UAssetAPI
                 SeaOfThievesGarbageData = null;
             }
 
-            BulkData = [];
+            AdditionalFiles = [];
             if (BulkDataStartOffset > 0 && reader.LoadUexp)
             {
                 long before = reader.BaseStream.Position;
                 reader.BaseStream.Seek(BulkDataStartOffset, SeekOrigin.Begin);
-                BulkData = reader.ReadBytes((int)(reader.BaseStream.Length - BulkDataStartOffset));
+                bool hasPayload = PayloadTocOffset > 0;
+                long end = hasPayload ? PayloadTocOffset : reader.BaseStream.Length;
+                AdditionalFiles = reader.ReadBytes((int)(end - BulkDataStartOffset));
+                if (hasPayload)
+                {
+                    Trailer = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+                }
                 reader.BaseStream.Seek(before, SeekOrigin.Begin);
             }
 
@@ -2228,6 +2291,22 @@ namespace UAssetAPI
                     Thumbnails[kv.Key] = reader.ReadObjectThumbnail();
                 }
             }
+        }
+
+        private static BitArray ReadBitArray(AssetBinaryReader reader, out int bitCount)
+        {
+            bitCount = reader.ReadInt32();
+            int length = ComputeBitArrayDataLenth(bitCount);
+            return new BitArray(reader.ReadBytes(length));
+        }
+        private static int BitsToNumWords(int bitCount)
+        {
+            return (int)Math.Ceiling(bitCount / 32.0);
+        }
+
+        private static int ComputeBitArrayDataLenth(int bitCount)
+        {
+            return sizeof(Int32) * BitsToNumWords(bitCount);
         }
 
         /// <summary>
@@ -2685,13 +2764,36 @@ namespace UAssetAPI
                 {
                     this.AssetRegistryDataOffset = (int)writer.BaseStream.Position;
 
-                    /*writer.Write(this.AssetRegistryData.Count);
-                    for (int i = 0; i < this.AssetRegistryData.Count; i++)
+                    if (!IsPreDependencyFormat)
                     {
-                        throw new NotImplementedException("Asset registry data is not yet supported. Please let me know if you see this error message");
-                    }*/
+                        writer.Write(AssetRegistryDependencyDataOffset);
+                    }
 
-                    writer.Write(AssetRegistryData);
+                    writer.Write(AssetRegistryRecords.Count);
+                    foreach (FAssetRegistryRecord record in AssetRegistryRecords)
+                    {
+                        writer.Write(record.Path);
+                        writer.Write(record.ClassName);
+
+                        writer.Write(record.TagMap.Count);
+                        foreach (KeyValuePair<string, string> pair in record.TagMap)
+                        {
+                            writer.Write(pair.Key);
+                            writer.Write(pair.Value);
+                        }
+                    }
+
+                    if (!IsPreDependencyFormat)
+                    {
+                        AssetRegistryDependencyDataOffset = writer.BaseStream.Position;
+                        writer.BaseStream.Seek(AssetRegistryDataOffset, SeekOrigin.Begin);
+                        writer.Write(AssetRegistryDependencyDataOffset);
+                        writer.BaseStream.Seek(AssetRegistryDependencyDataOffset, SeekOrigin.Begin);
+
+                        WriteBitArray(writer, ImportBitsCount, ImportBits);
+
+                        WriteBitArray(writer, SoftPackageBitsCount, SoftPackageBits);
+                    }
                 }
                 else
                 {
@@ -2797,7 +2899,12 @@ namespace UAssetAPI
                 if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
 
                 this.BulkDataStartOffset = (int)writer.BaseStream.Position;
-                writer.Write(BulkData);
+                writer.Write(AdditionalFiles);
+                if (PayloadTocOffset > 0)
+                {
+                    this.PayloadTocOffset = writer.BaseStream.Position;
+                    writer.Write(Trailer);
+                }
 
                 // Rewrite Section 3
                 if (this.Exports.Count > 0)
@@ -2837,6 +2944,17 @@ namespace UAssetAPI
                 GetEngineVersion(); // update dirty state
             }
             return stre;
+        }
+
+        private static void WriteBitArray(AssetBinaryWriter writer, int count, BitArray bitArray)
+        {
+            writer.Write(count);
+            if (count > 0)
+            {
+                byte[] data = new byte[ComputeBitArrayDataLenth(count)];
+                bitArray.CopyTo(data, 0);
+                writer.Write(data);
+            }
         }
 
         /// <summary>
