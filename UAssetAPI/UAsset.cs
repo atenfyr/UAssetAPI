@@ -1211,10 +1211,20 @@ namespace UAssetAPI
             try
             {
                 Mappings.PathsAlreadyProcessedForSchemas[assetPath] = 1;
+
+                // initial read to just fetch the FolderName
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
-                otherAsset.InternalAssetPath = assetPath;
+                AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
+                otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipParsingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
-                otherAsset.Read(otherAsset.PathToReader(pathOnDisk));
+                otherAsset.Read(otherReader);
+
+                // second read to get schemas
+                otherAsset.InternalAssetPath = (otherAsset.FolderName != null && otherAsset.FolderName.ToString() != "None") ? otherAsset.FolderName.ToString() : assetPath;
+                otherAsset.CustomSerializationFlags = CustomSerializationFlags.None;
+                otherReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                otherAsset.Read(otherReader);
+
                 // loading the asset will automatically add any new schemas to the mappings in-situ
             }
             catch

@@ -421,7 +421,20 @@ namespace UAssetAPI
                 while (practicingUnversionedPropertyIndex >= relevantSchema.PropCount) // if needed, go to parent struct
                 {
                     practicingUnversionedPropertyIndex -= relevantSchema.PropCount;
-                    relevantSchema = (relevantSchema.SuperType != null && reader.Asset.Mappings.Schemas.ContainsKey(relevantSchema.SuperType)) ? reader.Asset.Mappings.Schemas[relevantSchema.SuperType] : null;
+
+                    if (relevantSchema.SuperType != null && relevantSchema.SuperTypeModulePath != null && reader.Asset.Mappings.Schemas.ContainsKey(relevantSchema.SuperTypeModulePath + "." + relevantSchema.SuperType))
+                    {
+                        relevantSchema = reader.Asset.Mappings.Schemas[relevantSchema.SuperTypeModulePath + "." + relevantSchema.SuperType];
+                    }
+                    else if (relevantSchema.SuperType != null && reader.Asset.Mappings.Schemas.ContainsKey(relevantSchema.SuperType) && relevantSchema.Name != relevantSchema.SuperType) // name is insufficient if name of super is same as name of child
+                    {
+                        relevantSchema = reader.Asset.Mappings.Schemas[relevantSchema.SuperType];
+                    }
+                    else
+                    {
+                        relevantSchema = null;
+                    }
+
                     if (relevantSchema == null) throw new FormatException("Failed to find a valid property for schema index " + header.UnversionedPropertyIndex + " in the class " + parentName.Value.Value);
                 }
                 UsmapProperty relevantProperty = relevantSchema.Properties[practicingUnversionedPropertyIndex];
