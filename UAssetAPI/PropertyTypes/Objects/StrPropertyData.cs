@@ -44,8 +44,8 @@ public class StrPropertyData : PropertyData<FString>
 
     public override void FromString(string[] d, UAsset asset)
     {
-        var encoding = Encoding.ASCII;
-        if (d.Length >= 5) encoding = (d[4].Equals("utf-16") ? Encoding.Unicode : Encoding.ASCII);
+        var encoding = Encoding.UTF8;
+        if (d.Length >= 5) encoding = (d[4].Equals(Encoding.Unicode.HeaderName) ? Encoding.Unicode : Encoding.UTF8);
         Value = FString.FromString(d[0], encoding);
     }
 }

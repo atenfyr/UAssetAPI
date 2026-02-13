@@ -269,7 +269,7 @@ public class AssetBinaryReader : UnrealBinaryReader
             if (newVal == 0) break;
             readData.Add(newVal);
         }
-        return Encoding.ASCII.GetString(readData.ToArray());
+        return Encoding.UTF8.GetString(readData.ToArray());
     }
 
     public string XFERUNICODESTRING()

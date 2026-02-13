@@ -13,7 +13,7 @@ public static class CRCGenerator
 
     public static uint GenerateHash(string text, bool disableCasePreservingHash, bool version420 = false)
     {
-        return GenerateHash(text, Encoding.ASCII, disableCasePreservingHash, version420);
+        return GenerateHash(text, Encoding.UTF8, disableCasePreservingHash, version420);
     }
 
     public static uint GenerateHash(string text, Encoding encoding, bool disableCasePreservingHash, bool version420 = false)

@@ -238,7 +238,7 @@ namespace UAssetAPI
         public int XFERSTRING(string val)
         {
             long startMetric = this.BaseStream.Position;
-            this.Write(Encoding.ASCII.GetBytes(val + "\0"));
+            this.Write(Encoding.UTF8.GetBytes(val + "\0"));
             return (int)(this.BaseStream.Position - startMetric);
         }
 
