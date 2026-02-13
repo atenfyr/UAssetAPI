@@ -226,7 +226,7 @@ namespace UAssetAPI
 
                 // i doubt that this is true, empirically tested; need more data
                 int numSkip = 0;
-                if (asset.ObjectVersionUE5 >= ObjectVersionUE5.ADD_SOFTOBJECTPATH_LIST)
+                if (asset.ObjectVersion >= ObjectVersion.VER_UE4_CORRECT_LICENSEE_FLAG)
                 {
                     numSkip = Math.Min(asset.Mappings.GetAllProperties(highestSchema, parentModulePath?.ToString(), asset).Count, FFragment.SkipMax);
                 }
@@ -409,7 +409,7 @@ namespace UAssetAPI
                     throw new InvalidMappingsException();
                 }
 
-                UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName.Value.Value, reader.Asset, parentModulePath?.Value.Value);
+                UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName?.ToString(), reader.Asset, parentModulePath?.ToString());
                 while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
                     if (header.CurrentFragment.Value.bIsLast) return null;
@@ -435,7 +435,7 @@ namespace UAssetAPI
                         relevantSchema = null;
                     }
 
-                    if (relevantSchema == null) throw new FormatException("Failed to find a valid property for schema index " + header.UnversionedPropertyIndex + " in the class " + parentName.Value.Value);
+                    if (relevantSchema == null) throw new FormatException("Failed to find a valid property for schema index " + header.UnversionedPropertyIndex + " in the class " + parentName.ToString());
                 }
                 UsmapProperty relevantProperty = relevantSchema.Properties[practicingUnversionedPropertyIndex];
                 header.UnversionedPropertyIndex += 1;

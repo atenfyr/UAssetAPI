@@ -814,11 +814,11 @@ namespace UAssetAPI.Unversioned
             propDat = null;
 
             idx = 0;
-            var schemaName = ancestry.Parent.Value.Value;
+            var schemaName = ancestry.Parent.ToString();
             UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
             while (schemaName != null && relevantSchema != null)
             {
-                propDat = relevantSchema.GetProperty(propertyName.Value.Value, dupIndex) as T;
+                propDat = relevantSchema.GetProperty(propertyName.ToString(), dupIndex) as T;
                 if (propDat != null)
                 {
                     idx += propDat.SchemaIndex;
