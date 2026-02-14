@@ -58,7 +58,12 @@ namespace UAssetAPI
         /// <summary>
         /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UAsset.ParseExport(AssetBinaryReader, int, bool)"/> method.
         /// </summary>
-        SkipParsingExports = 8
+        SkipParsingExports = 8,
+
+        /// <summary>
+        /// Skip loading exports at read time altogether. Entries in the export map will be read as raw exports of zero length, so they cannot be manually parsed later. If this flag is set, SkipParsingExports will also effectively be automatically set regardless of whether or not it was already set manually.
+        /// </summary>
+        SkipLoadingExports = 16,
     }
 
 
@@ -1215,7 +1220,7 @@ namespace UAssetAPI
                 // initial read to just fetch the FolderName
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
                 AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
-                otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipParsingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
+                otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipLoadingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
                 otherAsset.Read(otherReader);
 
@@ -2122,7 +2127,8 @@ namespace UAssetAPI
 
             if (reader.LoadUexp)
             {
-                bool skipParsingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
+                bool skipLoadingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipLoadingExports);
+                bool skipParsingExports = skipLoadingExports || CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
 
                 // load dependencies, if needed and available
                 Dictionary<int, IList<int>> depsMap = LoadDependencies();
@@ -2135,11 +2141,11 @@ namespace UAssetAPI
                     {
                         int i = exportIdx - 1;
 
-                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
+                        if (!skipLoadingExports) reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (skipParsingExports || skipLoadingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            ((RawExport)Exports[i]).Data = skipLoadingExports ? Array.Empty<byte>() : reader.ReadBytes((int)Exports[i].SerialSize);
                             continue;
                         }
 
@@ -2151,11 +2157,11 @@ namespace UAssetAPI
                     {
                         if (Exports[i].alreadySerialized) continue;
 
-                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
+                        if (!skipLoadingExports) reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (skipParsingExports || skipLoadingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            ((RawExport)Exports[i]).Data = skipLoadingExports ? Array.Empty<byte>() : reader.ReadBytes((int)Exports[i].SerialSize);
                             continue;
                         }
 
