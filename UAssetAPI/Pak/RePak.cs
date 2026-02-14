@@ -28,6 +28,7 @@ using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UAssetAPI.PropertyTypes.Objects;
@@ -71,13 +72,16 @@ public class PakBuilder : SafeHandleZeroOrMinusOneIsInvalid
             {
                 // extract dll if needed
                 string outPath = Path.Combine(Directory.GetCurrentDirectory(), RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "repak_bind.so" : "repak_bind.dll");
-                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "UAssetAPI.repak_bind.so" : "UAssetAPI.repak_bind.dll"))
+                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "UAssetAPI.repak_bind.so.gz" : "UAssetAPI.repak_bind.dll.gz"))
                 {
                     if (resource != null)
                     {
                         using (var file = new FileStream(outPath, FileMode.Create, FileAccess.Write))
                         {
-                            resource.CopyTo(file);
+                            using (var gzipStream = new GZipStream(resource, CompressionMode.Decompress))
+                            {
+                                gzipStream.CopyTo(file);
+                            }
                         }
                     }
                 }

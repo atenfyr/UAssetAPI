@@ -69,8 +69,8 @@
     <Delete Files="$(ProjectDir)git_commit.txt" />
   </Target>
   <ItemGroup>
-    <None Remove="repak_bind.dll" />
-    <None Remove="repak_bind.so" />
+    <None Remove="repak_bind.dll.gz" />
+    <None Remove="repak_bind.so.gz" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -87,10 +87,10 @@
     <EmbeddedResource Include="git_commit.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="repak_bind.dll">
+    <EmbeddedResource Include="repak_bind.dll.gz">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="repak_bind.so">
+    <EmbeddedResource Include="repak_bind.so.gz">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
