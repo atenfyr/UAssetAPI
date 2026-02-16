@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 using UAssetAPI.JSON;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -17,8 +16,9 @@ namespace UAssetAPI.PropertyTypes.Objects
         [JsonProperty]
         [JsonConverter(typeof(FSignedZeroJsonConverter))]
         public float Value;
+		public override object RawValue { get => Value; set => Value = (float)value; }
 
-        public FloatPropertyData(FName name) : base(name)
+		public FloatPropertyData(FName name) : base(name)
         {
 
         }

@@ -78,7 +78,7 @@ namespace UAssetAPI
         private static void InitializePropertyTypeRegistry()
         {
             if (_propertyTypeRegistry != null) return;
-            _propertyTypeRegistry = new Dictionary<string, RegistryEntry>();
+            _propertyTypeRegistry = new Dictionary<string, RegistryEntry>(StringComparer.OrdinalIgnoreCase);
 
             Assembly[] allDependentAssemblies = GetDependentAssemblies(registryParentDataType.Assembly).ToArray();
             Assembly[] allAssemblies = new Assembly[allDependentAssemblies.Length + 1];
@@ -291,7 +291,7 @@ namespace UAssetAPI
             long startingOffset = 0;
             if (reader != null) startingOffset = reader.BaseStream.Position;
 
-            if (type.Value.Value == "None") return null;
+            if (type.Value.Value.Equals("None", StringComparison.OrdinalIgnoreCase)) return null;
 
             PropertyData data = null;
             if (PropertyTypeRegistry.ContainsKey(type.Value.Value))
@@ -439,7 +439,7 @@ namespace UAssetAPI
             else if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
             {
                 name = reader.ReadFName();
-                if (name.Value.Value == "None") return null;
+                if (name.Value.Value.Equals("None", StringComparison.OrdinalIgnoreCase)) return null;
 
                 List<FName> types = new List<FName>();
                 int numNamesLeft = 1;
@@ -464,7 +464,7 @@ namespace UAssetAPI
             else
             {
                 name = reader.ReadFName();
-                if (name.Value.Value == "None") return null;
+                if (name.Value.Value.Equals("None", StringComparison.OrdinalIgnoreCase)) return null;
 
                 type = reader.ReadFName();
 

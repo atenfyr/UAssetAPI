@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
-using System.Collections.Generic;
 
 namespace UAssetAPI.PropertyTypes.Objects
 {
@@ -45,24 +44,26 @@ namespace UAssetAPI.PropertyTypes.Objects
                 InnerType = reader.Asset.HasUnversionedProperties ? FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString()) : new FName(reader.Asset, enumDat1.Name);
             }
 
-            if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
+            if (reader.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal && InnerType != null)
             {
                 Value = null;
-                if (InnerType?.Value.Value == "ByteProperty" || InnerType?.Value.Value == "UInt16Property" || InnerType?.Value.Value == "UInt32Property")
+                if (InnerType.Value.Value.Equals("ByteProperty", StringComparison.OrdinalIgnoreCase) ||
+                    InnerType.Value.Value.Equals("UInt16Property", StringComparison.OrdinalIgnoreCase) ||
+                    InnerType.Value.Value.Equals("UInt32Property", StringComparison.OrdinalIgnoreCase))
                 {
                     long enumIndice = 0;
 
                     switch (InnerType?.Value.Value)
                     {
-                        case "ByteProperty":
+                        case string s when s.Equals("ByteProperty", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadByte();
                             if (enumIndice == byte.MaxValue) return;
                             break;
-                        case "UInt16Property":
+                        case string s when s.Equals("UInt16Property", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadUInt16();
                             if (enumIndice == ushort.MaxValue) return;
                             break;
-                        case "UInt32Property":
+                        case string s when s.Equals("UInt32Property", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadUInt32();
                             if (enumIndice == uint.MaxValue) return;
                             break;
@@ -81,23 +82,25 @@ namespace UAssetAPI.PropertyTypes.Objects
                     return;
                 }
 
-                if (InnerType?.Value.Value == "Int8Property" || InnerType?.Value.Value == "Int16Property" || 
-                    InnerType?.Value.Value == "IntProperty" || InnerType?.Value.Value == "Int64Property")
+                if (InnerType.Value.Value.Equals("Int8Property", StringComparison.OrdinalIgnoreCase) ||
+                    InnerType.Value.Value.Equals("Int16Property", StringComparison.OrdinalIgnoreCase) ||
+                    InnerType.Value.Value.Equals("IntProperty", StringComparison.OrdinalIgnoreCase) ||
+                    InnerType.Value.Value.Equals("Int64Property", StringComparison.OrdinalIgnoreCase))
                 {
                     long enumIndice = 0;
 
                     switch (InnerType?.Value.Value)
                     {
-                        case "Int8Property":
+                        case string s when s.Equals("Int8Property", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadSByte();
                             break;
-                        case "Int16Property":
+                        case string s when s.Equals("Int16Property", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadInt16();
                             break;
-                        case "IntProperty":
+                        case string s when s.Equals("IntProperty", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadInt32();
                             break;
-                        case "Int64Property":
+                        case string s when s.Equals("Int64Property", StringComparison.OrdinalIgnoreCase):
                             enumIndice = reader.ReadInt64();
                             break;
                     }
@@ -135,7 +138,7 @@ namespace UAssetAPI.PropertyTypes.Objects
 
             if (writer.Asset.HasUnversionedProperties && serializationContext == PropertySerializationContext.Normal)
             {
-                if (ValidEnumInnerTypeList.Contains(InnerType?.Value?.Value))
+                if (ValidEnumInnerTypeList.Contains(InnerType?.Value?.Value, StringComparer.OrdinalIgnoreCase))
                 {
                     long enumIndice = 0;
                     var listOfEnums = writer.Asset.Mappings.EnumMap[EnumType.Value.Value].Values;

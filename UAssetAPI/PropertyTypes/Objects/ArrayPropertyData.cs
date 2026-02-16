@@ -58,7 +58,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         }
 
         int numEntries = reader.ReadInt32();
-        if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently && !reader.Asset.HasUnversionedProperties)
+        if (ArrayType.Value.Value.Equals("StructProperty", StringComparison.OrdinalIgnoreCase) && ShouldSerializeStructsDifferently && !reader.Asset.HasUnversionedProperties)
         {
             var results = new PropertyData[numEntries];
 
@@ -76,14 +76,14 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
             if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
             {
                 name = reader.ReadFName();
-                if (name.Value.Value.Equals("None"))
+                if (name.Value.Value.Equals("None", StringComparison.OrdinalIgnoreCase))
                 {
                     Value = results;
                     return;
                 }
 
                 FName thisArrayType = reader.ReadFName();
-                if (thisArrayType.Value.Value.Equals("None"))
+                if (thisArrayType.Value.Value.Equals("None", StringComparison.OrdinalIgnoreCase))
                 {
                     Value = results;
                     return;
@@ -201,7 +201,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
 
         int here = (int)writer.BaseStream.Position;
         writer.Write(Value.Length);
-        if (ArrayType?.Value?.Value == "StructProperty" && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
+        if (string.Equals(ArrayType?.Value?.Value, "StructProperty", StringComparison.OrdinalIgnoreCase) && ShouldSerializeStructsDifferently && !writer.Asset.HasUnversionedProperties)
         {
             if (Value.Length == 0 && DummyStruct == null)
             {

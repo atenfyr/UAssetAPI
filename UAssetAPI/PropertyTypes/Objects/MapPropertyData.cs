@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
 using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Structs;
@@ -61,7 +62,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             switch (type.Value.Value)
             {
-                case "StructProperty":
+                case string s when s.Equals("StructProperty", StringComparison.OrdinalIgnoreCase):
                     FName strucType = null;
 
                     if (reader.Asset.Mappings != null && reader.Asset.Mappings.TryGetPropertyData(Name, Ancestry, reader.Asset, out UsmapMapData mapDat))
