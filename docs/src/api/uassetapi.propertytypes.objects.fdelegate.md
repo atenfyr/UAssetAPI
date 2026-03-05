@@ -47,3 +47,29 @@ public FDelegate(FPackageIndex _object, FName delegate)
 ```csharp
 public FDelegate()
 ```
+
+### **FDelegate(AssetBinaryReader)**
+
+```csharp
+public FDelegate(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+## Methods
+
+### **Write(AssetBinaryWriter)**
+
+```csharp
+public int Write(AssetBinaryWriter writer)
+```
+
+#### Parameters
+
+`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

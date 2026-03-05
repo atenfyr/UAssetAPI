@@ -9,7 +9,8 @@ Floating point quaternion that can represent a rotation about an axis in 3-D spa
 public struct FQuat
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FQuat](./uassetapi.unrealtypes.fquat.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FQuat](./uassetapi.unrealtypes.fquat.md)<br>
+Implements [IStruct&lt;FQuat&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Properties
 
@@ -160,3 +161,43 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FQuat Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FQuat](./uassetapi.unrealtypes.fquat.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FQuat FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FQuat](./uassetapi.unrealtypes.fquat.md)<br>

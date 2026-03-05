@@ -23,7 +23,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_JumpIfNot | 7 | Goto if not expression. |
 | EX_Assert | 9 | Assertion. |
 | EX_Nothing | 11 | No operation. |
+| EX_NothingInt32 | 12 | No operation with an int32 argument (useful for debugging script disassembly). |
 | EX_Let | 15 | Assign an arbitrary size value to a variable. |
+| EX_BitFieldConst | 17 | Assign to a single bit, defined by an FProperty. |
 | EX_ClassContext | 18 | Class default object context. |
 | EX_MetaCast | 19 | Metaclass cast. |
 | EX_LetBool | 20 | Let boolean variable. |
@@ -62,6 +64,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_UInt64Const | 54 | 64-bit unsigned integer constant. |
 | EX_DoubleConst | 55 | Double-precision floating point constant. |
 | EX_PrimitiveCast | 56 | A casting operator for primitives which reads the type as the subsequent byte |
+| EX_Vector3fConst | 65 | A float vector constant. |
 | EX_StructMemberContext | 66 | Context expression to address a property within a struct |
 | EX_LetMulticastDelegate | 67 | Assignment to a multi-cast delegate |
 | EX_LetDelegate | 68 | Assignment to a delegate |

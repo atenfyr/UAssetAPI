@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Drawing;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -24,7 +25,7 @@ public static class LinearHelpers
 /// <summary>
 /// A linear, 32-bit/component floating point RGBA color.
 /// </summary>
-public struct FLinearColor : ICloneable
+public struct FLinearColor : ICloneable, IStruct<FLinearColor>
 {
     [JsonProperty]
     public float R;
@@ -53,6 +54,8 @@ public struct FLinearColor : ICloneable
         A = reader.ReadSingle();
     }
 
+    public static FLinearColor Read(AssetBinaryReader reader) => new FLinearColor(reader);
+
     public int Write(AssetBinaryWriter writer)
     {
         writer.Write(R);
@@ -60,5 +63,16 @@ public struct FLinearColor : ICloneable
         writer.Write(B);
         writer.Write(A);
         return sizeof(float) * 4;
+    }
+
+    public override string ToString() => "(" + R + ", " + G + ", " + B + ", " + A + ")";
+
+    public static FLinearColor FromString(string[] d, UAsset asset)
+    {
+        float.TryParse(d[0], out float R);
+        float.TryParse(d[1], out float G);
+        float.TryParse(d[2], out float B);
+        float.TryParse(d[3], out float A);
+        return new FLinearColor(R, G, B, A);
     }
 }

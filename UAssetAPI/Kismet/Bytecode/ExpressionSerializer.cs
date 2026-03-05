@@ -37,8 +37,14 @@ namespace UAssetAPI.Kismet.Bytecode
                 case EExprToken.EX_Nothing:
                     res = new EX_Nothing();
                     break;
+                case EExprToken.EX_NothingInt32:
+                    res = new EX_NothingInt32();
+                    break;
                 case EExprToken.EX_Let:
                     res = new EX_Let();
+                    break;
+                case EExprToken.EX_BitFieldConst:
+                    res = new EX_BitFieldConst();
                     break;
                 case EExprToken.EX_ClassContext:
                     res = new EX_ClassContext();
@@ -180,6 +186,9 @@ namespace UAssetAPI.Kismet.Bytecode
                     break;
                 case EExprToken.EX_EndMapConst:
                     res = new EX_EndMapConst();
+                    break;
+                case EExprToken.EX_Vector3fConst:
+                    res = new EX_Vector3fConst();
                     break;
                 case EExprToken.EX_StructMemberContext:
                     res = new EX_StructMemberContext();

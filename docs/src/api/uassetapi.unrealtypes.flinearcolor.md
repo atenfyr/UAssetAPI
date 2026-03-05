@@ -9,7 +9,7 @@ public struct FLinearColor
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FLinearColor](./uassetapi.unrealtypes.flinearcolor.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable), [IStruct&lt;FLinearColor&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Fields
 
@@ -77,6 +77,20 @@ object Clone()
 
 [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
 
+### **Read(AssetBinaryReader)**
+
+```csharp
+FLinearColor Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FLinearColor](./uassetapi.unrealtypes.flinearcolor.md)<br>
+
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
@@ -90,3 +104,29 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FLinearColor FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FLinearColor](./uassetapi.unrealtypes.flinearcolor.md)<br>

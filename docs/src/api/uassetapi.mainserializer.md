@@ -60,12 +60,12 @@ The UAsset which the properties are contained within.
 
 [FUnversionedHeader](./uassetapi.unversioned.funversionedheader.md)<br>
 
-### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UAsset, AssetBinaryReader, Int32, EPropertyTagFlags, Int32, Boolean, Boolean)**
+### **TypeToClass(FName, FName, AncestryInfo, FName, FName, UAsset, AssetBinaryReader, Int32, EPropertyTagFlags, Int32, Boolean, Boolean, FPropertyTypeName)**
 
 Initializes the correct PropertyData class based off of serialized name, type, etc.
 
 ```csharp
-public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader, int leng, EPropertyTagFlags propertyTagFlags, int ArrayIndex, bool includeHeader, bool isZero)
+public static PropertyData TypeToClass(FName type, FName name, AncestryInfo ancestry, FName parentName, FName parentModulePath, UAsset asset, AssetBinaryReader reader, int leng, EPropertyTagFlags propertyTagFlags, int ArrayIndex, bool includeHeader, bool isZero, FPropertyTypeName propertyTypeName)
 ```
 
 #### Parameters
@@ -105,6 +105,9 @@ Does this property serialize its header in the current context?
 
 `isZero` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 Is the body of this property empty?
+
+`propertyTypeName` [FPropertyTypeName](./uassetapi.unrealtypes.fpropertytypename.md)<br>
+The complete property type name, if available.
 
 #### Returns
 

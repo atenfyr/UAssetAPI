@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UAssetAPI.CustomVersions;
@@ -93,6 +93,8 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (Activator.CreateInstance(T, Name) is not PropertyData data) return;
         data.Offset = offset;
         data.Ancestry.Initialize(Ancestry, Name);
+        // i think it's unnecessary
+        data.PropertyTypeName = PropertyTypeName?.GetParameter(0);
         data.Read(reader, false, leng1);
         Value = new List<PropertyData> { data };
     }
@@ -103,15 +105,6 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         PropertyData data = null;
 
         var unversionedHeader = new FUnversionedHeader(reader);
-        if (!reader.Asset.HasUnversionedProperties && reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
-        {
-            SerializationControl = (EClassSerializationControlExtension)reader.ReadByte();
-
-            if (SerializationControl.HasFlag(EClassSerializationControlExtension.OverridableSerializationInformation))
-            {
-                Operation = (EOverriddenPropertyOperation)reader.ReadByte();
-            }
-        }
         while ((data = MainSerializer.Read(reader, Ancestry, StructType, FName.DefineDummy(reader.Asset, reader.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), unversionedHeader, true)) != null)
         {
             resultingList.Add(data);
@@ -124,8 +117,17 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
     {
         if (includeHeader && !reader.Asset.HasUnversionedProperties) // originally !isForced
         {
-            StructType = reader.ReadFName();
-            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                if (PropertyTypeName is null) throw new FormatException("PropertyTypeName is required to read StructProperty with complete type names.");
+                StructType = PropertyTypeName.GetParameter(0).GetName();
+            }
+            else
+            {
+                StructType = reader.ReadFName();
+                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
+            }
+
             this.ReadEndPropertyTag(reader);
         }
 
@@ -245,8 +247,12 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
 
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.Write(StructType);
-            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(StructType);
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
+            }
+
             this.WriteEndPropertyTag(writer);
         }
 

@@ -1,51 +1,48 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
 
-public struct FNavAgentSelector(uint packedBits)
+public struct FNavAgentSelector : IStruct<FNavAgentSelector>
 {
-    public uint PackedBits = packedBits;
+    public uint PackedBits;
+
+    public FNavAgentSelector(uint packedBits)
+    {
+        PackedBits = packedBits;
+    }
+
+    public FNavAgentSelector(AssetBinaryReader reader)
+    {
+        PackedBits = reader.ReadUInt32();
+    }
+
+    public static FNavAgentSelector Read(AssetBinaryReader reader) => new FNavAgentSelector(reader);
+
+    public int Write(AssetBinaryWriter writer)
+    {
+        writer.Write(PackedBits);
+        return sizeof(uint);
+    }
+
+    public override string ToString()
+    {
+        return PackedBits.ToString();
+    }
+
+    public static FNavAgentSelector FromString(string[] d, UAsset asset)
+    {
+        uint.TryParse(d[0], out uint res);
+        return new FNavAgentSelector(res);
+    }
 }
 
-public class NavAgentSelectorPropertyData : PropertyData<FNavAgentSelector>
+public class NavAgentSelectorPropertyData : BasePropertyData<FNavAgentSelector>
 {
     public NavAgentSelectorPropertyData(FName name) : base(name) { }
 
     public NavAgentSelectorPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("NavAgentSelector");
-    public override bool HasCustomStructSerialization => true;
     public override FString PropertyType => CurrentPropertyType;
-
-    public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-    {
-        if (includeHeader)
-        {
-            this.ReadEndPropertyTag(reader);
-        }
-
-        Value = new FNavAgentSelector(reader.ReadUInt32()); 
-    }
-
-    public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
-    {
-        if (includeHeader)
-        {
-            this.WriteEndPropertyTag(writer);
-        }
-
-        writer.Write(Value.PackedBits);
-        return sizeof(uint);
-    }
-
-    public override void FromString(string[] d, UAsset asset)
-    {
-        if (uint.TryParse(d[0], out uint res)) Value = new FNavAgentSelector(res);
-    }
-
-    public override string ToString()
-    {
-        return Value.PackedBits.ToString();
-    }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -58,14 +59,11 @@ public struct TRangeBound<T>
     }
 }
 
-public struct FFrameNumber
+public struct FFrameNumber : IStruct<FFrameNumber>
 {
     public int Value;
 
-    public FFrameNumber()
-    {
-
-    }
+    public FFrameNumber() { }
 
     public FFrameNumber(int value)
     {
@@ -76,10 +74,19 @@ public struct FFrameNumber
     {
         Value = reader?.ReadInt32() ?? 0;
     }
-    
-    public void Write(AssetBinaryWriter writer)
+
+    public static FFrameNumber Read(AssetBinaryReader reader) => new FFrameNumber(reader);
+
+    public int Write(AssetBinaryWriter writer)
     {
         writer.Write(Value);
+        return sizeof(int);
+    }
+
+    public static FFrameNumber FromString(string[] d, UAsset asset)
+    {
+        if (int.TryParse(d[0], out int val)) return new FFrameNumber(val);
+        return new FFrameNumber();
     }
 }
 

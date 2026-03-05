@@ -1,9 +1,11 @@
-﻿namespace UAssetAPI.UnrealTypes;
+using UAssetAPI.PropertyTypes.Objects;
+
+namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// 4x4 matrix of floating point values.
 /// </summary>
-public struct FMatrix
+public struct FMatrix : IStruct<FMatrix>
 {
     public FPlane XPlane;
     public FPlane YPlane;
@@ -26,6 +28,7 @@ public struct FMatrix
         WPlane = new FPlane(reader);
     }
 
+    public static FMatrix Read(AssetBinaryReader reader) => new FMatrix(reader);
 
     public int Write(AssetBinaryWriter writer)
     {
@@ -34,5 +37,10 @@ public struct FMatrix
         size += ZPlane.Write(writer);
         size += WPlane.Write(writer);
         return size;
+    }
+
+    public static FMatrix FromString(string[] d, UAsset asset)
+    {
+        throw new System.NotImplementedException();
     }
 }

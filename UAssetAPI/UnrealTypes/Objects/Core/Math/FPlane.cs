@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.JSON;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
@@ -9,7 +10,7 @@ namespace UAssetAPI.UnrealTypes;
 /// This is different from many other Plane classes that use Xx+Yy+Zz+W=0.
 /// </summary>
 [JsonObject(MemberSerialization.OptIn)]
-public struct FPlane 
+public struct FPlane : IStruct<FPlane>
 {
     private float? _x1;
     private double _x2;
@@ -152,5 +153,17 @@ public struct FPlane
             writer.Write(WFloat);
             return sizeof(float) * 4;
         }
+    }
+
+    public static FPlane Read(AssetBinaryReader reader) => new FPlane(reader);
+
+    public override string ToString() => "(" + X + ", " + Y + ", " + Z + ", " + W + ")";
+    public static FPlane FromString(string[] d, UAsset asset)
+    {
+        double.TryParse(d[0], out double X);
+        double.TryParse(d[1], out double Y);
+        double.TryParse(d[2], out double Z);
+        double.TryParse(d[3], out double W);
+        return new FPlane(X, Y, Z, W);
     }
 }

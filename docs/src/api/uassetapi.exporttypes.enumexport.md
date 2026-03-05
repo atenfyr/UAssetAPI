@@ -45,6 +45,12 @@ public EClassSerializationControlExtension SerializationControl;
 public EOverriddenPropertyOperation Operation;
 ```
 
+### **HasLeadingFourNullBytes**
+
+```csharp
+public bool HasLeadingFourNullBytes;
+```
+
 ### **ObjectName**
 
 The name of the UObject represented by this resource.

@@ -1,4 +1,5 @@
-﻿using UAssetAPI.UnrealTypes;
+﻿using System;
+using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Kismet.Bytecode.Expressions;
 
@@ -31,5 +32,11 @@ public class EX_TransformConst : KismetExpression<FTransform>
     public override int Write(AssetBinaryWriter writer)
     {
         return Value.Write(writer);
+    }
+
+    public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+    {
+        base.Visit(asset, ref offset, visitor);
+        offset += asset.ObjectVersionUE5 >= ObjectVersionUE5.LARGE_WORLD_COORDINATES ? 80U : 40U;
     }
 }

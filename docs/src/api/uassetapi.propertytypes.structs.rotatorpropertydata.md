@@ -6,10 +6,10 @@ Implements a container for rotation information.
  All rotation values are stored in degrees.
 
 ```csharp
-public class RotatorPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1[[UAssetAPI.UnrealTypes.FRotator]], System.ICloneable
+public class RotatorPropertyData : UAssetAPI.PropertyTypes.Objects.BasePropertyData`1[[UAssetAPI.UnrealTypes.FRotator]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FRotator&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [RotatorPropertyData](./uassetapi.propertytypes.structs.rotatorpropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FRotator&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BasePropertyData&lt;FRotator&gt;](./uassetapi.propertytypes.objects.basepropertydata-1.md) → [RotatorPropertyData](./uassetapi.propertytypes.structs.rotatorpropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
 
 ## Fields
@@ -64,6 +64,12 @@ public bool IsZero;
 public EPropertyTagFlags PropertyTagFlags;
 ```
 
+### **PropertyTypeName**
+
+```csharp
+public FPropertyTypeName PropertyTypeName;
+```
+
 ### **PropertyTagExtensions**
 
 Optional extensions to serialize with this property.
@@ -102,16 +108,6 @@ public object Tag;
 
 ## Properties
 
-### **HasCustomStructSerialization**
-
-```csharp
-public bool HasCustomStructSerialization { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ### **PropertyType**
 
 ```csharp
@@ -121,6 +117,16 @@ public FString PropertyType { get; }
 #### Property Value
 
 [FString](./uassetapi.unrealtypes.fstring.md)<br>
+
+### **HasCustomStructSerialization**
+
+```csharp
+public bool HasCustomStructSerialization { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Value**
 
@@ -185,63 +191,3 @@ public RotatorPropertyData(FName name)
 ```csharp
 public RotatorPropertyData()
 ```
-
-## Methods
-
-### **Read(AssetBinaryReader, Boolean, Int64, Int64, PropertySerializationContext)**
-
-```csharp
-public void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2, PropertySerializationContext serializationContext)
-```
-
-#### Parameters
-
-`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-
-`includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-`leng1` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
-
-`leng2` [Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
-
-`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
-
-### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
-
-```csharp
-public int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext)
-```
-
-#### Parameters
-
-`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
-
-`includeHeader` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
-
-#### Returns
-
-[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-
-### **FromString(String[], UAsset)**
-
-```csharp
-public void FromString(String[] d, UAsset asset)
-```
-
-#### Parameters
-
-`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-`asset` [UAsset](./uassetapi.uasset.md)<br>
-
-### **ToString()**
-
-```csharp
-public string ToString()
-```
-
-#### Returns
-
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

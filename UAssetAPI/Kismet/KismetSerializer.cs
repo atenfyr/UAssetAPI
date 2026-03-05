@@ -1158,7 +1158,7 @@ namespace UAssetAPI.Kismet
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
                         jexp.Add("Class", GetFullName(exp.ClassPtr.Index));
-                        jexp.Add("Expression", SerializeExpression(exp.TargetExpression, ref index));
+                        jexp.Add("Expression", SerializeExpression(exp.Target, ref index));
                         break;
                     }
                 case EX_DynamicCast exp:
@@ -1166,7 +1166,7 @@ namespace UAssetAPI.Kismet
                         jexp.Add("Inst", exp.Inst);
                         index += 8;
                         jexp.Add("Class", GetFullName(exp.ClassPtr.Index));
-                        jexp.Add("Expression", SerializeExpression(exp.TargetExpression, ref index));
+                        jexp.Add("Expression", SerializeExpression(exp.Target, ref index));
                         break;
                     }
                 case EX_JumpIfNot exp:

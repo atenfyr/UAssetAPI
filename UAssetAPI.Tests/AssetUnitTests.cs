@@ -51,17 +51,19 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// Determines whether or not all exports in an asset have parsed correctly.
+        /// Asserts that all exports in an asset have parsed correctly.
         /// </summary>
         /// <param name="tester">The asset to test.</param>
-        /// <returns>true if all the exports in the asset have parsed correctly, otherwise false.</returns>
-        public bool CheckAllExportsParsedCorrectly(UAsset tester)
+        public void AssertAllExportsParsedCorrectly(UAsset tester)
         {
             foreach (Export testExport in tester.Exports)
             {
-                if (testExport is RawExport) return false;
+                Assert.IsFalse(testExport is RawExport, $"Export '{testExport.ObjectName}' in '{tester.FilePath}' was not parsed correctly (RawExport)");
+                if (testExport is FunctionExport funcExport)
+                {
+                    Assert.IsNotNull(funcExport.ScriptBytecode, $"FunctionExport '{testExport.ObjectName}' in '{tester.FilePath}' has null ScriptBytecode (failed to parse Kismet bytecode)");
+                }
             }
-            return true;
         }
 
         /// <summary>
@@ -74,6 +76,81 @@ namespace UAssetAPI.Tests
             List<string> allFilesToTest = Directory.GetFiles(folder, "*.uasset", SearchOption.AllDirectories).ToList();
             allFilesToTest.AddRange(Directory.GetFiles(folder, "*.umap", SearchOption.AllDirectories));
             return allFilesToTest.ToArray();
+        }
+
+        /// <summary>
+        /// Tests <see cref="FSoftObjectPath"/> equality functionality including IEquatable implementation.
+        /// </summary>
+        [TestMethod]
+        public void TestFSoftObjectPathEquality()
+        {
+            // Create a dummy asset for FName construction
+            var dummyAsset = new UAsset(Path.Combine("TestAssets", "TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
+            
+            // Create test instances
+            var packageName1 = new FName(dummyAsset, "TestPackage");
+            var assetName1 = new FName(dummyAsset, "TestAsset");
+            var subPath1 = new FString("SubPath1");
+            
+            var packageName2 = new FName(dummyAsset, "TestPackage");
+            var assetName2 = new FName(dummyAsset, "TestAsset");
+            var subPath2 = new FString("SubPath1");
+            
+            var packageName3 = new FName(dummyAsset, "DifferentPackage");
+            var assetName3 = new FName(dummyAsset, "DifferentAsset");
+            var subPath3 = new FString("SubPath2");
+
+            var path1 = new FSoftObjectPath(packageName1, assetName1, subPath1);
+            var path2 = new FSoftObjectPath(packageName2, assetName2, subPath2); // Same values
+            var path3 = new FSoftObjectPath(packageName3, assetName3, subPath3); // Different values
+            var path4 = new FSoftObjectPath(packageName1, assetName1, null); // Null subpath
+
+            // Test IEquatable<FSoftObjectPath>.Equals
+            Assert.IsTrue(path1.Equals(path2), "Equal paths should return true with typed Equals");
+            Assert.IsTrue(path2.Equals(path1), "Equal paths should return true with typed Equals (symmetry)");
+            Assert.IsFalse(path1.Equals(path3), "Different paths should return false with typed Equals");
+            Assert.IsFalse(path1.Equals(path4), "Paths with different subpaths should return false with typed Equals");
+
+            // Test object.Equals
+            Assert.IsTrue(path1.Equals((object)path2), "Equal paths should return true with object Equals");
+            Assert.IsFalse(path1.Equals((object)path3), "Different paths should return false with object Equals");
+            Assert.IsFalse(path1.Equals(null), "Path should not equal null");
+            Assert.IsFalse(path1.Equals("string"), "Path should not equal different type");
+
+            // Test == operator
+            Assert.IsTrue(path1 == path2, "Equal paths should return true with == operator");
+            Assert.IsFalse(path1 == path3, "Different paths should return false with == operator");
+
+            // Test != operator
+            Assert.IsFalse(path1 != path2, "Equal paths should return false with != operator");
+            Assert.IsTrue(path1 != path3, "Different paths should return true with != operator");
+
+            // Test GetHashCode consistency
+            Assert.IsTrue(path1.GetHashCode() == path2.GetHashCode(), "Equal paths should have equal hash codes");
+            
+            // Test with null values
+            var pathWithNullPackage = new FSoftObjectPath(new FTopLevelAssetPath(null, assetName1), subPath1);
+            var pathWithNullAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, null), subPath1);
+            var pathWithNullSubPath = new FSoftObjectPath(packageName1, assetName1, null);
+            
+            Assert.IsFalse(path1.Equals(pathWithNullPackage), "Paths with null package should not equal non-null");
+            Assert.IsFalse(path1.Equals(pathWithNullAsset), "Paths with null asset should not equal non-null");
+            Assert.IsFalse(path1.Equals(pathWithNullSubPath), "Paths with null subpath should not equal non-null");
+            
+            // Test null equality
+            var pathAllNull = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
+            var pathAllNull2 = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
+            Assert.IsTrue(pathAllNull.Equals(pathAllNull2), "Paths with all null values should be equal");
+            
+            // Test partial equality scenarios
+            var pathSamePackageAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName1), subPath3);
+            Assert.IsFalse(path1.Equals(pathSamePackageAsset), "Paths with same package/asset but different subpath should not be equal");
+            
+            var pathSamePackageSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName3), subPath1);
+            Assert.IsFalse(path1.Equals(pathSamePackageSubPath), "Paths with same package/subpath but different asset should not be equal");
+            
+            var pathSameAssetSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName3, assetName1), subPath1);
+            Assert.IsFalse(path1.Equals(pathSameAssetSubPath), "Paths with same asset/subpath but different package should not be equal");
         }
 
         /// <summary>
@@ -235,7 +312,7 @@ namespace UAssetAPI.Tests
             Assert.IsTrue(duplicatesExist);
 
             // Make sure all exports parsed correctly
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
         }
 
         /// <summary>
@@ -247,7 +324,7 @@ namespace UAssetAPI.Tests
         {
             var tester = new UAsset(Path.Combine("TestAssets", "TestUnknownProperties", "BP_DetPack_Charge.uasset"), EngineVersion.VER_UE4_25);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Check that only the expected unknown properties are present
             Dictionary<string, bool> newUnknownProperties = new Dictionary<string, bool>();
@@ -285,7 +362,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -298,7 +375,7 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -311,7 +388,33 @@ namespace UAssetAPI.Tests
                 Console.WriteLine(assetPath);
                 var tester = new UAsset(assetPath, version, mappings);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
-                Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+                AssertAllExportsParsedCorrectly(tester);
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
+
+        private void TestUE5_5Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_5", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                AssertAllExportsParsedCorrectly(tester);
+                Console.WriteLine(tester.GetEngineVersion());
+            }
+        }
+        
+        private void TestUE5_6Subsection(string game, EngineVersion version, Usmap mappings = null)
+        {
+            string[] allTestingAssets = GetAllTestAssets(Path.Combine("TestAssets", "TestUE5_6", game));
+            foreach (string assetPath in allTestingAssets)
+            {
+                Console.WriteLine(assetPath);
+                var tester = new UAsset(assetPath, version, mappings);
+                Assert.IsTrue(tester.VerifyBinaryEquality());
+                AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
@@ -367,7 +470,7 @@ namespace UAssetAPI.Tests
             var assetPath = Path.Combine("TestAssets", "TestManyAssets", "Bloodstained", "PB_DT_RandomizerRoomCheck.uasset");
             var tester = new UAsset(assetPath, EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
             Assert.IsTrue(tester.Exports.Count == 1);
 
             var ourDataTableExport = tester.Exports[0] as DataTableExport;
@@ -393,7 +496,7 @@ namespace UAssetAPI.Tests
             // Load the modified table back in and make sure we're good
             var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester2.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            AssertAllExportsParsedCorrectly(tester2);
             Assert.IsTrue(tester2.Exports.Count == 1);
 
             // Flip the flags back to what they originally were
@@ -416,7 +519,7 @@ namespace UAssetAPI.Tests
             Console.WriteLine(file);
             var tester = new UAsset(Path.Combine("TestAssets", subFolder, file), version, mappings);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             string jsonSerializedAsset = tester.SerializeJson();
             File.WriteAllText(Path.Combine("TestAssets", subFolder, "raw.json"), jsonSerializedAsset);
@@ -446,6 +549,7 @@ namespace UAssetAPI.Tests
             TestJsonOnFile("RaceSimDataAsset.uasset", EngineVersion.VER_UE4_27);
             TestJsonOnFile("TurboAcres_Environment.uasset", EngineVersion.VER_UE4_27);
             TestJsonOnFile("MGA_HeavyWeapon_Parent.uasset", EngineVersion.VER_UE4_25, "TestJson", "Outriders.usmap");
+            TestJsonOnFile("Atlas_6x4_Semi.uasset", EngineVersion.VER_UE5_5, "TestJson", "MotorTown.usmap");
         }
 
         /// <summary>
@@ -457,7 +561,7 @@ namespace UAssetAPI.Tests
         {
             var tester = new UAsset(Path.Combine("TestAssets", "TestCustomProperty", "AlternateStartActor.uasset"), EngineVersion.VER_UE4_23);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Make sure that there are no unknown properties, and that there is at least one CoolProperty with a value of 72
             bool hasCoolProperty = false;
@@ -500,11 +604,11 @@ namespace UAssetAPI.Tests
             // Verify the files can be parsed
             var tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             tester = new UAsset(Path.Combine("TestAssets", "TestACE7", "ex02_IGC_03_Subtitle.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             // Encrypt them
             decrypter.Encrypt(Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"), Path.Combine("TestAssets", "TestACE7", "plwp_6aam_a0.uasset"));
@@ -527,11 +631,11 @@ namespace UAssetAPI.Tests
             // Verify the files can be parsed
             var tester = new UAsset(Path.Combine("TestAssets", "TestMaterials", "M_COM_DetailMaster_B.uasset"), EngineVersion.VER_UE4_18);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
 
             tester = new UAsset(Path.Combine("TestAssets", "TestMaterials", "as_mt_base.uasset"), EngineVersion.VER_UE4_20);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
         }
 
         /// <summary>
@@ -543,15 +647,15 @@ namespace UAssetAPI.Tests
         {
             var soundClass = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestSoundClass.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(soundClass.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(soundClass));
+            AssertAllExportsParsedCorrectly(soundClass);
 
             var material = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestMaterial.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(material.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(material));
+            AssertAllExportsParsedCorrectly(material);
 
             var blueprint = new UAsset(Path.Combine("TestAssets", "TestEditorAssets", "TestActorBP.uasset"), EngineVersion.VER_UE4_27);
             Assert.IsTrue(blueprint.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(blueprint));
+            AssertAllExportsParsedCorrectly(blueprint);
         }
       
         /// <summary>
@@ -566,7 +670,7 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
-        /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.4 games.
         /// Binary equality is expected.
         /// </summary>
         [TestMethod]
@@ -576,6 +680,27 @@ namespace UAssetAPI.Tests
             TestUE5_4Subsection("Bellwright", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Bellwright", "Bellwright.usmap")));
             TestUE5_4Subsection("TheForeverWinter", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "TheForeverWinter", "TheForeverWinter.usmap")));
             TestUE5_4Subsection("Billiards", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "Billiards", "5.4.3-34507850+++UE5+Release-5.4-DeepSpace7.usmap")));
+            TestUE5_4Subsection("JOY", EngineVersion.VER_UE5_4, new Usmap(Path.Combine("TestAssets", "TestUE5_4", "JOY", "5.4.3-34507850+++UE5+Release-5.4-JOY.usmap")));
+        }
+
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.5 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_5()
+        {
+            TestUE5_5Subsection("BlankGame", EngineVersion.VER_UE5_5, new Usmap(Path.Combine("TestAssets", "TestUE5_5", "BlankGame", "BlankUE5_5.usmap")));
+        }
+        
+        /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.6 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_6()
+        {
+            TestUE5_6Subsection("BpThirdPerson", EngineVersion.VER_UE5_6, new Usmap(Path.Combine("TestAssets", "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap")));
         }
 
         /// <summary>
@@ -671,6 +796,18 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// In this test, we parse a .usmap with explicit enum values.
+        /// </summary>
+        [TestMethod]
+        public void TestUsmapWithExplicitEnumValues()
+        {
+            var usmap = new Usmap(Path.Combine("TestAssets", "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap"));
+            Assert.AreEqual(36767, usmap.NameMap.Count);
+            Assert.AreEqual(1739, usmap.EnumMap.Count);
+            Assert.AreEqual(9230, usmap.Schemas.Count);
+        }
+
+        /// <summary>
         /// In this test, we do tests for various underlying enum types within a DataTable row to ensure that it parses correctly and maintains binary equality.
         /// </summary>
         [TestMethod]
@@ -680,7 +817,7 @@ namespace UAssetAPI.Tests
             var assetPath = Path.Combine("TestAssets", "TestUE5_1", "UnderlyingEnumTypes", "NewDataTable.uasset");
             var tester = new UAsset(assetPath, EngineVersion.VER_UE5_1, usmap);
             Assert.IsTrue(tester.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            AssertAllExportsParsedCorrectly(tester);
             Assert.IsTrue(tester.Exports.Count == 1);
 
             var ourDataTableExport = tester.Exports[0] as DataTableExport;
@@ -702,7 +839,7 @@ namespace UAssetAPI.Tests
             // Load the modified table back in and make sure we're good
             var tester2 = new UAsset(Path.Combine("TestAssets", "MODIFIED.uasset"), EngineVersion.VER_UE5_1, usmap);
             Assert.IsTrue(tester2.VerifyBinaryEquality());
-            Assert.IsTrue(CheckAllExportsParsedCorrectly(tester2));
+            AssertAllExportsParsedCorrectly(tester2);
             Assert.IsTrue(tester2.Exports.Count == 1);
 
             firstEntry = (tester2.Exports[0] as DataTableExport)?.Table?.Data?[1];
@@ -767,7 +904,7 @@ namespace UAssetAPI.Tests
             Trace.LoggingAspect.Stop();
 
             //Assert.IsTrue(tester.VerifyBinaryEquality());
-            //Assert.IsTrue(CheckAllExportsParsedCorrectly(tester));
+            //CheckAllExportsParsedCorrectly(tester);
         }
 #endif
 

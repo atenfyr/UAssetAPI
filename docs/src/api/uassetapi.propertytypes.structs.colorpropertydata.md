@@ -63,6 +63,12 @@ public bool IsZero;
 public EPropertyTagFlags PropertyTagFlags;
 ```
 
+### **PropertyTypeName**
+
+```csharp
+public FPropertyTypeName PropertyTypeName;
+```
+
 ### **PropertyTagExtensions**
 
 Optional extensions to serialize with this property.

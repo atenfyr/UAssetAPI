@@ -18,6 +18,14 @@ The path of the file on disk. This does not need to be specified for regular par
 public string FilePath;
 ```
 
+### **Version**
+
+.usmap file version
+
+```csharp
+public UsmapVersion Version;
+```
+
 ### **FileVersionUE4**
 
 Game UE4 object version
@@ -163,6 +171,27 @@ public Usmap()
 ```
 
 ## Methods
+
+### **SerializeJSON(Formatting)**
+
+Serialize this usmap as JSON. This should only be used for debugging or visualization.
+
+
+
+The serialized JSON is lossy and cannot be converted back into a complete .usmap file.
+
+```csharp
+public string SerializeJSON(Formatting jsonFormatting)
+```
+
+#### Parameters
+
+`jsonFormatting` Formatting<br>
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The serialized JSON as a string.
 
 ### **GetSchemaFromStructExport(String, UAsset)**
 

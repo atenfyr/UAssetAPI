@@ -1,4 +1,7 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using System;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_SoftObjectConst"/> instruction.
@@ -32,6 +35,12 @@
         public override int Write(AssetBinaryWriter writer)
         {
             return ExpressionSerializer.WriteExpression(Value, writer);
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            Value.Visit(asset, ref offset, visitor);
         }
     }
 }

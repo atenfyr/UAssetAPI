@@ -3,10 +3,11 @@
 Namespace: UAssetAPI.UnrealTypes
 
 ```csharp
-public class FFieldPath
+public class FFieldPath : UAssetAPI.PropertyTypes.Objects.IStruct`1[[UAssetAPI.UnrealTypes.FFieldPath]]
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFieldPath](./uassetapi.unrealtypes.ffieldpath.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFieldPath](./uassetapi.unrealtypes.ffieldpath.md)<br>
+Implements [IStruct&lt;FFieldPath&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Fields
 
@@ -60,6 +61,20 @@ public FFieldPath(AssetBinaryReader reader)
 
 ## Methods
 
+### **Read(AssetBinaryReader)**
+
+```csharp
+public static FFieldPath Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FFieldPath](./uassetapi.unrealtypes.ffieldpath.md)<br>
+
 ### **Write(AssetBinaryWriter)**
 
 ```csharp
@@ -73,3 +88,19 @@ public int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+public static FFieldPath FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FFieldPath](./uassetapi.unrealtypes.ffieldpath.md)<br>

@@ -1,4 +1,8 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using System;
+using UAssetAPI.UnrealTypes;
+using UAssetAPI.ExportTypes;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_TextConst"/> instruction.
@@ -33,6 +37,33 @@
         public override int Write(AssetBinaryWriter writer)
         {
             return Value.Write(writer);
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 1; // TextLiteralType
+            switch (Value.TextLiteralType)
+            {
+                case EBlueprintTextLiteralType.Empty:
+                    break;
+                case EBlueprintTextLiteralType.LocalizedText:
+                    Value.LocalizedSource.Visit(asset, ref offset, visitor);
+                    Value.LocalizedKey.Visit(asset, ref offset, visitor);
+                    Value.LocalizedNamespace.Visit(asset, ref offset, visitor);
+                    break;
+                case EBlueprintTextLiteralType.InvariantText:
+                    Value.InvariantLiteralString.Visit(asset, ref offset, visitor);
+                    break;
+                case EBlueprintTextLiteralType.LiteralString:
+                    Value.LiteralString.Visit(asset, ref offset, visitor);
+                    break;
+                case EBlueprintTextLiteralType.StringTableEntry:
+                    offset += 8; // StringTableAsset
+                    Value.StringTableId.Visit(asset, ref offset, visitor);
+                    Value.StringTableKey.Visit(asset, ref offset, visitor);
+                    break;
+            }
         }
     }
 }

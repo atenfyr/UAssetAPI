@@ -132,3 +132,17 @@ The BinaryWriter to write from.
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The iCode offset of the data that was written.
+
+### **Visit(UAsset, UInt32&, Action&lt;KismetExpression, UInt32&gt;)**
+
+```csharp
+public void Visit(UAsset asset, UInt32& offset, Action<KismetExpression, uint> visitor)
+```
+
+#### Parameters
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+`offset` [UInt32&](https://docs.microsoft.com/en-us/dotnet/api/system.uint32&)<br>
+
+`visitor` [Action&lt;KismetExpression, UInt32&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.action-2)<br>

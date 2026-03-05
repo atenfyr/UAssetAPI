@@ -21,8 +21,12 @@
 		EX_Assert = 0x09,
 		/// <summary>No operation.</summary>
 		EX_Nothing = 0x0B,
+		/// <summary>No operation with an int32 argument (useful for debugging script disassembly).</summary>
+		EX_NothingInt32 = 0x0C,
 		/// <summary>Assign an arbitrary size value to a variable.</summary>
 		EX_Let = 0x0F,
+		/// <summary>Assign to a single bit, defined by an FProperty.</summary>
+		EX_BitFieldConst = 0x11,
 		/// <summary>Class default object context.</summary>
 		EX_ClassContext = 0x12,
 		/// <summary>Metaclass cast.</summary>
@@ -108,6 +112,8 @@
 		EX_EndSetConst = 0x3E,
 		EX_MapConst = 0x3F,
 		EX_EndMapConst = 0x40,
+		/// <summary>A float vector constant.</summary>
+		EX_Vector3fConst = 0x41,
 		/// <summary>Context expression to address a property within a struct</summary>
 		EX_StructMemberContext = 0x42,
 		/// <summary>Assignment to a multi-cast delegate</summary>

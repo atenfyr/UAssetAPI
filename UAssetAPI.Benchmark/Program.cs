@@ -342,9 +342,24 @@ namespace UAssetAPI.Benchmark
                     Console.WriteLine("Operation completed in " + timer.Elapsed.TotalMilliseconds + " ms");
                     timer.Stop();
                     break;
-                case "mappings":
-                    //Usmap with_skip = new Usmap(@"C:\Dumper-7\with_skip.usmap");
-                    Usmap no_skip = new Usmap(@"C:\Users\Alexandros\AppData\Local\UAssetGUI\Mappings\ReadyOrNot-D7-PPTH.usmap");
+                case "dumpmappings":
+                    {
+                        string usmapPath = args[1];
+                        Usmap usmapToDump = new Usmap(usmapPath);
+                        if (args.Length >= 3)
+                        {
+                            string filterStr = args[2];
+                            foreach (KeyValuePair<string, UsmapEnum> entry in usmapToDump.EnumMap)
+                            {
+                                if (!entry.Value.ModulePath.Contains(filterStr)) usmapToDump.EnumMap.Remove(entry.Key);
+                            }
+                            foreach (KeyValuePair<string, UsmapSchema> entry in usmapToDump.Schemas)
+                            {
+                                if (!entry.Value.ModulePath.Contains(filterStr)) usmapToDump.Schemas.Remove(entry.Key);
+                            }
+                        }
+                        File.WriteAllText(Path.ChangeExtension(usmapPath, ".json"), usmapToDump.SerializeJSON(Formatting.Indented));
+                    }
                     break;
             }
         }
@@ -352,7 +367,7 @@ namespace UAssetAPI.Benchmark
         public static void Main(string[] args)
         {
 #if DEBUG || DEBUG_VERBOSE
-            Run(new string[] { "abcd" });
+            //Run(new string[] { "abcd" });
 
             while (true)
             {

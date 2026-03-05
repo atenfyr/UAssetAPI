@@ -8,7 +8,8 @@ namespace UAssetAPI.UnrealTypes
     {
         Invalid,
 		Initial,
-		LatestPlusOne,
+        AddedCookedIndex,
+        LatestPlusOne,
 		Latest = LatestPlusOne - 1
 	}
 
@@ -30,6 +31,7 @@ namespace UAssetAPI.UnrealTypes
     public struct FObjectDataResource
     {
         public EObjectDataResourceFlags Flags;
+        public byte CookedIndex;
         public long SerialOffset;
         public long DuplicateSerialOffset;
         public long SerialSize;
@@ -37,9 +39,10 @@ namespace UAssetAPI.UnrealTypes
         public FPackageIndex OuterIndex;
         public uint LegacyBulkDataFlags;
 
-        public FObjectDataResource(EObjectDataResourceFlags Flags, long SerialOffset, long DuplicateSerialOffset, long SerialSize, long RawSize, FPackageIndex OuterIndex, uint LegacyBulkDataFlags)
+        public FObjectDataResource(EObjectDataResourceFlags Flags, long SerialOffset, long DuplicateSerialOffset, long SerialSize, long RawSize, FPackageIndex OuterIndex, uint LegacyBulkDataFlags, byte CookedIndex = 0)
         {
             this.Flags = Flags;
+            this.CookedIndex = CookedIndex;
             this.SerialOffset = SerialOffset;
             this.DuplicateSerialOffset = DuplicateSerialOffset;
             this.SerialSize = SerialSize;

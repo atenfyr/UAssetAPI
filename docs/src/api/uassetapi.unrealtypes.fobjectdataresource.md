@@ -18,6 +18,12 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 public EObjectDataResourceFlags Flags;
 ```
 
+### **CookedIndex**
+
+```csharp
+public byte CookedIndex;
+```
+
 ### **SerialOffset**
 
 ```csharp
@@ -56,10 +62,10 @@ public uint LegacyBulkDataFlags;
 
 ## Constructors
 
-### **FObjectDataResource(EObjectDataResourceFlags, Int64, Int64, Int64, Int64, FPackageIndex, UInt32)**
+### **FObjectDataResource(EObjectDataResourceFlags, Int64, Int64, Int64, Int64, FPackageIndex, UInt32, Byte)**
 
 ```csharp
-FObjectDataResource(EObjectDataResourceFlags Flags, long SerialOffset, long DuplicateSerialOffset, long SerialSize, long RawSize, FPackageIndex OuterIndex, uint LegacyBulkDataFlags)
+FObjectDataResource(EObjectDataResourceFlags Flags, long SerialOffset, long DuplicateSerialOffset, long SerialSize, long RawSize, FPackageIndex OuterIndex, uint LegacyBulkDataFlags, byte CookedIndex)
 ```
 
 #### Parameters
@@ -77,3 +83,5 @@ FObjectDataResource(EObjectDataResourceFlags Flags, long SerialOffset, long Dupl
 `OuterIndex` [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
 
 `LegacyBulkDataFlags` [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
+
+`CookedIndex` [Byte](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>

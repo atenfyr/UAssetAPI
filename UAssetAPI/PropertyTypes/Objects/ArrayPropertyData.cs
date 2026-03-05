@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using UAssetAPI.PropertyTypes.Structs;
@@ -41,7 +41,16 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
     {
         if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
-            ArrayType = reader.ReadFName();
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                if (PropertyTypeName is null) throw new FormatException("PropertyTypeName is required to read ArrayProperty with complete type names.");
+                ArrayType = PropertyTypeName.GetParameter(0).GetName();
+            }
+            else
+            {
+                ArrayType = reader.ReadFName();
+            }
+                
             this.ReadEndPropertyTag(reader);
         }
 
@@ -73,7 +82,11 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
                 isSpecialCase = reader.Asset.ObjectVersion == ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && asset.WillSerializeNameHashes == true;
             }
 
-            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                fullType = PropertyTypeName.GetParameter(0).GetParameter(0).GetName();
+            }
+            else if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
             {
                 name = reader.ReadFName();
                 if (name.Value.Value.Equals("None"))
@@ -118,11 +131,13 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
             }
             else
             {
+                var propTypeName = PropertyTypeName?.GetParameter(0);
                 for (int i = 0; i < numEntries; i++)
                 {
                     var data = new StructPropertyData(name, fullType);
                     data.Offset = reader.BaseStream.Position;
                     data.Ancestry.Initialize(Ancestry, Name);
+                    data.PropertyTypeName = propTypeName;
                     data.Read(reader, false, structLength, 0, PropertySerializationContext.Array);
                     data.StructGUID = structGUID;
                     results[i] = data;
@@ -142,10 +157,11 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
             int averageSizeEstimate = (int)((leng1 - 4) / numEntries);
             if (averageSizeEstimate <= 0) averageSizeEstimate = 1; // missing possible edge case where leng1 = 4 and numEntries = 2, may result is wrong size
 
+            var propTypeName = PropertyTypeName?.GetParameter(0);
             var results = new PropertyData[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, null, reader.Asset);
+                results[i] = MainSerializer.TypeToClass(ArrayType, FName.DefineDummy(reader.Asset, i.ToString(), int.MinValue), Ancestry, Name, null, reader.Asset, propertyTypeName: propTypeName);
                 results[i].Offset = reader.BaseStream.Position;
                 if (results[i] is StructPropertyData data) data.StructType = arrayStructType == null ? FName.DefineDummy(reader.Asset, "Generic") : arrayStructType;
                 results[i].Read(reader, false, averageSizeEstimate, 0, PropertySerializationContext.Array);
@@ -195,7 +211,10 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         // begin actual serialization
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.Write(ArrayType);
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(ArrayType);
+            }
             this.WriteEndPropertyTag(writer);
         }
 
@@ -233,7 +252,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
                 isSpecialCase = writer.Asset.ObjectVersion == ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && ((UAsset)writer.Asset).WillSerializeNameHashes == true;
             }
 
-            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME && writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
             {
                 writer.Write(DummyStruct.Name);
                 writer.Write(new FName(writer.Asset, "StructProperty"));
@@ -251,7 +270,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
                 Value[i].Write(writer, false);
             }
 
-            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME && writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_INNER_ARRAY_TAG_INFO && !isSpecialCase)
             {
                 int fullLen = (int)writer.BaseStream.Position - lengthLoc;
                 int newLoc = (int)writer.BaseStream.Position;

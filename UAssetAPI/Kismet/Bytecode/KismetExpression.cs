@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 
@@ -59,6 +60,31 @@ namespace UAssetAPI.Kismet.Bytecode
         public virtual int Write(AssetBinaryWriter writer)
         {
             return 0;
+        }
+
+        /// <summary>
+        /// Visits this expression and all child expressions, calling the visitor function for each with the in-memory offset.
+        /// Note: The offset is the in-memory offset, not the serialization offset.
+        /// </summary>
+        /// <param name="asset">The asset containing this expression.</param>
+        /// <param name="offset">Reference to the current in-memory offset, which is incremented as expressions are visited.</param>
+        /// <param name="visitor">The visitor function to call for each expression with the expression and its offset.</param>
+        public virtual void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            visitor(this, offset);
+            offset++;
+        }
+
+        /// <summary>
+        /// Gets the in-memory size of this expression and all child expressions.
+        /// </summary>
+        /// <param name="asset">The asset containing this expression.</param>
+        /// <returns>The size in bytes of this expression.</returns>
+        public uint GetSize(UAsset asset)
+        {
+            uint offset = 0;
+            Visit(asset, ref offset, (_, __) => { });
+            return offset;
         }
     }
 

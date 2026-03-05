@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using UAssetAPI.CustomVersions;
@@ -226,7 +226,6 @@ public class TextPropertyData : PropertyData<FString>
     FNumberFormattingOptions FormatOptions;
     [JsonProperty]
     FString TargetCulture;
-
 
     public bool ShouldSerializeTableId()
     {

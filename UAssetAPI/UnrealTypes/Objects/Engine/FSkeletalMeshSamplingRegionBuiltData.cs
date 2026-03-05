@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using UAssetAPI.CustomVersions;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// Built data for sampling a single region of a skeletal mesh
 /// </summary>
-public class FSkeletalMeshSamplingRegionBuiltData
+public class FSkeletalMeshSamplingRegionBuiltData : IStruct<FSkeletalMeshSamplingRegionBuiltData>
 {
     /** Triangles included in this region. */
     public int[] TriangleIndices;
@@ -20,34 +21,28 @@ public class FSkeletalMeshSamplingRegionBuiltData
     /** Provides random area weighted sampling of the TriangleIndices array. */
     FSkeletalMeshAreaWeightedTriangleSampler AreaWeightedSampler;
 
+    public FSkeletalMeshSamplingRegionBuiltData()
+    {
+        TriangleIndices = [];
+        Vertices = [];
+        BoneIndices = [];
+        AreaWeightedSampler = new FSkeletalMeshAreaWeightedTriangleSampler();
+    }
+
     public FSkeletalMeshSamplingRegionBuiltData(AssetBinaryReader reader)
     {
-        var num = reader.ReadInt32();
-        TriangleIndices = new int[num];
-        for (int i = 0; i < num; i++)
-        {
-            TriangleIndices[i] = reader.ReadInt32();
-        }
-
-        num = reader.ReadInt32();
-        BoneIndices = new int[num];
-        for (int i = 0; i < num; i++)
-        {
-            BoneIndices[i] = reader.ReadInt32();
-        }
+        TriangleIndices = reader.ReadArray(reader.ReadInt32);
+        BoneIndices = reader.ReadArray(reader.ReadInt32);
 
         AreaWeightedSampler = new FSkeletalMeshAreaWeightedTriangleSampler(reader);
 
         if (reader.Asset.GetCustomVersion<FNiagaraObjectVersion>() >= FNiagaraObjectVersion.SkeletalMeshVertexSampling)
         {
-            num = reader.ReadInt32();
-            Vertices = new int[num];
-            for (int i = 0; i < num; i++)
-            {
-                Vertices[i] = reader.ReadInt32();
-            }
+            Vertices = reader.ReadArray(reader.ReadInt32);
         }
     }
+
+    public static FSkeletalMeshSamplingRegionBuiltData Read(AssetBinaryReader reader) => new FSkeletalMeshSamplingRegionBuiltData(reader);
 
     public int Write(AssetBinaryWriter writer)
     {
@@ -81,5 +76,10 @@ public class FSkeletalMeshSamplingRegionBuiltData
         }
 
         return (int)(writer.BaseStream.Position - offset);
+    }
+
+    public static FSkeletalMeshSamplingRegionBuiltData FromString(string[] d, UAsset asset)
+    {
+        throw new NotImplementedException();
     }
 }

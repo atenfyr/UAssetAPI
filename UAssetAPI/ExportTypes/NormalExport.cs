@@ -33,6 +33,7 @@ namespace UAssetAPI.ExportTypes
         public Guid? ObjectGuid;
         public EClassSerializationControlExtension SerializationControl;
         public EOverriddenPropertyOperation Operation;
+        public bool HasLeadingFourNullBytes = false;
 
         /// <summary>
         /// Gets or sets the value associated with the specified key. This operation loops linearly, so it may not be suitable for high-performance environments.
@@ -125,7 +126,15 @@ namespace UAssetAPI.ExportTypes
             if (reader.Asset.ObjectVersionUE5 > ObjectVersionUE5.DATA_RESOURCES && reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
             {
                 int dummy = reader.ReadInt32();
-                if (dummy != 0) throw new FormatException("Expected 4 null bytes at start of NormalExport; got " + dummy);
+                if (dummy == 0)
+                {
+                    HasLeadingFourNullBytes = true;
+                }
+                else
+                {
+                    HasLeadingFourNullBytes = false;
+                    reader.BaseStream.Seek(-4, System.IO.SeekOrigin.Current);
+                }
             }
 
             Data = new List<PropertyData>();
@@ -166,7 +175,7 @@ namespace UAssetAPI.ExportTypes
         public override void Write(AssetBinaryWriter writer)
         {
             // 5.4-specific problem; unclear why this occurs
-            if (writer.Asset.ObjectVersionUE5 > ObjectVersionUE5.DATA_RESOURCES && writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+            if (HasLeadingFourNullBytes && writer.Asset.ObjectVersionUE5 > ObjectVersionUE5.DATA_RESOURCES && writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES && !ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
             {
                 writer.Write((int)0); // "false" bool?
             }

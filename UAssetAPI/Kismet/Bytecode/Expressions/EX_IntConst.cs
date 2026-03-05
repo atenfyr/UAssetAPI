@@ -1,4 +1,7 @@
-﻿namespace UAssetAPI.Kismet.Bytecode.Expressions
+﻿using System;
+using UAssetAPI.UnrealTypes;
+
+namespace UAssetAPI.Kismet.Bytecode.Expressions
 {
     /// <summary>
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_IntConst"/> instruction.
@@ -33,6 +36,12 @@
         {
             writer.Write(Value);
             return sizeof(int);
+        }
+
+        public override void Visit(UAsset asset, ref uint offset, Action<KismetExpression, uint> visitor)
+        {
+            base.Visit(asset, ref offset, visitor);
+            offset += 4; // Value
         }
     }
 }

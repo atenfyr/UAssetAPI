@@ -1,8 +1,9 @@
-﻿using System;
+using System;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
-public class FWeightedRandomSampler : ICloneable
+public class FWeightedRandomSampler : ICloneable, IStruct<FWeightedRandomSampler>
 {
     public float[] Prob;
     public int[] Alias;
@@ -10,8 +11,8 @@ public class FWeightedRandomSampler : ICloneable
 
     public FWeightedRandomSampler()
     {
-        Prob = Array.Empty<float>();
-        Alias = Array.Empty<int>();
+        Prob = [];
+        Alias = [];
         TotalWeight = 0;
     }
 
@@ -24,20 +25,8 @@ public class FWeightedRandomSampler : ICloneable
 
     public FWeightedRandomSampler(AssetBinaryReader reader)
     {
-        var num = reader.ReadInt32();
-        Prob = new float[num];
-        for (int i = 0; i < num; i++)
-        {
-            Prob[i] = reader.ReadSingle();
-        }
-
-        num = reader.ReadInt32();
-        Alias = new int[num];
-        for (int i = 0; i < num; i++)
-        {
-            Alias[i] = reader.ReadInt32();
-        }
-
+        Prob = reader.ReadArray(reader.ReadSingle);
+        Alias = reader.ReadArray(reader.ReadInt32);
         TotalWeight = reader.ReadSingle();
     }
 
@@ -63,6 +52,36 @@ public class FWeightedRandomSampler : ICloneable
     }
 
     public object Clone() => new FWeightedRandomSampler((float[])Prob.Clone(), (int[])Alias.Clone(), TotalWeight);
+
+    public static FWeightedRandomSampler Read(AssetBinaryReader reader) => new FWeightedRandomSampler(reader);
+
+    public override string ToString()
+    {
+        string oup = "(";
+
+        oup += "(";
+        for (int i = 0; i < Prob.Length; i++)
+        {
+            oup += Convert.ToString(Prob[i]) + ", ";
+        }
+        oup = oup.Remove(oup.Length - 2) + ")";
+
+        oup += "(";
+        for (int i = 0; i < Alias.Length; i++)
+        {
+            oup += Convert.ToString(Alias[i]) + ", ";
+        }
+        oup = oup.Remove(oup.Length - 2) + ")";
+
+        oup += ", " + TotalWeight + ")";
+
+        return oup;
+    }
+
+    public static FWeightedRandomSampler FromString(string[] d, UAsset asset)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 /// <summary>

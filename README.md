@@ -26,5 +26,7 @@ All contributions, whether through pull requests or issues, that you may make ar
 
 I am particularly interested in .uasset files that have their `VerifyBinaryEquality()` method return false (or display "failed to maintain binary equality" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)); if you encounter such an asset, feel free to submit an issue here with a copy of the asset in question along with the name of the game and the Unreal version that it was cooked with.
 
+Please note: Your issue will NOT be reviewed if your issue cannot be replicated due to no test asset being provided.
+
 ## License
 UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](LICENSE).

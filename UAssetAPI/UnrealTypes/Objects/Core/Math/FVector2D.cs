@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.JSON;
+using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// A vector in 2-D space composed of components (X, Y) with floating/double point precision.
 /// </summary>
-public struct FVector2D
+public struct FVector2D : IStruct<FVector2D>
 {
     private float? _x1;
     private double _x2;
@@ -95,5 +96,15 @@ public struct FVector2D
             writer.Write(YFloat);
             return sizeof(float) * 2;
         }
+    }
+
+    public static FVector2D Read(AssetBinaryReader reader) => new FVector2D(reader);
+
+    public override string ToString() => $"({X}, {Y})";
+    public static FVector2D FromString(string[] d, UAsset asset)
+    {
+        double.TryParse(d[0], out double X);
+        double.TryParse(d[1], out double Y);
+        return new FVector2D(X, Y);
     }
 }

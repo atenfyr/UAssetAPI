@@ -87,6 +87,24 @@ public FName ReadFName()
 
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
+### **ReadArray&lt;T&gt;(Func&lt;T&gt;)**
+
+```csharp
+public T[] ReadArray<T>(Func<T> readElement)
+```
+
+#### Type Parameters
+
+`T`<br>
+
+#### Parameters
+
+`readElement` Func&lt;T&gt;<br>
+
+#### Returns
+
+T[]<br>
+
 ### **ReadObjectThumbnail()**
 
 ```csharp

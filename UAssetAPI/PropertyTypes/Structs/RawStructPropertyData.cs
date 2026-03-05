@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
@@ -26,8 +26,17 @@ public class RawStructPropertyData : PropertyData<byte[]>
     {
         if (includeHeader && !reader.Asset.HasUnversionedProperties)
         {
-            StructType = reader.ReadFName();
-            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
+            if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                if (PropertyTypeName is null) throw new FormatException("PropertyTypeName is required to read MapProperty with complete type names.");
+                StructType = PropertyTypeName.GetParameter(0).GetName();
+                //StructGUID
+            }
+            else
+            {
+                StructType = reader.ReadFName();
+                if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) StructGUID = new Guid(reader.ReadBytes(16));
+            }
             this.ReadEndPropertyTag(reader);
         }
 
@@ -38,8 +47,11 @@ public class RawStructPropertyData : PropertyData<byte[]>
     {
         if (includeHeader && !writer.Asset.HasUnversionedProperties)
         {
-            writer.Write(StructType);
-            if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
+            if (writer.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
+            {
+                writer.Write(StructType);
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(StructGUID.ToByteArray());
+            }
             this.WriteEndPropertyTag(writer);
         }
 

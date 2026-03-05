@@ -10,7 +10,8 @@ Structure for three dimensional planes.
 public struct FPlane
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FPlane](./uassetapi.unrealtypes.fplane.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FPlane](./uassetapi.unrealtypes.fplane.md)<br>
+Implements [IStruct&lt;FPlane&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
 
 ## Properties
 
@@ -161,3 +162,43 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Read(AssetBinaryReader)**
+
+```csharp
+FPlane Read(AssetBinaryReader reader)
+```
+
+#### Parameters
+
+`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
+
+#### Returns
+
+[FPlane](./uassetapi.unrealtypes.fplane.md)<br>
+
+### **ToString()**
+
+```csharp
+string ToString()
+```
+
+#### Returns
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **FromString(String[], UAsset)**
+
+```csharp
+FPlane FromString(String[] d, UAsset asset)
+```
+
+#### Parameters
+
+`d` [String[]](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`asset` [UAsset](./uassetapi.uasset.md)<br>
+
+#### Returns
+
+[FPlane](./uassetapi.unrealtypes.fplane.md)<br>

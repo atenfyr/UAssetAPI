@@ -59,7 +59,12 @@ namespace UAssetAPI
         /// <summary>
         /// Skip parsing exports at read time. Entries in the export map will be read as raw exports. You can manually parse exports with the <see cref="UAsset.ParseExport(AssetBinaryReader, int, bool)"/> method.
         /// </summary>
-        SkipParsingExports = 8
+        SkipParsingExports = 8,
+
+        /// <summary>
+        /// Skip loading exports at read time altogether. Entries in the export map will be read as raw exports of zero length, so they cannot be manually parsed later. If this flag is set, SkipParsingExports will also effectively be automatically set regardless of whether or not it was already set manually.
+        /// </summary>
+        SkipLoadingExports = 16,
     }
 
 
@@ -1199,7 +1204,7 @@ namespace UAssetAPI
 
         public ISet<FName> OtherAssetsFailedToAccess = new HashSet<FName>();
 
-        public virtual bool PullSchemasFromAnotherAsset(FName path, FName desiredObject = null)
+        public virtual bool PullSchemasFromAnotherAsset(FName path)
         {
             if (CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipPreloadDependencyLoading)) return false;
 
@@ -1224,11 +1229,30 @@ namespace UAssetAPI
             try
             {
                 Mappings.PathsAlreadyProcessedForSchemas[assetPath] = 1;
+
+                // initial read to just fetch the FolderName
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
-                otherAsset.InternalAssetPath = assetPath;
+                AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
+                otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipLoadingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
-                otherAsset.Read(otherAsset.PathToReader(pathOnDisk));
+                otherAsset.Read(otherReader);
+
+                // second read to get schemas
+                otherAsset.InternalAssetPath = (otherAsset.FolderName != null && otherAsset.FolderName.ToString() != "None") ? otherAsset.FolderName.ToString() : assetPath;
+                otherAsset.CustomSerializationFlags = CustomSerializationFlags.None;
+                otherReader.BaseStream.Seek(0, SeekOrigin.Begin);
+                otherAsset.Read(otherReader);
+
                 // loading the asset will automatically add any new schemas to the mappings in-situ
+
+                // add to failed map
+                if (otherAsset.OtherAssetsFailedToAccess != null && OtherAssetsFailedToAccess != null)
+                {
+                    foreach (var entry in otherAsset.OtherAssetsFailedToAccess)
+                    {
+                        OtherAssetsFailedToAccess.Add(entry);
+                    }
+                }
             }
             catch
             {
@@ -1276,6 +1300,10 @@ namespace UAssetAPI
         ///         <item>
         ///             <version>-8</version>
         ///             <description>indicates that the UE5 version has been added to the summary</description>
+        ///         </item>
+        ///         <item>
+        ///             <version>-9</version>
+        ///             <description>indicates a contractual change in when early exits are required based on FileVersionTooNew. At or after this LegacyFileVersion, we support changing the PackageFileSummary serialization format for all bytes serialized after FileVersionLicensee, and that format change can be conditional on any of the versions parsed before that point. All packageloaders that understand the -9 legacyfileformat are required to early exit without further serialization at that point if FileVersionTooNew is true.</description>
         ///         </item>
         ///     </list>
         /// </remarks>
@@ -1463,6 +1491,9 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the gatherable text data items</summary>
         internal int GatherableTextDataOffset;
 
+        /// <summary>Location into the file on disk for the MetaData data</summary>
+        internal int MetaDataOffset;
+
         /// <summary>Number of exports contained in this package</summary>
         internal int ExportCount = 0;
 
@@ -1474,6 +1505,18 @@ namespace UAssetAPI
 
         /// <summary>Location into the file on disk for the ImportMap data</summary>
         internal int ImportOffset = 0;
+
+        /// <summary>Number of cells contained in this package</summary>
+        internal int CellExportCount;
+
+        /// <summary>Location into the file on disk for the CellExportMap data</summary>
+        internal int CellExportOffset;
+
+        /// <summary>Number of cell imports contained in this package</summary>
+        internal int CellImportCount;
+
+        /// <summary>Location into the file on disk for the CellImportMap data</summary>
+        internal int CellImportOffset;
 
         /// <summary>Location into the file on disk for the DependsMap data</summary>
         internal int DependsOffset = 0;
@@ -1491,6 +1534,10 @@ namespace UAssetAPI
         /// <summary>Thumbnail table offset</summary>
         [JsonProperty]
         internal int ThumbnailTableOffset;
+
+        /// <summary>Hash of the Package's bytes when it was saved to disk.</summary>
+        [JsonProperty]
+        internal byte[] SavedHash;
 
         /// <summary>Should be zero</summary>
         [JsonProperty]
@@ -1526,6 +1573,57 @@ namespace UAssetAPI
         internal bool doWeHaveAssetRegistryData = true;
         [JsonProperty]
         internal bool doWeHaveWorldTileInfo = true;
+
+        [JsonIgnore]
+        internal bool haveWeLoadedDependencies = false;
+        private Dictionary<int, IList<int>> LoadDependencies()
+        {
+            haveWeLoadedDependencies = true;
+            if (Exports == null) return null;
+
+            Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
+            for (int i = 0; i < Exports.Count; i++)
+            {
+                Export newExport = Exports[i];
+                List<FPackageIndex> deps = new List<FPackageIndex>();
+                deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
+                deps.AddRange(newExport.SerializationBeforeCreateDependencies);
+                //deps.Add(newExport.ClassIndex);
+                //deps.Add(newExport.SuperIndex);
+
+                depsMap[i + 1] = new List<int>();
+                foreach (FPackageIndex dep in deps)
+                {
+                    if (dep.IsImport())
+                    {
+                        Import imp = dep.ToImport(this);
+                        if (imp?.OuterIndex?.IsImport() ?? false)
+                        {
+                            Import outerIndex1 = imp?.OuterIndex?.ToImport(this);
+                            FName sourcePath = outerIndex1?.ObjectName;
+                            if (sourcePath?.ToString()?.StartsWith('/') ?? false)
+                            {
+                                this.PullSchemasFromAnotherAsset(sourcePath);
+                            }
+                            else if (outerIndex1?.OuterIndex?.IsImport() ?? false)
+                            {
+                                Import outerIndex2 = outerIndex1.OuterIndex.ToImport(this);
+                                if (outerIndex2?.ObjectName?.ToString()?.StartsWith('/') ?? false)
+                                {
+                                    this.PullSchemasFromAnotherAsset(outerIndex2.ObjectName);
+                                }
+                            }
+                        }
+                    }
+
+                    if (dep.IsExport())
+                    {
+                        depsMap[i + 1].Add(dep.Index);
+                    }
+                }
+            }
+            return depsMap;
+        }
 
         /// <summary>
         /// Copies a portion of a stream to another stream.
@@ -1604,13 +1702,23 @@ namespace UAssetAPI
 
             FileVersionLicenseeUE = reader.ReadInt32();
 
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                SavedHash = reader.ReadBytes(20);
+                SectionSixOffset = reader.ReadInt32();
+            }
+
             // Custom versions container
             if (LegacyFileVersion <= -2)
             {
                 CustomVersionContainer = reader.ReadCustomVersionContainer(CustomVersionSerializationFormat, CustomVersionContainer, Mappings);
             }
 
-            SectionSixOffset = reader.ReadInt32(); // 24
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            { 
+                SectionSixOffset = reader.ReadInt32(); // 24
+            }
+
             FolderName = reader.ReadFString();
             PackageFlags = (EPackageFlags)reader.ReadUInt32();
             NameCount = reader.ReadInt32();
@@ -1637,6 +1745,20 @@ namespace UAssetAPI
             ExportOffset = reader.ReadInt32(); // 61
             ImportCount = reader.ReadInt32(); // 65
             ImportOffset = reader.ReadInt32(); // 69 (haha funny)
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            {
+                CellExportCount = reader.ReadInt32();
+                CellExportOffset = reader.ReadInt32();
+                CellImportCount = reader.ReadInt32();
+                CellImportOffset = reader.ReadInt32();
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.METADATA_SERIALIZATION_OFFSET)
+            {
+                MetaDataOffset = reader.ReadInt32();
+            }
+
             DependsOffset = reader.ReadInt32(); // 73
             if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
@@ -1651,7 +1773,10 @@ namespace UAssetAPI
 
             // valorant garbage data is here
 
-            PackageGuid = new Guid(reader.ReadBytes(16));
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                PackageGuid = new Guid(reader.ReadBytes(16));
+            }
 
             if (!IsFilterEditorOnly)
             {
@@ -2031,6 +2156,13 @@ namespace UAssetAPI
                 for (int i = 0; i < count; i++)
                 {
                     EObjectDataResourceFlags Flags = (EObjectDataResourceFlags)reader.ReadUInt32();
+
+                    byte CookedIndex = 0;
+                    if (DataResourceVersion >= EObjectDataResourceVersion.AddedCookedIndex)
+                    {
+                        CookedIndex = reader.ReadByte();
+                    }
+
                     long SerialOffset = reader.ReadInt64();
                     long DuplicateSerialOffset = reader.ReadInt64();
                     long SerialSize = reader.ReadInt64();
@@ -2038,7 +2170,7 @@ namespace UAssetAPI
                     FPackageIndex OuterIndex = FPackageIndex.FromRawIndex(reader.ReadInt32());
                     uint LegacyBulkDataFlags = reader.ReadUInt32();
 
-                    DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags));
+                    DataResources.Add(new FObjectDataResource(Flags, SerialOffset, DuplicateSerialOffset, SerialSize, RawSize, OuterIndex, LegacyBulkDataFlags, CookedIndex));
                 }
             }
 
@@ -2058,38 +2190,11 @@ namespace UAssetAPI
 
             if (reader.LoadUexp)
             {
-                bool skipParsingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
+                bool skipLoadingExports = CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipLoadingExports);
+                bool skipParsingExports = skipLoadingExports || CustomSerializationFlags.HasFlag(CustomSerializationFlags.SkipParsingExports);
 
                 // load dependencies, if needed and available
-                Dictionary<int, IList<int>> depsMap = new Dictionary<int, IList<int>>();
-                for (int i = 0; i < Exports.Count; i++)
-                {
-                    Export newExport = Exports[i];
-                    List<FPackageIndex> deps = new List<FPackageIndex>();
-                    deps.AddRange(newExport.SerializationBeforeSerializationDependencies);
-                    deps.AddRange(newExport.SerializationBeforeCreateDependencies);
-                    //deps.Add(newExport.ClassIndex);
-                    //deps.Add(newExport.SuperIndex);
-
-                    depsMap[i + 1] = new List<int>();
-                    foreach (FPackageIndex dep in deps)
-                    {
-                        if (dep.IsImport())
-                        {
-                            Import imp = dep.ToImport(this);
-                            if (imp.OuterIndex.IsImport())
-                            {
-                                var sourcePath = imp.OuterIndex.ToImport(this).ObjectName;
-                                this.PullSchemasFromAnotherAsset(sourcePath, imp.ObjectName);
-                            }
-                        }
-
-                        if (dep.IsExport())
-                        {
-                            depsMap[i + 1].Add(dep.Index);
-                        }
-                    }
-                }
+                Dictionary<int, IList<int>> depsMap = LoadDependencies();
                 exportLoadOrder.AddRange(Enumerable.Range(1, Exports.Count).SortByDependencies(depsMap));
 
                 // Export data
@@ -2099,11 +2204,11 @@ namespace UAssetAPI
                     {
                         int i = exportIdx - 1;
 
-                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
+                        if (!skipLoadingExports) reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (skipParsingExports || skipLoadingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            ((RawExport)Exports[i]).Data = skipLoadingExports ? Array.Empty<byte>() : reader.ReadBytes((int)Exports[i].SerialSize);
                             continue;
                         }
 
@@ -2115,11 +2220,11 @@ namespace UAssetAPI
                     {
                         if (Exports[i].alreadySerialized) continue;
 
-                        reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
-                        if (skipParsingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
+                        if (!skipLoadingExports) reader.BaseStream.Seek(Exports[i].SerialOffset, SeekOrigin.Begin);
+                        if (skipParsingExports || skipLoadingExports || (manualSkips != null && manualSkips.Contains(i) && (forceReads == null || !forceReads.Contains(i))))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<RawExport>();
-                            ((RawExport)Exports[i]).Data = reader.ReadBytes((int)Exports[i].SerialSize);
+                            ((RawExport)Exports[i]).Data = skipLoadingExports ? Array.Empty<byte>() : reader.ReadBytes((int)Exports[i].SerialSize);
                             continue;
                         }
 
@@ -2248,6 +2353,13 @@ namespace UAssetAPI
             }
 
             writer.Write(FileVersionLicenseeUE);
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(SavedHash);
+                writer.Write(SectionSixOffset);
+            }
+
             if (LegacyFileVersion <= -2)
             {
                 if (IsUnversioned)
@@ -2260,7 +2372,11 @@ namespace UAssetAPI
                 }
             }
 
-            writer.Write(SectionSixOffset);
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(SectionSixOffset);
+            }
+
             writer.Write(FolderName);
             writer.Write((uint)PackageFlags);
             writer.Write(NameCount);
@@ -2283,6 +2399,20 @@ namespace UAssetAPI
             writer.Write(ExportOffset); // 61
             writer.Write(ImportCount); // 65
             writer.Write(ImportOffset); // 69 (haha funny)
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            {
+                writer.Write(CellExportCount);
+                writer.Write(CellExportOffset);
+                writer.Write(CellImportCount);
+                writer.Write(CellImportOffset);
+            }
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.METADATA_SERIALIZATION_OFFSET)
+            {
+                writer.Write(MetaDataOffset);
+            }
+
             writer.Write(DependsOffset); // 73
             if (ObjectVersion >= ObjectVersion.VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
             {
@@ -2297,7 +2427,11 @@ namespace UAssetAPI
 
             if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
-            writer.Write(PackageGuid.ToByteArray());
+            if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
+            {
+                writer.Write(PackageGuid.ToByteArray());
+            }
+
             if (!IsFilterEditorOnly)
             {
                 if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER)
@@ -2416,6 +2550,9 @@ namespace UAssetAPI
 
             // resolve ancestries
             ResolveAncestries();
+
+            // load deps if needed (i.e. asset was loaded from json)
+            if (!haveWeLoadedDependencies) LoadDependencies();
 
             var stre = new MemoryStream();
             try
@@ -2728,6 +2865,12 @@ namespace UAssetAPI
                     {
                         FObjectDataResource dataResource = DataResources[i];
                         writer.Write((uint)dataResource.Flags);
+
+                        if (DataResourceVersion >= EObjectDataResourceVersion.AddedCookedIndex)
+                        {
+                            writer.Write(dataResource.CookedIndex);
+                        }
+
                         writer.Write(dataResource.SerialOffset);
                         writer.Write(dataResource.DuplicateSerialOffset);
                         writer.Write(dataResource.SerialSize);
