@@ -87,10 +87,10 @@
     <EmbeddedResource Include="git_commit.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="repak_bind.dll.gz">
+    <EmbeddedResource Include="repak_bind.dll.gz" WithCulture="false">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="repak_bind.so.gz">
+    <EmbeddedResource Include="repak_bind.so.gz" WithCulture="false">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

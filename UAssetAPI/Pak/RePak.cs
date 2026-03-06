@@ -71,8 +71,9 @@ public class PakBuilder : SafeHandleZeroOrMinusOneIsInvalid
             if (ex is DllNotFoundException || ex is BadImageFormatException)
             {
                 // extract dll if needed
-                string outPath = Path.Combine(Directory.GetCurrentDirectory(), RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "repak_bind.so" : "repak_bind.dll");
-                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "UAssetAPI.repak_bind.so.gz" : "UAssetAPI.repak_bind.dll.gz"))
+                string outPath = Path.Combine(AppContext.BaseDirectory, RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "repak_bind.so" : "repak_bind.dll");
+                string resourceName = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "UAssetAPI.repak_bind.so.gz" : "UAssetAPI.repak_bind.dll.gz";
+                using (var resource = typeof(PropertyData).Assembly.GetManifestResourceStream(resourceName))
                 {
                     if (resource != null)
                     {
@@ -83,6 +84,10 @@ public class PakBuilder : SafeHandleZeroOrMinusOneIsInvalid
                                 gzipStream.CopyTo(file);
                             }
                         }
+                    }
+                    else
+                    {
+                        throw new DllNotFoundException("Failed to find resource: " + resourceName);
                     }
                 }
 
