@@ -926,6 +926,9 @@ namespace UAssetAPI
                     case "MetaData":
                         Exports[i] = Exports[i].ConvertToChildExport<MetaDataExport>();
                         break;
+                    case "AssetImportData":
+                        Exports[i] = Exports[i].ConvertToChildExport<AssetImportDataExport>();
+                        break;
                     default:
                         if (exportClassType.EndsWith("DataTable"))
                         {
