@@ -1497,6 +1497,9 @@ namespace UAssetAPI
         /// <summary>Location into the file on disk for the MetaData data</summary>
         internal int MetaDataOffset;
 
+        /// <summary>Raw bytes of the MetaData section (between MetaDataOffset and the next section). Preserved during roundtrip.</summary>
+        internal byte[] MetaDataBytes;
+
         /// <summary>Number of exports contained in this package</summary>
         internal int ExportCount = 0;
 
@@ -1973,6 +1976,13 @@ namespace UAssetAPI
                     var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts};
                     GatherableTextData.Add(textData);
                 }
+            }
+
+            // MetaData (build dependency data, UE5.4+)
+            if (MetaDataOffset > 0 && ImportOffset > MetaDataOffset)
+            {
+                reader.BaseStream.Seek(MetaDataOffset, SeekOrigin.Begin);
+                MetaDataBytes = reader.ReadBytes(ImportOffset - MetaDataOffset);
             }
 
             // Imports
@@ -2628,6 +2638,17 @@ namespace UAssetAPI
                             writer.Write(context.KeyMetaData);
                         }
                     }
+                }
+
+                // MetaData (build dependency data, UE5.4+)
+                if (MetaDataBytes != null && MetaDataBytes.Length > 0)
+                {
+                    this.MetaDataOffset = (int)writer.BaseStream.Position;
+                    writer.Write(MetaDataBytes);
+                }
+                else if (ObjectVersionUE5 >= ObjectVersionUE5.METADATA_SERIALIZATION_OFFSET)
+                {
+                    this.MetaDataOffset = (int)writer.BaseStream.Position;
                 }
 
                 // Imports
