@@ -1749,10 +1749,10 @@ namespace UAssetAPI
             ImportCount = reader.ReadInt32(); // 65
             ImportOffset = reader.ReadInt32(); // 69 (haha funny)
 
-            // VERSE_CELLS fields only exist in Fortnite/Epic-internal builds (version numbers >> 2000).
-            // Standard UE5 public releases do NOT write these fields even when FileVersionUE5 >= VERSE_CELLS (1015).
-            // Reading them on standard assets corrupts all subsequent header offsets. Skip for all standard UE5 files.
-            if ((int)ObjectVersionUE5 >= 2000)
+            // VERSE_CELLS fields (CellExportCount/Offset, CellImportCount/Offset) exist in UE5.4-5.6 (1015-1017)
+            // standard editor builds. UE5.7 (1018) removed them from the package summary header.
+            // Reading 16 bytes that no longer exist in UE5.7 corrupts all subsequent header field reads.
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS && ObjectVersionUE5 < ObjectVersionUE5.UE5_7_VERSION_BUMP)
             {
                 CellExportCount = reader.ReadInt32();
                 CellExportOffset = reader.ReadInt32();
@@ -2421,8 +2421,8 @@ namespace UAssetAPI
             writer.Write(ImportCount); // 65
             writer.Write(ImportOffset); // 69 (haha funny)
 
-            // See read path comment: VERSE_CELLS only present in Fortnite/Epic-internal builds (version >> 2000)
-            if ((int)ObjectVersionUE5 >= 2000)
+            // See read path: VERSE_CELLS present in UE5.4-5.6 (1015-1017), removed in UE5.7 (1018+)
+            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS && ObjectVersionUE5 < ObjectVersionUE5.UE5_7_VERSION_BUMP)
             {
                 writer.Write(CellExportCount);
                 writer.Write(CellExportOffset);
