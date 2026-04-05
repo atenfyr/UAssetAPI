@@ -1800,7 +1800,7 @@ namespace UAssetAPI
             if ((int)ObjectVersionUE5 >= 1018)
             {
                 reader.ReadBytes(24);
-                            }
+            }
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
