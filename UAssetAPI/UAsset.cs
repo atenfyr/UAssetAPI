@@ -1749,7 +1749,10 @@ namespace UAssetAPI
             ImportCount = reader.ReadInt32(); // 65
             ImportOffset = reader.ReadInt32(); // 69 (haha funny)
 
-            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            // VERSE_CELLS fields only exist in Fortnite/Epic-internal builds (version numbers >> 2000).
+            // Standard UE5 public releases do NOT write these fields even when FileVersionUE5 >= VERSE_CELLS (1015).
+            // Reading them on standard assets corrupts all subsequent header offsets. Skip for all standard UE5 files.
+            if ((int)ObjectVersionUE5 >= 2000)
             {
                 CellExportCount = reader.ReadInt32();
                 CellExportOffset = reader.ReadInt32();
@@ -1773,7 +1776,7 @@ namespace UAssetAPI
                 SearchableNamesOffset = reader.ReadInt32();
             }
             ThumbnailTableOffset = reader.ReadInt32();
-
+            
             // valorant garbage data is here
 
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
@@ -1783,7 +1786,7 @@ namespace UAssetAPI
 
             if (!IsFilterEditorOnly)
             {
-                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER 
+                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER
                     ? new Guid(reader.ReadBytes(16))
                     : PackageGuid;
 
@@ -1791,6 +1794,13 @@ namespace UAssetAPI
                     ObjectVersion < ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT)
                     reader.ReadBytes(16);
             }
+
+            // UE5.7 (ObjectVersionUE5 >= 1018 = UE5_7_VERSION_BUMP) added 24 bytes to the package summary
+            // here. Exact semantics TBD; observed pattern: 8 zero bytes + 16 byte GUID-like block.
+            if ((int)ObjectVersionUE5 >= 1018)
+            {
+                reader.ReadBytes(24);
+                            }
 
             Generations = new List<FGenerationInfo>();
             int generationCount = reader.ReadInt32();
@@ -2254,22 +2264,30 @@ namespace UAssetAPI
             // Searchable names
             if (SearchableNamesOffset > 0)
             {
-                SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
-                reader.BaseStream.Seek(SearchableNamesOffset, SeekOrigin.Begin);
-                var searchableNamesCount = reader.ReadInt32();
-                
-                for (int i = 0; i < searchableNamesCount; i++)
+                try
                 {
-                    var collectionIndex = reader.ReadInt32();
-                    var collectionCount = reader.ReadInt32();
-                    var searchableCollection = new List<FName>();
-                    for (int j = 0; j < collectionCount; j++)
-                    {
-                        var searchableName = reader.ReadFName();
-                        searchableCollection.Add(searchableName);
-                    }
+                    SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
+                    reader.BaseStream.Seek(SearchableNamesOffset, SeekOrigin.Begin);
+                    var searchableNamesCount = reader.ReadInt32();
 
-                    SearchableNames.Add(FPackageIndex.FromRawIndex(collectionIndex), searchableCollection);
+                    for (int i = 0; i < searchableNamesCount; i++)
+                    {
+                        var collectionIndex = reader.ReadInt32();
+                        var collectionCount = reader.ReadInt32();
+                        var searchableCollection = new List<FName>();
+                        for (int j = 0; j < collectionCount; j++)
+                        {
+                            var searchableName = reader.ReadFName();
+                            searchableCollection.Add(searchableName);
+                        }
+
+                        SearchableNames.Add(FPackageIndex.FromRawIndex(collectionIndex), searchableCollection);
+                    }
+                }
+                catch
+                {
+                    // SearchableNames parsing failed (format may differ in newer engine versions). Skip gracefully.
+                    SearchableNames = null;
                 }
             }
 
@@ -2403,7 +2421,8 @@ namespace UAssetAPI
             writer.Write(ImportCount); // 65
             writer.Write(ImportOffset); // 69 (haha funny)
 
-            if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+            // See read path comment: VERSE_CELLS only present in Fortnite/Epic-internal builds (version >> 2000)
+            if ((int)ObjectVersionUE5 >= 2000)
             {
                 writer.Write(CellExportCount);
                 writer.Write(CellExportOffset);

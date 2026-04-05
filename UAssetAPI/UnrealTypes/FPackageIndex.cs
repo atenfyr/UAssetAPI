@@ -15,16 +15,19 @@ namespace UAssetAPI.UnrealTypes;
 /// The actual array index will be (-FPackageIndex - 1)
 /// </summary>
 [JsonConverter(typeof(FPackageIndexJsonConverter))]
-public class FPackageIndex
+public class FPackageIndex : IComparable<FPackageIndex>, IComparable
 {
     /// <summary>
     /// Values greater than zero indicate that this is an index into the ExportMap.
     /// The actual array index will be (FPackageIndex - 1).
-    /// 
+    ///
     /// Values less than zero indicate that this is an index into the ImportMap.
     /// The actual array index will be (-FPackageIndex - 1)
     /// </summary>
     public int Index;
+
+    public int CompareTo(FPackageIndex? other) => other is null ? 1 : Index.CompareTo(other.Index);
+    public int CompareTo(object? obj) => obj is FPackageIndex other ? CompareTo(other) : 1;
 
     /// <summary>
     /// Returns an FPackageIndex based off of the index provided. Equivalent to <see cref="FPackageIndex(int)"/>.

@@ -713,6 +713,9 @@
         // OS shadow serialization of subobjects
         OS_SUB_OBJECT_SHADOW_SERIALIZATION,
 
+        // UE5.7 version bump (new format introduced in public 5.7 release)
+        UE5_7_VERSION_BUMP,
+
         // -----<new versions can be added before this line>-------------------------------------------------
         // - this needs to be the last line (see note below)
         AUTOMATIC_VERSION_PLUS_ONE,

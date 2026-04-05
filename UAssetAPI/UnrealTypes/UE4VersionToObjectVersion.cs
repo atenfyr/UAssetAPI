@@ -51,6 +51,6 @@ namespace UAssetAPI.UnrealTypes
         VER_UE5_4 = 1012,
         VER_UE5_5 = 1013,
         VER_UE5_6 = 1017,
-        VER_UE5_7 = 1017,
+        VER_UE5_7 = 1018,
     }
 }
