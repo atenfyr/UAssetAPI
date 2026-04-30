@@ -128,6 +128,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>
         /// An optional property GUID. Nearly always null.
         /// </summary>
+        [JsonProperty]
         public Guid? PropertyGuid = null;
 
         /// <summary>

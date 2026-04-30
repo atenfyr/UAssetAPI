@@ -360,6 +360,7 @@ namespace UAssetAPI
                     {
                         reader.BaseStream.Position = posBefore;
                         data = new RawStructPropertyData(name);
+                        data.PropertyTagFlags = propertyTagFlags;
                         data.Ancestry.Initialize(ancestry, parentName, parentModulePath);
                         data.ArrayIndex = ArrayIndex;
                         data.PropertyTypeName = propertyTypeName;
@@ -610,6 +611,7 @@ namespace UAssetAPI
                 writer.Write((int)0); // initial length
                 writer.Write((byte)property.PropertyTagFlags);
                 if (property.ArrayIndex != 0) writer.Write(property.ArrayIndex);
+                if (property.PropertyGuid != null) writer.Write(property.PropertyGuid.Value.ToByteArray());
                 int realLength = property.Write(writer, includeHeader);
                 int newLoc = (int)writer.BaseStream.Position;
 

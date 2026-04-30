@@ -1,4 +1,6 @@
-﻿using System;
+using Newtonsoft.Json;
+using System;
+using UAssetAPI.JSON;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -7,9 +9,11 @@ namespace UAssetAPI.PropertyTypes.Structs;
 public class MovieSceneGenerationLedgerPropertyData : PropertyData
 {
     /** Map of track identifiers to number of references within th template (generally 1, maybe >1 for shared tracks) */
+    [JsonConverter(typeof(TMapJsonConverter<StructPropertyData, int>))]
     TMap<StructPropertyData, int> TrackReferenceCounts;
 
     /** Map of track signature to array of track identifiers that it created */
+    [JsonConverter(typeof(TMapJsonConverter<Guid, StructPropertyData>))]
     TMap<Guid, StructPropertyData> TrackSignatureToTrackIdentifier;
 
     public MovieSceneGenerationLedgerPropertyData(FName name) : base(name) { }

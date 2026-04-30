@@ -1,6 +1,7 @@
-﻿using System;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using UAssetAPI.JSON;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
@@ -14,6 +15,7 @@ namespace UAssetAPI.FieldTypes
         public FName SerializedType;
         public FName Name;
         public EObjectFlags Flags;
+        [JsonConverter(typeof(TMapJsonConverter<FName, FString>))]
         public TMap<FName, FString> MetaDataMap;
 
         public virtual void Read(AssetBinaryReader reader)
@@ -26,14 +28,7 @@ namespace UAssetAPI.FieldTypes
                 bool bHasMetaData = reader.ReadBooleanInt();
                 if (bHasMetaData)
                 {
-                    MetaDataMap = new TMap<FName, FString>();
-                    int leng = reader.ReadInt32();
-                    for (int i = 0; i < leng; i++)
-                    {
-                        FName key = reader.ReadFName();
-                        FString val = reader.ReadFString();
-                        MetaDataMap.Add(key, val);
-                    }
+                    MetaDataMap = reader.ReadMap(reader.ReadFName, reader.ReadFString);
                 }
             }
         }
@@ -56,7 +51,6 @@ namespace UAssetAPI.FieldTypes
                         writer.Write(pair.Value);
                     }
                 }
-
             }
         }
 

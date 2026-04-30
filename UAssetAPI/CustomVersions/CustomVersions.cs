@@ -1793,6 +1793,14 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE5_4)]
         DynamicMeshAttributesSerializeBones,
 
+        /// <summary>Add option for sanitizing output attribute names for all PCG data getters</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        OptionSanitizeOutputAttributeNamesPCG,
+
+        /// <summary>Add automatic platform naming fix up for CommonUI input action data tables</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        CommonUIPlatformNamingUpgradeOption,
+
         /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
@@ -2010,6 +2018,46 @@ namespace UAssetAPI.CustomVersions
         /// <summary>Orthographic Near and Far Plane Auto-resolve enabled by default</summary>
         [Introduced(EngineVersion.VER_UE5_4)]
         OrthographicAutoNearFarPlane,
+
+        /// <summary>Fix a bug where BlendMask counts could get out of sync with BlendPose counts.</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AnimLayeredBoneBlendMasksFix,
+
+        /// <summary>Separated lens flare from bloom intensity</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        BloomIndependentLensFlare,
+
+        /// <summary>Add settings to IAnimationDataModel GUID generation</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        AnimModelGuidGenerationSettings,
+
+        /// <summary>Add support for Standalone HLOD</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        WorldPartitionAddStandaloneHLODSupport,
+
+        /// <summary>Fixed the missing bounds for cloth assets that don't have them serialized</summary>
+        [Introduced(EngineVersion.VER_UE5_6)]
+        RecalculateClothAssetSerializedBounds,
+
+        /// <summary>Composite plugin now uses its own derived scene capture components</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        CompositePluginDerivedSceneCaptures,
+
+        /// <summary>Add option to output attributes on the PCG Duplicate Cross Section node on the Data domain</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        ExtraOutputAttributesOnDataDomainPCG,
+
+        /// <summary>Media Profile: Changed storage of capture cameras list from lazy to soft pointers</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        MediaProfilePluginCaptureCameraSoftPtr,
+
+        /// <summary>Reparameterize Spline in SplineComponent based on SplineCurves parameterization</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        SplineComponentReparameterizeOnLoad,
+
+        /// <summary>Add solver and fabric property support to the schema based Cloth USD importer</summary>
+        [Introduced(EngineVersion.VER_UE5_7)]
+        AddSimulationPropertySupportToClothUSDImportNodeV2,
 
         /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
@@ -2416,7 +2464,6 @@ namespace UAssetAPI.CustomVersions
         /// </summary>
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
-
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1

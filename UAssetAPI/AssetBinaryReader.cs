@@ -225,16 +225,32 @@ public class AssetBinaryReader : UnrealBinaryReader
         return new FName(Asset, nameMapPointer, number);
     }
 
-    public T[] ReadArray<T>(Func<T> readElement)
+    public T[] ReadArray<T>(int length, Func<T> readElement)
     {
-        int arrayLength = ReadInt32();
-        if (arrayLength == 0) return [];
-        T[] newData = new T[arrayLength];
-        for (int i = 0; i < arrayLength; i++)
+        if (length == 0) return [];
+        T[] newData = new T[length];
+        for (int i = 0; i < length; i++)
         {
             newData[i] = readElement();
         }
         return newData;
+    }
+
+    public T[] ReadArray<T>(Func<T> readElement)
+    {
+        int arrayLength = ReadInt32();
+        return ReadArray(arrayLength, readElement);
+    }
+
+    public TMap<TKey, TValue> ReadMap<TKey, TValue>(int length, Func<TKey> keyGetter, Func<TValue> valueGetter) where TKey : notnull
+    {
+        return new TMap<TKey, TValue>(ReadArray<KeyValuePair<TKey, TValue>>(length, () => new(keyGetter(), valueGetter())));
+    }
+
+    public TMap<TKey, TValue> ReadMap<TKey, TValue>(Func<TKey> keyGetter, Func<TValue> valueGetter) where TKey : notnull
+    {
+        var length = ReadInt32();
+        return ReadMap(length, keyGetter, valueGetter);
     }
 
     public FObjectThumbnail ReadObjectThumbnail()

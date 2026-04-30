@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections;
@@ -21,6 +21,52 @@ using PostSharp.Serialization;
 
 namespace UAssetAPI
 {
+    public struct FTypeResource
+    {
+        public FName TypeName;
+        // Package where the type object lives.
+        public FName PackageName;
+        // This is the Class 'kind' for the type (e.g., "Class", "VerseClass", "BlueprintGeneratedClass", "UserDefinedStruct", etc).
+        public FName ClassName;
+        // Package where the Class 'kind' object lives.
+        public FName ClassPackageName;
+
+        public void Write(AssetBinaryWriter writer)
+        {
+            writer.Write(TypeName);
+            writer.Write(PackageName);
+            writer.Write(ClassName);
+            writer.Write(ClassPackageName);
+        }
+
+        public FTypeResource(AssetBinaryReader reader)
+        {
+            TypeName = reader.ReadFName();
+            PackageName = reader.ReadFName();
+            ClassName = reader.ReadFName();
+            ClassPackageName = reader.ReadFName();
+        }
+
+    }
+
+    public class FImportTypeHierarchy
+    {
+        public FTypeResource[] SuperTypes;
+
+        public void Write(AssetBinaryWriter writer)
+        {
+            writer.Write(SuperTypes.Length);
+            foreach (var super in SuperTypes)
+                super.Write(writer);
+        }
+
+        public FImportTypeHierarchy(AssetBinaryReader reader)
+        {
+            SuperTypes = reader.ReadArray(() => new FTypeResource(reader));
+        }
+
+    }
+
     public interface INameMap
     {
         IReadOnlyList<FString> GetNameMapIndexList();
@@ -300,6 +346,17 @@ namespace UAssetAPI
         /// List of Searchable Names, by object containing them. Sorted to keep order consistent.
         /// </summary>
         public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
+
+        /// <summary>
+        /// Map of hierarchical type information for FObjectImport Struct entries in the package
+        /// </summary>
+        [JsonConverter(typeof(TMapJsonConverter<FPackageIndex, FImportTypeHierarchy>))]
+        public TMap<FPackageIndex, FImportTypeHierarchy> ImportTypeHierarchies;
+
+        /// <summary>
+        /// MetaData for the editor
+        /// </summary>
+        public FMetaData MetaData;
 
         /// <summary>
         /// Map of object full names to the thumbnails
@@ -1370,24 +1427,21 @@ namespace UAssetAPI
         public List<FAssetRegistryRecord> AssetRegistryRecords;
 
         /// <summary>
-        /// Number of valid bits in `ImportBits'. This only appears in uncooked asset.
-        /// </summary>
-        public int ImportBitsCount = 0;
-
-        /// <summary>
         /// Bits indicating if imports used in game are contained in import map. This only appears in uncooked asset.
         /// </summary>
+        [JsonConverter(typeof(BitArrayJsonConverter))]
         public BitArray ImportBits;
-
-        /// <summary>
-        /// Number of valid bits in `SoftPackageBits'. This only appears in uncooked asset.
-        /// </summary>
-        public int SoftPackageBitsCount = 0;
 
         /// <summary>
         /// Bits indicating if soft packages used in game are contained in soft package reference list. This only appears in uncooked asset.
         /// </summary>
+        [JsonConverter(typeof(BitArrayJsonConverter))]
         public BitArray SoftPackageBits;
+
+        /// <summary>
+        /// Currently the only type of ExtraPackageDependencies we have are the collected build dependencies, which have both the Build and PropagateManage flags.
+        /// </summary>
+        public KeyValuePair<FName, uint>[] ExtraPackageDependencies;
 
         /// <summary>
         /// Any bulk data that is not stored in the export map.
@@ -1537,6 +1591,14 @@ namespace UAssetAPI
         /// <summary>Thumbnail table offset</summary>
         [JsonProperty]
         internal int ThumbnailTableOffset;
+
+        /// <summary>Number of import type hierarchy entries</summary>
+        [JsonProperty] 
+        internal int ImportTypeHierarchiesCount = 0;
+
+        /// <summary>Location into the file on disk for the import type hierarchy map</summary>
+        [JsonProperty]
+        internal int ImportTypeHierarchiesOffset = 0;
 
         /// <summary>Hash of the Package's bytes when it was saved to disk.</summary>
         [JsonProperty]
@@ -1774,7 +1836,11 @@ namespace UAssetAPI
             }
             ThumbnailTableOffset = reader.ReadInt32();
 
-            // valorant garbage data is here
+            if (ObjectVersionUE5 >= ObjectVersionUE5.IMPORT_TYPE_HIERARCHIES)
+            {
+                ImportTypeHierarchiesCount = reader.ReadInt32();
+                ImportTypeHierarchiesOffset = reader.ReadInt32();
+            }
 
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
             {
@@ -1958,6 +2024,7 @@ namespace UAssetAPI
                         var isOptional = reader.ReadInt32() > 0;
                         var infoMetaData = reader.ReadLocMetadataObject();
                         var keyMetaData = reader.ReadLocMetadataObject();
+
                         var context = new FTextSourceSiteContext
                         {
                             KeyName = keyName,
@@ -1973,6 +2040,11 @@ namespace UAssetAPI
                     var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts};
                     GatherableTextData.Add(textData);
                 }
+            }
+
+            if (MetaDataOffset > 0)
+            {
+                MetaData = new FMetaData(reader);
             }
 
             // Imports
@@ -2069,8 +2141,12 @@ namespace UAssetAPI
 
                 if (!IsPreDependencyFormat)
                 {
-                    ImportBits = ReadBitArray(reader, out ImportBitsCount);
-                    SoftPackageBits = ReadBitArray(reader, out SoftPackageBitsCount);
+                    ImportBits = ReadBitArray(reader);
+                    SoftPackageBits = ReadBitArray(reader);
+                    if (ObjectVersionUE5 >= ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES)
+                    {
+                        ExtraPackageDependencies = reader.ReadArray(() => new KeyValuePair<FName, uint>(reader.ReadFName(), reader.ReadUInt32()));
+                    }
                 }
             }
             else
@@ -2273,6 +2349,12 @@ namespace UAssetAPI
                 }
             }
 
+            if (ImportTypeHierarchiesOffset > 0)
+            {
+                reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
+                ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
+            }
+
             // Thumbnails
             if (ThumbnailTableOffset > 0)
             {
@@ -2302,11 +2384,11 @@ namespace UAssetAPI
             }
         }
 
-        private static BitArray ReadBitArray(AssetBinaryReader reader, out int bitCount)
+        private static BitArray ReadBitArray(AssetBinaryReader reader)
         {
-            bitCount = reader.ReadInt32();
+            var bitCount = reader.ReadInt32();
             int length = ComputeBitArrayDataLenth(bitCount);
-            return new BitArray(reader.ReadBytes(length));
+            return new BitArray(reader.ReadBytes(length)) { Length = bitCount };
         }
         private static int BitsToNumWords(int bitCount)
         {
@@ -2315,7 +2397,7 @@ namespace UAssetAPI
 
         private static int ComputeBitArrayDataLenth(int bitCount)
         {
-            return sizeof(Int32) * BitsToNumWords(bitCount);
+            return sizeof(int) * BitsToNumWords(bitCount);
         }
 
         /// <summary>
@@ -2426,7 +2508,14 @@ namespace UAssetAPI
             {
                 writer.Write(SearchableNamesOffset);
             }
+
             writer.Write(ThumbnailTableOffset);
+
+            if (ObjectVersionUE5 >= ObjectVersionUE5.IMPORT_TYPE_HIERARCHIES)
+            {
+                writer.Write(ImportTypeHierarchiesCount);
+                writer.Write(ImportTypeHierarchiesOffset);
+            }
 
             if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
 
@@ -2630,6 +2719,12 @@ namespace UAssetAPI
                     }
                 }
 
+                if (MetaData != null)
+                {
+                    MetaDataOffset = (int)writer.BaseStream.Position;
+                    MetaData.Write(writer);
+                }
+
                 // Imports
                 if (this.Imports.Count > 0)
                 {
@@ -2666,6 +2761,14 @@ namespace UAssetAPI
                 else
                 {
                     this.ExportOffset = 0;
+                }
+
+                // for binary equality after json conversion
+                // To-Do read/write cell data
+                if (ObjectVersionUE5 >= ObjectVersionUE5.VERSE_CELLS)
+                {
+                    CellImportOffset = (int)writer.BaseStream.Position;
+                    CellExportOffset = (int)writer.BaseStream.Position;
                 }
 
                 // DependsMap
@@ -2734,6 +2837,18 @@ namespace UAssetAPI
                     SearchableNamesOffset = 0;
                 }
 
+                if (ImportTypeHierarchies != null)
+                {
+                    ImportTypeHierarchiesOffset = (int)writer.BaseStream.Position;
+                    ImportTypeHierarchiesCount = ImportTypeHierarchies.Count;
+
+                    foreach (var kvp in ImportTypeHierarchies)
+                    {
+                        kvp.Key.Write(writer);
+                        kvp.Value.Write(writer);
+                    }
+                }
+
                 if (!IsFilterEditorOnly && Thumbnails != null)
                 {
                     var thumbnailOffsets = new List<(string ObjectFullName, int FileOffset)>();
@@ -2799,9 +2914,22 @@ namespace UAssetAPI
                         writer.Write(AssetRegistryDependencyDataOffset);
                         writer.BaseStream.Seek(AssetRegistryDependencyDataOffset, SeekOrigin.Begin);
 
-                        WriteBitArray(writer, ImportBitsCount, ImportBits);
+                        WriteBitArray(writer, ImportBits);
+                        WriteBitArray(writer, SoftPackageBits);
 
-                        WriteBitArray(writer, SoftPackageBitsCount, SoftPackageBits);
+                        if (ObjectVersionUE5 >= ObjectVersionUE5.ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES)
+                        {
+                            if (ExtraPackageDependencies is null) writer.Write(0);
+                            else
+                            {
+                                writer.Write(ExtraPackageDependencies.Length);
+                                foreach (var kvp in ExtraPackageDependencies)
+                                {
+                                    writer.Write(kvp.Key);
+                                    writer.Write(kvp.Value);
+                                }
+                            }
+                        }
                     }
                 }
                 else
@@ -2955,8 +3083,9 @@ namespace UAssetAPI
             return stre;
         }
 
-        private static void WriteBitArray(AssetBinaryWriter writer, int count, BitArray bitArray)
+        private static void WriteBitArray(AssetBinaryWriter writer, BitArray bitArray)
         {
+            var count = bitArray.Length;
             writer.Write(count);
             if (count > 0)
             {

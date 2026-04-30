@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace UAssetAPI.UnrealTypes
 {
@@ -12,4 +12,13 @@ namespace UAssetAPI.UnrealTypes
 
         [JsonProperty] public List<FLocMetadataValue> Values { get; set; } = new List<FLocMetadataValue>();
     }
+
+    public enum ELocMetadataType : int
+    {
+        None,
+        Boolean,
+        String,
+        Array,
+        Object,
+    };
 }

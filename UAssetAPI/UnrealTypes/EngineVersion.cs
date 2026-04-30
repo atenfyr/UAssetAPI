@@ -83,6 +83,8 @@ namespace UAssetAPI.UnrealTypes
         VER_UE5_6,
         /// <summary>5.7</summary>
         VER_UE5_7,
+        /// <summary>5.8</summary>
+        VER_UE5_8,
 
         VER_UE4_AUTOMATIC_VERSION_PLUS_ONE,
         /// <summary>The newest specified version of the Unreal Engine.</summary>
