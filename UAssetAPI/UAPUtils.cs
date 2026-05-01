@@ -14,6 +14,7 @@ namespace UAssetAPI
 {
     public static class UAPUtils
     {
+        public static string APIVersion => typeof(PropertyData).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
         public static string CurrentCommit = string.Empty;
 
         public static string SerializeJson(object obj, bool isFormatted)
