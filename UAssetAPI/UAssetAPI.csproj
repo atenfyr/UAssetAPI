@@ -13,12 +13,14 @@
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <Version>1.1.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game assets.</Description>
     <Title>UAssetAPI</Title>
     <Company>atenfyr</Company>
     <PackageProjectUrl>https://github.com/atenfyr/UAssetAPI</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/atenfyr/UAssetAPI</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageId>UAssetAPI</PackageId>
@@ -58,9 +60,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
+    <NoWarn>1591;1701;1702</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
+    <NoWarn>1591;1701;1702</NoWarn>
   </PropertyGroup>
   <Choose>
     <When Condition="$(DefineConstants.Contains('ADDTRACING'))">
@@ -106,6 +110,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
