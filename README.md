@@ -19,7 +19,7 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game
 ## Usage
 To get started with UAssetAPI, visit the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html) to get started with performing basic operations on your .uasset files.
 
-Major releases of UAssetAPI are available on NuGet: https://www.nuget.org/packages/UAssetAPI/
+Major releases of UAssetAPI are available on NuGet: [https://www.nuget.org/packages/UAssetAPI/](https://www.nuget.org/packages/UAssetAPI/)
 
 UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly view and modify game assets by hand, is also available and can be downloaded for free on GitHub at [https://github.com/atenfyr/UAssetGUI/releases](https://github.com/atenfyr/UAssetGUI/releases).
 
