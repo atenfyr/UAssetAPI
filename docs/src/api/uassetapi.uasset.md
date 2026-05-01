@@ -251,12 +251,52 @@ List of packages that are soft referenced by this package.
 public List<FString> SoftPackageReferenceList;
 ```
 
-### **AssetRegistryData**
+### **AssetRegistryDependencyDataOffset**
 
-Uncertain
+Offset to dependencies. This only appears in uncooked asset.
 
 ```csharp
-public Byte[] AssetRegistryData;
+public long AssetRegistryDependencyDataOffset;
+```
+
+### **AssetRegistryRecords**
+
+Asset registry data.
+
+```csharp
+public List<FAssetRegistryRecord> AssetRegistryRecords;
+```
+
+### **ImportBitsCount**
+
+Number of valid bits in `ImportBits'. This only appears in uncooked asset.
+
+```csharp
+public int ImportBitsCount;
+```
+
+### **ImportBits**
+
+Bits indicating if imports used in game are contained in import map. This only appears in uncooked asset.
+
+```csharp
+public BitArray ImportBits;
+```
+
+### **SoftPackageBitsCount**
+
+Number of valid bits in `SoftPackageBits'. This only appears in uncooked asset.
+
+```csharp
+public int SoftPackageBitsCount;
+```
+
+### **SoftPackageBits**
+
+Bits indicating if soft packages used in game are contained in soft package reference list. This only appears in uncooked asset.
+
+```csharp
+public BitArray SoftPackageBits;
 ```
 
 ### **BulkData**
@@ -265,6 +305,18 @@ Any bulk data that is not stored in the export map.
 
 ```csharp
 public Byte[] BulkData;
+```
+
+### **AdditionalFiles**
+
+```csharp
+public Byte[] AdditionalFiles;
+```
+
+### **Trailer**
+
+```csharp
+public Byte[] Trailer;
 ```
 
 ### **ValorantGarbageData**
@@ -415,6 +467,16 @@ Whether or not this asset has PKG_FilterEditorOnly flag.
 
 ```csharp
 public bool IsFilterEditorOnly { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **IsPreDependencyFormat**
+
+```csharp
+public bool IsPreDependencyFormat { get; }
 ```
 
 #### Property Value
