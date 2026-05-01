@@ -17,7 +17,9 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game
 - Automatic reflection for new property types in other loaded assemblies
 
 ## Usage
-To get started using UAssetAPI, first build the API using the [Build Instructions guide](https://atenfyr.github.io/UAssetAPI/guide/build.html) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html).
+To get started with UAssetAPI, first build the API using the [Build Instructions guide](https://atenfyr.github.io/UAssetAPI/guide/build.html) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html).
+
+Major releases of UAssetAPI are also available on NuGet: https://www.nuget.org/packages/UAssetAPI/
 
 UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly view and modify game assets by hand, is also available and can be downloaded for free on GitHub at [https://github.com/atenfyr/UAssetGUI/releases](https://github.com/atenfyr/UAssetGUI/releases).
 
@@ -28,5 +30,8 @@ I am particularly interested in .uasset files that have their `VerifyBinaryEqual
 
 Please note: Your issue will NOT be reviewed if your issue cannot be replicated due to no test asset being provided.
 
+## Source
+Source code for UAssetAPI is available on GitHub: https://github.com/atenfyr/UAssetAPI 
+
 ## License
-UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](LICENSE).
+UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](https://github.com/atenfyr/UAssetAPI/blob/master/LICENSE) on GitHub.

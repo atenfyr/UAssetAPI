@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>UAssetAPI</AssemblyTitle>
     <Product>UAssetAPI</Product>
-    <Copyright>Copyright © Atenfyr 2024</Copyright>
+    <Copyright>Copyright (c) 2020 - 2026 atenfyr</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
@@ -13,6 +13,16 @@
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <Version>1.1.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game assets.</Description>
+    <Title>UAssetAPI</Title>
+    <Company>atenfyr</Company>
+    <PackageProjectUrl>https://github.com/atenfyr/UAssetAPI</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/atenfyr/UAssetAPI</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>UAssetAPI</PackageId>
+    <Authors>atenfyr</Authors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -95,6 +105,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="Resources\AC7Key.bin" />
   </ItemGroup>
 </Project>
