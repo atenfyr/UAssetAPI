@@ -65,4 +65,14 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ChaosClothFictitiousAngularVelocitySubframeFix | 49 | Fix Chaos Cloth fictitious angular scale bug that requires existing parameter rescaling. |
 | SinglePrecisonParticleDataPT | 50 | Store physics thread particles data in single precision |
 | OrthographicAutoNearFarPlane | 51 | Orthographic Near and Far Plane Auto-resolve enabled by default |
-| VersionPlusOne | 52 | -----new versions can be added above this line------------------------------------------------- |
+| AnimLayeredBoneBlendMasksFix | 52 | Fix a bug where BlendMask counts could get out of sync with BlendPose counts. |
+| BloomIndependentLensFlare | 53 | Separated lens flare from bloom intensity |
+| AnimModelGuidGenerationSettings | 54 | Add settings to IAnimationDataModel GUID generation |
+| WorldPartitionAddStandaloneHLODSupport | 55 | Add support for Standalone HLOD |
+| RecalculateClothAssetSerializedBounds | 56 | Fixed the missing bounds for cloth assets that don't have them serialized |
+| CompositePluginDerivedSceneCaptures | 57 | Composite plugin now uses its own derived scene capture components |
+| ExtraOutputAttributesOnDataDomainPCG | 58 | Add option to output attributes on the PCG Duplicate Cross Section node on the Data domain |
+| MediaProfilePluginCaptureCameraSoftPtr | 59 | Media Profile: Changed storage of capture cameras list from lazy to soft pointers |
+| SplineComponentReparameterizeOnLoad | 60 | Reparameterize Spline in SplineComponent based on SplineCurves parameterization |
+| AddSimulationPropertySupportToClothUSDImportNodeV2 | 61 | Add solver and fabric property support to the schema based Cloth USD importer |
+| VersionPlusOne | 62 | -----new versions can be added above this line------------------------------------------------- |

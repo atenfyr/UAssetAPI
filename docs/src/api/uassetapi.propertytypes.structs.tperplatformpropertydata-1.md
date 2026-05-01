@@ -1,0 +1,1 @@
+# TPerPlatformPropertyData&lt;T&gt;

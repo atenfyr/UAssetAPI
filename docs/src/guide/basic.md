@@ -3,7 +3,6 @@
 ### Prerequisites
 * Basic C# knowledge
 * Visual Studio 2022 or later, with .NET 8.0 SDK
-* [A copy of UAssetAPI](./build.md)
 
 ### Basic Project Setup
 In this short guide, we will go over the very basics of parsing assets through UAssetAPI.
@@ -13,8 +12,18 @@ UAssetAPI targets [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/
 ![](./img/basic1.png)
 ![](./img/basic2.png)
 ![](./img/basic2_1.png)
+(Make sure that "Do not use top-level statements" is left unchecked.)
 
-Once we have entered Visual Studio, we must add a new reference to our UAssetAPI.dll file. This can be done by right-clicking under "References," clicking "Add Reference," clicking "Browse" in the bottom right of the Reference Manager window, browsing to your UAssetAPI.dll file on disk, and clicking "OK".
+Once we have entered Visual Studio, we must add a new reference to UAssetAPI. See one of the two sections below, depending on whether you would prefer to download a pre-built stable copy of UAssetAPI from NuGet or instead build your own copy of UAssetAPI (often needed to get the latest changes).
+
+#### Use NuGet build
+In Visual Studio, navigate to Tools -> NuGet Package Manager -> Package Manager Console. In the console window that appears, enter `NuGet\Install-Package UAssetAPI`. Continue on to the "Using UAssetAPI with Unreal Assets" section.
+
+#### Use local build
+
+First, build a copy of UAssetAPI from source by following the [Build Instructions](./build.md) guide.
+
+Now, we must add a new reference to our UAssetAPI.dll file. This can be done by right-clicking under "References," clicking "Add Reference," clicking "Browse" in the bottom right of the Reference Manager window, browsing to your UAssetAPI.dll file on disk, and clicking "OK".
 
 ![](./img/basic3.png)
 ![](./img/basic4.png)
@@ -38,8 +47,13 @@ For now, let's simply modify an integer. If we open the asset in UAssetGUI and l
 
 ![](./img/basic5.png)
 
-Let's start programming! Head to the `Program.cs` file and use the following pre-written code, placed in `static void Main(string[] args)` (feel free to copy and paste):
+Let's start programming! Head to the `Program.cs` file and use the following pre-written code, placed directly in the file (feel free to copy and paste):
 ```cs
+using UAssetAPI;
+using UAssetAPI.ExportTypes;
+using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.UnrealTypes;
+
 // Instantiate the asset with the path and the engine version (4.18).
 // This reads the entire asset to memory at once; use a different constructor with an AssetBinaryReader if you don't want that
 UAsset myAsset = new UAsset("C:\\plwp_6aam_a0.uasset", EngineVersion.VER_UE4_18);
@@ -75,6 +89,11 @@ What if we don't know where the property is? If we don't know the exact contents
 Let's say we want to modify a specific NameProperty called `InternalVariableName` in an export with the ObjectName `SCS_Node_1` (you can see this in UAssetGUI under the Export Information tab). Using the same file as above, we'll need to iterate through our exports until we find the appropriate property:
 
 ```cs
+using UAssetAPI;
+using UAssetAPI.ExportTypes;
+using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.UnrealTypes;
+
 // Instantiate the asset with the path and the engine version (4.18).
 // This reads the entire asset to memory at once; use a different constructor with an AssetBinaryReader if you don't want that
 UAsset myAsset = new UAsset("C:\\plwp_6aam_a0.uasset", EngineVersion.VER_UE4_18);

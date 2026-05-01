@@ -125,6 +125,22 @@ List of Searchable Names, by object containing them. Sorted to keep order consis
 public SortedDictionary<FPackageIndex, List<FName>> SearchableNames;
 ```
 
+### **ImportTypeHierarchies**
+
+Map of hierarchical type information for FObjectImport Struct entries in the package
+
+```csharp
+public TMap<FPackageIndex, FImportTypeHierarchy> ImportTypeHierarchies;
+```
+
+### **MetaData**
+
+MetaData for the editor
+
+```csharp
+public FMetaData MetaData;
+```
+
 ### **Thumbnails**
 
 Map of object full names to the thumbnails
@@ -267,14 +283,6 @@ Asset registry data.
 public List<FAssetRegistryRecord> AssetRegistryRecords;
 ```
 
-### **ImportBitsCount**
-
-Number of valid bits in `ImportBits'. This only appears in uncooked asset.
-
-```csharp
-public int ImportBitsCount;
-```
-
 ### **ImportBits**
 
 Bits indicating if imports used in game are contained in import map. This only appears in uncooked asset.
@@ -283,20 +291,20 @@ Bits indicating if imports used in game are contained in import map. This only a
 public BitArray ImportBits;
 ```
 
-### **SoftPackageBitsCount**
-
-Number of valid bits in `SoftPackageBits'. This only appears in uncooked asset.
-
-```csharp
-public int SoftPackageBitsCount;
-```
-
 ### **SoftPackageBits**
 
 Bits indicating if soft packages used in game are contained in soft package reference list. This only appears in uncooked asset.
 
 ```csharp
 public BitArray SoftPackageBits;
+```
+
+### **ExtraPackageDependencies**
+
+Currently the only type of ExtraPackageDependencies we have are the collected build dependencies, which have both the Build and PropagateManage flags.
+
+```csharp
+public KeyValuePair`2[] ExtraPackageDependencies;
 ```
 
 ### **BulkData**

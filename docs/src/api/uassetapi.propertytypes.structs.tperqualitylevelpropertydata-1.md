@@ -1,0 +1,1 @@
+# TPerQualityLevelPropertyData&lt;T&gt;

@@ -16,6 +16,18 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 public static string CurrentCommit;
 ```
 
+## Properties
+
+### **APIVersion**
+
+```csharp
+public static string APIVersion { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ## Methods
 
 ### **SerializeJson(Object, Boolean)**
