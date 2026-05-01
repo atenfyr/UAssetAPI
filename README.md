@@ -8,7 +8,7 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game
 ![Example image of C# source code using UAssetAPI](https://i.imgur.com/GZbr93m.png)
 
 ## Features
-- Low-level read/write capability for a wide variety of cooked and uncooked .uasset files from ~4.13 to 5.3
+- Low-level read/write capability for a wide variety of cooked and uncooked .uasset files from ~4.13 to 5.7
 - Support for more than 100 property types and 12 export types
 - Support for JSON export and import to a proprietary format that maintains binary equality
 - Support for reading and writing raw Kismet (blueprint) bytecode
@@ -17,9 +17,9 @@ UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game
 - Automatic reflection for new property types in other loaded assemblies
 
 ## Usage
-To get started with UAssetAPI, first build the API using the [Build Instructions guide](https://atenfyr.github.io/UAssetAPI/guide/build.html) and learn how to perform basic operations on your cooked .uasset files using the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html).
+To get started with UAssetAPI, visit the [Basic Usage guide](https://atenfyr.github.io/UAssetAPI/guide/basic.html) to get started with performing basic operations on your .uasset files.
 
-Major releases of UAssetAPI are also available on NuGet: https://www.nuget.org/packages/UAssetAPI/
+Major releases of UAssetAPI are available on NuGet: https://www.nuget.org/packages/UAssetAPI/
 
 UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly view and modify game assets by hand, is also available and can be downloaded for free on GitHub at [https://github.com/atenfyr/UAssetGUI/releases](https://github.com/atenfyr/UAssetGUI/releases).
 
