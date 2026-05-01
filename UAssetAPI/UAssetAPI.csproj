@@ -25,6 +25,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageId>UAssetAPI</PackageId>
     <Authors>atenfyr</Authors>
+    <PackageTags>UAssetAPI;UAsset;Asset;Serialization;UE4;UE5;Unreal;UnrealEngine;Modding</PackageTags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>

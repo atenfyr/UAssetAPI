@@ -5,7 +5,7 @@
 
 UAssetAPI is a low-level .NET library for reading and writing Unreal Engine game assets.
 
-<img src="https://i.imgur.com/GZbr93m.png" align="center">
+![Example image of C# source code using UAssetAPI](https://i.imgur.com/GZbr93m.png)
 
 ## Features
 - Low-level read/write capability for a wide variety of cooked and uncooked .uasset files from ~4.13 to 5.3
