@@ -11,7 +11,7 @@
     <Product>UAssetAPI.Tests</Product>
     <Copyright>Copyright © Atenfyr 2024</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
-    <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
+    <Configurations>Debug;Release;DebugVerbose;DebugTracing;ReleaseX</Configurations>
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -37,6 +37,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseX|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseX|x86'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <ItemGroup>

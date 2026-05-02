@@ -7,7 +7,7 @@
     <Copyright>Copyright (c) 2020 - 2026 atenfyr</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Configurations>Debug;Release;DebugVerbose;DebugTracing</Configurations>
+    <Configurations>Debug;Release;DebugVerbose;DebugTracing;ReleaseX</Configurations>
     <Platforms>AnyCPU;x86</Platforms>
     <FileVersion>1.1.1.0</FileVersion>
     <AssemblyVersion>1.1.1.0</AssemblyVersion>
@@ -66,6 +66,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
     <NoWarn>1591;1701;1702</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseX|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1591;1701;1702</NoWarn>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseX|x86'">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1591;1701;1702</NoWarn>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <Choose>
     <When Condition="$(DefineConstants.Contains('ADDTRACING'))">
