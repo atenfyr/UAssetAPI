@@ -3616,8 +3616,10 @@ namespace UAssetAPI.Trace {
         {
             [JsonProperty("data")]
             public byte[] Data;
+            [JsonProperty("start_index")]
+            public int StartIndex = 0;
             [JsonProperty("root")]
-            public Span Root;
+            public ActionSpan Root;
         }
 
         public class VersionConverter : JsonConverter<IAction>
@@ -3687,7 +3689,7 @@ namespace UAssetAPI.Trace {
                 using (StreamWriter writer = File.CreateText(outputPath)) {
                     var trace = new Trace {
                         Data = UnderlyingStream.Data,
-                        Root = Root,
+                        Root = new ActionSpan() { Span = Root },
                     };
                     writer.Write(JsonConvert.SerializeObject(trace, Formatting.None, new VersionConverter()));
                 }
