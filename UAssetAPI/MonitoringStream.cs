@@ -77,7 +77,7 @@ namespace UAssetAPI
             {
                 long correctedPosition = InnerStream.Position;
                 if (IsUexpOffset) correctedPosition -= Asset.Exports[0].SerialOffset;
-                Debug.WriteLine($"Stop byte reached at write time: reading {count} bytes starting at {correctedPosition}");
+                Debug.WriteLine($"Stop byte reached at write time: writing {count} bytes starting at {correctedPosition}");
                 Debugger.Break();
             }
 
