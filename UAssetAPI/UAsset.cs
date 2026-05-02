@@ -230,6 +230,12 @@ namespace UAssetAPI
         public string FilePath;
 
         /// <summary>
+        /// Whether this asset is only being parsed to extract schemas for parsing a different asset.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsParsingToPullSchemas = false;
+
+        /// <summary>
         /// The corresponding mapping data for the game that this asset is from. Optional unless unversioned properties are present.
         /// </summary>
         [JsonIgnore]
@@ -572,7 +578,6 @@ namespace UAssetAPI
                     }
                     catch (FileNotFoundException) { }
                 }
-
 
                 completeStream.Seek(0, SeekOrigin.Begin);
                 return completeStream;
@@ -1296,6 +1301,7 @@ namespace UAssetAPI
                 AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
                 otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipLoadingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
+                otherAsset.IsParsingToPullSchemas = true;
                 otherAsset.Read(otherReader);
 
                 // second read to get schemas
