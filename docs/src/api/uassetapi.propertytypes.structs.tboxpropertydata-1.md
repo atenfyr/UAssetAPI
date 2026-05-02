@@ -1,1 +1,0 @@
-# TBoxPropertyData&lt;T&gt;

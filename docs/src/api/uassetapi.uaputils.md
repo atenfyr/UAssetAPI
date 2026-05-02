@@ -8,20 +8,38 @@ public static class UAPUtils
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UAPUtils](./uassetapi.uaputils.md)
 
-## Fields
-
-### **CurrentCommit**
-
-```csharp
-public static string CurrentCommit;
-```
-
 ## Properties
 
 ### **APIVersion**
 
+Current version of UAssetAPI (major.minor.patch + suffix). Suffixed with "d" in debug configurations and "x" in experimental release configurations.
+
 ```csharp
 public static string APIVersion { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **DisplayVersion**
+
+Display agent for UAssetAPI.
+
+```csharp
+public static string DisplayVersion { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **CurrentCommit**
+
+The Git commit associated with this build of UAssetAPI.
+
+```csharp
+public static string CurrentCommit { get; }
 ```
 
 #### Property Value

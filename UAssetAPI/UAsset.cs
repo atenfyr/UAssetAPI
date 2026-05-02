@@ -3174,7 +3174,7 @@ namespace UAssetAPI
         /// <returns>A serialized JSON string that represents the asset.</returns>
         public string SerializeJson(Formatting jsonFormatting)
         {
-            Info = "Serialized with UAssetAPI " + UAPUtils.APIVersion + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? "" : (" (" + UAPUtils.CurrentCommit + ")"));
+            Info = "Serialized with " + UAPUtils.DisplayVersion;
             return JsonConvert.SerializeObject(this, jsonFormatting, jsonSettings);
         }
 

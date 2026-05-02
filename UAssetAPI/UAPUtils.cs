@@ -14,8 +14,50 @@ namespace UAssetAPI
 {
     public static class UAPUtils
     {
-        public static string APIVersion => typeof(PropertyData).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-        public static string CurrentCommit = string.Empty;
+        /// <summary>
+        /// Current version of UAssetAPI (major.minor.patch + suffix). Suffixed with "d" in debug configurations and "x" in experimental release configurations.
+        /// </summary>
+        public static string APIVersion
+        {
+            get
+            {
+                string res = typeof(PropertyData).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+
+#if RELEASEX
+                res += "x";
+#elif DEBUG || DEBUGVERBOSE || DEBUGTRACING
+                res += "d";
+#endif
+
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Display agent for UAssetAPI.
+        /// </summary>
+        public static string DisplayVersion
+        {
+            get
+            {
+                return "UAssetAPI v" + APIVersion + (string.IsNullOrEmpty(UAPUtils.CurrentCommit) ? string.Empty : (" (" + UAPUtils.CurrentCommit + ")"));
+            }
+        }
+
+        /// <summary>
+        /// The Git commit associated with this build of UAssetAPI.
+        /// </summary>
+        public static string CurrentCommit
+        {
+            get
+            {
+                if (!_commitAssigned) MainSerializer.InitializeCurrentCommit();
+                return _currentCommit;
+            }
+        }
+
+        internal static bool _commitAssigned = false;
+        internal static string _currentCommit = string.Empty;
 
         public static string SerializeJson(object obj, bool isFormatted)
         {

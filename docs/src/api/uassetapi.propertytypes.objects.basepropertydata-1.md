@@ -1,1 +1,0 @@
-# BasePropertyData&lt;T&gt;
