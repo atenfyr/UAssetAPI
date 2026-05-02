@@ -186,7 +186,7 @@ namespace UAssetAPI
                     {
                         if (zeroProps.Contains(lastNum))
                         {
-                            int valueNum = lastNum - firstNum + 1;
+                            int valueNum = lastNum - firstNum;
                             fragmentHasAnyZeros.Add(valueNum / FFragment.ValueMax);
                         }
                         sortedProps.Add(propMap[lastNum]);

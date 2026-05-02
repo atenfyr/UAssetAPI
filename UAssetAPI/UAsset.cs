@@ -2653,7 +2653,19 @@ namespace UAssetAPI
             // load deps if needed (i.e. asset was loaded from json)
             if (!haveWeLoadedDependencies) LoadDependencies();
 
-            var stre = new MemoryStream();
+            Stream stre = null;
+#if DEBUG || DEBUGVERBOSE || DEBUGTRACING
+            if (MonitoringStream.Enabled)
+            {
+                stre = new MonitoringStream(new MemoryStream(), this);
+            }
+            else
+            {
+                stre = new MemoryStream();
+            }
+#else
+            stre = new MemoryStream();
+#endif
             try
             {
                 AssetBinaryWriter writer = new AssetBinaryWriter(stre, this);
@@ -3087,7 +3099,12 @@ namespace UAssetAPI
                 isSerializationTime = false;
                 GetEngineVersion(); // update dirty state
             }
-            return stre;
+
+#if DEBUG || DEBUGVERBOSE || DEBUGTRACING
+            return stre is MonitoringStream ? (MemoryStream)((stre as MonitoringStream).InnerStream) : (MemoryStream)stre;
+#else
+            return (MemoryStream)stre;
+#endif
         }
 
         private static void WriteBitArray(AssetBinaryWriter writer, BitArray bitArray)
