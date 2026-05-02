@@ -17,5 +17,5 @@ using PostSharp.Extensibility;
 
 #if DEBUGTRACING
 [assembly: UAssetAPI.Trace.LoggingAspect]
-[assembly: UAssetAPI.Trace.LoggingAspect(AttributeTargetTypes="UAssetAPI.Trace.*", AttributeExclude = true)]
+[assembly: UAssetAPI.Trace.LoggingAspect(AttributeTargetTypes = "UAssetAPI.Trace.*", AttributeExclude = true)]
 #endif

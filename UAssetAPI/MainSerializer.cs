@@ -130,6 +130,11 @@ namespace UAssetAPI
                            nameParam
                         ).Compile();
 
+                        // prevent duplicate entries
+                        if (_propertyTypeRegistry.ContainsKey(returnedPropType.Value))
+                        {
+                            throw new InvalidOperationException($"Different child classes of PropertyData with the same PropertyType field exist: {res.PropertyType.FullName} and {_propertyTypeRegistry[returnedPropType.Value].PropertyType.FullName}");
+                        }
                         _propertyTypeRegistry[returnedPropType.Value] = res;
                     }
                 }

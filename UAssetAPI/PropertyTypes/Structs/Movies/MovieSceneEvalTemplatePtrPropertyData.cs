@@ -11,6 +11,9 @@ public class MovieSceneTemplatePropertyData : StructPropertyData
     public MovieSceneTemplatePropertyData(FName name) : base(name) { }
     public MovieSceneTemplatePropertyData() { }
 
+    private static readonly FString CurrentPropertyType = new FString("MovieSceneTemplate");
+    public override FString PropertyType => CurrentPropertyType;
+
     public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {
         if (includeHeader)

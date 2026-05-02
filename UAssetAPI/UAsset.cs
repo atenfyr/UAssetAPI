@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
@@ -3530,56 +3529,61 @@ namespace UAssetAPI
 namespace UAssetAPI.Trace {
     public class TraceStream : Stream
     {
-        Stream BaseStream;
+        public Stream InnerStream;
         public byte[] Data;
         public LoggingAspect.LogContext Context;
         public string PathOnDisk;
 
-        public TraceStream(Stream BaseStream, string pathOnDisk = null)
+        public TraceStream(Stream InnerStream, string pathOnDisk = null)
         {
-            var start = BaseStream.Position;
+            var start = InnerStream.Position;
+            InnerStream.Seek(0, SeekOrigin.Begin);
             using (MemoryStream ms = new MemoryStream())
             {
-                BaseStream.CopyTo(ms);
+                InnerStream.CopyTo(ms);
                 this.Data = ms.ToArray();
             }
-            BaseStream.Position = start;
-            this.BaseStream = BaseStream;
+            InnerStream.Seek(start, SeekOrigin.Begin);
+            this.InnerStream = InnerStream;
             this.PathOnDisk = pathOnDisk;
-        }
-
-        public override bool CanRead { get => BaseStream.CanRead; }
-        public override bool CanSeek => throw new NotImplementedException();
-        public override bool CanWrite => throw new NotImplementedException();
-        public override long Length { get => BaseStream.Length; }
-        public override long Position { get => BaseStream.Position; set => throw new NotImplementedException(); }
-
-        public override void Flush()
-        {
-            BaseStream.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            Context.OnRead(count);
-            return BaseStream.Read(buffer, offset, count);
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            var pos = BaseStream.Seek(offset, origin);
-            Context.OnSeek(pos);
-            return pos;
-        }
-
-        public override void SetLength(long value)
-        {
-            BaseStream.SetLength(value);
+            Context?.OnRead(count);
+            return InnerStream.Read(buffer, offset, count);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            BaseStream.Write(buffer, offset, count);
+            InnerStream.Write(buffer, offset, count);
+        }
+
+        public override long Position
+        {
+            get => InnerStream.Position;
+            set => Seek(value, SeekOrigin.Begin);
+        }
+        public override long Length => InnerStream.Length;
+        public override bool CanRead => InnerStream.CanRead;
+        public override bool CanSeek => InnerStream.CanSeek;
+        public override bool CanWrite => InnerStream.CanWrite;
+        public override void Flush() => InnerStream.Flush();
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            var pos = InnerStream.Seek(offset, origin);
+            Context?.OnSeek(pos);
+            return pos;
+        }
+
+        public override void SetLength(long value) => InnerStream.SetLength(value);
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                InnerStream.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 
