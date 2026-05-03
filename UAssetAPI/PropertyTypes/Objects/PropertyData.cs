@@ -339,6 +339,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         {
             CanBeZeroStream testStrm = new CanBeZeroStream(new MemoryStream(32));
             this.Write(new AssetBinaryWriter(testStrm, asset), false, PropertySerializationContext.CanBeZero);
+            testStrm.Flush();
             return !testStrm.HasWrittenNonZero;
         }
 
