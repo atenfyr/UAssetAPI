@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
@@ -9,6 +11,68 @@ using UAssetAPI.Unversioned;
 
 namespace UAssetAPI
 {
+    /// <summary>
+    /// Pass-through stream for detecting non-zero byte writes for CanBeZero.
+    /// </summary>
+    public class CanBeZeroStream : Stream
+    {
+        public Stream InnerStream;
+        public bool HasWrittenNonZero = false;
+
+        public CanBeZeroStream(Stream innerStream)
+        {
+            InnerStream = innerStream;
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return InnerStream.Read(buffer, offset, count);
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            if (!HasWrittenNonZero)
+            {
+                foreach (byte entry in buffer)
+                {
+                    if (entry != 0)
+                    {
+                        HasWrittenNonZero = true;
+                        break;
+                    }
+                }
+            }
+            InnerStream.Write(buffer, offset, count);
+        }
+
+        public override long Position
+        {
+            get => InnerStream.Position;
+            set => InnerStream.Position = value;
+        }
+        public override long Length => InnerStream.Length;
+        public override bool CanRead => InnerStream.CanRead;
+        public override bool CanSeek => InnerStream.CanSeek;
+        public override bool CanWrite => InnerStream.CanWrite;
+        public override void Flush() => InnerStream.Flush();
+        public override long Seek(long offset, SeekOrigin origin) => InnerStream.Seek(offset, origin);
+        public override void SetLength(long value) => InnerStream.SetLength(value);
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                InnerStream.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => InnerStream.ReadAsync(buffer, offset, count, cancellationToken);
+
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => InnerStream.WriteAsync(buffer, offset, count, cancellationToken);
+
+        public override Task FlushAsync(CancellationToken cancellationToken) => InnerStream.FlushAsync(cancellationToken);
+    }
+
     /// <summary>
     /// Any binary writer used in the parsing of Unreal file types.
     /// </summary>

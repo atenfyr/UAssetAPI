@@ -11,7 +11,8 @@ namespace UAssetAPI.PropertyTypes.Objects
         Normal,
         Array,
         Map,
-        StructFallback // a StructPropertyData with custom struct serialization falling back to standard serialization before/after reading custom data
+        StructFallback, // a StructPropertyData with custom struct serialization falling back to standard serialization before/after reading custom data
+        CanBeZero
     }
 
     [Flags]
@@ -325,18 +326,20 @@ namespace UAssetAPI.PropertyTypes.Objects
         }
 
         /// <summary>
-        /// Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.
+        /// Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization with unversioned properties.
+        /// <para/>
+        /// Note that this method performs a full write of the property, and is thus performance-intensive.
+        /// Container properties may wish to check for the following two conditions to know when to exit early:
+        /// <para/>
+        /// serializationContext == PropertySerializationContext.CanBeZero &amp;&amp; ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero
         /// </summary>
         /// <param name="asset">The asset to test serialization within.</param>
         /// <returns>Whether or not the property can be serialized as zero.</returns>
         public virtual bool CanBeZero(UAsset asset)
         {
-            MemoryStream testStrm = new MemoryStream(32); this.Write(new AssetBinaryWriter(testStrm, asset), false); byte[] testByteArray = testStrm.ToArray();
-            foreach (byte entry in testByteArray)
-            {
-                if (entry != 0) return false;
-            }
-            return true;
+            CanBeZeroStream testStrm = new CanBeZeroStream(new MemoryStream(32));
+            this.Write(new AssetBinaryWriter(testStrm, asset), false, PropertySerializationContext.CanBeZero);
+            return !testStrm.HasWrittenNonZero;
         }
 
         /// <summary>

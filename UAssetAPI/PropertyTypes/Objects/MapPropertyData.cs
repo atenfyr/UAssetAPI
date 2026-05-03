@@ -180,11 +180,12 @@ public class MapPropertyData : PropertyData
         base.ResolveAncestries(asset, ancestrySoFar);
     }
 
-    private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map)
+    private void WriteRawMap(AssetBinaryWriter writer, TMap<PropertyData, PropertyData> map, PropertySerializationContext serializationContext)
     {
         if (map == null) return;
         foreach (var entry in map)
         {
+            if (serializationContext == PropertySerializationContext.CanBeZero && ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero) break;
             entry.Key.Offset = writer.BaseStream.Position;
             entry.Key.Write(writer, false, PropertySerializationContext.Map);
             entry.Value.Offset = writer.BaseStream.Position;
@@ -225,7 +226,7 @@ public class MapPropertyData : PropertyData
         }
 
         writer.Write(Value?.Count ?? 0);
-        WriteRawMap(writer, Value);
+        WriteRawMap(writer, Value, serializationContext);
         return (int)writer.BaseStream.Position - here;
     }
 

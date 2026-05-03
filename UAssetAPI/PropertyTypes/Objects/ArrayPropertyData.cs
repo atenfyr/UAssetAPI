@@ -283,6 +283,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         {
             for (int i = 0; i < Value.Length; i++)
             {
+                if (serializationContext == PropertySerializationContext.CanBeZero && ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero) return -1;
                 Value[i].Offset = writer.BaseStream.Position;
                 Value[i].Write(writer, false, PropertySerializationContext.Array);
             }

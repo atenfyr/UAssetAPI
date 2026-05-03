@@ -191,8 +191,9 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         base.ResolveAncestries(asset, ancestrySoFar);
     }
 
-    private int WriteOnce(AssetBinaryWriter writer)
+    private int WriteOnce(AssetBinaryWriter writer, PropertySerializationContext serializationContext)
     {
+        if (serializationContext == PropertySerializationContext.CanBeZero && ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero) return -1;
         if (Value.Count > 1) throw new InvalidOperationException("Structs with type " + StructType.Value.Value + " cannot have more than one entry");
 
         if (Value.Count == 0)
@@ -206,7 +207,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         return Value[0].Write(writer, false);
     }
 
-    private int WriteNTPL(AssetBinaryWriter writer)
+    private int WriteNTPL(AssetBinaryWriter writer, PropertySerializationContext serializationContext)
     {
         int here = (int)writer.BaseStream.Position;
 
@@ -214,6 +215,7 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         MainSerializer.GenerateUnversionedHeader(ref allDat, StructType, FName.DefineDummy(writer.Asset, writer.Asset.InternalAssetPath + ((Ancestry?.Ancestors?.Count ?? 0) == 0 ? string.Empty : ("." + Ancestry.Parent))), writer.Asset)?.Write(writer);
         foreach (var t in allDat)
         {
+            if (serializationContext == PropertySerializationContext.CanBeZero && ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero) break;
             MainSerializer.Write(t, writer, true);
         }
         if (!writer.Asset.HasUnversionedProperties) writer.Write(new FName(writer.Asset, "None"));
@@ -259,21 +261,10 @@ public class StructPropertyData : PropertyData<List<PropertyData>>
         if (Value == null) Value = [];
 
         bool hasCustomStructSerialization = DetermineIfSerializeWithCustomStructSerialization(writer.Asset, serializationContext, out RegistryEntry targetEntry);
-        if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer);
+        if (targetEntry != null && hasCustomStructSerialization) return WriteOnce(writer, serializationContext);
         if (Value.Count == 0 && !SerializeNone) return 0;
-        return WriteNTPL(writer);
+        return WriteNTPL(writer, serializationContext);
     }
-
-    // removed; we'll actually just use default PropertyData alg
-
-    /*public override bool CanBeZero(UAsset asset)
-    {
-        if (StructType?.Value?.Value == "Guid")
-        {
-            return base.CanBeZero(asset);
-        }
-        return !DetermineIfSerializeWithCustomStructSerialization(asset, out _, out __) && base.CanBeZero(asset);
-    }*/
 
     public override void FromString(string[] d, UAsset asset)
     {

@@ -267,6 +267,11 @@ namespace UAssetAPI
             return (a + b - 1) / b;
         }
 
+        public static bool IsNormal(this PropertySerializationContext context)
+        {
+            return context == PropertySerializationContext.Normal || context == PropertySerializationContext.CanBeZero;
+        }
+
         public static string FixDirectorySeparatorsForDisk(this string path)
         {
             return path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
