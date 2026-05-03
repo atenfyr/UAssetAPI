@@ -338,7 +338,9 @@ namespace UAssetAPI.PropertyTypes.Objects
         public virtual bool CanBeZero(UAsset asset)
         {
             CanBeZeroStream testStrm = new CanBeZeroStream(new MemoryStream(32));
-            this.Write(new AssetBinaryWriter(testStrm, asset), false, PropertySerializationContext.CanBeZero);
+            AssetBinaryWriter binaryWriter = new AssetBinaryWriter(testStrm, asset);
+            this.Write(binaryWriter, false, PropertySerializationContext.CanBeZero);
+            binaryWriter.Flush();
             testStrm.Flush();
             return !testStrm.HasWrittenNonZero;
         }
