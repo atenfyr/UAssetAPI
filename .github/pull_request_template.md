@@ -4,9 +4,9 @@
 
 <!-- Please include a summary of the change(s) you have made.
 
-If this pull request is intended to fix an existing issue, reference the existing GitHub issue number here or create a new issue and reference the new issue number here. If your PR is intended to fix an existing issue but no issue number is referenced, your PR will not be reviewed.
+If this pull request is intended to fix an existing issue, reference the existing GitHub issue number here or create a new issue and reference the new issue number here.
 
-Please note that we currently do not accept AI generated code on the UAssetAPI repository. UAssetAPI is mature, stable software, so all changes must be thoroughly tested and reviewed by a human. Pull requests containing AI generated code will not be reviewed. -->
+We currently do not accept AI-generated code on the UAssetAPI or UAssetGUI repositories. UAssetAPI is mature, stable software, so all changes must be thoroughly tested and reviewed by a human. Pull requests containing AI-generated code, text, documentation, or other AI-generated assets will not be reviewed. -->
 
 ## Type of change
 

@@ -24,14 +24,16 @@ Major releases of UAssetAPI are available on NuGet: [https://www.nuget.org/packa
 UAssetGUI, a graphical wrapper around UAssetAPI which allows you to directly view and modify game assets by hand, is also available and can be downloaded for free on GitHub at [https://github.com/atenfyr/UAssetGUI/releases](https://github.com/atenfyr/UAssetGUI/releases).
 
 ## Contributing
-All contributions, whether through pull requests or issues, that you may make are greatly appreciated.
+Any contributions, whether through pull requests or issues, that you may make are greatly appreciated.
 
-I am particularly interested in .uasset files that have their `VerifyBinaryEquality()` method return false (or display "failed to maintain binary equality" within [UAssetGUI](https://github.com/atenfyr/UAssetGUI)); if you encounter such an asset, feel free to submit an issue here with a copy of the asset in question along with the name of the game and the Unreal version that it was cooked with.
+If you have an Unreal Engine .uasset file that displays "failed to maintain binary equality" in UAssetGUI or has the `VerifyBinaryEquality()` method return false, feel free to submit an issue on [the UAssetAPI issues page](https://github.com/atenfyr/UAssetAPI/issues) with a copy of the asset in question along with the name of the game, the Unreal Engine version that it was cooked with, and a mappings file for the game, if needed.
 
 Please note: Your issue will NOT be reviewed if your issue cannot be replicated due to no test asset being provided.
 
+We currently do not accept AI-generated code on the UAssetAPI or UAssetGUI repositories. UAssetAPI is mature, stable software, so all changes must be thoroughly tested and reviewed by a human. Pull requests containing AI-generated code, text, documentation, or other AI-generated assets will not be reviewed.
+
 ## Source
-Source code for UAssetAPI is available on GitHub: https://github.com/atenfyr/UAssetAPI 
+Source code for UAssetAPI is available on GitHub: https://github.com/atenfyr/UAssetAPI
 
 ## License
 UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](https://github.com/atenfyr/UAssetAPI/blob/master/LICENSE) on GitHub.
