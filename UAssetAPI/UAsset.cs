@@ -1008,6 +1008,10 @@ namespace UAssetAPI
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<StructExport>();
                         }
+                        else if (exportClassType == "SplineComponent")
+                        {
+                            Exports[i] = Exports[i].ConvertToChildExport<SceneComponentExport>();
+                        }
                         else if (MainSerializer.PropertyTypeRegistry.ContainsKey(exportClassType) || MainSerializer.AdditionalPropertyRegistry.Contains(exportClassType))
                         {
                             Exports[i] = Exports[i].ConvertToChildExport<PropertyExport>();

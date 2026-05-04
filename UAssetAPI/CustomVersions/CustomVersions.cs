@@ -2468,4 +2468,48 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     }
+
+    /// <summary>
+    /// Custom serialization version for changes made in //UE5/Private-Frosty stream
+    /// <para/>
+    /// aka FUE5PrivateFrostyStreamObjectVersion
+    /// </summary>
+    public enum FUE5SpecialProjectStreamObjectVersion
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = 0,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        HLODBatchingPolicy,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        SerializeSceneComponentStaticBounds,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosClothAddTethersToCachedData,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        SerializeActorLabelInCookedBuilds,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ConvertWorldPartitionHLODsCellsToName,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        ChaosClothRemoveKinematicTethers,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        SerializeSkeletalMeshMorphTargetRenderData,
+
+        [Introduced(EngineVersion.VER_UE5_0)]
+        StripMorphTargetSourceDataForCookedBuilds,
+
+        [Introduced(EngineVersion.VER_UE5_6)]
+        StateTreeGlobalParameterChanges,
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    };
 }

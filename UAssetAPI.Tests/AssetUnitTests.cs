@@ -651,6 +651,16 @@ namespace UAssetAPI.Tests
         }
 
         /// <summary>
+        /// In this test, we test several traditional assets specifically from Unreal Engine 5.7 games.
+        /// Binary equality is expected.
+        /// </summary>
+        [TestMethod]
+        public void TestTraditionalUE5_7()
+        {
+            TestSubsection("NanosWorld", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "NanosWorld", "NanosWorld.usmap")));
+        }
+
+        /// <summary>
         /// In this test, we test several editor assets specifically from Unreal Engine 5.7 games.
         /// Binary equality is expected.
         /// </summary>
