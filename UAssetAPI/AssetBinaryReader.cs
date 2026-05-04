@@ -284,6 +284,15 @@ public class AssetBinaryReader : UnrealBinaryReader
         return locMetadataObject;
     }
 
+    /*
+    !!!!!
+
+    THE FOLLOWING METHODS ARE INTENDED ONLY TO BE USED IN PARSING KISMET BYTECODE; PLEASE DO NOT USE THEM FOR ANY OTHER PURPOSE!
+
+    !!!!!
+    */
+
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public string XFERSTRING()
     {
         List<byte> readData = new List<byte>();
@@ -296,6 +305,7 @@ public class AssetBinaryReader : UnrealBinaryReader
         return Encoding.UTF8.GetString(readData.ToArray());
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public string XFERUNICODESTRING()
     {
         List<byte> readData = new List<byte>();
@@ -310,31 +320,37 @@ public class AssetBinaryReader : UnrealBinaryReader
         return Encoding.Unicode.GetString(readData.ToArray());
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public void XFERTEXT()
     {
 
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public FName XFERNAME()
     {
         return this.ReadFName();
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public FName XFER_FUNC_NAME()
     {
         return this.XFERNAME();
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public FPackageIndex XFERPTR()
     {
         return new FPackageIndex(this.ReadInt32());
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public FPackageIndex XFER_FUNC_POINTER()
     {
         return this.XFERPTR();
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public KismetPropertyPointer XFER_PROP_POINTER()
     {
         if (Asset.GetCustomVersion<FReleaseObjectVersion>() >= FReleaseObjectVersion.FFieldPathOwnerSerialization)
@@ -354,6 +370,7 @@ public class AssetBinaryReader : UnrealBinaryReader
         }
     }
 
+    /// <summary>This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!</summary>
     public FPackageIndex XFER_OBJECT_POINTER()
     {
         return this.XFERPTR();
