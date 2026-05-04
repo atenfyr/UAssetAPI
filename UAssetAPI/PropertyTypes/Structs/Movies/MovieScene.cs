@@ -75,7 +75,7 @@ public struct FMovieSceneSubSectionData
         if (reader != null)
         {
             Section = new FPackageIndex(reader);
-            ObjectBindingId = new Guid(reader.ReadBytes(16));
+            ObjectBindingId = reader.ReadGuid();
             Flags = (ESectionEvaluationFlags)reader.ReadByte();
         }
     }
@@ -83,7 +83,7 @@ public struct FMovieSceneSubSectionData
     public int Write(AssetBinaryWriter writer)
     {
         Section.Write(writer);
-        writer.Write(ObjectBindingId.ToByteArray());
+        writer.Write(ObjectBindingId);
         writer.Write((byte)Flags);
         return sizeof(int) + 16 + sizeof(byte);
     }

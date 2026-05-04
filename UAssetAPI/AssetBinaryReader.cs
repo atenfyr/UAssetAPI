@@ -76,6 +76,11 @@ public class UnrealBinaryReader : BinaryReader
         };
     }
 
+    public Guid ReadGuid()
+    {
+        return new Guid(ReadBytes(16));
+    }
+
     public override string ReadString()
     {
         return ReadFString()?.Value;
@@ -152,7 +157,7 @@ public class UnrealBinaryReader : BinaryReader
                 int numCustomVersions = ReadInt32();
                 for (int i = 0; i < numCustomVersions; i++)
                 {
-                    var customVersionID = new Guid(ReadBytes(16));
+                    var customVersionID = ReadGuid();
                     var customVersionNumber = ReadInt32();
                     newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber) { Name = ReadFString() });
                     existingCustomVersions.Add(customVersionID);
@@ -162,7 +167,7 @@ public class UnrealBinaryReader : BinaryReader
                 numCustomVersions = ReadInt32();
                 for (int i = 0; i < numCustomVersions; i++)
                 {
-                    var customVersionID = new Guid(ReadBytes(16));
+                    var customVersionID = ReadGuid();
                     var customVersionNumber = ReadInt32();
                     newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));                      
                     existingCustomVersions.Add(customVersionID);
@@ -216,7 +221,7 @@ public class AssetBinaryReader : UnrealBinaryReader
         if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
         {
             bool hasPropertyGuid = ReadBoolean();
-            if (hasPropertyGuid) return new Guid(ReadBytes(16));
+            if (hasPropertyGuid) return ReadGuid();
         }
         return null;
     }

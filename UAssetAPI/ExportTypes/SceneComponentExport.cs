@@ -40,7 +40,7 @@ namespace UAssetAPI.ExportTypes
             bool bComputeBounds = ((this[FName.DefineDummy(reader.Asset, "bComputeBoundsOnceForGame")] as BoolPropertyData)?.Value ?? false) || ((this[FName.DefineDummy(reader.Asset, "bComputedBoundsOnceForGame")] as BoolPropertyData)?.Value ?? false);
             if (bComputeBounds && reader.Asset.GetCustomVersion<FUE5SpecialProjectStreamObjectVersion>() >= FUE5SpecialProjectStreamObjectVersion.SerializeSceneComponentStaticBounds)
             {
-                bIsCooked = reader.ReadInt32() > 0;
+                bIsCooked = reader.ReadBooleanInt();
                 if (bIsCooked)
                 {
                     FVector Origin = new FVector(reader);
@@ -57,7 +57,7 @@ namespace UAssetAPI.ExportTypes
             bool bComputeBounds = ((this[FName.DefineDummy(writer.Asset, "bComputeBoundsOnceForGame")] as BoolPropertyData)?.Value ?? false) || ((this[FName.DefineDummy(writer.Asset, "bComputedBoundsOnceForGame")] as BoolPropertyData)?.Value ?? false);
             if (bComputeBounds && writer.Asset.GetCustomVersion<FUE5SpecialProjectStreamObjectVersion>() >= FUE5SpecialProjectStreamObjectVersion.SerializeSceneComponentStaticBounds)
             {
-                writer.Write((int)(bIsCooked ? 1 : 0));
+                writer.WriteBooleanInt(bIsCooked);
                 if (bIsCooked)
                 {
                     Bounds.Origin.Write(writer);

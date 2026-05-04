@@ -71,7 +71,7 @@ public class ViewTargetBlendParamsPropertyData : PropertyData
         writer.Write(BlendTime);
         writer.Write((byte)BlendFunction);
         writer.Write(BlendExp);
-        writer.Write(bLockOutgoing ? 1 : 0);
+        writer.WriteBooleanInt(bLockOutgoing);
         return sizeof(float) * 2 + sizeof(byte) + sizeof(int);
     }
 

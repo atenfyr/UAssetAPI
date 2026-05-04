@@ -24,7 +24,7 @@ public class GuidPropertyData : PropertyData<Guid>
             this.ReadEndPropertyTag(reader);
         }
 
-        Value = new Guid(reader.ReadBytes(16));
+        Value = reader.ReadGuid();
     }
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
@@ -34,7 +34,7 @@ public class GuidPropertyData : PropertyData<Guid>
             this.WriteEndPropertyTag(writer);
         }
 
-        writer.Write(Value.ToByteArray());
+        writer.Write(Value);
         return 16;
     }
 

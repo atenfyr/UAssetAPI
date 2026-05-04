@@ -17,13 +17,13 @@ public class FLevelSequenceLegacyObjectReference
     
     public FLevelSequenceLegacyObjectReference(AssetBinaryReader reader)
     {
-        ObjectId = new Guid(reader.ReadBytes(16));
+        ObjectId = reader.ReadGuid();
         ObjectPath = reader.ReadFString();
     }
 
     public int Write(AssetBinaryWriter writer)
     {
-        writer.Write(ObjectId.ToByteArray());
+        writer.Write(ObjectId);
         var size = 16;
         size += writer.Write(ObjectPath);
         return size;
@@ -52,7 +52,7 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
         Value = new TMap<Guid, FLevelSequenceLegacyObjectReference>();
         for (int i = 0; i < num; i++)
         {
-            Value[new Guid(reader.ReadBytes(16))] = new FLevelSequenceLegacyObjectReference(reader);
+            Value[reader.ReadGuid()] = new FLevelSequenceLegacyObjectReference(reader);
         }
     }
 
@@ -70,7 +70,7 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
 
         foreach (var pair in Value)
         {
-            writer.Write(pair.Key.ToByteArray());
+            writer.Write(pair.Key);
             pair.Value.Write(writer);
         }
 

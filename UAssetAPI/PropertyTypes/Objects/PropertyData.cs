@@ -262,7 +262,7 @@ namespace UAssetAPI.PropertyTypes.Objects
             }
             else if (PropertyTagFlags.HasFlag(EPropertyTagFlags.HasPropertyGuid))
             {
-                PropertyGuid = new Guid(reader.ReadBytes(16));
+                PropertyGuid = reader.ReadGuid();
             }
 
             if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION)
@@ -319,7 +319,7 @@ namespace UAssetAPI.PropertyTypes.Objects
                     if (PropertyTagExtensions.HasFlag(EPropertyTagExtension.OverridableInformation))
                     {
                         writer.Write((byte)OverrideOperation);
-                        writer.Write(bExperimentalOverridableLogic ? 1 : 0);
+                        writer.WriteBooleanInt(bExperimentalOverridableLogic);
                     }
                 }
             }

@@ -65,7 +65,7 @@ namespace UAssetAPI.UnrealTypes
 
             if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LAYER_ENABLE_DISTANCE_STREAMING)
             {
-                writer.Write(DistanceStreamingEnabled ? 1 : 0);
+                writer.WriteBooleanInt(DistanceStreamingEnabled);
             }
         }
 
@@ -239,7 +239,7 @@ namespace UAssetAPI.UnrealTypes
 
             if (asset.ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO_UPDATED)
             {
-                writer.Write(bHideInTileView ? 1 : 0);
+                writer.WriteBooleanInt(bHideInTileView);
                 writer.Write(ParentTilePackageName);
             }
 

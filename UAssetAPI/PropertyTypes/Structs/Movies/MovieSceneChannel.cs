@@ -70,10 +70,10 @@ public class FMovieSceneChannel<T>
         }
 
         valueWriter(DefaultValue);
-        writer.Write(bHasDefaultValue ? 1 : 0);
+        writer.WriteBooleanInt(bHasDefaultValue);
         TickResolution.Write(writer);
         if (writer.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() > FFortniteMainBranchObjectVersion.SerializeFloatChannelShowCurve)
-            writer.Write(bShowCurve ? 1 : 0);
+            writer.WriteBooleanInt(bShowCurve);
     }
 }
 

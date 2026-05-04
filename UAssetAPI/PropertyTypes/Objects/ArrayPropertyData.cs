@@ -106,7 +106,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
 
                 structLength = reader.ReadInt64(); // length value
                 fullType = reader.ReadFName();
-                structGUID = new Guid(reader.ReadBytes(16));
+                structGUID = reader.ReadGuid();
                 reader.ReadPropertyGuid();
             }
             else
@@ -259,7 +259,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
                 lengthLoc = (int)writer.BaseStream.Position;
                 writer.Write((long)0);
                 writer.Write(fullType);
-                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(DummyStruct.StructGUID.ToByteArray());
+                if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_STRUCT_GUID_IN_PROPERTY_TAG) writer.Write(DummyStruct.StructGUID);
                 if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG) writer.Write((byte)0);
             }
 

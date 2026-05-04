@@ -171,12 +171,12 @@ namespace UAssetAPI.ExportTypes
         // this commit doesn't seem to actually make any changes to how bools are serialized
         private bool ReadBit(AssetBinaryReader reader)
         {
-            return reader.ReadInt32() == 1;
+            return reader.ReadBooleanInt();
         }
 
         private void WriteBit(AssetBinaryWriter writer, bool b)
         {
-            writer.Write(b ? 1 : 0);
+            writer.WriteBooleanInt(b);
         }
 
         public void ReadExportMapEntry(AssetBinaryReader reader)
@@ -205,7 +205,7 @@ namespace UAssetAPI.ExportTypes
             this.bForcedExport = ReadBit(reader);
             this.bNotForClient = ReadBit(reader);
             this.bNotForServer = ReadBit(reader);
-            if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) this.PackageGuid = new Guid(reader.ReadBytes(16));
+            if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) this.PackageGuid = reader.ReadGuid();
             if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) this.IsInheritedInstance = ReadBit(reader);
             this.PackageFlags = (EPackageFlags)reader.ReadUInt32();
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)
@@ -271,7 +271,7 @@ namespace UAssetAPI.ExportTypes
             WriteBit(writer, bForcedExport);
             WriteBit(writer, bNotForClient);
             WriteBit(writer, bNotForServer);
-            if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) writer.Write(PackageGuid.ToByteArray());
+            if (Asset.ObjectVersionUE5 < ObjectVersionUE5.REMOVE_OBJECT_EXPORT_PACKAGE_GUID) writer.Write(PackageGuid);
             if (Asset.ObjectVersionUE5 >= ObjectVersionUE5.TRACK_OBJECT_EXPORT_IS_INHERITED) WriteBit(writer, IsInheritedInstance);
             writer.Write((uint)PackageFlags);
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_LOAD_FOR_EDITOR_GAME)

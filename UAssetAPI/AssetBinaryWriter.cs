@@ -149,6 +149,16 @@ namespace UAssetAPI
             Write(new FString(value));
         }
 
+        public virtual void Write(Guid value)
+        {
+            Write(value.ToByteArray());
+        }
+
+        public virtual void WriteBooleanInt(bool value)
+        {
+            Write((int)(value ? 1 : 0));
+        }
+
         public virtual int Write(FString value)
         {
             switch (value?.Value)
@@ -198,7 +208,7 @@ namespace UAssetAPI
                     {
                         if (CustomVersionContainer[i].Version <= 0 || !CustomVersionContainer[i].IsSerialized) continue;
                         realNum++;
-                        Write(CustomVersionContainer[i].Key.ToByteArray());
+                        Write(CustomVersionContainer[i].Key);
                         Write(CustomVersionContainer[i].Version);
                         Write(CustomVersionContainer[i].Name);
                     }
@@ -217,7 +227,7 @@ namespace UAssetAPI
                     {
                         if (CustomVersionContainer[i].Version < 0 || !CustomVersionContainer[i].IsSerialized) continue;
                         realNum++;
-                        Write(CustomVersionContainer[i].Key.ToByteArray());
+                        Write(CustomVersionContainer[i].Key);
                         Write(CustomVersionContainer[i].Version);
                     }
 
@@ -270,7 +280,7 @@ namespace UAssetAPI
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 Write(guid != null);
-                if (guid != null) Write(((Guid)guid).ToByteArray());
+                if (guid != null) Write((Guid)guid);
             }
         }
 

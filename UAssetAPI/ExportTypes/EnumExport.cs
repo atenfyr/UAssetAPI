@@ -98,7 +98,7 @@ namespace UAssetAPI.ExportTypes
 
             if (asset.ObjectVersion < ObjectVersion.VER_UE4_ENUM_CLASS_SUPPORT)
             {
-                writer.Write(CppForm == ECppForm.Namespaced ? 1 : 0);
+                writer.WriteBooleanInt(CppForm == ECppForm.Namespaced);
             }
             else
             {

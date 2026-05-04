@@ -68,7 +68,7 @@ public class FMovieSceneSegment
         if (writer.Asset.GetCustomVersion<FSequencerObjectVersion>() > FSequencerObjectVersion.EvaluationTree)
         {
             writer.Write(ID);
-            writer.Write(bAllowEmpty ? 1 : 0);
+            writer.WriteBooleanInt(bAllowEmpty);
         }
 
         writer.Write(Impls.Length);

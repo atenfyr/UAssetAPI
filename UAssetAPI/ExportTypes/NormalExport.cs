@@ -157,7 +157,7 @@ namespace UAssetAPI.ExportTypes
             }
 
             ObjectGuid = null;
-            if (!this.ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && reader.ReadBooleanInt()) ObjectGuid = new Guid(reader.ReadBytes(16));
+            if (!this.ObjectFlags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && reader.ReadBooleanInt()) ObjectGuid = reader.ReadGuid();
         }
 
         public override void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
@@ -209,7 +209,7 @@ namespace UAssetAPI.ExportTypes
             else
             {
                 writer.Write((int)1);
-                writer.Write(((Guid)ObjectGuid).ToByteArray());
+                writer.Write((Guid)ObjectGuid);
             }
         }
     }

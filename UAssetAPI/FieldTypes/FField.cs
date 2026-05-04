@@ -40,7 +40,7 @@ namespace UAssetAPI.FieldTypes
 
             if (!writer.Asset.IsFilterEditorOnly && !writer.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {
-                writer.Write(MetaDataMap is not null ? 1 : 0); // int32
+                writer.WriteBooleanInt(MetaDataMap is not null); // int32
                 if (MetaDataMap is not null && MetaDataMap.Count > 0)
                 {
                     writer.Write(MetaDataMap.Count); // int32

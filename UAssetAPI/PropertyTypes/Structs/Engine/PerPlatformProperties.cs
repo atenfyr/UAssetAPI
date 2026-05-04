@@ -56,7 +56,7 @@ public class PerPlatformBoolPropertyData : TPerPlatformPropertyData<bool>
         writer.Write(Value.Length);
         for (int i = 0; i < Value.Length; i++)
         {
-            writer.Write(Value[i] ? 1 : 0);
+            writer.WriteBooleanInt(Value[i]);
         }
         return sizeof(int) + sizeof(int) * Value.Length;
     }

@@ -619,7 +619,7 @@ namespace UAssetAPI
                 writer.Write((int)0); // initial length
                 writer.Write((byte)property.PropertyTagFlags);
                 if (property.ArrayIndex != 0) writer.Write(property.ArrayIndex);
-                if (property.PropertyGuid != null) writer.Write(property.PropertyGuid.Value.ToByteArray());
+                if (property.PropertyGuid != null) writer.Write(property.PropertyGuid.Value);
                 int realLength = property.Write(writer, includeHeader);
                 int newLoc = (int)writer.BaseStream.Position;
 

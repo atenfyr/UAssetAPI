@@ -44,7 +44,7 @@ public class MovieSceneGenerationLedgerPropertyData : PropertyData
         TrackSignatureToTrackIdentifier = new TMap<Guid, StructPropertyData>();
         for (int i = 0; i < SignatureToTrackIDs; i++)
         {
-            var guid = new Guid(reader.ReadBytes(16));
+            var guid = reader.ReadGuid();
             var counts = reader.ReadInt32();
             if (counts != 1) throw new FormatException("Invalid TrackSignatureToTrackIdentifier count");
             var identifier = new StructPropertyData(FName.DefineDummy(reader.Asset, "MovieSceneTrackIdentifier"), FName.DefineDummy(reader.Asset, "Generic"));
@@ -73,7 +73,7 @@ public class MovieSceneGenerationLedgerPropertyData : PropertyData
         writer.Write(TrackSignatureToTrackIdentifier.Count);
         foreach (var kvp in TrackSignatureToTrackIdentifier)
         {
-            writer.Write(kvp.Key.ToByteArray());
+            writer.Write(kvp.Key);
             writer.Write(1);
             kvp.Value.Write(writer, false, PropertySerializationContext.StructFallback);
         }

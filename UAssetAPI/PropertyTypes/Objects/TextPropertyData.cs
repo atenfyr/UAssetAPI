@@ -59,8 +59,8 @@ public class FNumberFormattingOptions
     public void Write(AssetBinaryWriter writer)
     {
         if (writer.Asset.GetCustomVersion<FEditorObjectVersion>() >= FEditorObjectVersion.AddedAlwaysSignNumberFormattingOption)
-            writer.Write(AlwaysSign ? 1 : 0);
-        writer.Write(UseGrouping ? 1 : 0);
+            writer.WriteBooleanInt(AlwaysSign);
+        writer.WriteBooleanInt(UseGrouping);
         writer.Write((byte)RoundingMode);
         writer.Write(MinimumIntegralDigits);
         writer.Write(MaximumIntegralDigits);

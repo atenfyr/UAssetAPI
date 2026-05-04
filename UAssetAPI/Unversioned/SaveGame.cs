@@ -119,7 +119,7 @@ namespace UAssetAPI.Unversioned
                 if (ver < UsmapVersion.Initial || ver > UsmapVersion.Latest) throw new FormatException(".usmap: Unknown file version " + ver);
                 if (ver >= UsmapVersion.PackageVersioning)
                 {
-                    bool bHasVersioning = reader.ReadInt32() > 0;
+                    bool bHasVersioning = reader.ReadBooleanInt();
                     if (bHasVersioning)
                     {
                         reader.ReadUInt32();

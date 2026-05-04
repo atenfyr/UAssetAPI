@@ -191,26 +191,26 @@ namespace UAssetAPI.ExportTypes
                 SerializeInterfaces(writer);
             }
 
-            writer.Write(bDeprecatedForceScriptOrder ? 1 : 0);
+            writer.WriteBooleanInt(bDeprecatedForceScriptOrder);
 
             writer.Write(new FName(writer.Asset, "None"));
 
             if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_ADD_COOKED_TO_UCLASS)
             {
-                writer.Write(bCooked ? 1 : 0);
+                writer.WriteBooleanInt(bCooked);
             }
 
             writer.Write(ClassDefaultObject.Index);
         }
 
-        private void SerializeInterfaces(BinaryWriter writer)
+        private void SerializeInterfaces(UnrealBinaryWriter writer)
         {
             writer.Write(Interfaces.Length);
             for (int i = 0; i < Interfaces.Length; i++)
             {
                 writer.Write(Interfaces[i].Class);
                 writer.Write(Interfaces[i].PointerOffset);
-                writer.Write(Interfaces[i].bImplementedByK2 ? 1 : 0);
+                writer.WriteBooleanInt(Interfaces[i].bImplementedByK2);
             }
         }
     }

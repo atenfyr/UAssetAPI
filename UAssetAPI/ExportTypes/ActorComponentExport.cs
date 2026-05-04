@@ -41,7 +41,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     FPackageIndex MemberParent = new FPackageIndex(reader);
                     FName MemberName = reader.ReadFName();
-                    Guid MemberGuid = new Guid(reader.ReadBytes(16));
+                    Guid MemberGuid = reader.ReadGuid();
                     UCSModifiedProperties.Add(new FSimpleMemberReference() { MemberParent = MemberParent, MemberName = MemberName, MemberGuid = MemberGuid });
                 }
             }
@@ -57,7 +57,7 @@ namespace UAssetAPI.ExportTypes
                 {
                     writer.Write(UCSModifiedProperties[i].MemberParent.Index);
                     writer.Write(UCSModifiedProperties[i].MemberName);
-                    writer.Write(UCSModifiedProperties[i].MemberGuid.ToByteArray());
+                    writer.Write(UCSModifiedProperties[i].MemberGuid);
                 }
             }
         }

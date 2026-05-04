@@ -1854,13 +1854,13 @@ namespace UAssetAPI
 
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
             {
-                PackageGuid = new Guid(reader.ReadBytes(16));
+                PackageGuid = reader.ReadGuid();
             }
 
             if (!IsFilterEditorOnly)
             {
                 PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER 
-                    ? new Guid(reader.ReadBytes(16))
+                    ? reader.ReadGuid()
                     : PackageGuid;
 
                 if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
@@ -1874,7 +1874,7 @@ namespace UAssetAPI
             {
                 reader.BaseStream.Position -= sizeof(int) + 16;
                 ValorantGarbageData = reader.ReadBytes(8); // garbage data
-                PackageGuid = new Guid(reader.ReadBytes(16));
+                PackageGuid = reader.ReadGuid();
                 generationCount = reader.ReadInt32();
             }
             for (int i = 0; i < generationCount; i++)
@@ -2030,8 +2030,8 @@ namespace UAssetAPI
                     {
                         var keyName = reader.ReadFString();
                         var siteDescription = reader.ReadFString();
-                        var isEditorOnly = reader.ReadInt32() > 0;
-                        var isOptional = reader.ReadInt32() > 0;
+                        var isEditorOnly = reader.ReadBooleanInt();
+                        var isOptional = reader.ReadBooleanInt();
                         var infoMetaData = reader.ReadLocMetadataObject();
                         var keyMetaData = reader.ReadLocMetadataObject();
 
@@ -2531,13 +2531,13 @@ namespace UAssetAPI
 
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
             {
-                writer.Write(PackageGuid.ToByteArray());
+                writer.Write(PackageGuid);
             }
 
             if (!IsFilterEditorOnly)
             {
                 if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER)
-                    writer.Write(PersistentGuid.ToByteArray());
+                    writer.Write(PersistentGuid);
 
                 // The owner persistent guid was added in VER_UE4_ADDED_PACKAGE_OWNER but removed in the next version VER_UE4_NON_OUTER_PACKAGE_IMPORT
                 if (ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER &&
@@ -2733,8 +2733,8 @@ namespace UAssetAPI
                         {
                             writer.Write(context.KeyName);
                             writer.Write(context.SiteDescription);
-                            writer.Write(context.IsEditorOnly ? 1 : 0);
-                            writer.Write(context.IsOptional ? 1 : 0);
+                            writer.WriteBooleanInt(context.IsEditorOnly);
+                            writer.WriteBooleanInt(context.IsOptional);
                             writer.Write(context.InfoMetaData);
                             writer.Write(context.KeyMetaData);
                         }
@@ -2761,7 +2761,7 @@ namespace UAssetAPI
                         if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
                             && !writer.Asset.IsFilterEditorOnly)
                             writer.Write(this.Imports[i].PackageName);
-                        if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) writer.Write(this.Imports[i].bImportOptional ? 1 : 0);
+                        if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) writer.WriteBooleanInt(this.Imports[i].bImportOptional);
                     }
                 }
                 else
