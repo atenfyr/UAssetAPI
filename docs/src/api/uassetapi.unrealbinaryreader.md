@@ -141,6 +141,16 @@ public bool ReadBooleanInt()
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+### **ReadGuid()**
+
+```csharp
+public Guid ReadGuid()
+```
+
+#### Returns
+
+[Guid](https://docs.microsoft.com/en-us/dotnet/api/system.guid)<br>
+
 ### **ReadString()**
 
 ```csharp

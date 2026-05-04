@@ -173,6 +173,26 @@ public void Write(string value)
 
 `value` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+### **Write(Guid)**
+
+```csharp
+public void Write(Guid value)
+```
+
+#### Parameters
+
+`value` [Guid](https://docs.microsoft.com/en-us/dotnet/api/system.guid)<br>
+
+### **WriteBooleanInt(Boolean)**
+
+```csharp
+public void WriteBooleanInt(bool value)
+```
+
+#### Parameters
+
+`value` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **Write(FString)**
 
 ```csharp

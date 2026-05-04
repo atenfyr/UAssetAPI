@@ -358,6 +358,20 @@ public static int DivideAndRoundUp(int a, int b)
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
+### **IsNormal(PropertySerializationContext)**
+
+```csharp
+public static bool IsNormal(PropertySerializationContext context)
+```
+
+#### Parameters
+
+`context` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **FixDirectorySeparatorsForDisk(String)**
 
 ```csharp

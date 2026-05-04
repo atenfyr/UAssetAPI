@@ -1392,7 +1392,6 @@ namespace UAssetAPI
         /// <summary>
         /// The version to use for serializing data resources.
         /// </summary>
-
         public EObjectDataResourceVersion DataResourceVersion;
 
         /// <summary>

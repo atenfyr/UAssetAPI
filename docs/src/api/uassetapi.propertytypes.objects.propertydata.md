@@ -331,7 +331,16 @@ protected void WriteEndPropertyTag(AssetBinaryWriter writer)
 
 ### **CanBeZero(UAsset)**
 
-Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization in unversioned properties.
+Does the body of this property entirely consist of null bytes? If so, the body can be skipped during serialization with unversioned properties.
+
+
+
+Note that this method performs a full write of the property, and is thus performance-intensive.
+ Container properties may wish to check for the following two conditions to know when to exit early:
+
+
+
+serializationContext == PropertySerializationContext.CanBeZero &amp;&amp; ((CanBeZeroStream)writer.BaseStream).HasWrittenNonZero
 
 ```csharp
 public bool CanBeZero(UAsset asset)

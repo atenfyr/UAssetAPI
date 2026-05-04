@@ -29,6 +29,14 @@ The path of the file on disk that this asset represents. This does not need to b
 public string FilePath;
 ```
 
+### **IsParsingToPullSchemas**
+
+Whether this asset is only being parsed to extract schemas for parsing a different asset.
+
+```csharp
+public bool IsParsingToPullSchemas;
+```
+
 ### **Mappings**
 
 The corresponding mapping data for the game that this asset is from. Optional unless unversioned properties are present.

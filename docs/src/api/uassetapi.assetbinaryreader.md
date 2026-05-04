@@ -193,6 +193,8 @@ public FLocMetadataObject ReadLocMetadataObject()
 
 ### **XFERSTRING()**
 
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
+
 ```csharp
 public string XFERSTRING()
 ```
@@ -202,6 +204,8 @@ public string XFERSTRING()
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 ### **XFERUNICODESTRING()**
+
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
 
 ```csharp
 public string XFERUNICODESTRING()
@@ -213,11 +217,15 @@ public string XFERUNICODESTRING()
 
 ### **XFERTEXT()**
 
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
+
 ```csharp
 public void XFERTEXT()
 ```
 
 ### **XFERNAME()**
+
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
 
 ```csharp
 public FName XFERNAME()
@@ -229,6 +237,8 @@ public FName XFERNAME()
 
 ### **XFER_FUNC_NAME()**
 
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
+
 ```csharp
 public FName XFER_FUNC_NAME()
 ```
@@ -238,6 +248,8 @@ public FName XFER_FUNC_NAME()
 [FName](./uassetapi.unrealtypes.fname.md)<br>
 
 ### **XFERPTR()**
+
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
 
 ```csharp
 public FPackageIndex XFERPTR()
@@ -249,6 +261,8 @@ public FPackageIndex XFERPTR()
 
 ### **XFER_FUNC_POINTER()**
 
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
+
 ```csharp
 public FPackageIndex XFER_FUNC_POINTER()
 ```
@@ -259,6 +273,8 @@ public FPackageIndex XFER_FUNC_POINTER()
 
 ### **XFER_PROP_POINTER()**
 
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
+
 ```csharp
 public KismetPropertyPointer XFER_PROP_POINTER()
 ```
@@ -268,6 +284,8 @@ public KismetPropertyPointer XFER_PROP_POINTER()
 [KismetPropertyPointer](./uassetapi.kismet.bytecode.kismetpropertypointer.md)<br>
 
 ### **XFER_OBJECT_POINTER()**
+
+This method is intended only to be used in parsing Kismet bytecode; please do not use it for any other purpose!
 
 ```csharp
 public FPackageIndex XFER_OBJECT_POINTER()
