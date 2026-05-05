@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BONESOCKETSOURCE_Bones | 0 |  |
+| BONESOCKETSOURCE_Sockets | 1 |  |
+| BONESOCKETSOURCE_MAX | 2 |  |

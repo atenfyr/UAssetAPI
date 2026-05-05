@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Int | 0 |  |
+| UInt | 1 |  |
+| Float | 2 |  |
+| Double | 3 |  |
+| Text | 4 |  |
+| Gender | 5 |  |
+| EFormatArgumentType_MAX | 6 |  |

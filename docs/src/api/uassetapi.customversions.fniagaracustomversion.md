@@ -36,6 +36,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ScriptsNowUseAGuidForIdentificationInsteadOfAnIndex | 20 | Scripts now use a guid for identification instead of an index when there are more than one with the same usage. |
 | NiagaraCombinedGPUSpawnUpdate | 21 | don't serialize shader maps for update scripts |
 | DontCompileGPUWhenNotNeeded | 22 | don't serialize shader maps for emitters that don't run on gpu. |
+| LifeCycleRework | 23 |  |
 | NowSerializingReadWriteDataSets | 24 | We weren't serializing event data sets previously. |
 | TranslatorClearOutBetweenEmitters | 25 | Forcing the internal parameter map vars to be reset between emitter calls. |
 | AddSamplerDataInterfaceParams | 26 | added sampler shader params based on DI buffer descriptors |
@@ -78,10 +79,13 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | RibbonRendererUVRefactor | 63 | Refactor the options for UV settings on the ribbon renderer. |
 | VariablesUseTypeDefRegistry | 64 | Replace the TypeDefinition in VariableBase with an index into the type registry |
 | AddLibraryVisibilityProperty | 65 | Expand the visibility options of the scripts to be able to hide a script completely from the user |
+| SignificanceHandlers | 66 |  |
 | ModuleVersioning | 67 | Added support for multiple versions of script data |
+| MoveDefaultValueFromFNiagaraVariableMetaDataToUNiagaraScriptVariable | 68 |  |
 | ChangeSystemDeterministicDefault | 69 | Changed the default mode from deterministic to non-deterministic which matches emitters |
 | StaticSwitchFunctionPinsUsePersistentGuids | 70 | Update static switch pins to use the PersistentId from their script variable so that when they're renamed their values aren't lost when reallocating pins. |
 | VisibilityCullingImprovements | 71 | Extended visibility culling options and moved properties into their own struct. |
+| AddBakerCameraBookmarks | 72 |  |
 | PopulateFunctionCallNodePinNameBindings | 73 | Function call node refresh from external changes has been refactored so that they don't need to populate their name bindings every load. |
 | ComponentRendererSpawnProperty | 74 | Changed the default value for the component renderer's OnlyCreateComponentsOnParticleSpawn property |
 | RepopulateFunctionCallNodePinNameBindings | 75 | Previous repopulate didn't handle module attributes like Particles.Module.Name so they need to be repopulated for renaming to work correctly. |
@@ -104,3 +108,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | AddedNewInterpolatedSpawnMode | 92 | Changed the interpolated spawn property into an enum |
 | UserAssetTagStorageInMetaData | 93 | Adding user asset tag storage in UMetaData for all UPackages |
 | VersionPlusOne | 94 | DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously. -----new versions can be added above this line------------------------------------------------- |
+| LatestVersion | 93 |  |

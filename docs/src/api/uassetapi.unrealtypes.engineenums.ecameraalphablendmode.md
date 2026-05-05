@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CABM_Linear | 0 |  |
+| CABM_Cubic | 1 |  |
+| CABM_MAX | 2 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AEM_Histogram | 0 |  |
+| AEM_Basic | 1 |  |
+| AEM_Manual | 2 |  |
+| AEM_MAX | 3 |  |

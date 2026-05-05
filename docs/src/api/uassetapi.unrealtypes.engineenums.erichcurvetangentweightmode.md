@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RCTWM_WeightedNone | 0 |  |
+| RCTWM_WeightedArrive | 1 |  |
+| RCTWM_WeightedLeave | 2 |  |
+| RCTWM_WeightedBoth | 3 |  |
+| RCTWM_MAX | 4 |  |

@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| ForOneFrame | 1 |  |
+| ForDuration | 2 |  |
+| Persistent | 3 |  |
+| EDrawDebugTrace_MAX | 4 |  |

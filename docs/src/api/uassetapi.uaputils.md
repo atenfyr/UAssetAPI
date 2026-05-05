@@ -6,7 +6,8 @@ Namespace: UAssetAPI
 public static class UAPUtils
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UAPUtils](./uassetapi.uaputils.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UAPUtils](./uassetapi.uaputils.md)<br>
+Attributes [ExtensionAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.extensionattribute)
 
 ## Properties
 

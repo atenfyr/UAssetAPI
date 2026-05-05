@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SimulationUpatesComponentTransform | 0 |  |
+| ComponentTransformIsKinematic | 1 |  |
+| EPhysicsTransformUpdateMode_MAX | 2 |  |

@@ -76,3 +76,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | SplineComponentReparameterizeOnLoad | 60 | Reparameterize Spline in SplineComponent based on SplineCurves parameterization |
 | AddSimulationPropertySupportToClothUSDImportNodeV2 | 61 | Add solver and fabric property support to the schema based Cloth USD importer |
 | VersionPlusOne | 62 | -----new versions can be added above this line------------------------------------------------- |
+| LatestVersion | 61 |  |

@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AllLODs | 0 |  |
+| SpecificLOD | 1 |  |
+| CalculateLOD | 2 |  |
+| LowestDetailLOD | 3 |  |
+| EMeshLODSelectionType_MAX | 4 |  |

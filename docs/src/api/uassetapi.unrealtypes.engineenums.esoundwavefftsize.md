@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| VerySmall_65 | 0 |  |
+| Small_257 | 1 |  |
+| Medium_513 | 2 |  |
+| Large_1025 | 3 |  |
+| VeryLarge_2049 | 4 |  |
+| ESoundWaveFFTSize_MAX | 5 |  |

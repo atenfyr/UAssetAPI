@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Sphere | 0 |  |
+| Capsule | 1 |  |
+| Box | 2 |  |
+| Cone | 3 |  |
+| EAttenuationShape_MAX | 4 |  |

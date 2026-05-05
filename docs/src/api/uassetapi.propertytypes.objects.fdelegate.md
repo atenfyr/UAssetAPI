@@ -8,7 +8,8 @@ Describes a function bound to an Object.
 public class FDelegate
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FDelegate](./uassetapi.propertytypes.objects.fdelegate.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FDelegate](./uassetapi.propertytypes.objects.fdelegate.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

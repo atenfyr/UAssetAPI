@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ELESM_Random | 0 |  |
+| ELESM_Sequential | 1 |  |
+| ELESM_MAX | 2 |  |

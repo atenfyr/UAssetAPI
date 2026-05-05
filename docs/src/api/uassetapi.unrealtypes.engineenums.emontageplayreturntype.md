@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| MontageLength | 0 |  |
+| Duration | 1 |  |
+| EMontagePlayReturnType_MAX | 2 |  |

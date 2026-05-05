@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| OT_NumOfTriangles | 0 |  |
+| OT_MaxDeviation | 1 |  |
+| OT_MAX | 2 |  |

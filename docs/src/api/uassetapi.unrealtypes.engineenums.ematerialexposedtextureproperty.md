@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TMTM_TextureSize | 0 |  |
+| TMTM_TexelSize | 1 |  |
+| TMTM_MAX | 2 |  |

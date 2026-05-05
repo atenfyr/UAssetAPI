@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Move | 0 |  |
+| Stop | 1 |  |
+| Return | 2 |  |
+| EMoveComponentAction_MAX | 3 |  |

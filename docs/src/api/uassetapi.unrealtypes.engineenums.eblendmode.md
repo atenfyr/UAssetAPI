@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BLEND_Opaque | 0 |  |
+| BLEND_Masked | 1 |  |
+| BLEND_Translucent | 2 |  |
+| BLEND_Additive | 3 |  |
+| BLEND_Modulate | 4 |  |
+| BLEND_AlphaComposite | 5 |  |
+| BLEND_AlphaHoldout | 6 |  |
+| BLEND_MAX | 7 |  |

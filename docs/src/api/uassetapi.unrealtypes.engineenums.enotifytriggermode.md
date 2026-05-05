@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AllAnimations | 0 |  |
+| HighestWeightedAnimation | 1 |  |
+| None | 2 |  |
+| ENotifyTriggerMode_MAX | 3 |  |

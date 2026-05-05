@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Linear | 0 |  |
+| EqualPower | 1 |  |
+| EPanningMethod_MAX | 2 |  |

@@ -5,7 +5,9 @@ namespace UAssetAPI.UnrealTypes
     /// </summary>
     public enum ObjectVersion
     {
+        /// <summary>Unknown version</summary>
         UNKNOWN = 0,
+        /// <summary>VER_UE4_OLDEST_LOADABLE_PACKAGE</summary>
         VER_UE4_OLDEST_LOADABLE_PACKAGE = 214,
 
         /// <summary>Removed restriction on blueprint-exposed variables from being read-only</summary>
@@ -646,7 +648,7 @@ namespace UAssetAPI.UnrealTypes
         VER_UE4_CORRECT_LICENSEE_FLAG,
 
         VER_UE4_AUTOMATIC_VERSION_PLUS_ONE,
-        /// <summary>The newest specified version of the Unreal Engine.</summary>
+        /// <summary>The newest specified version of UE4.</summary>
         VER_UE4_AUTOMATIC_VERSION = VER_UE4_AUTOMATIC_VERSION_PLUS_ONE - 1,
     };
 
@@ -655,70 +657,72 @@ namespace UAssetAPI.UnrealTypes
     /// </summary>
     public enum ObjectVersionUE5
     {
+        /// <summary>Unknown version</summary>
         UNKNOWN = 0,
 
-        // The original UE5 version, at the time this was added the UE4 version was 522, so UE5 will start from 1000 to show a clear difference
+        /// <summary>The original UE5 version, at the time this was added the UE4 version was 522, so UE5 will start from 1000 to show a clear difference</summary>
         INITIAL_VERSION = 1000,
 
-        // Support stripping names that are not referenced from export data
+        /// <summary>Support stripping names that are not referenced from export data</summary>
         NAMES_REFERENCED_FROM_EXPORT_DATA,
 
-        // Added a payload table of contents to the package summary 
+        /// <summary>Added a payload table of contents to the package summary </summary>
         PAYLOAD_TOC,
 
-        // Added data to identify references from and to optional package
+        /// <summary>Added data to identify references from and to optional package</summary>
         OPTIONAL_RESOURCES,
 
-        // Large world coordinates converts a number of core types to double components by default.
+        /// <summary>Large world coordinates converts a number of core types to double components by default.</summary>
         LARGE_WORLD_COORDINATES,
 
-        // Remove package GUID from FObjectExport
+        /// <summary>Remove package GUID from FObjectExport</summary>
         REMOVE_OBJECT_EXPORT_PACKAGE_GUID,
 
-        // Add IsInherited to the FObjectExport entry
+        /// <summary>Add IsInherited to the FObjectExport entry</summary>
         TRACK_OBJECT_EXPORT_IS_INHERITED,
 
-        // Replace FName asset path in FSoftObjectPath with (package name, asset name) pair FTopLevelAssetPath
+        /// <summary>Replace FName asset path in FSoftObjectPath with (package name, asset name) pair FTopLevelAssetPath</summary>
         FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES,
 
-        // Add a soft object path list to the package summary for fast remap
+        /// <summary>Add a soft object path list to the package summary for fast remap</summary>
         ADD_SOFTOBJECTPATH_LIST,
 
-        // Added bulk/data resource table
+        /// <summary>Added bulk/data resource table</summary>
         DATA_RESOURCES,
 
-        // Added script property serialization offset to export table entries for saved, versioned packages
+        /// <summary>Added script property serialization offset to export table entries for saved, versioned packages</summary>
         SCRIPT_SERIALIZATION_OFFSET,
 
-        // Adding property tag extension,
-        // Support for overridable serialization on UObject,
-        // Support for overridable logic in containers
+        /// <summary>
+        /// Adding property tag extension,
+        /// Support for overridable serialization on UObject,
+        /// Support for overridable logic in containers
+        /// </summary>
         PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION,
 
-        // Added property tag complete type name and serialization type
+        /// <summary>Added property tag complete type name and serialization type</summary>
         PROPERTY_TAG_COMPLETE_TYPE_NAME,
 
-        // Changed UE::AssetRegistry::WritePackageData to include PackageBuildDependencies
+        /// <summary>Changed UE::AssetRegistry::WritePackageData to include PackageBuildDependencies</summary>
         ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES,
         
-        // Added meta data serialization offset to for saved, versioned packages
+        /// <summary>Added meta data serialization offset to for saved, versioned packages</summary>
         METADATA_SERIALIZATION_OFFSET,
 
-        // Added VCells to the object graph
+        /// <summary>Added VCells to the object graph</summary>
         VERSE_CELLS,
 
-        // Changed PackageFileSummary to write FIoHash PackageSavedHash instead of FGuid Guid
+        /// <summary>Changed PackageFileSummary to write FIoHash PackageSavedHash instead of FGuid Guid</summary>
         PACKAGE_SAVED_HASH,
 
-        // OS shadow serialization of subobjects
+        /// <summary>OS shadow serialization of subobjects</summary>
         OS_SUB_OBJECT_SHADOW_SERIALIZATION,
 
-        // Adds a table of hierarchical type information for imports in a package
+        /// <summary>Adds a table of hierarchical type information for imports in a package</summary>
         IMPORT_TYPE_HIERARCHIES,
 
-        // -----<new versions can be added before this line>-------------------------------------------------
-        // - this needs to be the last line (see note below)
         AUTOMATIC_VERSION_PLUS_ONE,
+        /// <summary>The newest specified version of UE5.</summary>
         AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
     }
 }

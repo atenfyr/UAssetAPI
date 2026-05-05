@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoClear | 0 |  |
+| HardwareClear | 1 |  |
+| QuadAtMaxZ | 2 |  |
+| EClearSceneOptions_MAX | 3 |  |

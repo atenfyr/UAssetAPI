@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoPins | 0 |  |
+| Shown | 1 |  |
+| Hidden | 2 |  |
+| ENodeAdvancedPins_MAX | 3 |  |

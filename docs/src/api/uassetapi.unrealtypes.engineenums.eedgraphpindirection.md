@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EGPD_Input | 0 |  |
+| EGPD_Output | 1 |  |
+| EGPD_MAX | 2 |  |

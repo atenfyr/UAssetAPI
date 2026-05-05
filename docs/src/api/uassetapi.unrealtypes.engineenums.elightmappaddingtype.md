@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| LMPT_NormalPadding | 0 |  |
+| LMPT_PrePadding | 1 |  |
+| LMPT_NoPadding | 2 |  |
+| LMPT_MAX | 3 |  |

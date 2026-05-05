@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Off | 0 |  |
+| Lowest | 1 |  |
+| Low | 2 |  |
+| Normal | 3 |  |
+| High | 4 |  |
+| Highest | 5 |  |
+| EMeshFeatureImportance_MAX | 6 |  |

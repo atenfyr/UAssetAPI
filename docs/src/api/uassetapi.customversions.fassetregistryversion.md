@@ -33,3 +33,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | RemoveAssetPathFNames | 15 | Asset bundles are serialized as FTopLevelAssetPath instead of FSoftObjectPath, deprecated FAssetData::ObjectPath |
 | AddedHeader | 16 | Added header with bFilterEditorOnlyData flag |
 | AssetPackageDataHasExtension | 17 | Added Extension to AssetPackageData. |
+| VersionPlusOne | 18 |  |
+| LatestVersion | 17 |  |

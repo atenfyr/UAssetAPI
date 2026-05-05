@@ -7,7 +7,8 @@ public class ScalarMaterialInputPropertyData : MaterialInputPropertyData`1, Syst
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;Single&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [MaterialInputPropertyData&lt;Single&gt;](./uassetapi.propertytypes.structs.materialinputpropertydata-1.md) → [ScalarMaterialInputPropertyData](./uassetapi.propertytypes.structs.scalarmaterialinputpropertydata.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 
@@ -161,6 +162,12 @@ An optional tag which can be set on any property in memory. This is for the user
 
 ```csharp
 public object Tag;
+```
+
+### **_rawValue**
+
+```csharp
+protected object _rawValue;
 ```
 
 ## Properties

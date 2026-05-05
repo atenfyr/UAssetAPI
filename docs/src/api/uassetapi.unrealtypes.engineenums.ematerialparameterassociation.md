@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| LayerParameter | 0 |  |
+| BlendParameter | 1 |  |
+| GlobalParameter | 2 |  |
+| EMaterialParameterAssociation_MAX | 3 |  |

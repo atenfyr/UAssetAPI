@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Disabled | 0 |  |
+| BruteForce | 1 |  |
+| FinalGather | 2 |  |
+| ERayTracingGlobalIlluminationType_MAX | 3 |  |

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SoundWave | 0 |  |
+| WavFile | 1 |  |
+| EAudioRecordingExportType_MAX | 2 |  |

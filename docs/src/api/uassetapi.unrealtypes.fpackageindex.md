@@ -14,7 +14,8 @@ Wrapper for index into an ImportMap or ExportMap.
 public class FPackageIndex
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
+Attributes JsonConverterAttribute
 
 ## Fields
 

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_LetObj
 public class EX_LetObj : EX_LetBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md) → [EX_LetObj](./uassetapi.kismet.bytecode.expressions.ex_letobj.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md) → [EX_LetObj](./uassetapi.kismet.bytecode.expressions.ex_letobj.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

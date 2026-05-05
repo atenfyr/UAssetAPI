@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Inherited | 0 |  |
+| RetainOnLoad | 1 |  |
+| PrimeOnLoad | 2 |  |
+| LoadOnDemand | 3 |  |
+| ForceInline | 4 |  |
+| Uninitialized | 255 |  |

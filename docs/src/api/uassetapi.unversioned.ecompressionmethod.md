@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| Oodle | 1 |  |
+| Brotli | 2 |  |
+| ZStandard | 3 |  |
+| Unknown | 255 |  |

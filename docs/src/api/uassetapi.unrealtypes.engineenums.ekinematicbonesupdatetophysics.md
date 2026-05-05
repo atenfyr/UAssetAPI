@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SkipSimulatingBones | 0 |  |
+| SkipAllBones | 1 |  |
+| EKinematicBonesUpdateToPhysics_MAX | 2 |  |

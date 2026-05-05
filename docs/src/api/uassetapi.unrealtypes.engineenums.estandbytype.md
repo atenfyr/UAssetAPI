@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| STDBY_Rx | 0 |  |
+| STDBY_Tx | 1 |  |
+| STDBY_BadPing | 2 |  |
+| STDBY_MAX | 3 |  |

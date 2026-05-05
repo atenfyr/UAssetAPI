@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Rotati
 public class EX_RotationConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_RotationConst](./uassetapi.kismet.bytecode.expressions.ex_rotationconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_RotationConst](./uassetapi.kismet.bytecode.expressions.ex_rotationconst.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

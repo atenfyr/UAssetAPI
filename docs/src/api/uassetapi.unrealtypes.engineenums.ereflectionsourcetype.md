@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CapturedScene | 0 |  |
+| SpecifiedCubemap | 1 |  |
+| EReflectionSourceType_MAX | 2 |  |

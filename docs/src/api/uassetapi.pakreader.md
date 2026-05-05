@@ -9,6 +9,14 @@ public class PakReader : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsI
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [CriticalFinalizerObject](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.constrainedexecution.criticalfinalizerobject) → [SafeHandle](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.safehandle) → [SafeHandleZeroOrMinusOneIsInvalid](https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.safehandles.safehandlezeroorminusoneisinvalid) → [PakReader](./uassetapi.pakreader.md)<br>
 Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idisposable)
 
+## Fields
+
+### **handle**
+
+```csharp
+protected IntPtr handle;
+```
+
 ## Properties
 
 ### **IsInvalid**

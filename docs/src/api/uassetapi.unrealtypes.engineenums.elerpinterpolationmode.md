@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| QuatInterp | 0 |  |
+| EulerInterp | 1 |  |
+| DualQuatInterp | 2 |  |
+| ELerpInterpolationMode_MAX | 3 |  |

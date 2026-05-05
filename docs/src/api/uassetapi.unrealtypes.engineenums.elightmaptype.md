@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Default | 0 |  |
+| ForceSurface | 1 |  |
+| ForceVolumetric | 2 |  |
+| ELightmapType_MAX | 3 |  |

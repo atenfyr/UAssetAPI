@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RCCF_Empty | 0 |  |
+| RCCF_Constant | 1 |  |
+| RCCF_Linear | 2 |  |
+| RCCF_Cubic | 3 |  |
+| RCCF_Mixed | 4 |  |
+| RCCF_MAX | 5 |  |

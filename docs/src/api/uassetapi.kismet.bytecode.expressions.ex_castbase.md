@@ -8,7 +8,8 @@ Base class for several type cast expressions
 public abstract class EX_CastBase : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_CastBase](./uassetapi.kismet.bytecode.expressions.ex_castbase.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_CastBase](./uassetapi.kismet.bytecode.expressions.ex_castbase.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 
@@ -67,6 +68,14 @@ public string Inst { get; }
 #### Property Value
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+## Constructors
+
+### **EX_CastBase()**
+
+```csharp
+protected EX_CastBase()
+```
 
 ## Methods
 

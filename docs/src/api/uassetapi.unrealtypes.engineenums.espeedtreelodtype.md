@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| STLOD_Pop | 0 |  |
+| STLOD_Smooth | 1 |  |
+| STLOD_MAX | 2 |  |

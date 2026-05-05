@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Contex
 public class EX_Context_FailSilent : EX_Context
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Context](./uassetapi.kismet.bytecode.expressions.ex_context.md) → [EX_Context_FailSilent](./uassetapi.kismet.bytecode.expressions.ex_context_failsilent.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Context](./uassetapi.kismet.bytecode.expressions.ex_context.md) → [EX_Context_FailSilent](./uassetapi.kismet.bytecode.expressions.ex_context_failsilent.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

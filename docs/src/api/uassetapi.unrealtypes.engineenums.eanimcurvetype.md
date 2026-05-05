@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AttributeCurve | 0 |  |
+| MaterialCurve | 1 |  |
+| MorphTargetCurve | 2 |  |
+| MaxAnimCurveType | 3 |  |
+| EAnimCurveType_MAX | 4 |  |

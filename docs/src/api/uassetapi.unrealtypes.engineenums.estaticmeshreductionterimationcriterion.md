@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Triangles | 0 |  |
+| Vertices | 1 |  |
+| Any | 2 |  |
+| EStaticMeshReductionTerimationCriterion_MAX | 3 |  |

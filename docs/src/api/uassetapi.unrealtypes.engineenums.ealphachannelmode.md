@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Disabled | 0 |  |
+| LinearColorSpaceOnly | 1 |  |
+| AllowThroughTonemapper | 2 |  |
+| EAlphaChannelMode_MAX | 3 |  |

@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Luminance | 0 |  |
+| Red | 1 |  |
+| Green | 2 |  |
+| Blue | 3 |  |
+| Alpha | 4 |  |
+| EImportanceWeight_MAX | 5 |  |

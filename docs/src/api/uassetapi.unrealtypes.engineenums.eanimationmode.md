@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AnimationBlueprint | 0 |  |
+| AnimationSingleNode | 1 |  |
+| AnimationCustomMode | 2 |  |
+| EAnimationMode_MAX | 3 |  |

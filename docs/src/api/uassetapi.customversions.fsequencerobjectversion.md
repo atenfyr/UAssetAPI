@@ -27,3 +27,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ModifyLinearKeysForOldInterp | 11 | Change the linear keys so they act the old way and interpolate always. |
 | SerializeFloatChannelCompletely | 12 | Full Manual serialization of float channel |
 | SpawnableImprovements | 13 | Set ContinuouslyRespawn to false by default, added FMovieSceneSpawnable::bNetAddressableName |
+| VersionPlusOne | 14 |  |
+| LatestVersion | 13 |  |

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Jump](
 public class EX_Jump : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Jump](./uassetapi.kismet.bytecode.expressions.ex_jump.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Jump](./uassetapi.kismet.bytecode.expressions.ex_jump.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

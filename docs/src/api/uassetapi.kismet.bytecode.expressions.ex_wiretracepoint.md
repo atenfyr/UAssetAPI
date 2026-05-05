@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_WireTr
 public class EX_WireTracepoint : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_WireTracepoint](./uassetapi.kismet.bytecode.expressions.ex_wiretracepoint.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_WireTracepoint](./uassetapi.kismet.bytecode.expressions.ex_wiretracepoint.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

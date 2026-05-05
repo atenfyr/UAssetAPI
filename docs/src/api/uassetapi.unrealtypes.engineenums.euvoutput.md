@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| DoNotOutputChannel | 0 |  |
+| OutputChannel | 1 |  |
+| EUVOutput_MAX | 2 |  |

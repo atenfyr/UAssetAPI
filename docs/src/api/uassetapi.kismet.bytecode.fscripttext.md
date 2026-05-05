@@ -8,7 +8,8 @@ Represents an FText as serialized in Kismet bytecode.
 public class FScriptText
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FScriptText](./uassetapi.kismet.bytecode.fscripttext.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FScriptText](./uassetapi.kismet.bytecode.fscripttext.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

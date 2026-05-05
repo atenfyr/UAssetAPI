@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| First | 0 |  |
+| Second | 1 |  |
+| Third | 2 |  |
+| Fourth | 3 |  |
+| EMatrixColumns_MAX | 4 |  |

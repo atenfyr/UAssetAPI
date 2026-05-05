@@ -7,7 +7,8 @@ public class SceneComponentExport : ActorComponentExport, System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Export](./uassetapi.exporttypes.export.md) → [NormalExport](./uassetapi.exporttypes.normalexport.md) → [ActorComponentExport](./uassetapi.exporttypes.actorcomponentexport.md) → [SceneComponentExport](./uassetapi.exporttypes.scenecomponentexport.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute), JsonObjectAttribute
 
 ## Fields
 

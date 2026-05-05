@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Override | 0 |  |
+| DoNotOverride | 1 |  |
+| NormalizeByWeight | 2 |  |
+| BlendByWeight | 3 |  |
+| UseBasePose | 4 |  |
+| UseMaxValue | 5 |  |
+| UseMinValue | 6 |  |
+| ECurveBlendOption_MAX | 7 |  |

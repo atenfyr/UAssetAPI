@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CMODE_Clamp | 0 |  |
+| CMODE_ClampMin | 1 |  |
+| CMODE_ClampMax | 2 |  |
+| CMODE_MAX | 3 |  |

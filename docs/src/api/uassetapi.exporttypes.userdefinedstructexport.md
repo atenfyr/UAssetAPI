@@ -7,7 +7,8 @@ public class UserDefinedStructExport : StructExport, System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Export](./uassetapi.exporttypes.export.md) → [NormalExport](./uassetapi.exporttypes.normalexport.md) → [FieldExport](./uassetapi.exporttypes.fieldexport.md) → [StructExport](./uassetapi.exporttypes.structexport.md) → [UserDefinedStructExport](./uassetapi.exporttypes.userdefinedstructexport.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute), JsonObjectAttribute
 
 ## Fields
 

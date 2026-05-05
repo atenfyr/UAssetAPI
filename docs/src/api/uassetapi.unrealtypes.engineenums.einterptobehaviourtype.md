@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| OneShot | 0 |  |
+| OneShot_Reverse | 1 |  |
+| Loop_Reset | 2 |  |
+| PingPong | 3 |  |
+| EInterpToBehaviourType_MAX | 4 |  |

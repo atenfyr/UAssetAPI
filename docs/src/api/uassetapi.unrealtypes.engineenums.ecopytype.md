@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PlainProperty | 0 |  |
+| BoolProperty | 1 |  |
+| StructProperty | 2 |  |
+| ObjectProperty | 3 |  |
+| NameProperty | 4 |  |
+| ECopyType_MAX | 5 |  |

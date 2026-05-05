@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| WorldSpace | 0 |  |
+| ComponentSpace | 1 |  |
+| EBoneSpaces_MAX | 2 |  |

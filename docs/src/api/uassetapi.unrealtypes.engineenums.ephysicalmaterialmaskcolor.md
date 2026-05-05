@@ -13,3 +13,12 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Red | 0 |  |
+| Green | 1 |  |
+| Blue | 2 |  |
+| Cyan | 3 |  |
+| Magenta | 4 |  |
+| Yellow | 5 |  |
+| White | 6 |  |
+| Black | 7 |  |
+| MAX | 8 |  |

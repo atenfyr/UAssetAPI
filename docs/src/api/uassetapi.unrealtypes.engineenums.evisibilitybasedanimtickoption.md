@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AlwaysTickPoseAndRefreshBones | 0 |  |
+| AlwaysTickPose | 1 |  |
+| OnlyTickMontagesWhenNotRendered | 2 |  |
+| OnlyTickPoseWhenRendered | 3 |  |
+| EVisibilityBasedAnimTickOption_MAX | 4 |  |

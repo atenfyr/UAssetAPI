@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Speaker | 0 |  |
+| Controller | 1 |  |
+| ControllerFallbackToSpeaker | 2 |  |
+| EAudioOutputTarget_MAX | 3 |  |

@@ -43,29 +43,3 @@ int Write(AssetBinaryWriter writer)
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-
-### **&lt;.ctor&gt;g__ReadTree|1_1(AssetBinaryReader)**
-
-```csharp
-StructPropertyData <.ctor>g__ReadTree|1_1(AssetBinaryReader reader)
-```
-
-#### Parameters
-
-`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-
-#### Returns
-
-[StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>
-
-### **&lt;Write&gt;g__WriteTree|2_0(AssetBinaryWriter, StructPropertyData)**
-
-```csharp
-void <Write>g__WriteTree|2_0(AssetBinaryWriter writer, StructPropertyData data)
-```
-
-#### Parameters
-
-`writer` [AssetBinaryWriter](./uassetapi.assetbinarywriter.md)<br>
-
-`data` [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>

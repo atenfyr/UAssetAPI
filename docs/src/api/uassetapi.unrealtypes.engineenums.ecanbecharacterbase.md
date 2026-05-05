@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ECB_No | 0 |  |
+| ECB_Yes | 1 |  |
+| ECB_Owner | 2 |  |
+| ECB_MAX | 3 |  |

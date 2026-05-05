@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SDPG_World | 0 |  |
+| SDPG_Foreground | 1 |  |
+| SDPG_MAX | 2 |  |

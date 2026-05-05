@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Unknown | 0 |  |
+| Good | 1 |  |
+| Bad | 2 |  |
+| Serious | 3 |  |
+| Critical | 4 |  |
+| NumSeverities | 5 |  |
+| ETemperatureSeverityType_MAX | 6 |  |

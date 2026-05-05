@@ -19,6 +19,12 @@ Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idis
 public UAsset Asset;
 ```
 
+### **OutStream**
+
+```csharp
+protected Stream OutStream;
+```
+
 ## Properties
 
 ### **BaseStream**

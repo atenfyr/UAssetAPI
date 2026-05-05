@@ -33,28 +33,51 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using UAssetAPI.PropertyTypes.Objects;
 
+/// <summary>
+/// Pak version.
+/// </summary>
 public enum PakVersion : byte
 {
+    /// <summary>V0</summary>
     V0 = 0,
+    /// <summary>V1</summary>
     V1 = 1,
+    /// <summary>V2</summary>
     V2 = 2,
+    /// <summary>V3</summary>
     V3 = 3,
+    /// <summary>V4</summary>
     V4 = 4,
+    /// <summary>V5</summary>
     V5 = 5,
+    /// <summary>V6</summary>
     V6 = 6,
+    /// <summary>V7</summary>
     V7 = 7,
+    /// <summary>V8A</summary>
     V8A = 8,
+    /// <summary>V8B</summary>
     V8B = 9,
+    /// <summary>V9</summary>
     V9 = 10,
+    /// <summary>V10</summary>
     V10 = 11,
+    /// <summary>V11</summary>
     V11 = 12
 }
 
+/// <summary>
+/// Pak compression algorithm.
+/// </summary>
 public enum PakCompression : byte
 {
+    /// <summary>Zlib</summary>
     Zlib,
+    /// <summary>Gzip</summary>
     Gzip,
+    /// <summary>Oodle</summary>
     Oodle,
+    /// <summary>Zstd</summary>
     Zstd
 }
 

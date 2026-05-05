@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| OverlapFilter_All | 0 |  |
+| OverlapFilter_DynamicOnly | 1 |  |
+| OverlapFilter_StaticOnly | 2 |  |
+| OverlapFilter_MAX | 3 |  |

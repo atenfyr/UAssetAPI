@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| TeleportPhysics | 1 |  |
+| ResetPhysics | 2 |  |
+| ETeleportType_MAX | 3 |  |

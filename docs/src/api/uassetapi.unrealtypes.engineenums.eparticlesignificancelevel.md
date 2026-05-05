@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Low | 0 |  |
+| Medium | 1 |  |
+| High | 2 |  |
+| Critical | 3 |  |
+| Num | 4 |  |
+| EParticleSignificanceLevel_MAX | 5 |  |

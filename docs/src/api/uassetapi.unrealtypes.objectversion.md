@@ -15,6 +15,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| UNKNOWN | 0 | Unknown version |
+| VER_UE4_OLDEST_LOADABLE_PACKAGE | 214 | VER_UE4_OLDEST_LOADABLE_PACKAGE |
 | VER_UE4_BLUEPRINT_VARS_NOT_READ_ONLY | 215 | Removed restriction on blueprint-exposed variables from being read-only |
 | VER_UE4_STATIC_MESH_STORE_NAV_COLLISION | 216 | Added manually serialized element to UStaticMesh (precalculated nav collision) |
 | VER_UE4_ATMOSPHERIC_FOG_DECAY_NAME_CHANGE | 217 | Changed property name for atmospheric fog |
@@ -113,6 +115,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_REFERENCE_SKELETON_REFACTOR | 310 | Convert USkeleton and FBoneContrainer to using FReferenceSkeleton. |
 | VER_UE4_K2NODE_REFERENCEGUIDS | 311 | Adding references to variable, function, and macro nodes to be able to update to renamed values |
 | VER_UE4_FIXUP_ROOTBONE_PARENT | 312 | Fix up the 0th bone's parent bone index. |
+| VER_UE4_TEXT_RENDER_COMPONENTS_WORLD_SPACE_SIZING | 313 |  |
 | VER_UE4_MATERIAL_INSTANCE_BASE_PROPERTY_OVERRIDES_PHASE_2 | 314 | Material Instances overriding base material properties #2. |
 | VER_UE4_CLASS_NOTPLACEABLE_ADDED | 315 | CLASS_Placeable becomes CLASS_NotPlaceable |
 | VER_UE4_WORLD_LEVEL_INFO_LOD_LIST | 316 | Added LOD info list to a world tile description |
@@ -322,4 +325,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE4_NON_OUTER_PACKAGE_IMPORT | 520 | Added import that can have package different than their outer |
 | VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS | 521 | Added DependencyFlags to AssetRegistry |
 | VER_UE4_CORRECT_LICENSEE_FLAG | 522 | Fixed corrupt licensee flag in 4.26 assets |
-| VER_UE4_AUTOMATIC_VERSION | 522 | The newest specified version of the Unreal Engine. |
+| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 523 |  |
+| VER_UE4_AUTOMATIC_VERSION | 522 | The newest specified version of UE4. |

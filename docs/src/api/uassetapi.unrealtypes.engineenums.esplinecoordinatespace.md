@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Local | 0 |  |
+| World | 1 |  |
+| ESplineCoordinateSpace_MAX | 2 |  |

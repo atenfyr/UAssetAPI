@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_EndArr
 public class EX_EndArray : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_EndArray](./uassetapi.kismet.bytecode.expressions.ex_endarray.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_EndArray](./uassetapi.kismet.bytecode.expressions.ex_endarray.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

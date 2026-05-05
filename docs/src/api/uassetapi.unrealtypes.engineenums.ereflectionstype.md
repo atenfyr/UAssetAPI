@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ScreenSpace | 0 |  |
+| RayTracing | 1 |  |
+| EReflectionsType_MAX | 2 |  |

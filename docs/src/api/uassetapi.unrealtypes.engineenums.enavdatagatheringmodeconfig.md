@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Invalid | 0 |  |
+| Instant | 1 |  |
+| Lazy | 2 |  |
+| ENavDataGatheringModeConfig_MAX | 3 |  |

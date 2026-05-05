@@ -9,7 +9,8 @@ public class UAsset : INameMap
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UAsset](./uassetapi.uasset.md)<br>
-Implements [INameMap](./uassetapi.inamemap.md)
+Implements [INameMap](./uassetapi.inamemap.md)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute)
 
 ## Fields
 
@@ -216,7 +217,15 @@ public int LegacyFileVersion;
 **Remarks:**
 
 The lower 16 bits stores the UE3 engine version, while the upper 16 bits stores the UE4/licensee version. For newer packages this is -7.
- VersionDescription-2indicates presence of enum-based custom versions-3indicates guid-based custom versions-4indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions-5indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages-6indicates optimizations to how custom versions are being serialized-7indicates the texture allocation info has been removed from the summary-8indicates that the UE5 version has been added to the summary-9indicates a contractual change in when early exits are required based on FileVersionTooNew. At or after this LegacyFileVersion, we support changing the PackageFileSummary serialization format for all bytes serialized after FileVersionLicensee, and that format change can be conditional on any of the versions parsed before that point. All packageloaders that understand the -9 legacyfileformat are required to early exit without further serialization at that point if FileVersionTooNew is true.
+
+- - indicates presence of enum-based custom versions
+- - indicates guid-based custom versions
+- - indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
+- - indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
+- - indicates optimizations to how custom versions are being serialized
+- - indicates the texture allocation info has been removed from the summary
+- - indicates that the UE5 version has been added to the summary
+- - indicates a contractual change in when early exits are required based on FileVersionTooNew. At or after this LegacyFileVersion, we support changing the PackageFileSummary serialization format for all bytes serialized after FileVersionLicensee, and that format change can be conditional on any of the versions parsed before that point. All packageloaders that understand the -9 legacyfileformat are required to early exit without further serialization at that point if FileVersionTooNew is true.
 
 ### **DataResourceVersion**
 
@@ -726,12 +735,6 @@ public UAsset()
 
 ## Methods
 
-### **FixNameMapLookupIfNeeded()**
-
-```csharp
-internal void FixNameMapLookupIfNeeded()
-```
-
 ### **GetNameMapIndexList()**
 
 Returns the name map as a read-only list of FStrings.
@@ -1173,20 +1176,6 @@ The class path of the SuperStruct of this asset, if it exists.
 `parentClassExportName` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
 The export name of the SuperStruct of this asset, if it exists.
 
-### **GetParentClassExportName(FName&)**
-
-```csharp
-internal FName GetParentClassExportName(FName& modulePath)
-```
-
-#### Parameters
-
-`modulePath` [FName&](./uassetapi.unrealtypes.fname&.md)<br>
-
-#### Returns
-
-[FName](./uassetapi.unrealtypes.fname.md)<br>
-
 ### **AddImport(Import)**
 
 Adds a new import to the import map. This is equivalent to adding directly to the [UAsset.Imports](./uassetapi.uasset.md#imports) list.
@@ -1287,28 +1276,6 @@ public bool PullSchemasFromAnotherAsset(FName path)
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **CopySplitUp(Stream, Stream, Int32, Int32)**
-
-Copies a portion of a stream to another stream.
-
-```csharp
-internal static void CopySplitUp(Stream input, Stream output, int start, int leng)
-```
-
-#### Parameters
-
-`input` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
-The input stream.
-
-`output` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
-The output stream.
-
-`start` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The offset in the input stream to start copying from.
-
-`leng` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The length in bytes of the data to be copied.
 
 ### **Read(AssetBinaryReader, Int32[], Int32[])**
 

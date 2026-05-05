@@ -8,7 +8,8 @@ Base class for several Let (assignment) expressions
 public abstract class EX_LetBase : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 
@@ -67,6 +68,14 @@ public string Inst { get; }
 #### Property Value
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+## Constructors
+
+### **EX_LetBase()**
+
+```csharp
+protected EX_LetBase()
+```
 
 ## Methods
 

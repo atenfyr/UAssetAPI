@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ShortestSide | 0 |  |
+| LongestSide | 1 |  |
+| Horizontal | 2 |  |
+| Vertical | 3 |  |
+| Custom | 4 |  |
+| EUIScalingRule_MAX | 5 |  |

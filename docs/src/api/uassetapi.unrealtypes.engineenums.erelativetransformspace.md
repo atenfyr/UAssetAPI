@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RTS_World | 0 |  |
+| RTS_Actor | 1 |  |
+| RTS_Component | 2 |  |
+| RTS_ParentBoneSpace | 3 |  |
+| RTS_MAX | 4 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Masculine | 0 |  |
+| Feminine | 1 |  |
+| Neuter | 2 |  |
+| ETextGender_MAX | 3 |  |

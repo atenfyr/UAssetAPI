@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_IntOne
 public class EX_IntOne : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_IntOne](./uassetapi.kismet.bytecode.expressions.ex_intone.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_IntOne](./uassetapi.kismet.bytecode.expressions.ex_intone.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

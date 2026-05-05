@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| Paused | 1 |  |
+| Loading | 2 |  |
+| Saving | 3 |  |
+| Connecting | 4 |  |
+| Precaching | 5 |  |
+| WaitingToConnect | 6 |  |
+| MAX | 7 |  |

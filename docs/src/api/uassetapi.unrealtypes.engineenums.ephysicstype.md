@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PhysType_Default | 0 |  |
+| PhysType_Kinematic | 1 |  |
+| PhysType_Simulated | 2 |  |
+| PhysType_MAX | 3 |  |

@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Linear | 0 |  |
+| Curve | 1 |  |
+| Constant | 2 |  |
+| CurveClamped | 3 |  |
+| CurveCustomTangent | 4 |  |
+| ESplinePointType_MAX | 5 |  |

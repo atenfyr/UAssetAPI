@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SMTC_NumOfTriangles | 0 |  |
+| SMTC_NumOfVerts | 1 |  |
+| SMTC_TriangleOrVert | 2 |  |
+| SMTC_AbsNumOfTriangles | 3 |  |
+| SMTC_AbsNumOfVerts | 4 |  |
+| SMTC_AbsTriangleOrVert | 5 |  |
+| SMTC_MAX | 6 |  |

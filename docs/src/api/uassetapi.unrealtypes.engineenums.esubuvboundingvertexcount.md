@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BVC_FourVertices | 0 |  |
+| BVC_EightVertices | 1 |  |
+| BVC_MAX | 2 |  |

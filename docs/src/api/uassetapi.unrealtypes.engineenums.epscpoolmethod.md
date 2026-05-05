@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| AutoRelease | 1 |  |
+| ManualRelease | 2 |  |
+| ManualRelease_OnComplete | 3 |  |
+| FreeInPool | 4 |  |
+| EPSCPoolMethod_MAX | 5 |  |

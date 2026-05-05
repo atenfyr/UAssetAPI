@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_CallMa
 public class EX_CallMath : EX_FinalFunction
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md) → [EX_CallMath](./uassetapi.kismet.bytecode.expressions.ex_callmath.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md) → [EX_CallMath](./uassetapi.kismet.bytecode.expressions.ex_callmath.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

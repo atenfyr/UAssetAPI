@@ -9,7 +9,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_BitFie
 public class EX_BitFieldConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_BitFieldConst](./uassetapi.kismet.bytecode.expressions.ex_bitfieldconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_BitFieldConst](./uassetapi.kismet.bytecode.expressions.ex_bitfieldconst.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

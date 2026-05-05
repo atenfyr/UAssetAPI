@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| Array | 1 |  |
+| Set | 2 |  |
+| Map | 3 |  |
+| EPinContainerType_MAX | 4 |  |

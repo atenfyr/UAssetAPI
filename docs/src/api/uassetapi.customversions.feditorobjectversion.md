@@ -56,3 +56,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | SkeletalMeshMoveEditorSourceDataToPrivateAsset | 38 | Move all SkeletalMesh source data into a private uasset in the same package has the skeletalmesh |
 | NumberParsingOptionsNumberLimitsAndClamping | 39 | Parse text only if the number is inside the limits of its type |
 | SkeletalMeshSourceDataSupport16bitOfMaterialNumber | 40 | Make sure we can have more then 255 material in the skeletal mesh source data |
+| VersionPlusOne | 41 |  |
+| LatestVersion | 40 |  |

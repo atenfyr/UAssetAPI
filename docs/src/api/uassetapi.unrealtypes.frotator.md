@@ -10,7 +10,8 @@ public struct FRotator
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FRotator](./uassetapi.unrealtypes.frotator.md)<br>
-Implements [IStruct&lt;FRotator&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
+Implements [IStruct&lt;FRotator&gt;](./uassetapi.propertytypes.objects.istruct-1.md)<br>
+Attributes JsonObjectAttribute
 
 ## Properties
 

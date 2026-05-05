@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Unknown | 0 |  |
+| NeverCook | 1 |  |
+| DevelopmentCook | 2 |  |
+| DevelopmentAlwaysCook | 3 |  |
+| AlwaysCook | 4 |  |
+| EPrimaryAssetCookRule_MAX | 5 |  |

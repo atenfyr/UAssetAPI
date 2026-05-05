@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| LinkedLayers | 0 |  |
+| LinkedAnimGraph | 1 |  |
+| EPreviewAnimationBlueprintApplicationMethod_MAX | 2 |  |

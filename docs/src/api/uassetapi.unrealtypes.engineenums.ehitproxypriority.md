@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| HPP_World | 0 |  |
+| HPP_Wireframe | 1 |  |
+| HPP_Foreground | 2 |  |
+| HPP_UI | 3 |  |
+| HPP_MAX | 4 |  |

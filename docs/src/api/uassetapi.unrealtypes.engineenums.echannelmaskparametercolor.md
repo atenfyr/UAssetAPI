@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Red | 0 |  |
+| Green | 1 |  |
+| Blue | 2 |  |
+| Alpha | 3 |  |
+| EChannelMaskParameterColor_MAX | 4 |  |

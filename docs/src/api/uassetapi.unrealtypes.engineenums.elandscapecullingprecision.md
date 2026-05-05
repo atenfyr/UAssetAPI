@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| High | 0 |  |
+| Medium | 1 |  |
+| Low | 2 |  |
+| ELandscapeCullingPrecision_MAX | 3 |  |

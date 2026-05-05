@@ -8,7 +8,8 @@ Represents a case in a Kismet bytecode switch statement.
 public struct FKismetSwitchCase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FKismetSwitchCase](./uassetapi.kismet.bytecode.expressions.fkismetswitchcase.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FKismetSwitchCase](./uassetapi.kismet.bytecode.expressions.fkismetswitchcase.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

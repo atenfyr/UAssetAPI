@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| VLM_VolumetricLightmap | 0 |  |
+| VLM_SparseVolumeLightingSamples | 1 |  |
+| VLM_MAX | 2 |  |

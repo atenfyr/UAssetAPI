@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| DoNotLock | 0 |  |
+| LockOnCapture | 1 |  |
+| LockAlways | 2 |  |
+| LockInFullscreen | 3 |  |
+| EMouseLockMode_MAX | 4 |  |

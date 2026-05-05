@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| OpaqueOnly | 1 |  |
+| OpaqueAndMasked | 2 |  |
+| Auto | 3 |  |
+| EEarlyZPass_MAX | 4 |  |

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RIF_Constant | 0 |  |
+| RIF_Linear | 1 |  |
+| RIF_MAX | 2 |  |

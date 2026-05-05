@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Custom | 0 |  |
+| X | 1 |  |
+| Y | 2 |  |
+| Z | 3 |  |
+| UseGlobalPhysicsSetting | 4 |  |
+| EPlaneConstraintAxisSetting_MAX | 5 |  |

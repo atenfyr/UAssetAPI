@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SceneDepth | 0 |  |
+| DistanceField | 1 |  |
+| EParticleCollisionMode_MAX | 2 |  |

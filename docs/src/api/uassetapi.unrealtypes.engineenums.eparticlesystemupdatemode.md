@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EPSUM_RealTime | 0 |  |
+| EPSUM_FixedTime | 1 |  |
+| EPSUM_MAX | 2 |  |

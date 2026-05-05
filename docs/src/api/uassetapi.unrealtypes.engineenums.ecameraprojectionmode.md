@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Perspective | 0 |  |
+| Orthographic | 1 |  |
+| ECameraProjectionMode_MAX | 2 |  |

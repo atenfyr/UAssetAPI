@@ -9,7 +9,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Nothin
 public class EX_Nothing : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Nothing](./uassetapi.kismet.bytecode.expressions.ex_nothing.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Nothing](./uassetapi.kismet.bytecode.expressions.ex_nothing.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

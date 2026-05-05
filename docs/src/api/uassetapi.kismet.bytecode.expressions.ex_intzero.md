@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_IntZer
 public class EX_IntZero : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_IntZero](./uassetapi.kismet.bytecode.expressions.ex_intzero.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_IntZero](./uassetapi.kismet.bytecode.expressions.ex_intzero.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

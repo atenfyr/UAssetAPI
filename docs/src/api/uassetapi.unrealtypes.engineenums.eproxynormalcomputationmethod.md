@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AngleWeighted | 0 |  |
+| AreaWeighted | 1 |  |
+| EqualWeighted | 2 |  |
+| EProxyNormalComputationMethod_MAX | 3 |  |

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BodyCollision_Enabled | 0 |  |
+| BodyCollision_Disabled | 1 |  |
+| BodyCollision_MAX | 2 |  |

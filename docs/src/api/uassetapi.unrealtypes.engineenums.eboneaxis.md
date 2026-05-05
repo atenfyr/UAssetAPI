@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BA_X | 0 |  |
+| BA_Y | 1 |  |
+| BA_Z | 2 |  |
+| BA_MAX | 3 |  |

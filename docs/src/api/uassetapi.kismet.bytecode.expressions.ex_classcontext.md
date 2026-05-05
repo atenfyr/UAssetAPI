@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ClassC
 public class EX_ClassContext : EX_Context
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Context](./uassetapi.kismet.bytecode.expressions.ex_context.md) → [EX_ClassContext](./uassetapi.kismet.bytecode.expressions.ex_classcontext.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_Context](./uassetapi.kismet.bytecode.expressions.ex_context.md) → [EX_ClassContext](./uassetapi.kismet.bytecode.expressions.ex_classcontext.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

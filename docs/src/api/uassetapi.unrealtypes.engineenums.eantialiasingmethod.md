@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AAM_None | 0 |  |
+| AAM_FXAA | 1 |  |
+| AAM_TemporalAA | 2 |  |
+| AAM_MSAA | 3 |  |
+| AAM_DLSS | 4 |  |
+| AAM_MAX | 5 |  |

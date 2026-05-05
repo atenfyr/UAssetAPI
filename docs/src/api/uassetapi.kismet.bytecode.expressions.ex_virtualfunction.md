@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Virtua
 public class EX_VirtualFunction : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VirtualFunction](./uassetapi.kismet.bytecode.expressions.ex_virtualfunction.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VirtualFunction](./uassetapi.kismet.bytecode.expressions.ex_virtualfunction.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

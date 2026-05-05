@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Offline | 0 |  |
+| Runtime | 1 |  |
+| EFontCacheType_MAX | 2 |  |

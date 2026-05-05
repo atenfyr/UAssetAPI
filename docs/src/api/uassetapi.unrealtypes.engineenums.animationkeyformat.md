@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AKF_ConstantKeyLerp | 0 |  |
+| AKF_VariableKeyLerp | 1 |  |
+| AKF_PerTrackCompression | 2 |  |
+| AKF_MAX | 3 |  |

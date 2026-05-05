@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TL_TimelineLength | 0 |  |
+| TL_LastKeyFrame | 1 |  |
+| TL_MAX | 2 |  |

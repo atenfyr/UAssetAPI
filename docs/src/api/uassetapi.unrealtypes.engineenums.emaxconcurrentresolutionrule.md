@@ -13,3 +13,12 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PreventNew | 0 |  |
+| StopOldest | 1 |  |
+| StopFarthestThenPreventNew | 2 |  |
+| StopFarthestThenOldest | 3 |  |
+| StopLowestPriority | 4 |  |
+| StopQuietest | 5 |  |
+| StopLowestPriorityThenPreventNew | 6 |  |
+| Count | 7 |  |
+| EMaxConcurrentResolutionRule_MAX | 8 |  |

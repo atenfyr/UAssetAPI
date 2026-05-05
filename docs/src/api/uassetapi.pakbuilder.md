@@ -9,6 +9,14 @@ public class PakBuilder : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIs
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [CriticalFinalizerObject](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.constrainedexecution.criticalfinalizerobject) → [SafeHandle](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.safehandle) → [SafeHandleZeroOrMinusOneIsInvalid](https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.safehandles.safehandlezeroorminusoneisinvalid) → [PakBuilder](./uassetapi.pakbuilder.md)<br>
 Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idisposable)
 
+## Fields
+
+### **handle**
+
+```csharp
+protected IntPtr handle;
+```
+
 ## Properties
 
 ### **IsInvalid**

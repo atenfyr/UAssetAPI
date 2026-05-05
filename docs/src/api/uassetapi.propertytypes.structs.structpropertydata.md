@@ -7,7 +7,8 @@ public class StructPropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData`1
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute), JsonObjectAttribute
 
 ## Fields
 
@@ -131,6 +132,12 @@ An optional tag which can be set on any property in memory. This is for the user
 
 ```csharp
 public object Tag;
+```
+
+### **_rawValue**
+
+```csharp
+protected object _rawValue;
 ```
 
 ## Properties
@@ -264,24 +271,6 @@ public void ResolveAncestries(UAsset asset, AncestryInfo ancestrySoFar)
 `asset` [UAsset](./uassetapi.uasset.md)<br>
 
 `ancestrySoFar` [AncestryInfo](./uassetapi.propertytypes.objects.ancestryinfo.md)<br>
-
-### **DetermineIfSerializeWithCustomStructSerialization(UAsset, PropertySerializationContext, RegistryEntry&)**
-
-```csharp
-internal bool DetermineIfSerializeWithCustomStructSerialization(UAsset Asset, PropertySerializationContext serializationContext, RegistryEntry& targetEntry)
-```
-
-#### Parameters
-
-`Asset` [UAsset](./uassetapi.uasset.md)<br>
-
-`serializationContext` [PropertySerializationContext](./uassetapi.propertytypes.objects.propertyserializationcontext.md)<br>
-
-`targetEntry` [RegistryEntry&](./uassetapi.registryentry&.md)<br>
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **Write(AssetBinaryWriter, Boolean, PropertySerializationContext)**
 

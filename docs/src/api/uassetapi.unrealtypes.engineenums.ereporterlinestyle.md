@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Line | 0 |  |
+| Dash | 1 |  |
+| EReporterLineStyle_MAX | 2 |  |

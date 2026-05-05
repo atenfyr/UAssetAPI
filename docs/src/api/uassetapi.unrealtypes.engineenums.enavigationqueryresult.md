@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Invalid | 0 |  |
+| Error | 1 |  |
+| Fail | 2 |  |
+| Success | 3 |  |
+| ENavigationQueryResult_MAX | 4 |  |

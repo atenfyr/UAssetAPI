@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TRM_Get | 0 |  |
+| TRM_Post | 1 |  |
+| TRM_Delete | 2 |  |
+| TRM_MAX | 3 |  |

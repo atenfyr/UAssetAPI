@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Outside | 0 |  |
+| Inside | 1 |  |
+| ELegendPosition_MAX | 2 |  |

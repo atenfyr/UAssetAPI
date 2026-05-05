@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EOO_OffsetRandom | 0 |  |
+| EOO_OffsetZero | 1 |  |
+| EOO_MAX | 2 |  |

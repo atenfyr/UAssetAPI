@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EM_Standard | 0 |  |
+| EM_Freeze | 1 |  |
+| EM_DelayedFreeze | 2 |  |
+| EM_MAX | 3 |  |

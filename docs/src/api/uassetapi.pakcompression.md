@@ -2,6 +2,8 @@
 
 Namespace: UAssetAPI
 
+Pak compression algorithm.
+
 ```csharp
 public enum PakCompression
 ```
@@ -13,3 +15,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Zlib | 0 | Zlib |
+| Gzip | 1 | Gzip |
+| Oodle | 2 | Oodle |
+| Zstd | 3 | Zstd |

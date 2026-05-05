@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Blend | 0 |  |
+| UseA | 1 |  |
+| UseB | 2 |  |
+| EMaterialAttributeBlend_MAX | 3 |  |

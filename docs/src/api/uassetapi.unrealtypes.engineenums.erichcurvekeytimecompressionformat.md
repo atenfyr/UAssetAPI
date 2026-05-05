@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RCKTCF_uint16 | 0 |  |
+| RCKTCF_float32 | 1 |  |
+| RCKTCF_MAX | 2 |  |

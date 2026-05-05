@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Fullscreen | 0 |  |
+| WindowedFullscreen | 1 |  |
+| Windowed | 2 |  |
+| EWindowMode_MAX | 3 |  |

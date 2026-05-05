@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SortByDistance | 0 |  |
+| SortByProjectedZ | 1 |  |
+| SortAlongAxis | 2 |  |
+| ETranslucentSortPolicy_MAX | 3 |  |

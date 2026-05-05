@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| KeepRelativeOffset | 0 |  |
+| KeepWorldPosition | 1 |  |
+| SnapToTarget | 2 |  |
+| SnapToTargetIncludingScale | 3 |  |
+| EAttachLocation_MAX | 4 |  |

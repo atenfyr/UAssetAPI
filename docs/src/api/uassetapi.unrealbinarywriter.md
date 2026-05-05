@@ -11,6 +11,14 @@ public class UnrealBinaryWriter : System.IO.BinaryWriter, System.IDisposable, Sy
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [BinaryWriter](https://docs.microsoft.com/en-us/dotnet/api/system.io.binarywriter) → [UnrealBinaryWriter](./uassetapi.unrealbinarywriter.md)<br>
 Implements [IDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.idisposable), [IAsyncDisposable](https://docs.microsoft.com/en-us/dotnet/api/system.iasyncdisposable)
 
+## Fields
+
+### **OutStream**
+
+```csharp
+protected Stream OutStream;
+```
+
 ## Properties
 
 ### **BaseStream**

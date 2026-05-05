@@ -13,3 +13,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Byte | 0 |  |
+| FName | 1 |  |

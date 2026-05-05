@@ -58,12 +58,21 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_StructConst | 47 | An arbitrary UStruct constant |
 | EX_EndStructConst | 48 | End of UStruct constant |
 | EX_SetArray | 49 | Set the value of arbitrary array |
+| EX_EndArray | 50 |  |
 | EX_PropertyConst | 51 | FProperty constant. |
 | EX_UnicodeStringConst | 52 | Unicode string constant. |
 | EX_Int64Const | 53 | 64-bit integer constant. |
 | EX_UInt64Const | 54 | 64-bit unsigned integer constant. |
 | EX_DoubleConst | 55 | Double-precision floating point constant. |
 | EX_PrimitiveCast | 56 | A casting operator for primitives which reads the type as the subsequent byte |
+| EX_SetSet | 57 |  |
+| EX_EndSet | 58 |  |
+| EX_SetMap | 59 |  |
+| EX_EndMap | 60 |  |
+| EX_SetConst | 61 |  |
+| EX_EndSetConst | 62 |  |
+| EX_MapConst | 63 |  |
+| EX_EndMapConst | 64 |  |
 | EX_Vector3fConst | 65 | A float vector constant. |
 | EX_StructMemberContext | 66 | Context expression to address a property within a struct |
 | EX_LetMulticastDelegate | 67 | Assignment to a multi-cast delegate |
@@ -71,6 +80,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_LocalVirtualFunction | 69 | Special instructions to quickly call a virtual function that we know is going to run only locally |
 | EX_LocalFinalFunction | 70 | Special instructions to quickly call a final function that we know is going to run only locally |
 | EX_LocalOutVariable | 72 | local out (pass by reference) function parameter |
+| EX_DeprecatedOp4A | 74 |  |
 | EX_InstanceDelegate | 75 | const reference to a delegate or normal function object |
 | EX_PushExecutionFlow | 76 | push an address on to the execution flow stack for future execution when a EX_PopExecutionFlow is executed. Execution continues on normally and doesn't change to the pushed address. |
 | EX_PopExecutionFlow | 77 | continue execution at the last address previously pushed onto the execution flow stack. |
@@ -92,9 +102,17 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | EX_BindDelegate | 97 | bind object and name to delegate |
 | EX_RemoveMulticastDelegate | 98 | Remove a delegate from a multicast delegate's targets |
 | EX_CallMulticastDelegate | 99 | Call multicast delegate |
+| EX_LetValueOnPersistentFrame | 100 |  |
+| EX_ArrayConst | 101 |  |
+| EX_EndArrayConst | 102 |  |
+| EX_SoftObjectConst | 103 |  |
 | EX_CallMath | 104 | static pure function from on local call space |
+| EX_SwitchValue | 105 |  |
 | EX_InstrumentationEvent | 106 | Instrumentation event |
+| EX_ArrayGetByRef | 107 |  |
 | EX_ClassSparseDataVariable | 108 | Sparse data variable |
+| EX_FieldPathConst | 109 |  |
 | EX_AutoRtfmTransact | 112 | AutoRTFM: run following code in a transaction |
 | EX_AutoRtfmStopTransact | 113 | AutoRTFM: if in a transaction, abort or break, otherwise no operation |
 | EX_AutoRtfmAbortIfNot | 114 | AutoRTFM: evaluate bool condition, abort transaction on false |
+| EX_Max | 255 |  |

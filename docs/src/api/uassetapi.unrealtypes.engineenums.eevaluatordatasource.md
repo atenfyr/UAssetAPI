@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EDS_SourcePose | 0 |  |
+| EDS_DestinationPose | 1 |  |
+| EDS_MAX | 2 |  |

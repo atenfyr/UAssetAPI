@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Undefined | 0 |  |
+| AlwaysSpawn | 1 |  |
+| AdjustIfPossibleButAlwaysSpawn | 2 |  |
+| AdjustIfPossibleButDontSpawnIfColliding | 3 |  |
+| DontSpawnIfColliding | 4 |  |
+| ESpawnActorCollisionHandlingMethod_MAX | 5 |  |

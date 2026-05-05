@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EAPSM_Random | 0 |  |
+| EAPSM_Sequential | 1 |  |
+| EAPSM_MAX | 2 |  |

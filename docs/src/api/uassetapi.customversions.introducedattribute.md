@@ -8,7 +8,8 @@ Represents the engine version at the time that a custom version was implemented.
 public class IntroducedAttribute : System.Attribute
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.attribute) → [IntroducedAttribute](./uassetapi.customversions.introducedattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.attribute) → [IntroducedAttribute](./uassetapi.customversions.introducedattribute.md)<br>
+Attributes [AttributeUsageAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.attributeusageattribute)
 
 ## Fields
 

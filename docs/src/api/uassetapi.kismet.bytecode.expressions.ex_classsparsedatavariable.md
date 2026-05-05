@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ClassS
 public class EX_ClassSparseDataVariable : EX_VariableBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_ClassSparseDataVariable](./uassetapi.kismet.bytecode.expressions.ex_classsparsedatavariable.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_ClassSparseDataVariable](./uassetapi.kismet.bytecode.expressions.ex_classsparsedatavariable.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

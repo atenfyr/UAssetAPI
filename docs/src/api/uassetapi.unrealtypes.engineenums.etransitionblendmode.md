@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TBM_Linear | 0 |  |
+| TBM_Cubic | 1 |  |
+| TBM_MAX | 2 |  |

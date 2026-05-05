@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Normal | 0 |  |
+| Sensitive | 1 |  |
+| Custom | 2 |  |
+| ESleepFamily_MAX | 3 |  |

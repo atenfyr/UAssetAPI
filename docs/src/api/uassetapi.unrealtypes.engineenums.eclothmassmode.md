@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| UniformMass | 0 |  |
+| TotalMass | 1 |  |
+| Density | 2 |  |
+| MaxClothMassMode | 3 |  |
+| EClothMassMode_MAX | 4 |  |

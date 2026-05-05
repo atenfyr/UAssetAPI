@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Full3D | 0 |  |
+| YZPlane | 1 |  |
+| XZPlane | 2 |  |
+| XYPlane | 3 |  |
+| ESettingsDOF_MAX | 4 |  |

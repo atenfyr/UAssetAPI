@@ -14,4 +14,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | Name | Value | Description |
 | --- | --: | --- |
 | BeforeCustomVersionWasAdded | 0 | Before any version changes were made |
+| SkeletalMeshVertexSampling | 1 |  |
 | VersionPlusOne | 2 | -----new versions can be added above this line------------------------------------------------- |
+| LatestVersion | 1 |  |

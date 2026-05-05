@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| PadToPowerOfTwo | 1 |  |
+| PadToSquarePowerOfTwo | 2 |  |
+| ETexturePowerOfTwoSetting_MAX | 3 |  |

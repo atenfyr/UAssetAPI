@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| DoNotTrace | 0 |  |
+| TraceFullPath | 1 |  |
+| OnlyTraceWhileAscending | 2 |  |
+| ESuggestProjVelocityTraceOption_MAX | 3 |  |

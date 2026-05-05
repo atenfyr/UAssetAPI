@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CameraLocal | 0 |  |
+| World | 1 |  |
+| UserDefined | 2 |  |
+| ECameraAnimPlaySpace_MAX | 3 |  |

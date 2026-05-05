@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Default | 0 |  |
+| Development | 1 |  |
+| FinalRelease | 2 |  |
+| EBlueprintCompileMode_MAX | 3 |  |

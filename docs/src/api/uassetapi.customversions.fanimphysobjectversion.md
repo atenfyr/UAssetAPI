@@ -33,3 +33,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ChangeRetargetSourceReferenceToSoftObjectPtr | 15 | Change RetargetSource reference to SoftObjectPtr |
 | SaveEditorOnlyFullPoseForPoseAsset | 16 | Save editor only full pose for pose asset |
 | GeometryCacheAssetDeprecation | 17 | Asset change and cleanup to facilitate new streaming system |
+| VersionPlusOne | 18 |  |
+| LatestVersion | 17 |  |

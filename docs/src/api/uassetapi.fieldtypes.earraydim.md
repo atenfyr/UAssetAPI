@@ -15,3 +15,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NotAnArray | 0 |  |
+| TArray | 1 |  |
+| CArray | 2 |  |

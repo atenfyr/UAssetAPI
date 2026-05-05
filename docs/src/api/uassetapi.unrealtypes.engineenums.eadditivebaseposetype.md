@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ABPT_None | 0 |  |
+| ABPT_RefPose | 1 |  |
+| ABPT_AnimScaled | 2 |  |
+| ABPT_AnimFrame | 3 |  |
+| ABPT_MAX | 4 |  |

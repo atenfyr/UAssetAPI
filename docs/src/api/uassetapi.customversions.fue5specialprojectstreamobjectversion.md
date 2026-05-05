@@ -20,3 +20,14 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | Name | Value | Description |
 | --- | --: | --- |
 | BeforeCustomVersionWasAdded | 0 | Before any version changes were made |
+| HLODBatchingPolicy | 1 |  |
+| SerializeSceneComponentStaticBounds | 2 |  |
+| ChaosClothAddTethersToCachedData | 3 |  |
+| SerializeActorLabelInCookedBuilds | 4 |  |
+| ConvertWorldPartitionHLODsCellsToName | 5 |  |
+| ChaosClothRemoveKinematicTethers | 6 |  |
+| SerializeSkeletalMeshMorphTargetRenderData | 7 |  |
+| StripMorphTargetSourceDataForCookedBuilds | 8 |  |
+| StateTreeGlobalParameterChanges | 9 |  |
+| VersionPlusOne | 10 |  |
+| LatestVersion | 9 |  |

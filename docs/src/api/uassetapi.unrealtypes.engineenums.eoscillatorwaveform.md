@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SineWave | 0 |  |
+| PerlinNoise | 1 |  |
+| EOscillatorWaveform_MAX | 2 |  |

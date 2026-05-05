@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SMOI_Off | 0 |  |
+| SMOI_Lowest | 1 |  |
+| SMOI_Low | 2 |  |
+| SMOI_Normal | 3 |  |
+| SMOI_High | 4 |  |
+| SMOI_Highest | 5 |  |
+| SMOI_MAX | 6 |  |

@@ -9,7 +9,8 @@ public abstract class PropertyData : System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 
@@ -103,6 +104,12 @@ An optional tag which can be set on any property in memory. This is for the user
 
 ```csharp
 public object Tag;
+```
+
+### **_rawValue**
+
+```csharp
+protected object _rawValue;
 ```
 
 ## Properties
@@ -303,19 +310,6 @@ The context in which this property is being written.
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 The length in bytes of the data that was written.
-
-### **InitializeZero(AssetBinaryReader)**
-
-Initialize this property when serialized as zero.
-
-```csharp
-internal void InitializeZero(AssetBinaryReader reader)
-```
-
-#### Parameters
-
-`reader` [AssetBinaryReader](./uassetapi.assetbinaryreader.md)<br>
-The BinaryReader to read from.
 
 ### **WriteEndPropertyTag(AssetBinaryWriter)**
 

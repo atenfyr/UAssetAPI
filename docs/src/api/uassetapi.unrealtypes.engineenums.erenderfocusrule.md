@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Always | 0 |  |
+| NonPointer | 1 |  |
+| NavigationOnly | 2 |  |
+| Never | 3 |  |
+| ERenderFocusRule_MAX | 4 |  |

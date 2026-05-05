@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Disabled | 0 |  |
+| Enabled | 1 |  |
+| EnabledOnDemand | 2 |  |
+| EnabledWithStencil | 3 |  |
+| ECustomDepthStencil_MAX | 4 |  |

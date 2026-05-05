@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| OSM_Alpha | 0 |  |
+| OSM_ColorBrightness | 1 |  |
+| OSM_RedChannel | 2 |  |
+| OSM_GreenChannel | 3 |  |
+| OSM_BlueChannel | 4 |  |
+| OSM_MAX | 5 |  |

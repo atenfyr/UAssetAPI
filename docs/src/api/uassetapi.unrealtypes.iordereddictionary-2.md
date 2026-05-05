@@ -12,7 +12,8 @@ public interface IOrderedDictionary<TKey, TValue> : , , , System.Collections.IEn
 
 `TValue`<br>
 
-Implements IDictionary&lt;TKey, TValue&gt;, ICollection&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable), IOrderedDictionary, [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary), [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.icollection)
+Implements IDictionary&lt;TKey, TValue&gt;, ICollection&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable), IOrderedDictionary, [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary), [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.icollection)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute)
 
 ## Properties
 

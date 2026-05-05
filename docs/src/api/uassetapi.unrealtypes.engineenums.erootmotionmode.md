@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoRootMotionExtraction | 0 |  |
+| IgnoreRootMotion | 1 |  |
+| RootMotionFromEverything | 2 |  |
+| RootMotionFromMontagesOnly | 3 |  |
+| ERootMotionMode_MAX | 4 |  |

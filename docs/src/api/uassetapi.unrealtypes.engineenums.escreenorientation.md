@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Unknown | 0 |  |
+| Portrait | 1 |  |
+| PortraitUpsideDown | 2 |  |
+| LandscapeLeft | 3 |  |
+| LandscapeRight | 4 |  |
+| FaceUp | 5 |  |
+| FaceDown | 6 |  |
+| EScreenOrientation_MAX | 7 |  |

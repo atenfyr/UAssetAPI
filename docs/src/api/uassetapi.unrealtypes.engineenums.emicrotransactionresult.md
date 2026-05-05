@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| MTR_Succeeded | 0 |  |
+| MTR_Failed | 1 |  |
+| MTR_Canceled | 2 |  |
+| MTR_RestoredFromServer | 3 |  |
+| MTR_MAX | 4 |  |

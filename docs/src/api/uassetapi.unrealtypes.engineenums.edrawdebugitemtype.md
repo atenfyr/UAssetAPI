@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| DirectionalArrow | 0 |  |
+| Sphere | 1 |  |
+| Line | 2 |  |
+| OnScreenMessage | 3 |  |
+| CoordinateSystem | 4 |  |
+| EDrawDebugItemType_MAX | 5 |  |

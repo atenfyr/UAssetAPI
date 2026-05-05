@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RefPose | 0 |  |
+| AnimFirstFrame | 1 |  |
+| Zero | 2 |  |
+| ERootMotionRootLock_MAX | 3 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| MPM_Normal | 0 |  |
+| MPM_Abs | 1 |  |
+| MPM_Direct | 2 |  |
+| MPM_MAX | 3 |  |

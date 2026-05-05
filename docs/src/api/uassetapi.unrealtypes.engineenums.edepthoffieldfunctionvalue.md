@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TDOF_NearAndFarMask | 0 |  |
+| TDOF_NearMask | 1 |  |
+| TDOF_FarMask | 2 |  |
+| TDOF_CircleOfConfusionRadius | 3 |  |
+| TDOF_MAX | 4 |  |

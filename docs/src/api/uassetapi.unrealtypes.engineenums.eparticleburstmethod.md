@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EPBM_Instant | 0 |  |
+| EPBM_Interpolated | 1 |  |
+| EPBM_MAX | 2 |  |

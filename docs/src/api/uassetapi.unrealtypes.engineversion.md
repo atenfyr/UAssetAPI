@@ -15,6 +15,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| UNKNOWN | 0 |  |
+| VER_UE4_OLDEST_LOADABLE_PACKAGE | 1 |  |
 | VER_UE4_0 | 2 | 4.0 |
 | VER_UE4_1 | 3 | 4.1 |
 | VER_UE4_2 | 4 | 4.2 |
@@ -53,4 +55,5 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | VER_UE5_6 | 37 | 5.6 |
 | VER_UE5_7 | 38 | 5.7 |
 | VER_UE5_8 | 39 | 5.8 |
+| VER_UE4_AUTOMATIC_VERSION_PLUS_ONE | 40 |  |
 | VER_UE4_AUTOMATIC_VERSION | 39 | The newest specified version of the Unreal Engine. |

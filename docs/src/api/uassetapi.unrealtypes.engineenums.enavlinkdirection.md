@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BothWays | 0 |  |
+| LeftToRight | 1 |  |
+| RightToLeft | 2 |  |
+| ENavLinkDirection_MAX | 3 |  |

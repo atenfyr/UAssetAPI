@@ -34,12 +34,6 @@ public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly asse
 
 [IEnumerable&lt;String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
-### **InitializeCurrentCommit()**
-
-```csharp
-internal static void InitializeCurrentCommit()
-```
-
 ### **GenerateUnversionedHeader(List`1&, FName, FName, UAsset)**
 
 Generates an unversioned header based on a list of properties, and sorts the list in the correct order to be serialized.

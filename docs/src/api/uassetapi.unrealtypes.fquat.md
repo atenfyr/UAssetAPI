@@ -10,7 +10,8 @@ public struct FQuat
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [FQuat](./uassetapi.unrealtypes.fquat.md)<br>
-Implements [IStruct&lt;FQuat&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
+Implements [IStruct&lt;FQuat&gt;](./uassetapi.propertytypes.objects.istruct-1.md)<br>
+Attributes JsonObjectAttribute
 
 ## Properties
 

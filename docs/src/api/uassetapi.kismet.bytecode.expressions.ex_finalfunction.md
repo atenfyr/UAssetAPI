@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_FinalF
 public class EX_FinalFunction : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

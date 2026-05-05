@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Invalid | 0 |  |
+| Valid | 1 |  |
+| Excluded | 2 |  |
+| EInertializationBoneState_MAX | 3 |  |

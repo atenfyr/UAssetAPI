@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| KeepRelative | 0 |  |
+| KeepWorld | 1 |  |
+| EDetachmentRule_MAX | 2 |  |

@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| HalfToEven | 0 |  |
+| HalfFromZero | 1 |  |
+| HalfToZero | 2 |  |
+| FromZero | 3 |  |
+| ToZero | 4 |  |
+| ToNegativeInfinity | 5 |  |
+| ToPositiveInfinity | 6 |  |
+| ERoundingMode_MAX | 7 |  |

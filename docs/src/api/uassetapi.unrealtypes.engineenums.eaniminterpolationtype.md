@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Linear | 0 |  |
+| Step | 1 |  |
+| EAnimInterpolationType_MAX | 2 |  |

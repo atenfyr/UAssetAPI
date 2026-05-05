@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| X | 0 |  |
+| Y | 1 |  |
+| Z | 2 |  |
+| EVertexPaintAxis_MAX | 3 |  |

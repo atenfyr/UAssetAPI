@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Inactive | 0 |  |
+| Pending | 1 |  |
+| Active | 2 |  |
+| EInertializationState_MAX | 3 |  |

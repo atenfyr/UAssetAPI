@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Directional | 0 |  |
+| Point | 1 |  |
+| EWindSourceType_MAX | 2 |  |

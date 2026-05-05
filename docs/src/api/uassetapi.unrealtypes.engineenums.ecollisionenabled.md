@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoCollision | 0 |  |
+| QueryOnly | 1 |  |
+| PhysicsOnly | 2 |  |
+| QueryAndPhysics | 3 |  |
+| ECollisionEnabled_MAX | 4 |  |

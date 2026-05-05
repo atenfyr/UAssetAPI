@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_MetaCa
 public class EX_MetaCast : EX_CastBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_CastBase](./uassetapi.kismet.bytecode.expressions.ex_castbase.md) → [EX_MetaCast](./uassetapi.kismet.bytecode.expressions.ex_metacast.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_CastBase](./uassetapi.kismet.bytecode.expressions.ex_castbase.md) → [EX_MetaCast](./uassetapi.kismet.bytecode.expressions.ex_metacast.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

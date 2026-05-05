@@ -2,6 +2,8 @@
 
 Namespace: UAssetAPI
 
+Pak version.
+
 ```csharp
 public enum PakVersion
 ```
@@ -13,3 +15,16 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| V0 | 0 | V0 |
+| V1 | 1 | V1 |
+| V2 | 2 | V2 |
+| V3 | 3 | V3 |
+| V4 | 4 | V4 |
+| V5 | 5 | V5 |
+| V6 | 6 | V6 |
+| V7 | 7 | V7 |
+| V8A | 8 | V8A |
+| V8B | 9 | V8B |
+| V9 | 10 | V9 |
+| V10 | 11 | V10 |
+| V11 | 12 | V11 |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RVTMVM_None | 0 |  |
+| RVTMVM_MipLevel | 1 |  |
+| RVTMVM_MipBias | 2 |  |
+| RVTMVM_MAX | 3 |  |

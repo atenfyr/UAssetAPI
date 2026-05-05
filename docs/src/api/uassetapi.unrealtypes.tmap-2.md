@@ -17,7 +17,8 @@ public class TMap<TKey, TValue> : IOrderedDictionary`2, , , , System.Collections
 `TValue`<br>
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [TMap&lt;TKey, TValue&gt;](./uassetapi.unrealtypes.tmap-2.md)<br>
-Implements IOrderedDictionary&lt;TKey, TValue&gt;, IDictionary&lt;TKey, TValue&gt;, ICollection&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable), IOrderedDictionary, [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary), [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.icollection)
+Implements IOrderedDictionary&lt;TKey, TValue&gt;, IDictionary&lt;TKey, TValue&gt;, ICollection&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;TKey, TValue&gt;&gt;, [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable), IOrderedDictionary, [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary), [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.icollection)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute)
 
 ## Properties
 

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| MeshMergeType_Default | 0 |  |
+| MeshMergeType_MergeActor | 1 |  |
+| MeshMergeType_MAX | 2 |  |

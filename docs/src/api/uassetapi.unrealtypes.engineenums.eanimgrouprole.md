@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CanBeLeader | 0 |  |
+| AlwaysFollower | 1 |  |
+| AlwaysLeader | 2 |  |
+| TransitionLeader | 3 |  |
+| TransitionFollower | 4 |  |
+| EAnimGroupRole_MAX | 5 |  |

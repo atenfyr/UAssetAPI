@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Invalid | 0 |  |
+| Initial | 1 |  |
+| AddedCookedIndex | 2 |  |
+| LatestPlusOne | 3 |  |
+| Latest | 2 |  |

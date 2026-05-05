@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Low16000Hz | 16000 |  |
+| Normal24000Hz | 24000 |  |
+| EVoiceSampleRate_MAX | 24001 |  |

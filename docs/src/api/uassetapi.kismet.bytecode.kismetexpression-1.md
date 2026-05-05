@@ -10,7 +10,8 @@ public abstract class KismetExpression<T> : KismetExpression
 
 `T`<br>
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;T&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;T&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

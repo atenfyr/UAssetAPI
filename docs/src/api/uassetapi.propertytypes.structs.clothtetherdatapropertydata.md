@@ -9,7 +9,8 @@ public class ClothTetherDataPropertyData : StructPropertyData, System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;List&lt;PropertyData&gt;&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [StructPropertyData](./uassetapi.propertytypes.structs.structpropertydata.md) → [ClothTetherDataPropertyData](./uassetapi.propertytypes.structs.clothtetherdatapropertydata.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes [DefaultMemberAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.defaultmemberattribute), JsonObjectAttribute
 
 ## Fields
 
@@ -139,6 +140,12 @@ An optional tag which can be set on any property in memory. This is for the user
 
 ```csharp
 public object Tag;
+```
+
+### **_rawValue**
+
+```csharp
+protected object _rawValue;
 ```
 
 ## Properties

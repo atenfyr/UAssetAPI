@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| None | 0 |  |
+| Scroll | 1 |  |
+| Magnify | 2 |  |
+| Swipe | 3 |  |
+| Rotate | 4 |  |
+| LongPress | 5 |  |
+| ESlateGesture_MAX | 6 |  |

@@ -8,7 +8,8 @@ Represents a Kismet bytecode pointer to an FProperty or FField.
 public class KismetPropertyPointer
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetPropertyPointer](./uassetapi.kismet.bytecode.kismetpropertypointer.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetPropertyPointer](./uassetapi.kismet.bytecode.kismetpropertypointer.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

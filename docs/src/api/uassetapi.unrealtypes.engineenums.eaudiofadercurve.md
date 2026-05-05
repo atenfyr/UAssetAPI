@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Linear | 0 |  |
+| Logarithmic | 1 |  |
+| SCurve | 2 |  |
+| Sin | 3 |  |
+| Count | 4 |  |
+| EAudioFaderCurve_MAX | 5 |  |

@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Destroyed | 0 |  |
+| LevelTransition | 1 |  |
+| EndPlayInEditor | 2 |  |
+| RemovedFromWorld | 3 |  |
+| Quit | 4 |  |
+| EEndPlayReason_MAX | 5 |  |

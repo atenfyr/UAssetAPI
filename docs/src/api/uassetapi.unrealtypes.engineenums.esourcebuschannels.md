@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Mono | 0 |  |
+| Stereo | 1 |  |
+| ESourceBusChannels_MAX | 2 |  |

@@ -6,7 +6,8 @@ Namespace: UAssetAPI.UnrealTypes
 public class FPropertyTypeName
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FPropertyTypeName](./uassetapi.unrealtypes.fpropertytypename.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FPropertyTypeName](./uassetapi.unrealtypes.fpropertytypename.md)<br>
+Attributes JsonConverterAttribute
 
 ## Fields
 

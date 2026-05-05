@@ -7,7 +7,8 @@ public class FFieldPath : UAssetAPI.PropertyTypes.Objects.IStruct`1[[UAssetAPI.U
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FFieldPath](./uassetapi.unrealtypes.ffieldpath.md)<br>
-Implements [IStruct&lt;FFieldPath&gt;](./uassetapi.propertytypes.objects.istruct-1.md)
+Implements [IStruct&lt;FFieldPath&gt;](./uassetapi.propertytypes.objects.istruct-1.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

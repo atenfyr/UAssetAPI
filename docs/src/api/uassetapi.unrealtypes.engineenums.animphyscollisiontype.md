@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CoM | 0 |  |
+| CustomSphere | 1 |  |
+| InnerSphere | 2 |  |
+| OuterSphere | 3 |  |
+| AnimPhysCollisionType_MAX | 4 |  |

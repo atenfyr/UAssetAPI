@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Frame1 | 0 |  |
+| Frame2 | 1 |  |
+| EConstraintFrame_MAX | 2 |  |

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Primit
 public class EX_PrimitiveCast : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_PrimitiveCast](./uassetapi.kismet.bytecode.expressions.ex_primitivecast.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_PrimitiveCast](./uassetapi.kismet.bytecode.expressions.ex_primitivecast.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

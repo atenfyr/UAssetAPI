@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Enabled | 0 |  |
+| Disabled | 1 |  |
+| DevelopmentOnly | 2 |  |
+| ENodeEnabledState_MAX | 3 |  |

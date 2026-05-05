@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NeverAsPin | 0 |  |
+| PinHiddenByDefault | 1 |  |
+| PinShownByDefault | 2 |  |
+| AlwaysAsPin | 3 |  |
+| EPinHidingMode_MAX | 4 |  |

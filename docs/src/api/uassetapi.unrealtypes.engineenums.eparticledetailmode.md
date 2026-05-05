@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PDM_Low | 0 |  |
+| PDM_Medium | 1 |  |
+| PDM_High | 2 |  |
+| PDM_MAX | 3 |  |

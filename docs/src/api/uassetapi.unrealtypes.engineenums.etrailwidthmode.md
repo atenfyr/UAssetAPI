@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ETrailWidthMode_FromCentre | 0 |  |
+| ETrailWidthMode_FromFirst | 1 |  |
+| ETrailWidthMode_FromSecond | 2 |  |
+| ETrailWidthMode_MAX | 3 |  |

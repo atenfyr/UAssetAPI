@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Singular | 0 |  |
+| Plural | 1 |  |
+| EGrammaticalNumber_MAX | 2 |  |

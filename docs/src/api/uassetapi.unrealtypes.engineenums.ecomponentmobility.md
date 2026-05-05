@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Static | 0 |  |
+| Stationary | 1 |  |
+| Movable | 2 |  |
+| EComponentMobility_MAX | 3 |  |

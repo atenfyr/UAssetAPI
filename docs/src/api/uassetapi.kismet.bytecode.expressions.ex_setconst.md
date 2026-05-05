@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_SetCon
 public class EX_SetConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_SetConst](./uassetapi.kismet.bytecode.expressions.ex_setconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_SetConst](./uassetapi.kismet.bytecode.expressions.ex_setconst.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

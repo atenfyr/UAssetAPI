@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| MTM_NoTessellation | 0 |  |
+| MTM_FlatTessellation | 1 |  |
+| MTM_PNTriangles | 2 |  |
+| MTM_MAX | 3 |  |

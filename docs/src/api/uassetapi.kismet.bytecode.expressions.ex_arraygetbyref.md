@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ArrayG
 public class EX_ArrayGetByRef : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_ArrayGetByRef](./uassetapi.kismet.bytecode.expressions.ex_arraygetbyref.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_ArrayGetByRef](./uassetapi.kismet.bytecode.expressions.ex_arraygetbyref.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

@@ -13,3 +13,11 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| BaseColor | 0 |  |
+| BaseColor_Normal_DEPRECATED | 1 |  |
+| BaseColor_Normal_Specular | 2 |  |
+| BaseColor_Normal_Specular_YCoCg | 3 |  |
+| BaseColor_Normal_Specular_Mask_YCoCg | 4 |  |
+| WorldHeight | 5 |  |
+| Count | 6 |  |
+| ERuntimeVirtualTextureMaterialType_MAX | 7 |  |

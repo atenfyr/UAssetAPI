@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PlanetTopAtAbsoluteWorldOrigin | 0 |  |
+| PlanetTopAtComponentTransform | 1 |  |
+| PlanetCenterAtComponentTransform | 2 |  |
+| ESkyAtmosphereTransformMode_MAX | 3 |  |

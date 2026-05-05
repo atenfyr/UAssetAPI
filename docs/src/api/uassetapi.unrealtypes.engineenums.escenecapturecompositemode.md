@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SCCM_Overwrite | 0 |  |
+| SCCM_Additive | 1 |  |
+| SCCM_Composite | 2 |  |
+| SCCM_MAX | 3 |  |

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SLERP | 0 |  |
+| TwistAndSwing | 1 |  |
+| EAngularDriveMode_MAX | 2 |  |

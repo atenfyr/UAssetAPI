@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Closed | 0 |  |
+| Error | 1 |  |
+| Synchronized | 2 |  |
+| Synchronizing | 3 |  |
+| ETimecodeProviderSynchronizationState_MAX | 4 |  |

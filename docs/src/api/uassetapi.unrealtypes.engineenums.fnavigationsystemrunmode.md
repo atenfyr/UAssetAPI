@@ -13,3 +13,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| InvalidMode | 0 |  |
+| GameMode | 1 |  |
+| EditorMode | 2 |  |
+| SimulationMode | 3 |  |
+| PIEMode | 4 |  |
+| FNavigationSystemRunMode_MAX | 5 |  |

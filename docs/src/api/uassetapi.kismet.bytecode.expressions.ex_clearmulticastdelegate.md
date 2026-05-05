@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_ClearM
 public class EX_ClearMulticastDelegate : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_ClearMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_clearmulticastdelegate.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_ClearMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_clearmulticastdelegate.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

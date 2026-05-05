@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PET2SRCM_Default | 0 |  |
+| PET2SRCM_Particle | 1 |  |
+| PET2SRCM_Actor | 2 |  |
+| PET2SRCM_MAX | 3 |  |

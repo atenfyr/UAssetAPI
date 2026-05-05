@@ -16,3 +16,9 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | Name | Value | Description |
 | --- | --: | --- |
 | BeforeCustomVersionWasAdded | 0 | Before any version changes were made |
+| MaterialInputNativeSerialize | 1 |  |
+| EnumProperties | 2 |  |
+| SkeletalMaterialEditorDataStripping | 3 |  |
+| FProperties | 4 |  |
+| VersionPlusOne | 5 |  |
+| LatestVersion | 4 |  |

@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| UseConfigDefault | 0 |  |
+| AlwaysUpdate | 1 |  |
+| OnlyUpdateMovable | 2 |  |
+| NeverUpdate | 3 |  |
+| EActorUpdateOverlapsMethod_MAX | 4 |  |

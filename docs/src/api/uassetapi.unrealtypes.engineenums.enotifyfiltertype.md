@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoFiltering | 0 |  |
+| LOD | 1 |  |
+| ENotifyFilterType_MAX | 2 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Unknown | 0 |  |
+| Guids | 1 |  |
+| Enums | 2 |  |
+| Optimized | 3 |  |

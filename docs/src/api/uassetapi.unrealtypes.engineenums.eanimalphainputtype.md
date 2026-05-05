@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Float | 0 |  |
+| Bool | 1 |  |
+| Curve | 2 |  |
+| EAnimAlphaInputType_MAX | 3 |  |

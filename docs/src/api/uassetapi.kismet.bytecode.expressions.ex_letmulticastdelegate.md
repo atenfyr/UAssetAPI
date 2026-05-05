@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_LetMul
 public class EX_LetMulticastDelegate : EX_LetBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md) → [EX_LetMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_letmulticastdelegate.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetBase](./uassetapi.kismet.bytecode.expressions.ex_letbase.md) → [EX_LetMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_letmulticastdelegate.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

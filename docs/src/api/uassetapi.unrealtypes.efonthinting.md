@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Default | 0 |  |
+| Auto | 1 |  |
+| AutoLight | 2 |  |
+| Monochrome | 3 |  |
+| None | 4 |  |

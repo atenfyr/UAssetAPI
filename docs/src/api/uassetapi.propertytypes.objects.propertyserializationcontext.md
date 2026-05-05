@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Normal | 0 |  |
+| Array | 1 |  |
+| Map | 2 |  |
+| StructFallback | 3 |  |
+| CanBeZero | 4 |  |

@@ -32,3 +32,4 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | OptionSanitizeOutputAttributeNamesPCG | 16 | Add option for sanitizing output attribute names for all PCG data getters |
 | CommonUIPlatformNamingUpgradeOption | 17 | Add automatic platform naming fix up for CommonUI input action data tables |
 | VersionPlusOne | 18 | -----new versions can be added above this line------------------------------------------------- |
+| LatestVersion | 17 |  |

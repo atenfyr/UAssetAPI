@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Deprec
 public class EX_DeprecatedOp4A : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_DeprecatedOp4A](./uassetapi.kismet.bytecode.expressions.ex_deprecatedop4a.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_DeprecatedOp4A](./uassetapi.kismet.bytecode.expressions.ex_deprecatedop4a.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

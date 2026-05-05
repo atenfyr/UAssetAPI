@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Empty | 0 |  |
+| SimpleCurves | 1 |  |
+| RichCurves | 2 |  |
+| ECurveTableMode_MAX | 3 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Default | 0 |  |
+| Enable | 1 |  |
+| Disable | 2 |  |
+| MAX | 3 |  |

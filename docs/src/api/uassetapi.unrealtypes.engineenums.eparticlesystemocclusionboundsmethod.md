@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| EPSOBM_None | 0 |  |
+| EPSOBM_ParticleBounds | 1 |  |
+| EPSOBM_CustomBounds | 2 |  |
+| EPSOBM_MAX | 3 |  |

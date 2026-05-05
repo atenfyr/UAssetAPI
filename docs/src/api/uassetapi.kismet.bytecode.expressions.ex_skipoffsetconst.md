@@ -9,7 +9,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_SkipOf
 public class EX_SkipOffsetConst : UAssetAPI.Kismet.Bytecode.KismetExpression`1[[System.UInt32]]
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;UInt32&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_SkipOffsetConst](./uassetapi.kismet.bytecode.expressions.ex_skipoffsetconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [KismetExpression&lt;UInt32&gt;](./uassetapi.kismet.bytecode.kismetexpression-1.md) → [EX_SkipOffsetConst](./uassetapi.kismet.bytecode.expressions.ex_skipoffsetconst.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

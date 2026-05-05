@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SLSH_QuadLayer | 0 |  |
+| SLSH_CylinderLayer | 1 |  |
+| SLSH_CubemapLayer | 2 |  |
+| SLSH_EquirectLayer | 3 |  |
+| SLSH_MAX | 4 |  |

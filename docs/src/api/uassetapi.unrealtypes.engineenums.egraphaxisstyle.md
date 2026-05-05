@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Lines | 0 |  |
+| Notches | 1 |  |
+| Grid | 2 |  |
+| EGraphAxisStyle_MAX | 3 |  |

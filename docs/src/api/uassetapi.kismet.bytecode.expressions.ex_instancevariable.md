@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_Instan
 public class EX_InstanceVariable : EX_VariableBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_InstanceVariable](./uassetapi.kismet.bytecode.expressions.ex_instancevariable.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_InstanceVariable](./uassetapi.kismet.bytecode.expressions.ex_instancevariable.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

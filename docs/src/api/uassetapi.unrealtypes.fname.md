@@ -9,7 +9,8 @@ public class FName : System.ICloneable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FName](./uassetapi.unrealtypes.fname.md)<br>
-Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)
+Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
+Attributes JsonConverterAttribute
 
 ## Fields
 
@@ -165,22 +166,6 @@ public string ToString()
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The human-readable string that represents this FName.
-
-### **FromStringFragments(INameMap, String, String&, Int32&)**
-
-```csharp
-internal static void FromStringFragments(INameMap asset, string val, String& str, Int32& num)
-```
-
-#### Parameters
-
-`asset` [INameMap](./uassetapi.inamemap.md)<br>
-
-`val` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
-`str` [String&](https://docs.microsoft.com/en-us/dotnet/api/system.string&)<br>
-
-`num` [Int32&](https://docs.microsoft.com/en-us/dotnet/api/system.int32&)<br>
 
 ### **IsFromStringValid(INameMap, String)**
 

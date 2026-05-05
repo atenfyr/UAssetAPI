@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Unknown | 0 |  |
+| Inactive | 1 |  |
+| Background | 2 |  |
+| Active | 3 |  |
+| EApplicationState_MAX | 4 |  |

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_CallMu
 public class EX_CallMulticastDelegate : EX_FinalFunction
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md) → [EX_CallMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_callmulticastdelegate.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_FinalFunction](./uassetapi.kismet.bytecode.expressions.ex_finalfunction.md) → [EX_CallMulticastDelegate](./uassetapi.kismet.bytecode.expressions.ex_callmulticastdelegate.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

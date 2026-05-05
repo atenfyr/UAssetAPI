@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Begin | 0 |  |
+| End | 1 |  |
+| EAnimNotifyEventType_MAX | 2 |  |

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_EndMap
 public class EX_EndMapConst : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_EndMapConst](./uassetapi.kismet.bytecode.expressions.ex_endmapconst.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_EndMapConst](./uassetapi.kismet.bytecode.expressions.ex_endmapconst.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

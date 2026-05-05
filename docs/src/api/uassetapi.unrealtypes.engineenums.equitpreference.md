@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Quit | 0 |  |
+| Background | 1 |  |
+| EQuitPreference_MAX | 2 |  |

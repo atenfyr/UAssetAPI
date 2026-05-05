@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Disabled | 0 |  |
+| Hard_shadows | 1 |  |
+| Area_shadows | 2 |  |
+| EReflectedAndRefractedRayTracedShadows_MAX | 3 |  |

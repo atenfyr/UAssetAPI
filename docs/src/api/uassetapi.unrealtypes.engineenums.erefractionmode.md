@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| RM_IndexOfRefraction | 0 |  |
+| RM_PixelNormalOffset | 1 |  |
+| RM_MAX | 2 |  |

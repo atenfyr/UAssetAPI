@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TLT_StandardBlend | 0 |  |
+| TLT_Inertialization | 1 |  |
+| TLT_Custom | 2 |  |
+| TLT_MAX | 3 |  |

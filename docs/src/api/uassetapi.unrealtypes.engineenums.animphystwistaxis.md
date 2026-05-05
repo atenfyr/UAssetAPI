@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| AxisX | 0 |  |
+| AxisY | 1 |  |
+| AxisZ | 2 |  |
+| AnimPhysTwistAxis_MAX | 3 |  |

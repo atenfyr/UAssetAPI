@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| CMOT_Float1 | 0 |  |
+| CMOT_Float2 | 1 |  |
+| CMOT_Float3 | 2 |  |
+| CMOT_Float4 | 3 |  |
+| CMOT_MAX | 4 |  |

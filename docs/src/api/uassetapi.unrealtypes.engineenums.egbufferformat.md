@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Force8BitsPerChannel | 0 |  |
+| Default | 1 |  |
+| HighPrecisionNormals | 3 |  |
+| Force16BitsPerChannel | 5 |  |
+| EGBufferFormat_MAX | 6 |  |

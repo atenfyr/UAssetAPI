@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SLS_CapturedScene | 0 |  |
+| SLS_SpecifiedCubemap | 1 |  |
+| SLS_MAX | 2 |  |

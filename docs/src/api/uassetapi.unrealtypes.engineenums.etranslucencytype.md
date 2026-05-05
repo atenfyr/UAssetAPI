@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Raster | 0 |  |
+| RayTracing | 1 |  |
+| ETranslucencyType_MAX | 2 |  |

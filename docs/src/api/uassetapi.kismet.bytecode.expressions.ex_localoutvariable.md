@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_LocalO
 public class EX_LocalOutVariable : EX_VariableBase
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_LocalOutVariable](./uassetapi.kismet.bytecode.expressions.ex_localoutvariable.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_VariableBase](./uassetapi.kismet.bytecode.expressions.ex_variablebase.md) → [EX_LocalOutVariable](./uassetapi.kismet.bytecode.expressions.ex_localoutvariable.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| VERTSURFACESOURCE_Vert | 0 |  |
+| VERTSURFACESOURCE_Surface | 1 |  |
+| VERTSURFACESOURCE_MAX | 2 |  |

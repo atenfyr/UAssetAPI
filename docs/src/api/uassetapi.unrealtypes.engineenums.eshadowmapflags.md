@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| SMF_None | 0 |  |
+| SMF_Streamed | 1 |  |
+| SMF_MAX | 2 |  |

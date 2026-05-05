@@ -13,3 +13,10 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| TRANSFORM_Tangent | 0 |  |
+| TRANSFORM_Local | 1 |  |
+| TRANSFORM_World | 2 |  |
+| TRANSFORM_View | 3 |  |
+| TRANSFORM_Camera | 4 |  |
+| TRANSFORM_ParticleWorld | 5 |  |
+| TRANSFORM_MAX | 6 |  |

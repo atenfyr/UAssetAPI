@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Continues | 0 |  |
+| Silent | 1 |  |
+| Hold | 2 |  |
+| ENaturalSoundFalloffMode_MAX | 3 |  |

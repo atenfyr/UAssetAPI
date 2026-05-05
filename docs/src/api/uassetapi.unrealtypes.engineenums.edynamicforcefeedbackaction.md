@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Start | 0 |  |
+| Update | 1 |  |
+| Stop | 2 |  |
+| EDynamicForceFeedbackAction_MAX | 3 |  |

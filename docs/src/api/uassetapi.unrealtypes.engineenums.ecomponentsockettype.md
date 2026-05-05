@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Invalid | 0 |  |
+| Bone | 1 |  |
+| Socket | 2 |  |
+| EComponentSocketType_MAX | 3 |  |

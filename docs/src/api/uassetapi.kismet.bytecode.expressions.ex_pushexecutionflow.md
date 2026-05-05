@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_PushEx
 public class EX_PushExecutionFlow : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_PushExecutionFlow](./uassetapi.kismet.bytecode.expressions.ex_pushexecutionflow.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_PushExecutionFlow](./uassetapi.kismet.bytecode.expressions.ex_pushexecutionflow.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 

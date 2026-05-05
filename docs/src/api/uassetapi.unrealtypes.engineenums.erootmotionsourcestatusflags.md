@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Prepared | 1 |  |
+| Finished | 2 |  |
+| MarkedForRemoval | 4 |  |
+| ERootMotionSourceStatusFlags_MAX | 5 |  |

@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ILCQ_Off | 0 |  |
+| ILCQ_Point | 1 |  |
+| ILCQ_Volume | 2 |  |
+| ILCQ_MAX | 3 |  |

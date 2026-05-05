@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| PEB2MT_Source | 0 |  |
+| PEB2MT_Target | 1 |  |
+| PEB2MT_MAX | 2 |  |

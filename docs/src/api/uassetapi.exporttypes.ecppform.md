@@ -15,3 +15,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Regular | 0 |  |
+| Namespaced | 1 |  |
+| EnumClass | 2 |  |

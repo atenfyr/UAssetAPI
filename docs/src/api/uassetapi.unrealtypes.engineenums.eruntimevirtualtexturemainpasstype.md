@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Never | 0 |  |
+| Exclusive | 1 |  |
+| Always | 2 |  |
+| ERuntimeVirtualTextureMainPassType_MAX | 3 |  |

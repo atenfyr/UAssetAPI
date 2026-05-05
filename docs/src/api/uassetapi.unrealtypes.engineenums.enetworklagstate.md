@@ -13,3 +13,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NotLagging | 0 |  |
+| Lagging | 1 |  |
+| ENetworkLagState_MAX | 2 |  |

@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| One | 1 |  |
+| Two | 2 |  |
+| Four | 4 |  |
+| Eight | 8 |  |
+| ECompositingSampleCount_MAX | 9 |  |

@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| InitialVersion | 1 |  |
+| AddedCustomVersions | 2 |  |
+| PackageFileSummaryVersionChange | 3 |  |
+| VersionPlusOne | 4 |  |
+| LatestVersion | 3 |  |

@@ -13,3 +13,14 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| ERSM_Default | 0 |  |
+| ERSM_256 | 1 |  |
+| ERSM_2 | 2 |  |
+| ERSM_3 | 3 |  |
+| ERSM_5 | 4 |  |
+| ERSM_9 | 5 |  |
+| ERSM_17 | 6 |  |
+| ERSM_33 | 7 |  |
+| ERSM_65 | 8 |  |
+| ERSM_129 | 9 |  |
+| ERSM_MAX | 10 |  |

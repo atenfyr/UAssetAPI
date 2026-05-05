@@ -13,3 +13,7 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| Linear | 0 |  |
+| CustomCurve | 1 |  |
+| Manual | 2 |  |
+| ESendLevelControlMethod_MAX | 3 |  |

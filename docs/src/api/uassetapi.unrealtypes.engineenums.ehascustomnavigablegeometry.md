@@ -13,3 +13,8 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| No | 0 |  |
+| Yes | 1 |  |
+| EvenIfNotCollidable | 2 |  |
+| DontExport | 3 |  |
+| EHasCustomNavigableGeometry_MAX | 4 |  |

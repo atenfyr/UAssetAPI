@@ -16,3 +16,6 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 
 | Name | Value | Description |
 | --- | --: | --- |
+| NoExtension | 0 |  |
+| ReserveForFutureUse | 1 |  |
+| OverridableSerializationInformation | 2 |  |

@@ -8,7 +8,8 @@ A single Kismet bytecode instruction, corresponding to the [EExprToken.EX_LetVal
 public class EX_LetValueOnPersistentFrame : UAssetAPI.Kismet.Bytecode.KismetExpression
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetValueOnPersistentFrame](./uassetapi.kismet.bytecode.expressions.ex_letvalueonpersistentframe.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [KismetExpression](./uassetapi.kismet.bytecode.kismetexpression.md) → [EX_LetValueOnPersistentFrame](./uassetapi.kismet.bytecode.expressions.ex_letvalueonpersistentframe.md)<br>
+Attributes JsonObjectAttribute
 
 ## Fields
 
