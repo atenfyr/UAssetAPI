@@ -237,6 +237,6 @@ public void WriteCustomVersionContainer(ECustomVersionSerializationFormat format
 
 #### Parameters
 
-`format` [ECustomVersionSerializationFormat](./uassetapi.unversioned.ecustomversionserializationformat.md)<br>
+`format` [ECustomVersionSerializationFormat](./uassetapi.ecustomversionserializationformat.md)<br>
 
 `CustomVersionContainer` [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>

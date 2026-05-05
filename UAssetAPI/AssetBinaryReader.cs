@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.Kismet.Bytecode;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.Unversioned;
 
 namespace UAssetAPI;
+
+public enum ECustomVersionSerializationFormat
+{
+    Unknown,
+    Guids,
+    Enums,
+    Optimized
+}
 
 /// <summary>
 /// Any binary reader used in the parsing of Unreal file types.

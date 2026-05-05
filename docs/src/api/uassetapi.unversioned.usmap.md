@@ -431,3 +431,44 @@ public void Read(UsmapBinaryReader compressedReader)
 #### Parameters
 
 `compressedReader` [UsmapBinaryReader](./uassetapi.usmapbinaryreader.md)<br>
+
+### **PatchUsmapWithVersion(String, EngineVersion)**
+
+Patches a .usmap file in-situ to contain versioning info.
+
+```csharp
+public static void PatchUsmapWithVersion(string usmapPath, EngineVersion newVersion)
+```
+
+#### Parameters
+
+`usmapPath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The path to the .usmap file to patch.
+
+`newVersion` [EngineVersion](./uassetapi.unrealtypes.engineversion.md)<br>
+Engine version to write.
+
+### **PatchUsmapWithVersion(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, UInt32)**
+
+Patches a .usmap file in-situ to contain versioning info.
+
+```csharp
+public static void PatchUsmapWithVersion(string usmapPath, ObjectVersion ObjectVersion, ObjectVersionUE5 ObjectVersionUE5, List<CustomVersion> CustomVersionContainer, uint NetCL)
+```
+
+#### Parameters
+
+`usmapPath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The path to the .usmap file to patch.
+
+`ObjectVersion` [ObjectVersion](./uassetapi.unrealtypes.objectversion.md)<br>
+UE4 object version to write.
+
+`ObjectVersionUE5` [ObjectVersionUE5](./uassetapi.unrealtypes.objectversionue5.md)<br>
+UE5 object version to write.
+
+`CustomVersionContainer` [List&lt;CustomVersion&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1)<br>
+Custom version container to write.
+
+`NetCL` [UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
+NetCL number to write. Defaults to 0.

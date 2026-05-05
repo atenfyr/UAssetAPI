@@ -1216,6 +1216,81 @@ namespace UAssetAPI.Unversioned
         }
 
         /// <summary>
+        /// Patches a .usmap file in-situ to contain versioning info.
+        /// </summary>
+        /// <param name="usmapPath">The path to the .usmap file to patch.</param>
+        /// <param name="newVersion">Engine version to write.</param>
+        public static void PatchUsmapWithVersion(string usmapPath, EngineVersion newVersion)
+        {
+            if (newVersion == EngineVersion.UNKNOWN) return;
+
+            if (!Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
+            ObjectVersion ObjectVersion = (ObjectVersion)(int)bridgeVer;
+
+            ObjectVersionUE5 ObjectVersionUE5 = ObjectVersionUE5.UNKNOWN;
+            if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE5VersionToObjectVersion bridgeVer2)) ObjectVersionUE5 = (ObjectVersionUE5)(int)bridgeVer2;
+
+            List<CustomVersion> CustomVersionContainer = UAsset.GetDefaultCustomVersionContainer(newVersion);
+
+            PatchUsmapWithVersion(usmapPath, ObjectVersion, ObjectVersionUE5, CustomVersionContainer);
+        }
+
+        /// <summary>
+        /// Patches a .usmap file in-situ to contain versioning info.
+        /// </summary>
+        /// <param name="usmapPath">The path to the .usmap file to patch.</param>
+        /// <param name="ObjectVersion">UE4 object version to write.</param>
+        /// <param name="ObjectVersionUE5">UE5 object version to write.</param>
+        /// <param name="CustomVersionContainer">Custom version container to write.</param>
+        /// <param name="NetCL">NetCL number to write. Defaults to 0.</param>
+        public static void PatchUsmapWithVersion(string usmapPath, ObjectVersion ObjectVersion, ObjectVersionUE5 ObjectVersionUE5, List<CustomVersion> CustomVersionContainer, uint NetCL = 0)
+        {
+            byte[] restOfData = null;
+            UsmapVersion ver = UsmapVersion.Initial;
+            using (FileStream origStream = File.Open(usmapPath, FileMode.Open))
+            {
+                UnrealBinaryReader reader = new UnrealBinaryReader(origStream);
+
+                reader.BaseStream.Seek(0, SeekOrigin.Begin);
+                ushort fileSignature = reader.ReadUInt16();
+                if (fileSignature != Usmap.USMAP_MAGIC) throw new FormatException(".usmap: File signature mismatch");
+
+                ver = (UsmapVersion)reader.ReadByte();
+                if (ver < UsmapVersion.Initial || ver > UsmapVersion.Latest) throw new FormatException(".usmap: Unknown file version " + ver);
+                if (ver >= UsmapVersion.PackageVersioning)
+                {
+                    bool bHasVersioning = reader.ReadBooleanInt();
+                    if (bHasVersioning)
+                    {
+                        reader.ReadUInt32();
+                        reader.ReadUInt32();
+                        reader.ReadCustomVersionContainer(ECustomVersionSerializationFormat.Optimized);
+                        reader.ReadUInt32();
+                    }
+                }
+
+                restOfData = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+            }
+
+            if (ver < UsmapVersion.PackageVersioning) ver = UsmapVersion.PackageVersioning;
+
+            using (FileStream origStream = File.Open(usmapPath, FileMode.Create))
+            {
+                UnrealBinaryWriter writer = new UnrealBinaryWriter(origStream);
+
+                writer.Seek(0, SeekOrigin.Begin);
+                writer.Write(Usmap.USMAP_MAGIC);
+                writer.Write((byte)ver);
+                writer.WriteBooleanInt(true); // bHasVersioning
+                writer.Write((uint)ObjectVersion);
+                writer.Write((uint)ObjectVersionUE5);
+                writer.WriteCustomVersionContainer(ECustomVersionSerializationFormat.Optimized, CustomVersionContainer);
+                writer.Write(NetCL);
+                writer.Write(restOfData);
+            }
+        }
+
+        /// <summary>
         /// Reads a .usmap file from disk and initializes a new instance of the <see cref="Usmap"/> class to store its data in memory.
         /// </summary>
         /// <param name="path">The path of the file file on disk that this instance will read from.</param>
