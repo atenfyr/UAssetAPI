@@ -1192,6 +1192,7 @@ namespace UAssetAPI.Unversioned
                             {
                                 string extId = reader.ReadString(4);
                                 uint extLeng = reader.ReadUInt32();
+                                long endPos = reader.BaseStream.Position + extLeng;
                                 try
                                 {
                                     ReadExtension(extId, extLeng);
@@ -1199,6 +1200,7 @@ namespace UAssetAPI.Unversioned
                                 catch
                                 {
                                     FailedExtensions.Add(extId);
+                                    reader.BaseStream.Position = endPos;
                                 }
                             }
                             break;
