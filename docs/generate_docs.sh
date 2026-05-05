@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# dotnet tool install -g XMLDoc2Markdown
+dotnet tool install -g XMLDoc2Markdown
 
 # cd to script dir https://stackoverflow.com/a/17744637
 cd "$(cd -P -- "$(dirname -- "$0")" && pwd -P)"

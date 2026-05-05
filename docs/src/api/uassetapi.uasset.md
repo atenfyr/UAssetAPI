@@ -78,6 +78,14 @@ The licensee file version. Used by some games to add their own Engine-level vers
 public int FileVersionLicenseeUE;
 ```
 
+### **GameSpecificOverride**
+
+Enum for selecting game-specific overrides.
+
+```csharp
+public GameSpecificOverride GameSpecificOverride;
+```
+
 ### **ObjectVersion**
 
 The object version of UE4 that will be used to parse this asset.
@@ -444,6 +452,22 @@ Localization ID of this package
 public FString LocalizationId;
 ```
 
+### **ImportTypeHierarchiesCount**
+
+Number of import type hierarchy entries
+
+```csharp
+public int ImportTypeHierarchiesCount;
+```
+
+### **ImportTypeHierarchiesOffset**
+
+Location into the file on disk for the import type hierarchy map
+
+```csharp
+public int ImportTypeHierarchiesOffset;
+```
+
 ### **UASSET_MAGIC**
 
 Magic number for the .uasset format
@@ -510,12 +534,12 @@ public bool IsPreDependencyFormat { get; }
 
 ## Constructors
 
-### **UAsset(String, EngineVersion, Usmap, CustomSerializationFlags)**
+### **UAsset(String, EngineVersion, Usmap, CustomSerializationFlags, GameSpecificOverride)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+public UAsset(string path, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -532,6 +556,9 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
@@ -540,12 +567,12 @@ Thrown when this is an unversioned asset and [UAsset.ObjectVersion](./uassetapi.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(String, Boolean, EngineVersion, Usmap, CustomSerializationFlags)**
+### **UAsset(String, Boolean, EngineVersion, Usmap, CustomSerializationFlags, GameSpecificOverride)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, bool loadUexp, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+public UAsset(string path, bool loadUexp, EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -565,6 +592,9 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
@@ -573,12 +603,12 @@ Thrown when this is an unversioned asset and [UAsset.ObjectVersion](./uassetapi.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(AssetBinaryReader, EngineVersion, Usmap, Boolean, CustomSerializationFlags)**
+### **UAsset(AssetBinaryReader, EngineVersion, Usmap, Boolean, CustomSerializationFlags, GameSpecificOverride)**
 
 Reads an asset from a BinaryReader and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(AssetBinaryReader reader, EngineVersion engineVersion, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags)
+public UAsset(AssetBinaryReader reader, EngineVersion engineVersion, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -598,6 +628,9 @@ Does this asset uses separate bulk data files (.uexp, .ubulk)?
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
@@ -606,12 +639,12 @@ Thrown when this is an unversioned asset and [UAsset.ObjectVersion](./uassetapi.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(EngineVersion, Usmap, CustomSerializationFlags)**
+### **UAsset(EngineVersion, Usmap, CustomSerializationFlags, GameSpecificOverride)**
 
 Initializes a new instance of the [UAsset](./uassetapi.uasset.md) class. This instance will store no asset data and does not represent any asset in particular until the [UAsset.Read(AssetBinaryReader, Int32[], Int32[])](./uassetapi.uasset.md#readassetbinaryreader-int32-int32) method is manually called.
 
 ```csharp
-public UAsset(EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+public UAsset(EngineVersion engineVersion, Usmap mappings, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -625,12 +658,15 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
-### **UAsset(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags)**
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
+### **UAsset(String, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags, GameSpecificOverride)**
 
 Reads an asset from disk and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -653,6 +689,9 @@ A valid set of mappings for the game that this asset is from. Not required unles
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
@@ -661,12 +700,12 @@ Thrown when this is an unversioned asset and [UAsset.ObjectVersion](./uassetapi.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(AssetBinaryReader, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, Boolean, CustomSerializationFlags)**
+### **UAsset(AssetBinaryReader, ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, Boolean, CustomSerializationFlags, GameSpecificOverride)**
 
 Reads an asset from a BinaryReader and initializes a new instance of the [UAsset](./uassetapi.uasset.md) class to store its data in memory.
 
 ```csharp
-public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags)
+public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, bool useSeparateBulkDataFiles, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -692,6 +731,9 @@ Does this asset uses separate bulk data files (.uexp, .ubulk)?
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
 
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
+
 #### Exceptions
 
 [UnknownEngineVersionException](./uassetapi.unknownengineversionexception.md)<br>
@@ -700,12 +742,12 @@ Thrown when this is an unversioned asset and [UAsset.ObjectVersion](./uassetapi.
 [FormatException](https://docs.microsoft.com/en-us/dotnet/api/system.formatexception)<br>
 Throw when the asset cannot be parsed correctly.
 
-### **UAsset(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags)**
+### **UAsset(ObjectVersion, ObjectVersionUE5, List&lt;CustomVersion&gt;, Usmap, CustomSerializationFlags, GameSpecificOverride)**
 
 Initializes a new instance of the [UAsset](./uassetapi.uasset.md) class. This instance will store no asset data and does not represent any asset in particular until the [UAsset.Read(AssetBinaryReader, Int32[], Int32[])](./uassetapi.uasset.md#readassetbinaryreader-int32-int32) method is manually called.
 
 ```csharp
-public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags)
+public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings, CustomSerializationFlags customSerializationFlags, GameSpecificOverride gsOverride)
 ```
 
 #### Parameters
@@ -724,6 +766,9 @@ A valid set of mappings for the game that this asset is from. Not required unles
 
 `customSerializationFlags` [CustomSerializationFlags](./uassetapi.customserializationflags.md)<br>
 A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.
+
+`gsOverride` [GameSpecificOverride](./uassetapi.unrealtypes.gamespecificoverride.md)<br>
+An optional selection of game-specific overrides.
 
 ### **UAsset()**
 

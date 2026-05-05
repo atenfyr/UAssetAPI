@@ -2367,10 +2367,13 @@ namespace UAssetAPI
                 }
             }
 
-            if (ImportTypeHierarchiesOffset > 1)
+            if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
             {
-                reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
-                ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
+                if (ImportTypeHierarchiesOffset > 0)
+                {
+                    reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
+                    ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
+                }
             }
 
             // Thumbnails
@@ -2876,20 +2879,26 @@ namespace UAssetAPI
                     SearchableNamesOffset = 0;
                 }
 
-                if (ImportTypeHierarchies != null)
+                if (GameSpecificOverride == GameSpecificOverride.FarFarWest)
                 {
-                    ImportTypeHierarchiesOffset = (int)writer.BaseStream.Position;
-                    ImportTypeHierarchiesCount = ImportTypeHierarchies.Count;
-
-                    foreach (var kvp in ImportTypeHierarchies)
-                    {
-                        kvp.Key.Write(writer);
-                        kvp.Value.Write(writer);
-                    }
+                    // TODO: true identities of these fields are still unknown
+                    //ImportTypeHierarchiesOffset = 1;
+                    //ImportTypeHierarchiesCount = 1;
                 }
                 else
                 {
-                    if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
+                    if (ImportTypeHierarchies != null)
+                    {
+                        ImportTypeHierarchiesOffset = (int)writer.BaseStream.Position;
+                        ImportTypeHierarchiesCount = ImportTypeHierarchies.Count;
+
+                        foreach (var kvp in ImportTypeHierarchies)
+                        {
+                            kvp.Key.Write(writer);
+                            kvp.Value.Write(writer);
+                        }
+                    }
+                    else
                     {
                         ImportTypeHierarchiesOffset = 0;
                         ImportTypeHierarchiesCount = 0;
