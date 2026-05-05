@@ -94,6 +94,7 @@ public class UnrealBinaryReader : BinaryReader
     public virtual FString ReadFString()
     {
         int length = this.ReadInt32();
+        if (length > 1e6) throw new FormatException($"Invalid FString length: {length}"); // some parsing error is obviously occurring if we have extremely large strings
         switch (length)
         {
             case < 0:

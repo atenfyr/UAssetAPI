@@ -207,6 +207,7 @@ namespace UAssetAPI
                     for (int i = 0; i < num; i++)
                     {
                         if (CustomVersionContainer[i].Version <= 0 || !CustomVersionContainer[i].IsSerialized) continue;
+                        if (CustomVersionContainer[i].Key == CustomVersion.UnusedCustomVersionKey) continue;
                         realNum++;
                         Write(CustomVersionContainer[i].Key);
                         Write(CustomVersionContainer[i].Version);
@@ -226,6 +227,7 @@ namespace UAssetAPI
                     for (int i = 0; i < num; i++)
                     {
                         if (CustomVersionContainer[i].Version < 0 || !CustomVersionContainer[i].IsSerialized) continue;
+                        if (CustomVersionContainer[i].Key == CustomVersion.UnusedCustomVersionKey) continue;
                         realNum++;
                         Write(CustomVersionContainer[i].Key);
                         Write(CustomVersionContainer[i].Version);

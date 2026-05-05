@@ -261,6 +261,11 @@ namespace UAssetAPI
         public int FileVersionLicenseeUE;
 
         /// <summary>
+        /// Enum for selecting game-specific overrides.
+        /// </summary>
+        public GameSpecificOverride GameSpecificOverride = GameSpecificOverride.None;
+
+        /// <summary>
         /// The object version of UE4 that will be used to parse this asset.
         /// </summary>
         public ObjectVersion ObjectVersion = ObjectVersion.UNKNOWN;
@@ -1304,6 +1309,7 @@ namespace UAssetAPI
                 AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
                 otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipLoadingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
+                otherAsset.GameSpecificOverride = GameSpecificOverride;
                 otherAsset.IsParsingToPullSchemas = true;
                 otherAsset.Read(otherReader);
 
@@ -1489,6 +1495,11 @@ namespace UAssetAPI
         public List<FGenerationInfo> Generations;
 
         /// <summary>
+        /// Number of generations. Automatically determined at write time.
+        /// </summary>
+        internal int GenerationCount;
+
+        /// <summary>
         /// Current ID for this package. Effectively unused.
         /// </summary>
         public Guid PackageGuid;
@@ -1602,12 +1613,12 @@ namespace UAssetAPI
         internal int ThumbnailTableOffset;
 
         /// <summary>Number of import type hierarchy entries</summary>
-        [JsonProperty] 
-        internal int ImportTypeHierarchiesCount = 0;
+        [JsonProperty]
+        public int ImportTypeHierarchiesCount = 0;
 
         /// <summary>Location into the file on disk for the import type hierarchy map</summary>
         [JsonProperty]
-        internal int ImportTypeHierarchiesOffset = 0;
+        public int ImportTypeHierarchiesOffset = 0;
 
         /// <summary>Hash of the Package's bytes when it was saved to disk.</summary>
         [JsonProperty]
@@ -1868,19 +1879,22 @@ namespace UAssetAPI
             }
 
             Generations = new List<FGenerationInfo>();
-            int generationCount = reader.ReadInt32();
-            if (generationCount < 0 || generationCount > 1e5) // failsafe for some specific games
+            GenerationCount = reader.ReadInt32();
+            if (GenerationCount < 0 || GenerationCount > 1e5) // failsafe for some specific games
             {
                 reader.BaseStream.Position -= sizeof(int) + 16;
                 ValorantGarbageData = reader.ReadBytes(8); // garbage data
                 PackageGuid = reader.ReadGuid();
-                generationCount = reader.ReadInt32();
+                GenerationCount = reader.ReadInt32();
             }
-            for (int i = 0; i < generationCount; i++)
+            if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
             {
-                int genNumExports = reader.ReadInt32();
-                int genNumNames = reader.ReadInt32();
-                Generations.Add(new FGenerationInfo(genNumExports, genNumNames));
+                for (int i = 0; i < GenerationCount; i++)
+                {
+                    int genNumExports = reader.ReadInt32();
+                    int genNumNames = reader.ReadInt32();
+                    Generations.Add(new FGenerationInfo(genNumExports, genNumNames));
+                }
             }
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_ENGINE_VERSION_OBJECT)
@@ -2358,7 +2372,7 @@ namespace UAssetAPI
                 }
             }
 
-            if (ImportTypeHierarchiesOffset > 0)
+            if (ImportTypeHierarchiesOffset > 1)
             {
                 reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
                 ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
@@ -2545,14 +2559,24 @@ namespace UAssetAPI
                     writer.Write(new byte[16]);
                 }
             }
-            writer.Write(Generations.Count);
-            for (int i = 0; i < Generations.Count; i++)
+
+            if (GameSpecificOverride == GameSpecificOverride.FarFarWest)
             {
-                Generations[i].ExportCount = ExportCount;
-                Generations[i].NameCount = NameCount;
-                writer.Write(Generations[i].ExportCount);
-                writer.Write(Generations[i].NameCount);
+                writer.Write(GenerationCount);
             }
+            else
+            {
+                GenerationCount = Generations.Count;
+                writer.Write(Generations.Count);
+                for (int i = 0; i < Generations.Count; i++)
+                {
+                    Generations[i].ExportCount = ExportCount;
+                    Generations[i].NameCount = NameCount;
+                    writer.Write(Generations[i].ExportCount);
+                    writer.Write(Generations[i].NameCount);
+                }
+            }
+
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_ENGINE_VERSION_OBJECT)
             {
@@ -2867,6 +2891,14 @@ namespace UAssetAPI
                     {
                         kvp.Key.Write(writer);
                         kvp.Value.Write(writer);
+                    }
+                }
+                else
+                {
+                    if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
+                    {
+                        ImportTypeHierarchiesOffset = 0;
+                        ImportTypeHierarchiesCount = 0;
                     }
                 }
 
@@ -3390,18 +3422,20 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        public UAsset(string path, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.FilePath = path;
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             SetEngineVersion(engineVersion);
 
             Read(PathToReader(path));
         }
-        
+
         /// <summary>
         /// Reads an asset from disk and initializes a new instance of the <see cref="UAsset"/> class to store its data in memory.
         /// </summary>
@@ -3410,13 +3444,15 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, bool loadUexp, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        public UAsset(string path, bool loadUexp, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.FilePath = path;
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             SetEngineVersion(engineVersion);
 
             Read(PathToReader(path, loadUexp));
@@ -3430,12 +3466,14 @@ namespace UAssetAPI
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        public UAsset(AssetBinaryReader reader, EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             SetEngineVersion(engineVersion);
             Read(reader);
@@ -3447,10 +3485,12 @@ namespace UAssetAPI
         /// <param name="engineVersion">The version of the Unreal Engine that will be used to parse this asset. If the asset is versioned, this can be left unspecified.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
-        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
+        public UAsset(EngineVersion engineVersion = EngineVersion.UNKNOWN, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             SetEngineVersion(engineVersion);
         }
 
@@ -3463,13 +3503,15 @@ namespace UAssetAPI
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        public UAsset(string path, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.FilePath = path;
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
             if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;
@@ -3487,12 +3529,14 @@ namespace UAssetAPI
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="useSeparateBulkDataFiles">Does this asset uses separate bulk data files (.uexp, .ubulk)?</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
         /// <exception cref="UnknownEngineVersionException">Thrown when this is an unversioned asset and <see cref="ObjectVersion"/> is unspecified.</exception>
         /// <exception cref="FormatException">Throw when the asset cannot be parsed correctly.</exception>
-        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        public UAsset(AssetBinaryReader reader, ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, bool useSeparateBulkDataFiles = false, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             UseSeparateBulkDataFiles = useSeparateBulkDataFiles;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
@@ -3509,10 +3553,12 @@ namespace UAssetAPI
         /// <param name="customVersionContainer">A list of custom versions to parse this asset with.</param>
         /// <param name="mappings">A valid set of mappings for the game that this asset is from. Not required unless unversioned properties are used.</param>
         /// <param name="customSerializationFlags">A set of custom serialization flags, which can be used to override certain optional behavior in how UAssetAPI serializes assets.</param>
-        public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None)
+        /// <param name="gsOverride">An optional selection of game-specific overrides.</param>
+        public UAsset(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer, Usmap mappings = null, CustomSerializationFlags customSerializationFlags = CustomSerializationFlags.None, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             this.Mappings = mappings;
             this.CustomSerializationFlags = customSerializationFlags;
+            this.GameSpecificOverride = gsOverride;
             ObjectVersion = objectVersion;
             ObjectVersionUE5 = objectVersionUE5;
             if (customVersionContainer != null) CustomVersionContainer = customVersionContainer;

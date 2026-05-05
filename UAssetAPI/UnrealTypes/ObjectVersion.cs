@@ -725,4 +725,13 @@ namespace UAssetAPI.UnrealTypes
         /// <summary>The newest specified version of UE5.</summary>
         AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
     }
+
+    /// <summary>
+    /// An enum used to represent game-specific overrides.
+    /// </summary>
+    public enum GameSpecificOverride
+    {
+        None = 0,
+        FarFarWest
+    }
 }

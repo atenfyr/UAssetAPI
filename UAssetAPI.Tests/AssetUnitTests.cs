@@ -333,26 +333,26 @@ namespace UAssetAPI.Tests
             }
         }
 
-        private void TestManyAssetsSubsection(string game, EngineVersion version, Usmap mappings = null)
+        private void TestManyAssetsSubsection(string game, EngineVersion version, Usmap mappings = null, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             string[] allTestingAssets = GetAllTestAssets(Path.Combine(TestFolder, "TestManyAssets", game));
             foreach (string assetPath in allTestingAssets)
             {
                 Console.WriteLine(assetPath);
-                var tester = new UAsset(assetPath, version, mappings);
+                var tester = new UAsset(assetPath, version, mappings, CustomSerializationFlags.None, gsOverride);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
             }
         }
 
-        private void TestSubsection(string game, string mainFolder, string subFolder, EngineVersion version, Usmap mappings = null)
+        private void TestSubsection(string game, string mainFolder, string subFolder, EngineVersion version, Usmap mappings = null, GameSpecificOverride gsOverride = GameSpecificOverride.None)
         {
             string[] allTestingAssets = GetAllTestAssets(Path.Combine(mainFolder, subFolder, game));
             foreach (string assetPath in allTestingAssets)
             {
                 Console.WriteLine(assetPath);
-                var tester = new UAsset(assetPath, version, mappings);
+                var tester = new UAsset(assetPath, version, mappings, CustomSerializationFlags.None, gsOverride);
                 Assert.IsTrue(tester.VerifyBinaryEquality());
                 AssertAllExportsParsedCorrectly(tester);
                 Console.WriteLine(tester.GetEngineVersion());
@@ -658,6 +658,7 @@ namespace UAssetAPI.Tests
         public void TestTraditionalUE5_7()
         {
             TestSubsection("NanosWorld", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "NanosWorld", "NanosWorld.usmap")));
+            TestSubsection("FarFarWest", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "FarFarWest", "FarFarWest.usmap")), GameSpecificOverride.FarFarWest);
         }
 
         /// <summary>
