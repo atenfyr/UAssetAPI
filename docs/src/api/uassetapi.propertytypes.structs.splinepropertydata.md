@@ -1,12 +1,12 @@
 # SplinePropertyData
 
-Namespace: UAssetAPI.PropertyTypes.Structs.Engine
+Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
 public class SplinePropertyData : UAssetAPI.PropertyTypes.Objects.PropertyData, System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [SplinePropertyData](./uassetapi.propertytypes.structs.engine.splinepropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [SplinePropertyData](./uassetapi.propertytypes.structs.splinepropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
 Attributes JsonObjectAttribute
 

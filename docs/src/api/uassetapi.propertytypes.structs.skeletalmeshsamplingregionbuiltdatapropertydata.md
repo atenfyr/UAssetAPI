@@ -1,12 +1,12 @@
 # SkeletalMeshSamplingRegionBuiltDataPropertyData
 
-Namespace: UAssetAPI.StructTypes
+Namespace: UAssetAPI.PropertyTypes.Structs
 
 ```csharp
 public class SkeletalMeshSamplingRegionBuiltDataPropertyData : UAssetAPI.PropertyTypes.Objects.BasePropertyData`1[[UAssetAPI.UnrealTypes.FSkeletalMeshSamplingRegionBuiltData]], System.ICloneable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSkeletalMeshSamplingRegionBuiltData&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BasePropertyData&lt;FSkeletalMeshSamplingRegionBuiltData&gt;](./uassetapi.propertytypes.objects.basepropertydata-1.md) → [SkeletalMeshSamplingRegionBuiltDataPropertyData](./uassetapi.structtypes.skeletalmeshsamplingregionbuiltdatapropertydata.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PropertyData](./uassetapi.propertytypes.objects.propertydata.md) → [PropertyData&lt;FSkeletalMeshSamplingRegionBuiltData&gt;](./uassetapi.propertytypes.objects.propertydata-1.md) → [BasePropertyData&lt;FSkeletalMeshSamplingRegionBuiltData&gt;](./uassetapi.propertytypes.objects.basepropertydata-1.md) → [SkeletalMeshSamplingRegionBuiltDataPropertyData](./uassetapi.propertytypes.structs.skeletalmeshsamplingregionbuiltdatapropertydata.md)<br>
 Implements [ICloneable](https://docs.microsoft.com/en-us/dotnet/api/system.icloneable)<br>
 Attributes JsonObjectAttribute
 

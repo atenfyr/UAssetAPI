@@ -2,7 +2,7 @@
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.PropertyTypes.Structs.Engine
+namespace UAssetAPI.PropertyTypes.Structs
 {
     public class SplinePropertyData : PropertyData
     {

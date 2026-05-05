@@ -1,7 +1,7 @@
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
-namespace UAssetAPI.StructTypes;
+namespace UAssetAPI.PropertyTypes.Structs;
 
 public class SkeletalMeshSamplingRegionBuiltDataPropertyData : BasePropertyData<FSkeletalMeshSamplingRegionBuiltData>
 {
