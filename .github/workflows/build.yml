@@ -1,0 +1,26 @@
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: .NET Setup
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Unit tests
+        run: dotnet test --no-restore --verbosity normal
