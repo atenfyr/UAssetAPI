@@ -1495,11 +1495,6 @@ namespace UAssetAPI
         public List<FGenerationInfo> Generations;
 
         /// <summary>
-        /// Number of generations. Automatically determined at write time.
-        /// </summary>
-        internal int GenerationCount;
-
-        /// <summary>
         /// Current ID for this package. Effectively unused.
         /// </summary>
         public Guid PackageGuid;
@@ -1879,7 +1874,7 @@ namespace UAssetAPI
             }
 
             Generations = new List<FGenerationInfo>();
-            GenerationCount = reader.ReadInt32();
+            int GenerationCount = reader.ReadInt32();
             if (GenerationCount < 0 || GenerationCount > 1e5) // failsafe for some specific games
             {
                 reader.BaseStream.Position -= sizeof(int) + 16;
@@ -2562,11 +2557,10 @@ namespace UAssetAPI
 
             if (GameSpecificOverride == GameSpecificOverride.FarFarWest)
             {
-                writer.Write(GenerationCount);
+                writer.Write(NameCount);
             }
             else
             {
-                GenerationCount = Generations.Count;
                 writer.Write(Generations.Count);
                 for (int i = 0; i < Generations.Count; i++)
                 {
