@@ -15,7 +15,7 @@ namespace UAssetAPI.UnrealTypes;
 /// The actual array index will be (-FPackageIndex - 1)
 /// </summary>
 [JsonConverter(typeof(FPackageIndexJsonConverter))]
-public class FPackageIndex
+public class FPackageIndex : IComparable
 {
     /// <summary>
     /// Values greater than zero indicate that this is an index into the ExportMap.
@@ -117,6 +117,12 @@ public class FPackageIndex
     {
         if (!(obj is FPackageIndex comparingPackageIndex)) return false;
         return comparingPackageIndex.Index == this.Index;
+    }
+
+    public int CompareTo(object obj)
+    {
+        if (!(obj is FPackageIndex comparingPackageIndex)) return 0;
+        return Index.CompareTo(comparingPackageIndex.Index);
     }
 
     public static bool operator <(FPackageIndex first, FPackageIndex second)
