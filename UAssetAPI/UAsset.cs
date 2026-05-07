@@ -970,7 +970,6 @@ namespace UAssetAPI
                 {
                     var uas = (UAsset)reader.Asset;
                     nextStarting = uas.BulkDataStartOffset;
-                    if (uas.SeaOfThievesGarbageData != null) nextStarting -= uas.SeaOfThievesGarbageData.Length;
                 }
 
                 FName exportClassTypeName = Exports[i].GetExportClassType();
@@ -1468,28 +1467,6 @@ namespace UAssetAPI
         public byte[] Trailer;
 
         /// <summary>
-        /// Some garbage data that appears to be present in certain games (e.g. Valorant)
-        /// </summary>
-        public byte[] ValorantGarbageData;
-
-        /// <summary>
-        /// Some garbage data that appears to be present in certain games (e.g. Sea of Thieves)
-        /// null = not present
-        /// empty array = present, but serialize as offset = 0, length = 0
-        /// </summary>
-        public byte[] SeaOfThievesGarbageData = null;
-
-        /// <summary>
-        /// Sea of Thieves garbage data offset
-        /// </summary>
-        internal int SeaOfThievesGarbageDataOffset = -1;
-
-        /// <summary>
-        /// Sea of Thieves garbage data length
-        /// </summary>
-        internal short SeaOfThievesGarbageDataLength = -1;
-
-        /// <summary>
         /// Data about previous versions of this package.
         /// </summary>
         public List<FGenerationInfo> Generations;
@@ -1875,13 +1852,6 @@ namespace UAssetAPI
 
             Generations = new List<FGenerationInfo>();
             int GenerationCount = reader.ReadInt32();
-            if (GenerationCount < 0 || GenerationCount > 1e5) // failsafe for some specific games
-            {
-                reader.BaseStream.Position -= sizeof(int) + 16;
-                ValorantGarbageData = reader.ReadBytes(8); // garbage data
-                PackageGuid = reader.ReadGuid();
-                GenerationCount = reader.ReadInt32();
-            }
             if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
             {
                 for (int i = 0; i < GenerationCount; i++)
@@ -1931,14 +1901,6 @@ namespace UAssetAPI
 
             AssetRegistryDataOffset = reader.ReadInt32();
             BulkDataStartOffset = reader.ReadInt64();
-            if (BulkDataStartOffset < -1e14 || BulkDataStartOffset > 1e14)
-            {
-                // probably Sea of Thieves, etc.
-                reader.BaseStream.Position -= sizeof(long);
-                SeaOfThievesGarbageDataOffset = reader.ReadInt32();
-                SeaOfThievesGarbageDataLength = reader.ReadInt16();
-                BulkDataStartOffset = reader.ReadInt64();
-            }
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
             {
@@ -2170,23 +2132,6 @@ namespace UAssetAPI
             else
             {
                 doWeHaveAssetRegistryData = false;
-            }
-
-            // SeaOfThievesGarbageData
-            if (SeaOfThievesGarbageDataOffset > 0 && SeaOfThievesGarbageDataLength > 0)
-            {
-                long before = reader.BaseStream.Position;
-                reader.BaseStream.Seek(SeaOfThievesGarbageDataOffset, SeekOrigin.Begin);
-                SeaOfThievesGarbageData = reader.ReadBytes(SeaOfThievesGarbageDataLength);
-                reader.BaseStream.Seek(before, SeekOrigin.Begin);
-            }
-            else if (SeaOfThievesGarbageDataOffset == 0 || SeaOfThievesGarbageDataLength == 0)
-            {
-                SeaOfThievesGarbageData = Array.Empty<byte>();
-            }
-            else
-            {
-                SeaOfThievesGarbageData = null;
             }
 
             AdditionalFiles = [];
@@ -2538,8 +2483,6 @@ namespace UAssetAPI
                 writer.Write(ImportTypeHierarchiesOffset);
             }
 
-            if (ValorantGarbageData != null && ValorantGarbageData.Length > 0) writer.Write(ValorantGarbageData);
-
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
             {
                 writer.Write(PackageGuid);
@@ -2604,19 +2547,6 @@ namespace UAssetAPI
             }
 
             writer.Write(AssetRegistryDataOffset);
-            if (SeaOfThievesGarbageData != null)
-            {
-                if (SeaOfThievesGarbageData.Length == 0)
-                {
-                    writer.Write((int)0);
-                    writer.Write((short)0);
-                }
-                else
-                {
-                    writer.Write((int)(BulkDataStartOffset - SeaOfThievesGarbageData.Length));
-                    writer.Write((short)SeaOfThievesGarbageData.Length);
-                }
-            }
             writer.Write(BulkDataStartOffset);
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_WORLD_LEVEL_INFO)
@@ -3088,9 +3018,6 @@ namespace UAssetAPI
                     }
                 }
 
-                // SeaOfThievesGarbageData
-                if (SeaOfThievesGarbageData != null && SeaOfThievesGarbageData.Length > 0) writer.Write(SeaOfThievesGarbageData);
-
                 this.BulkDataStartOffset = (int)writer.BaseStream.Position;
                 writer.Write(AdditionalFiles);
                 if (PayloadTocOffset > 0)
@@ -3115,7 +3042,6 @@ namespace UAssetAPI
                         else
                         {
                             nextStarting = this.BulkDataStartOffset;
-                            if (this.SeaOfThievesGarbageData != null) nextStarting -= this.SeaOfThievesGarbageData.Length;
                         }
 
                         us.SerialOffset = categoryStarts[i];
