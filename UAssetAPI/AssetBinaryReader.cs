@@ -100,11 +100,11 @@ public class UnrealBinaryReader : BinaryReader
             case < 0:
                 var len = -length * 2;
                 Span<byte> data = len < 512 ? stackalloc byte[len] : new byte[len];
-                BaseStream.Read(data);
+                BaseStream.ReadExactly(data);
                 return new FString(Encoding.Unicode.GetString(data[..^2]), Encoding.Unicode);
             case > 0:
                 data = length < 512 ? stackalloc byte[length] : new byte[length];
-                BaseStream.Read(data);
+                BaseStream.ReadExactly(data);
                 return new FString(Encoding.UTF8.GetString(data[..^1]), Encoding.UTF8);
             default:
                 return null;
@@ -120,7 +120,7 @@ public class UnrealBinaryReader : BinaryReader
                 throw new FormatException("Invalid UTF-8 string length");
             case > 0:
                 Span<byte> data = length < 512 ? stackalloc byte[length] : new byte[length];
-                BaseStream.Read(data);
+                BaseStream.ReadExactly(data);
                 return new FString(Encoding.UTF8.GetString(data), Encoding.UTF8);
             default:
                 return null;

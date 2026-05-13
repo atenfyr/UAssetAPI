@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
@@ -13,14 +16,14 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
-    public class UsmapSchemaPropertiesJsonConverter : JsonConverter<IReadOnlyDictionary<int, UsmapProperty>>
+    public class UsmapSchemaPropertiesJsonConverter : Newtonsoft.Json.JsonConverter<IReadOnlyDictionary<int, UsmapProperty>>
     {
-        public override IReadOnlyDictionary<int, UsmapProperty> ReadJson(JsonReader reader, Type objectType, IReadOnlyDictionary<int, UsmapProperty> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override IReadOnlyDictionary<int, UsmapProperty> ReadJson(JsonReader reader, Type objectType, IReadOnlyDictionary<int, UsmapProperty> existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
             return null;
         }
 
-        public override void WriteJson(JsonWriter writer, IReadOnlyDictionary<int, UsmapProperty> value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, IReadOnlyDictionary<int, UsmapProperty> value, Newtonsoft.Json.JsonSerializer serializer)
         {
             writer.WriteStartObject();
             foreach (KeyValuePair<int, UsmapProperty> entry in value)
@@ -226,14 +229,14 @@ namespace UAssetAPI.Unversioned
     public class UsmapProperty : ICloneable
     {
         public string Name;
-        public ushort SchemaIndex;
-        public ushort ArrayIndex; // not serialized
-        public byte ArraySize;
+        public int SchemaIndex;
+        public int ArrayIndex; // not serialized
+        public int ArraySize;
         [JsonConverter(typeof(StringEnumConverter))]
         public EPropertyFlags PropertyFlags;
         public UsmapPropertyData PropertyData;
 
-        public UsmapProperty(string name, ushort schemaIndex, ushort arrayIndex, byte arraySize, UsmapPropertyData propertyData)
+        public UsmapProperty(string name, int schemaIndex, int arrayIndex, int arraySize, UsmapPropertyData propertyData)
         {
             Name = name;
             SchemaIndex = schemaIndex;
@@ -270,55 +273,121 @@ namespace UAssetAPI.Unversioned
 
     public class UsmapSchema
     {
-        public string Name;
-        public string SuperType;
-        public string SuperTypeModulePath;
+        public string Name
+        {
+            get { PopulateIfNeeded(); return _Name; }
+            set { _Name = value; }
+        }
+        public string SuperType
+        {
+            get { PopulateIfNeeded(); return _SuperType; }
+            set { _SuperType = value; }
+        }
+        public string SuperTypeModulePath
+        {
+            get { PopulateIfNeeded(); return _SuperTypeModulePath; }
+            set { _SuperTypeModulePath = value; }
+        }
         [JsonIgnore]
-        public ushort PropCount;
-        public string ModulePath;
-        /// <summary>
-        /// Whether or not this schema was retrieved from a .uasset file.
-        /// </summary>
+        public int PropCount
+        {
+            get { PopulateIfNeeded(); return _PropCount; }
+            set { _PropCount = value; }
+        }
+        public string ModulePath
+        {
+            get { PopulateIfNeeded(); return _ModulePath; }
+            set { _ModulePath = value; }
+        }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public UsmapStructKind StructKind
+        {
+            get { PopulateIfNeeded(); return _StructKind; }
+            set { _StructKind = value; }
+        }
+        public int StructOrClassFlags
+        {
+            get { PopulateIfNeeded(); return _StructOrClassFlags; }
+            set { _StructOrClassFlags = value; }
+        }
         [JsonIgnore]
         public bool FromAsset = false;
 
+        [JsonIgnore]
+        private string _Name;
+        [JsonIgnore]
+        private string _SuperType;
+        [JsonIgnore]
+        private string _SuperTypeModulePath;
+        [JsonIgnore]
+        private int _PropCount;
+        [JsonIgnore]
+        private string _ModulePath;
+        [JsonIgnore]
+        private UsmapStructKind _StructKind;
+        [JsonIgnore]
+        private int _StructOrClassFlags;
+
         [JsonConverter(typeof(UsmapSchemaPropertiesJsonConverter))]
-        public IReadOnlyDictionary<int, UsmapProperty> Properties => properties;
+        public IReadOnlyDictionary<int, UsmapProperty> Properties { get { PopulateIfNeeded(); return propertiesInternal; } }
 
         [JsonIgnore]
-        private ConcurrentDictionary<int, UsmapProperty> properties;
+        internal ConcurrentDictionary<int, UsmapProperty> propertiesInternal;
         [JsonIgnore]
-        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
+        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> PropertiesMap { get { PopulateIfNeeded(); return _propertiesMap; } }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public UsmapStructKind StructKind;
-        public int StructOrClassFlags;
+        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> _propertiesMap;
+
+        [JsonIgnore]
+        internal string JmapPath = null;
+        [JsonIgnore]
+        internal long JmapOffset = -1;
+        [JsonIgnore]
+        internal long JmapSize = -1;
+        [JsonIgnore]
+        internal bool IsPopulated = false;
+        internal void PopulateIfNeeded()
+        {
+            if (!IsPopulated && JmapOffset >= 0 && JmapSize >= 0 && JmapPath != null)
+            {
+                using (FileStream fs = File.OpenRead(JmapPath))
+                {
+                    fs.Seek(JmapOffset, SeekOrigin.Begin);
+                    byte[] buffer = new byte[JmapSize];
+                    int bytesRead = fs.Read(buffer);
+                    JmapHelper.ReadSchema(Encoding.UTF8.GetString(buffer, 0, bytesRead), this);
+                }
+            }
+            IsPopulated = true;
+        }
 
         public UsmapProperty GetProperty(string key, int dupIndex)
         {
             var keyTuple = new Tuple<string, int>(key, dupIndex);
-            return propertiesMap.ContainsKey(keyTuple) ? propertiesMap[keyTuple] : null;
+            return PropertiesMap.ContainsKey(keyTuple) ? PropertiesMap[keyTuple] : null;
         }
 
         public void ConstructPropertiesMap(bool isCaseInsensitive)
         {
-            propertiesMap = new ConcurrentDictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
-            foreach (KeyValuePair<int, UsmapProperty> entry in properties)
+            _propertiesMap = new ConcurrentDictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
+            foreach (KeyValuePair<int, UsmapProperty> entry in propertiesInternal)
             {
-                propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
+                _propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
             }
         }
 
-        public UsmapSchema(string name, string superType, ushort propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, bool fromAsset = false)
+        public UsmapSchema(string name, string superType, int propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, bool fromAsset = false)
         {
             Name = name;
             SuperType = superType;
             SuperTypeModulePath = superTypeModulePath;
             PropCount = propCount;
-            properties = props;
+            propertiesInternal = props;
             FromAsset = fromAsset;
 
             ConstructPropertiesMap(isCaseInsensitive);
+
+            IsPopulated = true;
         }
 
         public UsmapSchema()
@@ -329,15 +398,64 @@ namespace UAssetAPI.Unversioned
 
     public class UsmapEnum
     {
-        public string Name;
-        public string ModulePath;
-        public int EnumFlags;
-        public ConcurrentDictionary<long, string> Values;
+        public string Name
+        {
+            get { PopulateIfNeeded(); return _Name; }
+            set { _Name = value; }
+        }
+        public string ModulePath
+        {
+            get { PopulateIfNeeded(); return _ModulePath; }
+            set { _ModulePath = value; }
+        }
+        public int EnumFlags
+        {
+            get { PopulateIfNeeded(); return _EnumFlags; }
+            set { _EnumFlags = value; }
+        }
+        public ConcurrentDictionary<long, string> Values
+        {
+            get { PopulateIfNeeded(); return _Values; }
+            set { _Values = value; }
+        }
+
+        [JsonIgnore]
+        private string _Name;
+        [JsonIgnore]
+        private string _ModulePath;
+        [JsonIgnore]
+        private int _EnumFlags;
+        [JsonIgnore]
+        internal ConcurrentDictionary<long, string> _Values;
+
+        [JsonIgnore]
+        internal string JmapPath = null;
+        [JsonIgnore]
+        internal long JmapOffset = -1;
+        [JsonIgnore]
+        internal long JmapSize = -1;
+        [JsonIgnore]
+        internal bool IsPopulated = false;
+        internal void PopulateIfNeeded()
+        {
+            if (!IsPopulated && JmapOffset >= 0 && JmapSize >= 0 && JmapPath != null)
+            {
+                using (FileStream fs = File.OpenRead(JmapPath))
+                {
+                    fs.Seek(JmapOffset, SeekOrigin.Begin);
+                    byte[] buffer = new byte[JmapSize];
+                    int bytesRead = fs.Read(buffer);
+                    JmapHelper.ReadEnum(Encoding.UTF8.GetString(buffer, 0, bytesRead), this);
+                }
+            }
+            IsPopulated = true;
+        }
 
         public UsmapEnum(string name, ConcurrentDictionary<long, string> values)
         {
             Name = name;
             Values = values;
+            IsPopulated = true;
         }
 
         public UsmapEnum()
@@ -665,7 +783,7 @@ namespace UAssetAPI.Unversioned
             {
                 foreach (FProperty entry in exp.LoadedProperties)
                 {
-                    UsmapProperty converted = new UsmapProperty(entry.Name.ToString(), (ushort)idx, 0, 1, ConvertFPropertyToUsmapPropertyData(exp, entry));
+                    UsmapProperty converted = new UsmapProperty(entry.Name.ToString(), idx, 0, 1, ConvertFPropertyToUsmapPropertyData(exp, entry));
                     res[idx] = converted;
                     idx++;
                 }
@@ -693,7 +811,7 @@ namespace UAssetAPI.Unversioned
                 {
                     if (entry.ToExport(exp.Asset) is not PropertyExport field) continue;
 
-                    UsmapProperty converted = new UsmapProperty(field.ObjectName.ToString(), (ushort)idx, 0, 1, ConvertUPropertyToUsmapPropertyData(field));
+                    UsmapProperty converted = new UsmapProperty(field.ObjectName.ToString(), idx, 0, 1, ConvertUPropertyToUsmapPropertyData(field));
                     res[idx] = converted;
                     idx++;
                 }
@@ -701,7 +819,7 @@ namespace UAssetAPI.Unversioned
 
             string ssName = exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null;
             string ssPath = (exp.SuperStruct.IsImport() && exp.SuperStruct.ToImport(exp.Asset).OuterIndex.IsImport()) ? exp.SuperStruct.ToImport(exp.Asset).OuterIndex.ToImport(exp.Asset).ObjectName.ToString() : null;
-            return new UsmapSchema(exp.ObjectName.ToString(), ssName, (ushort)res.Count, res, isCaseInsensitive, ssPath, true);
+            return new UsmapSchema(exp.ObjectName.ToString(), ssName, res.Count, res, isCaseInsensitive, ssPath, true);
         }
 
         /// <summary>
@@ -954,7 +1072,7 @@ namespace UAssetAPI.Unversioned
             }
         }
 
-        private UsmapPropertyData InitPropData(EPropertyType typ)
+        internal static UsmapPropertyData InitPropData(EPropertyType typ)
         {
             switch (typ)
             {
@@ -1215,6 +1333,205 @@ namespace UAssetAPI.Unversioned
             }
         }
 
+        private bool ReadToken(ref Utf8JsonReader reader, ref byte[] buffer, FileStream fs, ref long bytesNotInBuffer)
+        {
+            bool success = false;
+            try
+            {
+                success = reader.Read();
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                success = false;
+            }
+
+            if (!success)
+            {
+                JsonReaderState state = reader.CurrentState;
+
+                long startIdx = reader.BytesConsumed;
+                long numberOfBytesToPreserve = buffer.LongLength - startIdx;
+                long numberOfBytesToRead = buffer.LongLength - numberOfBytesToPreserve;
+
+                Array.Copy(buffer, startIdx, buffer, 0, numberOfBytesToPreserve);
+                int bytesRead = fs.Read(buffer, (int)numberOfBytesToPreserve, (int)numberOfBytesToRead);
+                if (bytesRead == 0) return false;
+
+                reader = new Utf8JsonReader(buffer.AsSpan(0, (int)(numberOfBytesToPreserve + bytesRead)), bytesRead < numberOfBytesToRead, state);
+
+                bytesNotInBuffer += startIdx;
+
+                return reader.Read();
+            }
+            return true;
+        }
+
+        private bool SkipToken(ref Utf8JsonReader reader, ref byte[] buffer, FileStream fs, ref long bytesNotInBuffer)
+        {
+            bool success = false;
+            try
+            {
+                success = reader.TrySkip();
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                success = false;
+            }
+
+            if (!success)
+            {
+                JsonReaderState state = reader.CurrentState;
+
+                long startIdx = reader.BytesConsumed;
+                long numberOfBytesToPreserve = buffer.LongLength - startIdx;
+                long numberOfBytesToRead = buffer.LongLength - numberOfBytesToPreserve;
+
+                Array.Copy(buffer, startIdx, buffer, 0, numberOfBytesToPreserve);
+                int bytesRead = fs.Read(buffer, (int)numberOfBytesToPreserve, (int)numberOfBytesToRead);
+                if (bytesRead == 0) return false;
+
+                reader = new Utf8JsonReader(buffer.AsSpan(0, (int)(numberOfBytesToPreserve + bytesRead)), bytesRead < numberOfBytesToRead, state);
+
+                bytesNotInBuffer += startIdx;
+
+                return reader.TrySkip();
+            }
+            return true;
+        }
+
+        public void ReadJMAP(string path)
+        {
+            EnumMap = new ConcurrentDictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+            Schemas = new ConcurrentDictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+
+            using (FileStream fs = File.OpenRead(path))
+            {
+                byte[] buffer = new byte[1024 * 1024 * 10]; // 10 MB buffer, we assume no object is larger than this
+                int bytesRead = fs.Read(buffer);
+
+                long bytesNotInBuffer = 0;
+                var reader = new Utf8JsonReader(buffer.AsSpan(0, bytesRead), bytesRead < buffer.Length, state: default);
+
+                while (ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer))
+                {
+                    if (reader.TokenType == JsonTokenType.PropertyName)
+                    {
+                        string topLevelName = reader.GetString();
+                        switch(topLevelName)
+                        {
+                            case "metadata":
+                                ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                if (reader.TokenType != JsonTokenType.StartObject) throw new System.Text.Json.JsonException();
+                                while (ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer) && reader.TokenType != JsonTokenType.EndObject)
+                                {
+                                    if (reader.TokenType != JsonTokenType.PropertyName) throw new System.Text.Json.JsonException();
+                                    string metadataEntryName = reader.GetString();
+                                    ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+
+                                    switch (metadataEntryName)
+                                    {
+                                        case "engine_version":
+                                            int major = -1;
+                                            int minor = -1;
+
+                                            if (reader.TokenType != JsonTokenType.StartObject) throw new System.Text.Json.JsonException();
+                                            while (ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer) && reader.TokenType != JsonTokenType.EndObject)
+                                            {
+                                                if (reader.TokenType != JsonTokenType.PropertyName) throw new System.Text.Json.JsonException();
+                                                string engineVersionEntryName = reader.GetString();
+
+                                                switch(engineVersionEntryName)
+                                                {
+                                                    case "major":
+                                                        ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                                        if (reader.TokenType != JsonTokenType.Number) throw new System.Text.Json.JsonException();
+                                                        major = reader.GetInt32();
+                                                        break;
+                                                    case "minor":
+                                                        ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                                        if (reader.TokenType != JsonTokenType.Number) throw new System.Text.Json.JsonException();
+                                                        minor = reader.GetInt32();
+                                                        break;
+                                                    default:
+                                                        SkipToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                                        break;
+                                                }
+                                            }
+
+                                            if (major >= 0 && minor >= 0)
+                                            {
+                                                EngineVersion newVersion = EngineVersion.UNKNOWN;
+                                                if (major == 4)
+                                                {
+                                                    newVersion = EngineVersion.VER_UE4_0 + minor;
+                                                }
+                                                else if (major == 5)
+                                                {
+                                                    newVersion = EngineVersion.VER_UE5_0 + minor;
+                                                }
+
+                                                if (newVersion != EngineVersion.UNKNOWN)
+                                                {
+                                                    if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE4VersionToObjectVersion bridgeVer))
+                                                    {
+                                                        this.FileVersionUE4 = (ObjectVersion)(int)bridgeVer;
+
+                                                        if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE5VersionToObjectVersion bridgeVer2))
+                                                        {
+                                                            this.FileVersionUE5 = (ObjectVersionUE5)(int)bridgeVer2;
+                                                        }
+
+                                                        this.CustomVersionContainer = UAsset.GetDefaultCustomVersionContainer(newVersion);
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            SkipToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                            break;
+                                    }
+                                }
+                                break;
+                            case "objects":
+                                ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                if (reader.TokenType != JsonTokenType.StartObject) throw new System.Text.Json.JsonException();
+                                while (ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer) && reader.TokenType != JsonTokenType.EndObject)
+                                {
+                                    // now at a schema name
+                                    if (reader.TokenType != JsonTokenType.PropertyName) throw new System.Text.Json.JsonException();
+                                    string schemaName = reader.GetString();
+                                    ReadToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+
+                                    // now at the start of the object, record offset and skip it
+                                    if (reader.TokenType != JsonTokenType.StartObject) throw new System.Text.Json.JsonException();
+                                    long offset = reader.TokenStartIndex + bytesNotInBuffer;
+                                    SkipToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
+                                    long size = reader.TokenStartIndex + bytesNotInBuffer - offset + 1; // add one to include the end object token
+
+                                    // store
+                                    string schemaNameNoPath = schemaName;
+                                    string modulePath = null;
+                                    if (schemaName.Contains("."))
+                                    {
+                                        schemaNameNoPath = schemaName.Substring(schemaName.LastIndexOf('.') + 1);
+                                        modulePath = schemaName.Substring(0, schemaName.LastIndexOf('.'));
+                                    }
+
+                                    Schemas[schemaName] = new UsmapSchema() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false };
+                                    EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false };
+                                    Schemas[schemaNameNoPath] = Schemas[schemaName];
+                                    EnumMap[schemaNameNoPath] = EnumMap[schemaName];
+                                }
+                                break;
+                            default:
+                                SkipToken(ref reader, ref buffer, fs, ref bytesNotInBuffer); // will skip both name and value
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Patches a .usmap file in-situ to contain versioning info.
         /// </summary>
@@ -1291,14 +1608,21 @@ namespace UAssetAPI.Unversioned
         }
 
         /// <summary>
-        /// Reads a .usmap file from disk and initializes a new instance of the <see cref="Usmap"/> class to store its data in memory.
+        /// Reads a .usmap or .jmap file from disk and initializes a new instance of the <see cref="Usmap"/> class to store its data in memory.
         /// </summary>
         /// <param name="path">The path of the file file on disk that this instance will read from.</param>
         /// <exception cref="FormatException">Throw when the file cannot be parsed correctly.</exception>
         public Usmap(string path)
         {
             this.FilePath = path;
-            Read(PathToReader(path));
+            if (Path.GetExtension(path) == ".jmap")
+            {
+                ReadJMAP(path);
+            }
+            else
+            {
+                Read(PathToReader(path));
+            }
         }
 
         /// <summary>
