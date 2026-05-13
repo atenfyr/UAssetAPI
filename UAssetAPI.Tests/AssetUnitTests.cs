@@ -658,6 +658,7 @@ namespace UAssetAPI.Tests
         public void TestTraditionalUE5_7()
         {
             TestSubsection("NanosWorld", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "NanosWorld", "NanosWorld.usmap")));
+            TestSubsection("FarFarWest", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "FarFarWest", "FarFarWest.usmap")));
         }
 
         /// <summary>
