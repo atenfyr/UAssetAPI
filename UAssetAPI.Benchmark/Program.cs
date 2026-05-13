@@ -108,12 +108,10 @@ namespace UAssetAPI.Benchmark
                     timer.Restart();
                     foreach (string assetPath in allTestingAssets2)
                     {
-                        if (Path.GetExtension(assetPath) == ".usmap")
+                        if (Path.GetExtension(assetPath) == ".usmap" || Path.GetExtension(assetPath) == ".jmap")
                         {
                             timer.Start();
-                            mappings = new Usmap();
-                            mappings.SkipBlueprintSchemas = true;
-                            mappings.Read(mappings.PathToReader(assetPath));
+                            mappings = new Usmap(assetPath);
                             timer.Stop();
                             Console.WriteLine("Mappings parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms");
                             break;
