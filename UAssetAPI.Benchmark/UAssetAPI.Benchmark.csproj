@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{A74E7E85-1797-477C-AEC1-583AE7D109D0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>UAssetAPI.Benchmark</AssemblyTitle>
     <Product>UAssetAPI.Benchmark</Product>
@@ -81,6 +81,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 </Project>
