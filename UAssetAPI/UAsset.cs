@@ -1852,14 +1852,11 @@ namespace UAssetAPI
 
             Generations = new List<FGenerationInfo>();
             int GenerationCount = reader.ReadInt32();
-            if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
+            for (int i = 0; i < GenerationCount; i++)
             {
-                for (int i = 0; i < GenerationCount; i++)
-                {
-                    int genNumExports = reader.ReadInt32();
-                    int genNumNames = reader.ReadInt32();
-                    Generations.Add(new FGenerationInfo(genNumExports, genNumNames));
-                }
+                int genNumExports = reader.ReadInt32();
+                int genNumNames = reader.ReadInt32();
+                Generations.Add(new FGenerationInfo(genNumExports, genNumNames));
             }
 
             if (ObjectVersion >= ObjectVersion.VER_UE4_ENGINE_VERSION_OBJECT)
@@ -2312,13 +2309,10 @@ namespace UAssetAPI
                 }
             }
 
-            if (GameSpecificOverride != GameSpecificOverride.FarFarWest)
+            if (ImportTypeHierarchiesOffset > 0)
             {
-                if (ImportTypeHierarchiesOffset > 0)
-                {
-                    reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
-                    ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
-                }
+                reader.BaseStream.Seek(ImportTypeHierarchiesOffset, SeekOrigin.Begin);
+                ImportTypeHierarchies = reader.ReadMap(ImportTypeHierarchiesCount, () => new FPackageIndex(reader), () => new FImportTypeHierarchy(reader));
             }
 
             // Thumbnails
@@ -2501,20 +2495,13 @@ namespace UAssetAPI
                 }
             }
 
-            if (GameSpecificOverride == GameSpecificOverride.FarFarWest)
+            writer.Write(Generations.Count);
+            for (int i = 0; i < Generations.Count; i++)
             {
-                writer.Write(NameCount);
-            }
-            else
-            {
-                writer.Write(Generations.Count);
-                for (int i = 0; i < Generations.Count; i++)
-                {
-                    Generations[i].ExportCount = ExportCount;
-                    Generations[i].NameCount = NameCount;
-                    writer.Write(Generations[i].ExportCount);
-                    writer.Write(Generations[i].NameCount);
-                }
+                Generations[i].ExportCount = ExportCount;
+                Generations[i].NameCount = NameCount;
+                writer.Write(Generations[i].ExportCount);
+                writer.Write(Generations[i].NameCount);
             }
 
 
@@ -2809,30 +2796,21 @@ namespace UAssetAPI
                     SearchableNamesOffset = 0;
                 }
 
-                if (GameSpecificOverride == GameSpecificOverride.FarFarWest)
+                if (ImportTypeHierarchies != null)
                 {
-                    // TODO: true identities of these fields are still unknown
-                    //ImportTypeHierarchiesOffset = 1;
-                    //ImportTypeHierarchiesCount = 1;
+                    ImportTypeHierarchiesOffset = (int)writer.BaseStream.Position;
+                    ImportTypeHierarchiesCount = ImportTypeHierarchies.Count;
+
+                    foreach (var kvp in ImportTypeHierarchies)
+                    {
+                        kvp.Key.Write(writer);
+                        kvp.Value.Write(writer);
+                    }
                 }
                 else
                 {
-                    if (ImportTypeHierarchies != null)
-                    {
-                        ImportTypeHierarchiesOffset = (int)writer.BaseStream.Position;
-                        ImportTypeHierarchiesCount = ImportTypeHierarchies.Count;
-
-                        foreach (var kvp in ImportTypeHierarchies)
-                        {
-                            kvp.Key.Write(writer);
-                            kvp.Value.Write(writer);
-                        }
-                    }
-                    else
-                    {
-                        ImportTypeHierarchiesOffset = 0;
-                        ImportTypeHierarchiesCount = 0;
-                    }
+                    ImportTypeHierarchiesOffset = 0;
+                    ImportTypeHierarchiesCount = 0;
                 }
 
                 if (!IsFilterEditorOnly && Thumbnails != null)

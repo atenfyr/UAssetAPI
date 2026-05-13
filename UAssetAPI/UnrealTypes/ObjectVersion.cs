@@ -731,7 +731,6 @@ namespace UAssetAPI.UnrealTypes
     /// </summary>
     public enum GameSpecificOverride
     {
-        None = 0,
-        FarFarWest
+        None = 0
     }
 }
