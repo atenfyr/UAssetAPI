@@ -10,57 +10,83 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Fields
 
-### **Name**
-
-```csharp
-public string Name;
-```
-
-### **SuperType**
-
-```csharp
-public string SuperType;
-```
-
-### **SuperTypeModulePath**
-
-```csharp
-public string SuperTypeModulePath;
-```
-
-### **PropCount**
-
-```csharp
-public ushort PropCount;
-```
-
-### **ModulePath**
-
-```csharp
-public string ModulePath;
-```
-
 ### **FromAsset**
-
-Whether or not this schema was retrieved from a .uasset file.
 
 ```csharp
 public bool FromAsset;
 ```
 
+## Properties
+
+### **Name**
+
+```csharp
+public string Name { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **SuperType**
+
+```csharp
+public string SuperType { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **SuperTypeModulePath**
+
+```csharp
+public string SuperTypeModulePath { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+### **PropCount**
+
+```csharp
+public int PropCount { get; set; }
+```
+
+#### Property Value
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **ModulePath**
+
+```csharp
+public string ModulePath { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ### **StructKind**
 
 ```csharp
-public UsmapStructKind StructKind;
+public UsmapStructKind StructKind { get; set; }
 ```
+
+#### Property Value
+
+[UsmapStructKind](./uassetapi.unversioned.usmapstructkind.md)<br>
 
 ### **StructOrClassFlags**
 
 ```csharp
-public int StructOrClassFlags;
+public int StructOrClassFlags { get; set; }
 ```
 
-## Properties
+#### Property Value
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ### **Properties**
 
@@ -74,10 +100,10 @@ public IReadOnlyDictionary<int, UsmapProperty> Properties { get; }
 
 ## Constructors
 
-### **UsmapSchema(String, String, UInt16, ConcurrentDictionary&lt;Int32, UsmapProperty&gt;, Boolean, String, Boolean)**
+### **UsmapSchema(String, String, Int32, ConcurrentDictionary&lt;Int32, UsmapProperty&gt;, Boolean, String, Boolean)**
 
 ```csharp
-public UsmapSchema(string name, string superType, ushort propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, bool fromAsset)
+public UsmapSchema(string name, string superType, int propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, bool fromAsset)
 ```
 
 #### Parameters
@@ -86,7 +112,7 @@ public UsmapSchema(string name, string superType, ushort propCount, ConcurrentDi
 
 `superType` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`propCount` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
+`propCount` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 `props` ConcurrentDictionary&lt;Int32, UsmapProperty&gt;<br>
 

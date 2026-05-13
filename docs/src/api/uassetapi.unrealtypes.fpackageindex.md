@@ -11,10 +11,11 @@ Wrapper for index into an ImportMap or ExportMap.
  The actual array index will be (-FPackageIndex - 1)
 
 ```csharp
-public class FPackageIndex
+public class FPackageIndex : System.IComparable
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [FPackageIndex](./uassetapi.unrealtypes.fpackageindex.md)<br>
+Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable)<br>
 Attributes JsonConverterAttribute
 
 ## Fields
@@ -235,6 +236,20 @@ public bool Equals(object obj)
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **CompareTo(Object)**
+
+```csharp
+public int CompareTo(object obj)
+```
+
+#### Parameters
+
+`obj` [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ### **GetHashCode()**
 

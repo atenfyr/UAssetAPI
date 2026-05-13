@@ -352,24 +352,6 @@ public Byte[] AdditionalFiles;
 public Byte[] Trailer;
 ```
 
-### **ValorantGarbageData**
-
-Some garbage data that appears to be present in certain games (e.g. Valorant)
-
-```csharp
-public Byte[] ValorantGarbageData;
-```
-
-### **SeaOfThievesGarbageData**
-
-Some garbage data that appears to be present in certain games (e.g. Sea of Thieves)
- null = not present
- empty array = present, but serialize as offset = 0, length = 0
-
-```csharp
-public Byte[] SeaOfThievesGarbageData;
-```
-
 ### **Generations**
 
 Data about previous versions of this package.

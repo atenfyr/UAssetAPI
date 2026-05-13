@@ -128,7 +128,7 @@ public bool AreFNamesCaseInsensitive { get; set; }
 
 ### **Usmap(String)**
 
-Reads a .usmap file from disk and initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class to store its data in memory.
+Reads a .usmap or .jmap file from disk and initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class to store its data in memory.
 
 ```csharp
 public Usmap(string path)
@@ -431,6 +431,16 @@ public void Read(UsmapBinaryReader compressedReader)
 #### Parameters
 
 `compressedReader` [UsmapBinaryReader](./uassetapi.usmapbinaryreader.md)<br>
+
+### **ReadJMAP(String)**
+
+```csharp
+public void ReadJMAP(string path)
+```
+
+#### Parameters
+
+`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 ### **PatchUsmapWithVersion(String, EngineVersion)**
 

@@ -20,19 +20,19 @@ public string Name;
 ### **SchemaIndex**
 
 ```csharp
-public ushort SchemaIndex;
+public int SchemaIndex;
 ```
 
 ### **ArrayIndex**
 
 ```csharp
-public ushort ArrayIndex;
+public int ArrayIndex;
 ```
 
 ### **ArraySize**
 
 ```csharp
-public byte ArraySize;
+public int ArraySize;
 ```
 
 ### **PropertyFlags**
@@ -49,21 +49,21 @@ public UsmapPropertyData PropertyData;
 
 ## Constructors
 
-### **UsmapProperty(String, UInt16, UInt16, Byte, UsmapPropertyData)**
+### **UsmapProperty(String, Int32, Int32, Int32, UsmapPropertyData)**
 
 ```csharp
-public UsmapProperty(string name, ushort schemaIndex, ushort arrayIndex, byte arraySize, UsmapPropertyData propertyData)
+public UsmapProperty(string name, int schemaIndex, int arrayIndex, int arraySize, UsmapPropertyData propertyData)
 ```
 
 #### Parameters
 
 `name` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`schemaIndex` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
+`schemaIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-`arrayIndex` [UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
+`arrayIndex` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
-`arraySize` [Byte](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+`arraySize` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 `propertyData` [UsmapPropertyData](./uassetapi.unversioned.usmappropertydata.md)<br>
 

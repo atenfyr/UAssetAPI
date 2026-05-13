@@ -8,31 +8,47 @@ public class UsmapEnum
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UsmapEnum](./uassetapi.unversioned.usmapenum.md)
 
-## Fields
+## Properties
 
 ### **Name**
 
 ```csharp
-public string Name;
+public string Name { get; set; }
 ```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 ### **ModulePath**
 
 ```csharp
-public string ModulePath;
+public string ModulePath { get; set; }
 ```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 ### **EnumFlags**
 
 ```csharp
-public int EnumFlags;
+public int EnumFlags { get; set; }
 ```
+
+#### Property Value
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ### **Values**
 
 ```csharp
-public ConcurrentDictionary<long, string> Values;
+public ConcurrentDictionary<long, string> Values { get; set; }
 ```
+
+#### Property Value
+
+ConcurrentDictionary&lt;Int64, String&gt;<br>
 
 ## Constructors
 

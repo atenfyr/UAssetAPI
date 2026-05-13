@@ -2,7 +2,7 @@
 
 ### Prerequisites
 * Basic C# knowledge
-* Visual Studio 2022 or later, with .NET 8.0 SDK
+* Visual Studio 2026 or later, with .NET 10.0 SDK
 
 ### Basic Project Setup
 In this short guide, we will go over the very basics of parsing assets through UAssetAPI.
