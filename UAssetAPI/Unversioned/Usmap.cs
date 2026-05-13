@@ -329,12 +329,14 @@ namespace UAssetAPI.Unversioned
         private int _StructOrClassFlags;
 
         [JsonConverter(typeof(UsmapSchemaPropertiesJsonConverter))]
-        public IReadOnlyDictionary<int, UsmapProperty> Properties => propertiesInternal;
+        public IReadOnlyDictionary<int, UsmapProperty> Properties { get { PopulateIfNeeded(); return propertiesInternal; } }
 
         [JsonIgnore]
         internal ConcurrentDictionary<int, UsmapProperty> propertiesInternal;
         [JsonIgnore]
-        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> propertiesMap;
+        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> PropertiesMap { get { PopulateIfNeeded(); return _propertiesMap; } }
+
+        private ConcurrentDictionary<Tuple<string, int>, UsmapProperty> _propertiesMap;
 
         [JsonIgnore]
         internal string JmapPath = null;
@@ -362,15 +364,15 @@ namespace UAssetAPI.Unversioned
         public UsmapProperty GetProperty(string key, int dupIndex)
         {
             var keyTuple = new Tuple<string, int>(key, dupIndex);
-            return propertiesMap.ContainsKey(keyTuple) ? propertiesMap[keyTuple] : null;
+            return PropertiesMap.ContainsKey(keyTuple) ? PropertiesMap[keyTuple] : null;
         }
 
         public void ConstructPropertiesMap(bool isCaseInsensitive)
         {
-            propertiesMap = new ConcurrentDictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
+            _propertiesMap = new ConcurrentDictionary<Tuple<string, int>, UsmapProperty>(new PropertyMapComparer { Comparer = isCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture });
             foreach (KeyValuePair<int, UsmapProperty> entry in propertiesInternal)
             {
-                propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
+                _propertiesMap[new Tuple<string, int>(entry.Value.Name, entry.Value.ArrayIndex)] = entry.Value;
             }
         }
 
@@ -424,7 +426,7 @@ namespace UAssetAPI.Unversioned
         [JsonIgnore]
         private int _EnumFlags;
         [JsonIgnore]
-        private ConcurrentDictionary<long, string> _Values;
+        internal ConcurrentDictionary<long, string> _Values;
 
         [JsonIgnore]
         internal string JmapPath = null;
@@ -438,7 +440,13 @@ namespace UAssetAPI.Unversioned
         {
             if (!IsPopulated && JmapOffset >= 0 && JmapSize >= 0 && JmapPath != null)
             {
-                // TODO
+                using (FileStream fs = File.OpenRead(JmapPath))
+                {
+                    fs.Seek(JmapOffset, SeekOrigin.Begin);
+                    byte[] buffer = new byte[JmapSize];
+                    int bytesRead = fs.Read(buffer);
+                    JmapHelper.ReadEnum(Encoding.UTF8.GetString(buffer, 0, bytesRead), this);
+                }
             }
             IsPopulated = true;
         }
@@ -1064,7 +1072,7 @@ namespace UAssetAPI.Unversioned
             }
         }
 
-        internal UsmapPropertyData InitPropData(EPropertyType typ)
+        internal static UsmapPropertyData InitPropData(EPropertyType typ)
         {
             switch (typ)
             {
@@ -1522,9 +1530,6 @@ namespace UAssetAPI.Unversioned
                     }
                 }
             }
-
-            // just for testing
-            Debug.WriteLine(Schemas["ItemComponent"].SuperType.ToString());
         }
 
         /// <summary>

@@ -419,6 +419,10 @@ namespace UAssetAPI
                 }
 
                 UsmapSchema relevantSchema = reader.Asset.Mappings.GetSchemaFromName(parentName?.ToString(), reader.Asset, parentModulePath?.ToString());
+#if DEBUG || DEBUGVERBOSE || DEBUGTRACING
+                UsmapSchema originalSchemaForAnalysis = reader.Asset.Mappings.GetSchemaFromName(parentName?.ToString(), reader.Asset, parentModulePath?.ToString());
+#endif
+
                 while (header.UnversionedPropertyIndex > header.CurrentFragment.Value.LastNum)
                 {
                     if (header.CurrentFragment.Value.bIsLast) return null;

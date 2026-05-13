@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -9,16 +8,11 @@ namespace UAssetAPI.Unversioned
     // note that the following classes do not necessarily explicitly specify all the fields that jmap actually serializes, only fields relevant to us
     // all other fields are serialized in the Other dictionary
 
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-    [JsonDerivedType(typeof(JmapObject), typeDiscriminator: "Object")]
-    [JsonDerivedType(typeof(JmapPackage), typeDiscriminator: "Package")]
-    [JsonDerivedType(typeof(JmapStruct), typeDiscriminator: "Struct")] // this is non-standard, type discriminator "Struct" does not actually exist in jmap
-    [JsonDerivedType(typeof(JmapScriptStruct), typeDiscriminator: "ScriptStruct")]
-    [JsonDerivedType(typeof(JmapClass), typeDiscriminator: "Class")]
-    [JsonDerivedType(typeof(JmapFunction), typeDiscriminator: "Function")]
-    [JsonDerivedType(typeof(JmapEnum), typeDiscriminator: "Enum")]
-    public class JmapObject
+    public class JmapObjectBase
     {
+        [JsonIgnore]
+        public string Type;
+
         // from Object
         [JsonPropertyName("address")]
         [JsonInclude]
@@ -42,13 +36,18 @@ namespace UAssetAPI.Unversioned
         public IDictionary<string, object> Other;
     }
 
-    public class JmapPackage : JmapObject
+    public class JmapObject : JmapObjectBase
+    {
+
+    }
+
+    public class JmapPackage : JmapObjectBase
     {
         // from Package
         // (none)
     }
 
-    public class JmapStruct : JmapObject
+    public class JmapStruct : JmapObjectBase
     {
         // from Struct
         [JsonPropertyName("super_struct")]
@@ -56,7 +55,7 @@ namespace UAssetAPI.Unversioned
         public string SuperStruct;
         [JsonPropertyName("properties")]
         [JsonInclude]
-        public List<JmapProperty> Properties;
+        public List<JmapPropertyBase> Properties;
     }
 
     public class JmapScriptStruct : JmapStruct
@@ -77,7 +76,7 @@ namespace UAssetAPI.Unversioned
         // (all these fields left unserialized)
     }
 
-    public class JmapEnum : JmapObject
+    public class JmapEnum : JmapObjectBase
     {
         // from Enum
         [JsonPropertyName("cpp_type")]
@@ -95,24 +94,11 @@ namespace UAssetAPI.Unversioned
         public Dictionary<long, string> Values;
     }
 
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type", UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToBaseType)]
-    [JsonDerivedType(typeof(JmapProperty), typeDiscriminator: "Property")] // "Property" type discriminator is non-standard
-    [JsonDerivedType(typeof(JmapStructProperty), typeDiscriminator: "StructProperty")]
-    [JsonDerivedType(typeof(JmapArrayProperty), typeDiscriminator: "ArrayProperty")]
-    [JsonDerivedType(typeof(JmapEnumProperty), typeDiscriminator: "EnumProperty")]
-    [JsonDerivedType(typeof(JmapMapProperty), typeDiscriminator: "MapProperty")]
-    [JsonDerivedType(typeof(JmapSetProperty), typeDiscriminator: "SetProperty")]
-    [JsonDerivedType(typeof(JmapByteProperty), typeDiscriminator: "ByteProperty")]
-    [JsonDerivedType(typeof(JmapObjectProperty), typeDiscriminator: "ObjectProperty")]
-    [JsonDerivedType(typeof(JmapClassProperty), typeDiscriminator: "ClassProperty")]
-    [JsonDerivedType(typeof(JmapWeakObjectProperty), typeDiscriminator: "WeakObjectProperty")]
-    [JsonDerivedType(typeof(JmapSoftObjectProperty), typeDiscriminator: "SoftObjectProperty")]
-    [JsonDerivedType(typeof(JmapSoftClassProperty), typeDiscriminator: "SoftClassProperty")]
-    [JsonDerivedType(typeof(JmapLazyObjectProperty), typeDiscriminator: "LazyObjectProperty")]
-    [JsonDerivedType(typeof(JmapInterfaceProperty), typeDiscriminator: "InterfaceProperty")]
-    [JsonDerivedType(typeof(JmapOptionalProperty), typeDiscriminator: "OptionalProperty")]
-    public class JmapProperty
+    public class JmapPropertyBase
     {
+        [JsonIgnore]
+        public string Type;
+
         [JsonPropertyName("address")]
         [JsonInclude]
         public string Address;
@@ -132,87 +118,67 @@ namespace UAssetAPI.Unversioned
         public IDictionary<string, object> Other;
     }
 
-    public class JmapStructProperty : JmapProperty
+    public class JmapProperty : JmapPropertyBase
+    {
+
+    }
+
+    public class JmapStructProperty : JmapPropertyBase
     {
         [JsonPropertyName("struct")]
         [JsonInclude]
         public string Struct;
     }
 
-    public class JmapArrayProperty : JmapProperty
+    public class JmapArrayProperty : JmapPropertyBase
     {
         [JsonPropertyName("inner")]
         [JsonInclude]
-        public JmapProperty Inner;
+        public JmapPropertyBase Inner;
     }
 
-    public class JmapEnumProperty : JmapProperty
+    public class JmapEnumProperty : JmapPropertyBase
     {
         [JsonPropertyName("container")]
         [JsonInclude]
-        public JmapProperty Container;
+        public JmapPropertyBase Container;
         [JsonPropertyName("enum")]
         [JsonInclude]
         public string Enum;
     }
 
-    public class JmapMapProperty : JmapProperty
+    public class JmapMapProperty : JmapPropertyBase
     {
         [JsonPropertyName("key_prop")]
         [JsonInclude]
-        public JmapProperty Key;
+        public JmapPropertyBase Key;
         [JsonPropertyName("value_prop")]
         [JsonInclude]
-        public JmapProperty Value;
+        public JmapPropertyBase Value;
     }
 
-    public class JmapSetProperty : JmapProperty
+    public class JmapSetProperty : JmapPropertyBase
     {
         [JsonPropertyName("key_prop")]
         [JsonInclude]
-        public JmapProperty Key;
+        public JmapPropertyBase Key;
     }
 
-    public class JmapByteProperty : JmapProperty
+    public class JmapByteProperty : JmapPropertyBase
     {
         [JsonPropertyName("enum")]
         [JsonInclude]
         public string Enum;
     }
 
-
-    public class JmapObjectProperty : JmapProperty
+    public class JmapObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
         [JsonInclude]
         public string PropertyClass;
     }
 
-    public class JmapClassProperty : JmapProperty
-    {
-        [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
-        [JsonPropertyName("meta_class")]
-        [JsonInclude]
-        public string MetaClass;
-    }
-
-    public class JmapWeakObjectProperty : JmapProperty
-    {
-        [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
-    }
-
-    public class JmapSoftObjectProperty : JmapProperty
-    {
-        [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
-    }
-
-    public class JmapSoftClassProperty : JmapProperty
+    public class JmapClassProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
         [JsonInclude]
@@ -222,25 +188,170 @@ namespace UAssetAPI.Unversioned
         public string MetaClass;
     }
 
-    public class JmapLazyObjectProperty : JmapProperty
+    public class JmapWeakObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
         [JsonInclude]
         public string PropertyClass;
     }
 
-    public class JmapInterfaceProperty : JmapProperty
+    public class JmapSoftObjectProperty : JmapPropertyBase
+    {
+        [JsonPropertyName("property_class")]
+        [JsonInclude]
+        public string PropertyClass;
+    }
+
+    public class JmapSoftClassProperty : JmapPropertyBase
+    {
+        [JsonPropertyName("property_class")]
+        [JsonInclude]
+        public string PropertyClass;
+        [JsonPropertyName("meta_class")]
+        [JsonInclude]
+        public string MetaClass;
+    }
+
+    public class JmapLazyObjectProperty : JmapPropertyBase
+    {
+        [JsonPropertyName("property_class")]
+        [JsonInclude]
+        public string PropertyClass;
+    }
+
+    public class JmapInterfaceProperty : JmapPropertyBase
     {
         [JsonPropertyName("interface_class")]
         [JsonInclude]
         public string InterfaceClass;
     }
 
-    public class JmapOptionalProperty : JmapProperty
+    public class JmapOptionalProperty : JmapPropertyBase
     {
         [JsonPropertyName("inner")]
         [JsonInclude]
-        public JmapProperty Inner;
+        public JmapPropertyBase Inner;
+    }
+
+    public class JmapObjectConverter : JsonConverter<JmapObjectBase>
+    {
+        public override bool CanConvert(Type typeToConvert)
+        {
+            return typeToConvert == typeof(JmapObjectBase);
+        }
+
+        public override JmapObjectBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            using var jsonDoc = JsonDocument.ParseValue(ref reader);
+            if (!jsonDoc.RootElement.TryGetProperty("type", out var typeProp)) throw new JsonException();
+            string typeDiscriminator = typeProp.GetString();
+
+            JmapObjectBase res = null;
+            switch (typeDiscriminator)
+            {
+                case "Object":
+                    res = JsonSerializer.Deserialize<JmapObject>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "Package":
+                    res = JsonSerializer.Deserialize<JmapPackage>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "ScriptStruct":
+                    res = JsonSerializer.Deserialize<JmapScriptStruct>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "Class":
+                    res = JsonSerializer.Deserialize<JmapClass>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "Function":
+                    res = JsonSerializer.Deserialize<JmapFunction>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "Enum":
+                    res = JsonSerializer.Deserialize<JmapEnum>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+            }
+
+            res.Type = typeDiscriminator;
+
+            return res;
+        }
+
+        public override void Write(Utf8JsonWriter writer, JmapObjectBase value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class JmapPropertyConverter : JsonConverter<JmapPropertyBase>
+    {
+        public override bool CanConvert(Type typeToConvert)
+        {
+            return typeToConvert == typeof(JmapPropertyBase);
+        }
+
+        public override JmapPropertyBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            using var jsonDoc = JsonDocument.ParseValue(ref reader);
+            if (!jsonDoc.RootElement.TryGetProperty("type", out var typeProp)) throw new JsonException();
+            string typeDiscriminator = typeProp.GetString();
+
+            JmapPropertyBase res = null;
+            switch(typeDiscriminator)
+            {
+                case "StructProperty":
+                    res = JsonSerializer.Deserialize<JmapStructProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "ArrayProperty":
+                    res = JsonSerializer.Deserialize<JmapArrayProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "EnumProperty":
+                    res = JsonSerializer.Deserialize<JmapEnumProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "MapProperty":
+                    res = JsonSerializer.Deserialize<JmapMapProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "SetProperty":
+                    res = JsonSerializer.Deserialize<JmapSetProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "ByteProperty":
+                    res = JsonSerializer.Deserialize<JmapByteProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "ObjectProperty":
+                    res = JsonSerializer.Deserialize<JmapObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "ClassProperty":
+                    res = JsonSerializer.Deserialize<JmapClassProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "WeakObjectProperty":
+                    res = JsonSerializer.Deserialize<JmapWeakObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "SoftObjectProperty":
+                    res = JsonSerializer.Deserialize<JmapSoftObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "SoftClassProperty":
+                    res = JsonSerializer.Deserialize<JmapSoftClassProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "LazyObjectProperty":
+                    res = JsonSerializer.Deserialize<JmapLazyObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "InterfaceProperty":
+                    res = JsonSerializer.Deserialize<JmapInterfaceProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                case "OptionalProperty":
+                    res = JsonSerializer.Deserialize<JmapOptionalProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+                default:
+                    res = JsonSerializer.Deserialize<JmapProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    break;
+            }
+
+            res.Type = typeDiscriminator;
+
+            return res;
+        }
+
+        public override void Write(Utf8JsonWriter writer, JmapPropertyBase value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class JmapEnumNamesConverter : JsonConverter<Dictionary<long, string>>
@@ -282,180 +393,197 @@ namespace UAssetAPI.Unversioned
     /// </summary>
     public static class JmapHelper
     {
-        private static Dictionary<string, EPropertyType> GetPropertyTypesAsEnum(string objectJSON)
+        /// <summary>
+        /// Converts a jmap type string to its corresponding usmap EPropertyType enum value.
+        /// </summary>
+        /// <param name="type">Input jmap type string.</param>
+        /// <returns>The corresponding usmap EPropertyType enum value.</returns>
+        private static EPropertyType EPropertyTypeStringToEnum(string type)
         {
-            Dictionary<string, EPropertyType> output = new Dictionary<string, EPropertyType>();
-            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(objectJSON));
-
-            while (reader.Read())
+            EPropertyType typeAsEnum = EPropertyType.Unknown;
+            switch (type)
             {
-                if (reader.TokenType == JsonTokenType.PropertyName && reader.GetString() == "properties")
-                {
-                    string name = null;
-                    string type = null;
-                    while (reader.Read())
-                    {
-                        if (reader.TokenType == JsonTokenType.EndObject)
-                        {
-                            name = null;
-                            type = null;
-                        }
-
-                        if (reader.TokenType == JsonTokenType.PropertyName)
-                        {
-                            switch(reader.GetString())
-                            {
-                                case "name":
-                                    reader.Read();
-                                    name = reader.GetString();
-                                    break;
-                                case "type":
-                                    reader.Read();
-                                    type = reader.GetString();
-                                    break;
-                            }
-                        }
-
-                        if (name != null && type != null)
-                        {
-                            EPropertyType typeAsEnum = EPropertyType.Unknown;
-                            switch(type)
-                            {
-                                case "StructProperty":
-                                    typeAsEnum = EPropertyType.StructProperty;
-                                    break;
-                                case "StrProperty":
-                                    typeAsEnum = EPropertyType.StrProperty;
-                                    break;
-                                case "NameProperty":
-                                    typeAsEnum = EPropertyType.NameProperty;
-                                    break;
-                                case "TextProperty":
-                                    typeAsEnum = EPropertyType.TextProperty;
-                                    break;
-                                case "MulticastInlineDelegateProperty":
-                                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
-                                    break;
-                                case "MulticastSparseDelegateProperty":
-                                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
-                                    break;
-                                case "MulticastDelegateProperty":
-                                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
-                                    break;
-                                case "DelegateProperty":
-                                    typeAsEnum = EPropertyType.DelegateProperty;
-                                    break;
-                                case "BoolProperty":
-                                    typeAsEnum = EPropertyType.BoolProperty;
-                                    break;
-                                case "ArrayProperty":
-                                    typeAsEnum = EPropertyType.ArrayProperty;
-                                    break;
-                                case "EnumProperty":
-                                    typeAsEnum = EPropertyType.EnumProperty;
-                                    break;
-                                case "MapProperty":
-                                    typeAsEnum = EPropertyType.MapProperty;
-                                    break;
-                                case "SetProperty":
-                                    typeAsEnum = EPropertyType.SetProperty;
-                                    break;
-                                case "FloatProperty":
-                                    typeAsEnum = EPropertyType.FloatProperty;
-                                    break;
-                                case "DoubleProperty":
-                                    typeAsEnum = EPropertyType.DoubleProperty;
-                                    break;
-                                case "ByteProperty":
-                                    typeAsEnum = EPropertyType.ByteProperty;
-                                    break;
-                                case "UInt16Property":
-                                    typeAsEnum = EPropertyType.UInt16Property;
-                                    break;
-                                case "UInt32Property":
-                                    typeAsEnum = EPropertyType.UInt32Property;
-                                    break;
-                                case "UInt64Property":
-                                    typeAsEnum = EPropertyType.UInt64Property;
-                                    break;
-                                case "Int8Property":
-                                    typeAsEnum = EPropertyType.Int8Property;
-                                    break;
-                                case "Int16Property":
-                                    typeAsEnum = EPropertyType.Int16Property;
-                                    break;
-                                case "IntProperty":
-                                    typeAsEnum = EPropertyType.IntProperty;
-                                    break;
-                                case "Int64Property":
-                                    typeAsEnum = EPropertyType.Int64Property;
-                                    break;
-                                case "ObjectProperty":
-                                    typeAsEnum = EPropertyType.ObjectProperty;
-                                    break;
-                                case "ClassProperty":
-                                    typeAsEnum = EPropertyType.Unknown;
-                                    break;
-                                case "WeakObjectProperty":
-                                    typeAsEnum = EPropertyType.WeakObjectProperty;
-                                    break;
-                                case "SoftObjectProperty":
-                                    typeAsEnum = EPropertyType.SoftObjectProperty;
-                                    break;
-                                case "SoftClassProperty":
-                                    typeAsEnum = EPropertyType.Unknown;
-                                    break;
-                                case "LazyObjectProperty":
-                                    typeAsEnum = EPropertyType.LazyObjectProperty;
-                                    break;
-                                case "InterfaceProperty":
-                                    typeAsEnum = EPropertyType.InterfaceProperty;
-                                    break;
-                                case "FieldPathProperty":
-                                    typeAsEnum = EPropertyType.FieldPathProperty;
-                                    break;
-                                case "OptionalProperty":
-                                    typeAsEnum = EPropertyType.OptionalProperty;
-                                    break;
-                                case "FUtf8StrProperty":
-                                    typeAsEnum = EPropertyType.Utf8StrProperty;
-                                    break;
-                                case "AnsiStrProperty":
-                                    typeAsEnum = EPropertyType.AnsiStrProperty;
-                                    break;
-                                default:
-                                    typeAsEnum = EPropertyType.Unknown;
-                                    break;
-                            }
-
-                            output[name] = typeAsEnum;
-                        }
-                    }
-                }
+                case "StructProperty":
+                    typeAsEnum = EPropertyType.StructProperty;
+                    break;
+                case "StrProperty":
+                    typeAsEnum = EPropertyType.StrProperty;
+                    break;
+                case "NameProperty":
+                    typeAsEnum = EPropertyType.NameProperty;
+                    break;
+                case "TextProperty":
+                    typeAsEnum = EPropertyType.TextProperty;
+                    break;
+                case "MulticastInlineDelegateProperty":
+                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
+                    break;
+                case "MulticastSparseDelegateProperty":
+                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
+                    break;
+                case "MulticastDelegateProperty":
+                    typeAsEnum = EPropertyType.MulticastDelegateProperty;
+                    break;
+                case "DelegateProperty":
+                    typeAsEnum = EPropertyType.DelegateProperty;
+                    break;
+                case "BoolProperty":
+                    typeAsEnum = EPropertyType.BoolProperty;
+                    break;
+                case "ArrayProperty":
+                    typeAsEnum = EPropertyType.ArrayProperty;
+                    break;
+                case "EnumProperty":
+                    typeAsEnum = EPropertyType.EnumProperty;
+                    break;
+                case "MapProperty":
+                    typeAsEnum = EPropertyType.MapProperty;
+                    break;
+                case "SetProperty":
+                    typeAsEnum = EPropertyType.SetProperty;
+                    break;
+                case "FloatProperty":
+                    typeAsEnum = EPropertyType.FloatProperty;
+                    break;
+                case "DoubleProperty":
+                    typeAsEnum = EPropertyType.DoubleProperty;
+                    break;
+                case "ByteProperty":
+                    typeAsEnum = EPropertyType.ByteProperty;
+                    break;
+                case "UInt16Property":
+                    typeAsEnum = EPropertyType.UInt16Property;
+                    break;
+                case "UInt32Property":
+                    typeAsEnum = EPropertyType.UInt32Property;
+                    break;
+                case "UInt64Property":
+                    typeAsEnum = EPropertyType.UInt64Property;
+                    break;
+                case "Int8Property":
+                    typeAsEnum = EPropertyType.Int8Property;
+                    break;
+                case "Int16Property":
+                    typeAsEnum = EPropertyType.Int16Property;
+                    break;
+                case "IntProperty":
+                    typeAsEnum = EPropertyType.IntProperty;
+                    break;
+                case "Int64Property":
+                    typeAsEnum = EPropertyType.Int64Property;
+                    break;
+                case "ObjectProperty":
+                    typeAsEnum = EPropertyType.ObjectProperty;
+                    break;
+                case "ClassProperty":
+                    typeAsEnum = EPropertyType.ObjectProperty;
+                    break;
+                case "WeakObjectProperty":
+                    typeAsEnum = EPropertyType.WeakObjectProperty;
+                    break;
+                case "SoftObjectProperty":
+                    typeAsEnum = EPropertyType.SoftObjectProperty;
+                    break;
+                case "SoftClassProperty":
+                    typeAsEnum = EPropertyType.SoftObjectProperty;
+                    break;
+                case "LazyObjectProperty":
+                    typeAsEnum = EPropertyType.LazyObjectProperty;
+                    break;
+                case "InterfaceProperty":
+                    typeAsEnum = EPropertyType.InterfaceProperty;
+                    break;
+                case "FieldPathProperty":
+                    typeAsEnum = EPropertyType.FieldPathProperty;
+                    break;
+                case "OptionalProperty":
+                    typeAsEnum = EPropertyType.OptionalProperty;
+                    break;
+                case "FUtf8StrProperty":
+                    typeAsEnum = EPropertyType.Utf8StrProperty;
+                    break;
+                case "AnsiStrProperty":
+                    typeAsEnum = EPropertyType.AnsiStrProperty;
+                    break;
+                default:
+                    typeAsEnum = EPropertyType.Unknown;
+                    break;
             }
 
-            return output;
+            return typeAsEnum;
+        }
+
+        private static UsmapPropertyData SetupUsmapProperty(JmapPropertyBase jmapProp)
+        {
+            EPropertyType typEnum = EPropertyTypeStringToEnum(jmapProp.Type);
+            UsmapPropertyData res = Usmap.InitPropData(typEnum);
+            switch (typEnum)
+            {
+                case EPropertyType.EnumProperty:
+                    ((UsmapEnumData)res).InnerType = SetupUsmapProperty(((JmapEnumProperty)jmapProp).Container);
+                    ((UsmapEnumData)res).Name = ((JmapEnumProperty)jmapProp).Enum;
+
+                    // strip module path from Name (usmap convention)
+                    if (((UsmapEnumData)res).Name.Contains('.')) ((UsmapEnumData)res).Name = ((UsmapEnumData)res).Name.Substring(((UsmapEnumData)res).Name.LastIndexOf('.') + 1);
+                    break;
+                case EPropertyType.StructProperty:
+                    ((UsmapStructData)res).StructType = ((JmapStructProperty)jmapProp).Struct;
+
+                    // strip module path from StructType (usmap convention)
+                    if (((UsmapStructData)res).StructType.Contains('.')) ((UsmapStructData)res).StructType = ((UsmapStructData)res).StructType.Substring(((UsmapStructData)res).StructType.LastIndexOf('.') + 1);
+                    break;
+                case EPropertyType.SetProperty:
+                    ((UsmapArrayData)res).InnerType = SetupUsmapProperty(((JmapSetProperty)jmapProp).Key);
+                    break;
+                case EPropertyType.ArrayProperty:
+                    ((UsmapArrayData)res).InnerType = SetupUsmapProperty(((JmapArrayProperty)jmapProp).Inner);
+                    break;
+                case EPropertyType.OptionalProperty:
+                    ((UsmapArrayData)res).InnerType = SetupUsmapProperty(((JmapOptionalProperty)jmapProp).Inner);
+                    break;
+                case EPropertyType.MapProperty:
+                    ((UsmapMapData)res).InnerType = SetupUsmapProperty(((JmapMapProperty)jmapProp).Key);
+                    ((UsmapMapData)res).ValueType = SetupUsmapProperty(((JmapMapProperty)jmapProp).Value);
+                    break;
+                default:
+                    break;
+            }
+
+            return res;
         }
 
         public static void ReadSchema(string objectJSON, UsmapSchema templateSchema)
         {
-            Dictionary<string, EPropertyType> propertyTypes = GetPropertyTypesAsEnum(objectJSON);
+            //Dictionary<string, EPropertyType> propertyTypes = GetPropertyTypesAsEnum(objectJSON);
 
-            JmapObject serializedObject = JsonSerializer.Deserialize<JmapObject>(objectJSON, new JsonSerializerOptions()
+            JmapObjectBase serializedObject = JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, new JsonSerializerOptions()
             {
                 AllowOutOfOrderMetadataProperties = true,
+                Converters =
+                {
+                    new JmapObjectConverter(),
+                    new JmapPropertyConverter()
+                }
             });
             if (serializedObject is JmapStruct str)
             {
-                templateSchema.SuperType = str.SuperStruct;
-                if (str.SuperStruct.Contains(".")) templateSchema.SuperTypeModulePath = str.SuperStruct.Substring(0, str.SuperStruct.LastIndexOf('.'));
+                if (str.SuperStruct != null && str.SuperStruct.Contains("."))
+                {
+                    templateSchema.SuperType = str.SuperStruct.Substring(str.SuperStruct.LastIndexOf('.') + 1);
+                    templateSchema.SuperTypeModulePath = str.SuperStruct.Substring(0, str.SuperStruct.LastIndexOf('.'));
+                }
+                else
+                {
+                    templateSchema.SuperType = str.SuperStruct;
+                    templateSchema.SuperTypeModulePath = null;
+                }
 
                 templateSchema.propertiesInternal = new System.Collections.Concurrent.ConcurrentDictionary<int, UsmapProperty>();
                 int propIdx = 0;
-                foreach (JmapProperty jmapProp in str.Properties)
+                foreach (JmapPropertyBase jmapProp in str.Properties)
                 {
                     UsmapProperty usmapProp = new UsmapProperty(jmapProp.Name, propIdx, 0, jmapProp.ArrayDim, null);
-                    //usmapProp.PropertyData = Usmap.
+                    usmapProp.PropertyData = SetupUsmapProperty(jmapProp);
 
                     templateSchema.propertiesInternal[propIdx] = usmapProp;
                     for (int i = 0; i < jmapProp.ArrayDim; i++)
@@ -468,10 +596,34 @@ namespace UAssetAPI.Unversioned
                     propIdx += jmapProp.ArrayDim;
                 }
                 templateSchema.ConstructPropertiesMap(false);
-                templateSchema.PropCount = templateSchema.Properties.Count;
+                templateSchema.PropCount = templateSchema.propertiesInternal.Count;
             }
 
             templateSchema.StructKind = (serializedObject is JmapClass) ? UsmapStructKind.UClass : (serializedObject is JmapScriptStruct ? UsmapStructKind.UScriptStruct : UsmapStructKind.None);
+        }
+
+        public static void ReadEnum(string objectJSON, UsmapEnum templateSchema)
+        {
+            //Dictionary<string, EPropertyType> propertyTypes = GetPropertyTypesAsEnum(objectJSON);
+
+            JmapObjectBase serializedObject = JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, new JsonSerializerOptions()
+            {
+                AllowOutOfOrderMetadataProperties = true,
+                Converters =
+                {
+                    new JmapObjectConverter(),
+                    new JmapPropertyConverter()
+                }
+            });
+            if (serializedObject is JmapEnum str)
+            {
+                templateSchema.EnumFlags = 0; // not used by UAssetAPI in practice, can populate if needed (need to convert string to int)
+                templateSchema._Values = new System.Collections.Concurrent.ConcurrentDictionary<long, string>(str.Values);
+                foreach (KeyValuePair<long, string> entry in str.Values)
+                {
+                    templateSchema._Values[entry.Key] = entry.Value;
+                }
+            }
         }
     }
 }
