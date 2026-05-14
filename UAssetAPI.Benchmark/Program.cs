@@ -108,7 +108,7 @@ namespace UAssetAPI.Benchmark
                     timer.Restart();
                     foreach (string assetPath in allTestingAssets2)
                     {
-                        if (Path.GetExtension(assetPath) == ".usmap" || Path.GetExtension(assetPath) == ".jmap")
+                        if (Path.GetExtension(assetPath) == ".usmap" || Path.GetExtension(assetPath) == ".jmap" || assetPath.EndsWith(".jmap.gz"))
                         {
                             timer.Start();
                             mappings = new Usmap(assetPath);
