@@ -567,7 +567,7 @@ namespace UAssetAPI.Unversioned
 
         public static JmapObjectBase GetObjectBase(string objectJSON, JsonSerializerOptions options = null)
         {
-            return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, options ?? JmapDefaultOptions());
+            return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, options ?? Usmap.SerializerOptions ?? JmapDefaultOptions());
         }
 
         public static void ReadSchema(JmapObjectBase objectBase, UsmapSchema templateSchema)

@@ -1422,12 +1422,12 @@ namespace UAssetAPI.Unversioned
             return true;
         }
 
+        internal static readonly JsonSerializerOptions SerializerOptions = JmapHelper.JmapDefaultOptions();
+
         private void ReadJMAPUncompressed(Stream fs, bool lazyRead, string path = null)
         {
             EnumMap = new ConcurrentDictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
             Schemas = new ConcurrentDictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
-
-            JsonSerializerOptions serializerOptions = JmapHelper.JmapDefaultOptions();
 
             byte[] buffer = new byte[1024 * 1024 * 10]; // 10 MB buffer, we assume no object is larger than this
             int bytesRead = fs.Read(buffer);
@@ -1584,7 +1584,7 @@ namespace UAssetAPI.Unversioned
                                         if (addStartObjectTokenToString) tokenDataStr = "{" + tokenDataStr; // slow, but only happens every buffer read, which is infrequent
 
                                         // parse full data and store
-                                        JmapObjectBase objectBase = JmapHelper.GetObjectBase(tokenDataStr, serializerOptions);
+                                        JmapObjectBase objectBase = JmapHelper.GetObjectBase(tokenDataStr, SerializerOptions);
                                         if (objectBase is JmapEnum)
                                         {
                                             EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false };
