@@ -14,7 +14,7 @@ namespace UAssetAPI
     /// <summary>
     /// Pass-through stream for detecting non-zero byte writes for CanBeZero.
     /// </summary>
-    public class CanBeZeroStream : Stream
+    internal class CanBeZeroStream : Stream
     {
         public Stream InnerStream;
         public bool HasWrittenNonZero = false;

@@ -7,7 +7,7 @@ namespace UAssetAPI
 {
 #if DEBUG || DEBUGVERBOSE || DEBUGTRACING
     /// <summary>
-    /// Pass-through stream for debugging.
+    /// Pass-through stream for debugging. Only present in debug builds.
     /// </summary>
     public class MonitoringStream : Stream
     {
