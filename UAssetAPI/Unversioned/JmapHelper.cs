@@ -553,17 +553,21 @@ namespace UAssetAPI.Unversioned
             return res;
         }
 
-        public static JmapObjectBase GetObjectBase(string objectJSON)
+        public static JsonSerializerOptions JmapDefaultOptions()
         {
-            return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, new JsonSerializerOptions()
+            return new JsonSerializerOptions()
             {
-                AllowOutOfOrderMetadataProperties = true,
                 Converters =
                 {
                     new JmapObjectConverter(),
                     new JmapPropertyConverter()
                 }
-            });
+            };
+        }
+
+        public static JmapObjectBase GetObjectBase(string objectJSON, JsonSerializerOptions options = null)
+        {
+            return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, options ?? JmapDefaultOptions());
         }
 
         public static void ReadSchema(JmapObjectBase objectBase, UsmapSchema templateSchema)
