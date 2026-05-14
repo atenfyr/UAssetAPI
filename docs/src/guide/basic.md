@@ -7,7 +7,7 @@
 ### Basic Project Setup
 In this short guide, we will go over the very basics of parsing assets through UAssetAPI.
 
-UAssetAPI targets [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0), which means you will need the .NET 8.0 SDK to use UAssetAPI. We will start off in this specific guide by creating a new C# Console App project in Visual Studio, making sure we specifically target .NET 8.0:
+UAssetAPI targets [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), which means you will need the .NET 10.0 SDK to use UAssetAPI. We will start off in this specific guide by creating a new C# Console App project in Visual Studio, making sure we specifically target .NET 10.0:
 
 ![](./img/basic1.png)
 ![](./img/basic2.png)
