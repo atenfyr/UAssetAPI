@@ -1545,20 +1545,6 @@ namespace UAssetAPI.Unversioned
                                 // we also add one to include the end object token "}"
                                 long size = reader.TokenStartIndex + bytesNotInBuffer - offset + 1;
 
-                                // if bufferPosBefore + size is > the size of the buffer, then we overflowed, so we need to compensate for the data moving to the start of the buffer
-                                bool addStartObjectTokenToString = false;
-                                if (bufferPosBefore + size > buffer.Length)
-                                {
-                                    // the data is shifted left so that startIdxIfOverflow is now at 0
-                                    bufferPosBefore = bufferPosBefore - startIdxIfOverflow;
-
-                                    // we already consumed StartObject, so it didn't get copied over and "{" should be at -1... so we'll have to add an extra "{" token to the start of the span
-                                    // we also need to increase buffer pos by 1 and reduce size by 1 to drop the "{" that wasn't copied over
-                                    addStartObjectTokenToString = true;
-                                    bufferPosBefore++;
-                                    size--;
-                                }
-
                                 // we can skip some entries, most notably functions and cdos
                                 // most performant way to do this is to check the name, want to avoid having to parse the actual JSON
                                 bool skipping = false;
@@ -1579,6 +1565,20 @@ namespace UAssetAPI.Unversioned
                                     }
                                     else
                                     {
+                                        // if bufferPosBefore + size is > the size of the buffer, then we overflowed, so we need to compensate for the data moving to the start of the buffer
+                                        bool addStartObjectTokenToString = false;
+                                        if (bufferPosBefore + size > buffer.Length)
+                                        {
+                                            // the data is shifted left so that startIdxIfOverflow is now at 0
+                                            bufferPosBefore = bufferPosBefore - startIdxIfOverflow;
+
+                                            // we already consumed StartObject, so it didn't get copied over and "{" should be at -1... so we'll have to add an extra "{" token to the start of the span
+                                            // we also need to increase buffer pos by 1 and reduce size by 1 to drop the "{" that wasn't copied over
+                                            addStartObjectTokenToString = true;
+                                            bufferPosBefore++;
+                                            size--;
+                                        }
+
                                         Span<byte> tokenData = buffer.AsSpan((int)bufferPosBefore, (int)size);
                                         string tokenDataStr = Encoding.UTF8.GetString(tokenData);
                                         if (addStartObjectTokenToString) tokenDataStr = "{" + tokenDataStr; // slow, but only happens every buffer read, which is infrequent
