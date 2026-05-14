@@ -4,6 +4,9 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI;
 
+/// <summary>
+/// Helper class for generating CRC hashes for use in uasset name maps.
+/// </summary>
 public static class CRCGenerator
 {
     public static uint GenerateHash(FString text, bool disableCasePreservingHash, bool version420 = false)
@@ -64,7 +67,7 @@ public static class CRCGenerator
         return output;
     }
 
-    public static uint Strihash_DEPRECATED(string text, Encoding encoding, bool version420 = false)
+    internal static uint Strihash_DEPRECATED(string text, Encoding encoding, bool version420 = false)
     {
         uint hash = 0;
         byte[] rawDataForCharacter;
@@ -90,7 +93,7 @@ public static class CRCGenerator
     }
 
     // Accurate as-is for both WIDECHAR and ANSICHAR
-    public static uint StrCrc32(string text, uint CRC = 0)
+    internal static uint StrCrc32(string text, uint CRC = 0)
     {
         CRC = ~CRC;
         for (int i = 0; i < text.Length; i++)
@@ -107,7 +110,7 @@ public static class CRCGenerator
         return ~CRC;
     }
 
-    public static readonly uint[] CRCTable_DEPRECATED =
+    private static readonly uint[] CRCTable_DEPRECATED =
     [
         0x00000000, 0x04C11DB7, 0x09823B6E, 0x0D4326D9, 0x130476DC, 0x17C56B6B, 0x1A864DB2, 0x1E475005, 0x2608EDB8, 0x22C9F00F, 0x2F8AD6D6, 0x2B4BCB61, 0x350C9B64, 0x31CD86D3, 0x3C8EA00A, 0x384FBDBD,
         0x4C11DB70, 0x48D0C6C7, 0x4593E01E, 0x4152FDA9, 0x5F15ADAC, 0x5BD4B01B, 0x569796C2, 0x52568B75, 0x6A1936C8, 0x6ED82B7F, 0x639B0DA6, 0x675A1011, 0x791D4014, 0x7DDC5DA3, 0x709F7B7A, 0x745E66CD,
@@ -127,7 +130,7 @@ public static class CRCGenerator
         0x89B8FD09, 0x8D79E0BE, 0x803AC667, 0x84FBDBD0, 0x9ABC8BD5, 0x9E7D9662, 0x933EB0BB, 0x97FFAD0C, 0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4
     ];
 
-    public static readonly uint[,] CRCTablesSB8 = new uint[8, 256]
+    private static readonly uint[,] CRCTablesSB8 = new uint[8, 256]
     {
         {
             0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91,

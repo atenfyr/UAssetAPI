@@ -31,7 +31,7 @@ public List<string> Values;
 ### **Type**
 
 ```csharp
-public EPropertyType Type;
+public UsmapPropertyType Type;
 ```
 
 ## Constructors

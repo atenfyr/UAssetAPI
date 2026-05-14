@@ -6,7 +6,7 @@ using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {
-    public class FSignedZeroJsonConverter : JsonConverter
+    internal class FSignedZeroJsonConverter : JsonConverter
     {
         private static readonly decimal negativeZero = decimal.Negate(decimal.Zero);
 

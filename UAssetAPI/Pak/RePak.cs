@@ -284,7 +284,7 @@ public class PakReader : SafeHandleZeroOrMinusOneIsInvalid
 }
 
 
-public static class StreamCallbacks
+internal static class StreamCallbacks
 {
     public static RePakInterop.StreamCallbacks Create(Stream stream)
     {

@@ -321,7 +321,7 @@ namespace UAssetAPI
         /// </summary>
         public bool IsFilterEditorOnly => PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly);
 
-        public bool IsPreDependencyFormat => IsFilterEditorOnly || ObjectVersion < ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
+        internal bool IsPreDependencyFormat => IsFilterEditorOnly || ObjectVersion < ObjectVersion.VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS;
 
         [JsonIgnore]
         internal volatile bool isSerializationTime = false;

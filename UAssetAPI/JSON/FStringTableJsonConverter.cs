@@ -8,7 +8,7 @@ using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {
-    public class FStringTableJsonConverter : JsonConverter
+    internal class FStringTableJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

@@ -5,7 +5,7 @@ using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {
-    public class FPackageIndexJsonConverter : JsonConverter
+    internal class FPackageIndexJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

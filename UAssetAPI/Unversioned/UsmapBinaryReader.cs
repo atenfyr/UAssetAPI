@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using UAssetAPI.Kismet.Bytecode;
-using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 using UAssetAPI.Unversioned;
 
 namespace UAssetAPI

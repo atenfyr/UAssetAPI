@@ -1,12 +1,12 @@
-# ECompressionMethod
+# UsmapCompressionMethod
 
 Namespace: UAssetAPI.Unversioned
 
 ```csharp
-public enum ECompressionMethod
+public enum UsmapCompressionMethod
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [ECompressionMethod](./uassetapi.unversioned.ecompressionmethod.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [UsmapCompressionMethod](./uassetapi.unversioned.usmapcompressionmethod.md)<br>
 Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [ISpanFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.ispanformattable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields

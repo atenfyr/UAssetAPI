@@ -102,14 +102,6 @@ public List<string> FailedExtensions;
 public ConcurrentDictionary<string, byte> PathsAlreadyProcessedForSchemas;
 ```
 
-### **USMAP_MAGIC**
-
-Magic number for the .usmap format
-
-```csharp
-public static ushort USMAP_MAGIC;
-```
-
 ## Properties
 
 ### **AreFNamesCaseInsensitive**
@@ -164,7 +156,7 @@ Throw when the asset cannot be parsed correctly.
 
 ### **Usmap()**
 
-Initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class. This instance will store no data and does not represent any file in particular until the [Usmap.ReadHeader(UsmapBinaryReader)](./uassetapi.unversioned.usmap.md#readheaderusmapbinaryreader) method is manually called.
+Initializes a new instance of the [Usmap](./uassetapi.unversioned.usmap.md) class. This instance will store no data and does not represent any file in particular until the [Usmap.ReadUSMAP(UsmapBinaryReader)](./uassetapi.unversioned.usmap.md#readusmapusmapbinaryreader) or [Usmap.ReadJMAP(String, Boolean)](./uassetapi.unversioned.usmap.md#readjmapstring-boolean) method is manually called.
 
 ```csharp
 public Usmap()
@@ -422,25 +414,60 @@ public UsmapBinaryReader ReadHeader(UsmapBinaryReader reader)
 
 [UsmapBinaryReader](./uassetapi.usmapbinaryreader.md)<br>
 
-### **Read(UsmapBinaryReader)**
+### **ReadUSMAP(UsmapBinaryReader)**
 
 ```csharp
-public void Read(UsmapBinaryReader compressedReader)
+public void ReadUSMAP(UsmapBinaryReader compressedReader)
 ```
 
 #### Parameters
 
 `compressedReader` [UsmapBinaryReader](./uassetapi.usmapbinaryreader.md)<br>
 
-### **ReadJMAP(String)**
+### **ReadJMAP(Stream, Boolean, String)**
+
+Read in a .jmap file from a stream.
 
 ```csharp
-public void ReadJMAP(string path)
+public void ReadJMAP(Stream strm, bool lazyRead, string path)
+```
+
+#### Parameters
+
+`strm` [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream)<br>
+Stream referencing the .jmap file.
+
+`lazyRead` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not to use lazy read. If true, schemas will be read from the .json as they are needed, which worsens asset parse time but improves mappings load time.
+
+`path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+Path on disk to the original .jmap file. This can be left null if lazyRead is false.
+
+#### Exceptions
+
+T:System.Text.Json.JsonException<br>
+An error occurred while attempting to parse .jmap JSON.
+
+### **ReadJMAP(String, Boolean)**
+
+Read in a .jmap file from disk.
+
+```csharp
+public void ReadJMAP(string path, bool lazyRead)
 ```
 
 #### Parameters
 
 `path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+Path to the .jmap file.
+
+`lazyRead` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+Whether or not to use lazy read. If true, schemas will be read from the .json as they are needed, which worsens asset parse time but improves mappings load time.
+
+#### Exceptions
+
+T:System.Text.Json.JsonException<br>
+An error occurred while attempting to parse .jmap JSON.
 
 ### **PatchUsmapWithVersion(String, EngineVersion)**
 

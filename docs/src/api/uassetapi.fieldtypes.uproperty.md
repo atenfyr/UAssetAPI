@@ -113,9 +113,9 @@ public void Write(AssetBinaryWriter writer)
 ### **GetUsmapPropertyType()**
 
 ```csharp
-public EPropertyType GetUsmapPropertyType()
+public UsmapPropertyType GetUsmapPropertyType()
 ```
 
 #### Returns
 
-[EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>
+[UsmapPropertyType](./uassetapi.unversioned.usmappropertytype.md)<br>

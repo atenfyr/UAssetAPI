@@ -16,7 +16,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.Unversioned
 {
-    public class UsmapSchemaPropertiesJsonConverter : Newtonsoft.Json.JsonConverter<IReadOnlyDictionary<int, UsmapProperty>>
+    internal class UsmapSchemaPropertiesJsonConverter : Newtonsoft.Json.JsonConverter<IReadOnlyDictionary<int, UsmapProperty>>
     {
         public override IReadOnlyDictionary<int, UsmapProperty> ReadJson(JsonReader reader, Type objectType, IReadOnlyDictionary<int, UsmapProperty> existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
         {

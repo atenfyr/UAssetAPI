@@ -50,15 +50,3 @@ public AC7XorKey(string fname)
 
 `fname` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The name of the asset being encrypted on disk without the extension.
-
-## Methods
-
-### **SkipCount(Int32)**
-
-```csharp
-public void SkipCount(int count)
-```
-
-#### Parameters
-
-`count` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UAssetAPI.JSON
 {
-    public class ByteArrayJsonConverter : JsonConverter
+    internal class ByteArrayJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

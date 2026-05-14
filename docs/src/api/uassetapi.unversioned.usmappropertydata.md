@@ -13,20 +13,20 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 ### **Type**
 
 ```csharp
-public EPropertyType Type;
+public UsmapPropertyType Type;
 ```
 
 ## Constructors
 
-### **UsmapPropertyData(EPropertyType)**
+### **UsmapPropertyData(UsmapPropertyType)**
 
 ```csharp
-public UsmapPropertyData(EPropertyType type)
+public UsmapPropertyData(UsmapPropertyType type)
 ```
 
 #### Parameters
 
-`type` [EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>
+`type` [UsmapPropertyType](./uassetapi.unversioned.usmappropertytype.md)<br>
 
 ### **UsmapPropertyData()**
 

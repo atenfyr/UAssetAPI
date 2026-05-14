@@ -33,7 +33,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.JSON;
 
-public class TMapJsonConverter<TKey, TValue> : JsonConverter
+internal class TMapJsonConverter<TKey, TValue> : JsonConverter
 {
     public override bool CanConvert(Type objectType)
     {

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI
 {
@@ -15,7 +13,7 @@ namespace UAssetAPI
         public int pk1;
         public int pk2;
 
-        public void SkipCount(int count)
+        private void SkipCount(int count)
         {
             int num = count % 217;
             pk1 += num;

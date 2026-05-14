@@ -19,20 +19,20 @@ public UsmapPropertyData InnerType;
 ### **Type**
 
 ```csharp
-public EPropertyType Type;
+public UsmapPropertyType Type;
 ```
 
 ## Constructors
 
-### **UsmapArrayData(EPropertyType)**
+### **UsmapArrayData(UsmapPropertyType)**
 
 ```csharp
-public UsmapArrayData(EPropertyType type)
+public UsmapArrayData(UsmapPropertyType type)
 ```
 
 #### Parameters
 
-`type` [EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>
+`type` [UsmapPropertyType](./uassetapi.unversioned.usmappropertytype.md)<br>
 
 ## Methods
 

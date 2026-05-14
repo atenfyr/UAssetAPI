@@ -504,16 +504,6 @@ public bool IsFilterEditorOnly { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### **IsPreDependencyFormat**
-
-```csharp
-public bool IsPreDependencyFormat { get; }
-```
-
-#### Property Value
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
 ## Constructors
 
 ### **UAsset(String, EngineVersion, Usmap, CustomSerializationFlags, GameSpecificOverride)**

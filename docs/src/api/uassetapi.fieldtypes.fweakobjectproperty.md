@@ -58,12 +58,6 @@ public ELifetimeCondition BlueprintReplicationCondition;
 public object RawValue;
 ```
 
-### **UsmapPropertyTypeOverrides**
-
-```csharp
-public IDictionary<string, EPropertyType> UsmapPropertyTypeOverrides;
-```
-
 ### **SerializedType**
 
 ```csharp

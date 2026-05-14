@@ -3,11 +3,10 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using UAssetAPI.UnrealTypes;
-using UAssetAPI.ExportTypes;
 
 namespace UAssetAPI.JSON
 {
-    public class UAssetContractResolver : DefaultContractResolver
+    internal class UAssetContractResolver : DefaultContractResolver
     {
         public Dictionary<FName, string> ToBeFilled;
 

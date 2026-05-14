@@ -19,7 +19,7 @@ public string StructType;
 ### **Type**
 
 ```csharp
-public EPropertyType Type;
+public UsmapPropertyType Type;
 ```
 
 ## Constructors

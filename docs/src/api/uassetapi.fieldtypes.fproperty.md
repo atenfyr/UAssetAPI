@@ -54,12 +54,6 @@ public ELifetimeCondition BlueprintReplicationCondition;
 public object RawValue;
 ```
 
-### **UsmapPropertyTypeOverrides**
-
-```csharp
-public IDictionary<string, EPropertyType> UsmapPropertyTypeOverrides;
-```
-
 ### **SerializedType**
 
 ```csharp
@@ -121,12 +115,12 @@ T<br>
 ### **GetUsmapPropertyType()**
 
 ```csharp
-public EPropertyType GetUsmapPropertyType()
+public UsmapPropertyType GetUsmapPropertyType()
 ```
 
 #### Returns
 
-[EPropertyType](./uassetapi.unversioned.epropertytype.md)<br>
+[UsmapPropertyType](./uassetapi.unversioned.usmappropertytype.md)<br>
 
 ### **Read(AssetBinaryReader)**
 

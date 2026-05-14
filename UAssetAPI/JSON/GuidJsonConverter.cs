@@ -3,7 +3,7 @@ using System;
 
 namespace UAssetAPI.JSON
 {
-    public class GuidJsonConverter : JsonConverter
+    internal class GuidJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
