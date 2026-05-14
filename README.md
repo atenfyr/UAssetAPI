@@ -37,3 +37,5 @@ Source code for UAssetAPI is available on GitHub: https://github.com/atenfyr/UAs
 
 ## License
 UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](https://github.com/atenfyr/UAssetAPI/blob/master/LICENSE) on GitHub.
+
+You can view license agreements for the third-party software that is used as part of this library in the [NOTICE.md file](https://github.com/atenfyr/UAssetAPI/blob/master/NOTICE.md) on GitHub.
