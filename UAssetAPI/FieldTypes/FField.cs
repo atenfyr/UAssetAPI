@@ -85,16 +85,16 @@ namespace UAssetAPI.FieldTypes
         }
 
         [JsonIgnore]
-        public IDictionary<string, EPropertyType> UsmapPropertyTypeOverrides = new Dictionary<string, EPropertyType>()
+        private readonly IDictionary<string, UsmapPropertyType> UsmapPropertyTypeOverrides = new Dictionary<string, UsmapPropertyType>()
         {
-            { "MulticastInlineDelegateProperty", EPropertyType.MulticastDelegateProperty },
-            { "ClassProperty", EPropertyType.ObjectProperty },
-            { "SoftClassProperty", EPropertyType.SoftObjectProperty }
+            { "MulticastInlineDelegateProperty", UsmapPropertyType.MulticastDelegateProperty },
+            { "ClassProperty", UsmapPropertyType.ObjectProperty },
+            { "SoftClassProperty", UsmapPropertyType.SoftObjectProperty }
         };
 
-        public EPropertyType GetUsmapPropertyType()
+        public UsmapPropertyType GetUsmapPropertyType()
         {
-            EPropertyType res = EPropertyType.Unknown;
+            UsmapPropertyType res = UsmapPropertyType.Unknown;
             if (UsmapPropertyTypeOverrides.TryGetValue(SerializedType.Value.Value, out res)) return res;
             if (Enum.TryParse(SerializedType.Value.Value, out res)) return res;
             return res;

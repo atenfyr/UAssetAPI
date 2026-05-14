@@ -91,47 +91,47 @@ public abstract class UProperty : UField
 
     public UProperty() { }
 
-    public EPropertyType GetUsmapPropertyType()
+    public UsmapPropertyType GetUsmapPropertyType()
     {
         return this switch
         {
-            UEnumProperty => EPropertyType.EnumProperty,
-            UByteProperty => EPropertyType.ByteProperty,
-            UBoolProperty => EPropertyType.BoolProperty,
-            UInt8Property => EPropertyType.Int8Property,
-            UInt16Property => EPropertyType.Int16Property,
-            UIntProperty => EPropertyType.IntProperty,
-            UInt64Property => EPropertyType.Int64Property,
-            UUInt16Property => EPropertyType.UInt16Property,
-            UUInt32Property => EPropertyType.UInt32Property,
-            UUInt64Property => EPropertyType.UInt64Property,
-            UFloatProperty => EPropertyType.FloatProperty,
-            UDoubleProperty => EPropertyType.DoubleProperty,
+            UEnumProperty => UsmapPropertyType.EnumProperty,
+            UByteProperty => UsmapPropertyType.ByteProperty,
+            UBoolProperty => UsmapPropertyType.BoolProperty,
+            UInt8Property => UsmapPropertyType.Int8Property,
+            UInt16Property => UsmapPropertyType.Int16Property,
+            UIntProperty => UsmapPropertyType.IntProperty,
+            UInt64Property => UsmapPropertyType.Int64Property,
+            UUInt16Property => UsmapPropertyType.UInt16Property,
+            UUInt32Property => UsmapPropertyType.UInt32Property,
+            UUInt64Property => UsmapPropertyType.UInt64Property,
+            UFloatProperty => UsmapPropertyType.FloatProperty,
+            UDoubleProperty => UsmapPropertyType.DoubleProperty,
 
-            UAssetClassProperty => EPropertyType.SoftObjectProperty,
-            USoftClassProperty => EPropertyType.SoftObjectProperty,
-            UClassProperty => EPropertyType.ObjectProperty,
-            UAssetObjectProperty => EPropertyType.AssetObjectProperty,
-            UWeakObjectProperty => EPropertyType.WeakObjectProperty,
-            ULazyObjectProperty => EPropertyType.LazyObjectProperty,
-            USoftObjectProperty => EPropertyType.SoftObjectProperty,
-            UObjectProperty => EPropertyType.ObjectProperty,
+            UAssetClassProperty => UsmapPropertyType.SoftObjectProperty,
+            USoftClassProperty => UsmapPropertyType.SoftObjectProperty,
+            UClassProperty => UsmapPropertyType.ObjectProperty,
+            UAssetObjectProperty => UsmapPropertyType.AssetObjectProperty,
+            UWeakObjectProperty => UsmapPropertyType.WeakObjectProperty,
+            ULazyObjectProperty => UsmapPropertyType.LazyObjectProperty,
+            USoftObjectProperty => UsmapPropertyType.SoftObjectProperty,
+            UObjectProperty => UsmapPropertyType.ObjectProperty,
 
-            UNameProperty => EPropertyType.NameProperty,
-            UStrProperty => EPropertyType.StrProperty,
-            UTextProperty => EPropertyType.TextProperty,
+            UNameProperty => UsmapPropertyType.NameProperty,
+            UStrProperty => UsmapPropertyType.StrProperty,
+            UTextProperty => UsmapPropertyType.TextProperty,
 
-            UInterfaceProperty => EPropertyType.InterfaceProperty,
+            UInterfaceProperty => UsmapPropertyType.InterfaceProperty,
 
-            UMulticastDelegateProperty => EPropertyType.MulticastDelegateProperty,
-            UDelegateProperty => EPropertyType.DelegateProperty,
+            UMulticastDelegateProperty => UsmapPropertyType.MulticastDelegateProperty,
+            UDelegateProperty => UsmapPropertyType.DelegateProperty,
 
-            UMapProperty => EPropertyType.MapProperty,
-            USetProperty => EPropertyType.SetProperty,
-            UArrayProperty => EPropertyType.ArrayProperty,
-            UStructProperty => EPropertyType.StructProperty,
+            UMapProperty => UsmapPropertyType.MapProperty,
+            USetProperty => UsmapPropertyType.SetProperty,
+            UArrayProperty => UsmapPropertyType.ArrayProperty,
+            UStructProperty => UsmapPropertyType.StructProperty,
 
-            _ => EPropertyType.Unknown,
+            _ => UsmapPropertyType.Unknown,
         };
     }
 }
