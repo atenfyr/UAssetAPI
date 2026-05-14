@@ -24,7 +24,9 @@ The source code of UAssetAPI is publicly available on GitHub at [https://github.
 Any bugs or feature requests that you may have can be submitted on the GitHub page as an issue. You can also direct any questions you may have to the folks on the Unreal Engine Modding Discord server, which you can join with this invite link: [https://discord.gg/zVvsE9mEEa](https://discord.gg/zVvsE9mEEa).
 
 ## Source
-Source code for UAssetAPI is available on GitHub: https://github.com/atenfyr/UAssetAPI 
+Source code for UAssetAPI is available on GitHub: [https://github.com/atenfyr/UAssetAPI](https://github.com/atenfyr/UAssetAPI)
 
 ## License
 UAssetAPI and UAssetGUI are distributed under the MIT license, which you can view in detail in the [LICENSE file](https://github.com/atenfyr/UAssetAPI/blob/master/LICENSE) on GitHub.
+
+You can view license agreements for the third-party software that is used as part of this library in the [NOTICE.md file](https://github.com/atenfyr/UAssetAPI/blob/master/NOTICE.md) on GitHub.
