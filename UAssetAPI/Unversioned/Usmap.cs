@@ -356,9 +356,16 @@ namespace UAssetAPI.Unversioned
                     fs.Seek(JmapOffset, SeekOrigin.Begin);
                     byte[] buffer = new byte[JmapSize];
                     int bytesRead = fs.Read(buffer);
-                    PopulateIfNeeded(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                    PopulateIfNeeded(buffer.AsSpan(0, bytesRead));
                 }
             }
+        }
+
+        internal void PopulateIfNeeded(ReadOnlySpan<byte> jsonData)
+        {
+            if (IsPopulated) return;
+            JmapHelper.ReadSchema(jsonData, this);
+            IsPopulated = true;
         }
 
         internal void PopulateIfNeeded(string jsonData)
@@ -460,9 +467,16 @@ namespace UAssetAPI.Unversioned
                     fs.Seek(JmapOffset, SeekOrigin.Begin);
                     byte[] buffer = new byte[JmapSize];
                     int bytesRead = fs.Read(buffer);
-                    PopulateIfNeeded(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                    PopulateIfNeeded(buffer.AsSpan(0, bytesRead));
                 }
             }
+        }
+
+        internal void PopulateIfNeeded(ReadOnlySpan<byte> jsonData)
+        {
+            if (IsPopulated) return;
+            JmapHelper.ReadEnum(jsonData, this);
+            IsPopulated = true;
         }
 
         internal void PopulateIfNeeded(string jsonData)
@@ -1426,8 +1440,8 @@ namespace UAssetAPI.Unversioned
 
         private void ReadJMAPUncompressed(Stream fs, bool lazyRead, string path = null)
         {
-            EnumMap = new ConcurrentDictionary<string, UsmapEnum>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
-            Schemas = new ConcurrentDictionary<string, UsmapSchema>(AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+            EnumMap = new ConcurrentDictionary<string, UsmapEnum>(Environment.ProcessorCount, 8192, AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
+            Schemas = new ConcurrentDictionary<string, UsmapSchema>(Environment.ProcessorCount, 8192, AreFNamesCaseInsensitive ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture);
 
             byte[] buffer = new byte[1024 * 1024 * 10]; // 10 MB buffer, we assume no object is larger than this
             int bytesRead = fs.Read(buffer);
@@ -1580,11 +1594,21 @@ namespace UAssetAPI.Unversioned
                                         }
 
                                         Span<byte> tokenData = buffer.AsSpan((int)bufferPosBefore, (int)size);
-                                        string tokenDataStr = Encoding.UTF8.GetString(tokenData);
-                                        if (addStartObjectTokenToString) tokenDataStr = "{" + tokenDataStr; // slow, but only happens every buffer read, which is infrequent
+
+                                        JmapObjectBase objectBase = null;
+                                        if (addStartObjectTokenToString)
+                                        {
+                                            byte[] prefixed = new byte[size + 1];
+                                            prefixed[0] = (byte)'{';
+                                            tokenData.CopyTo(prefixed.AsSpan(1));
+                                            objectBase = JmapHelper.GetObjectBase(prefixed, SerializerOptions);
+                                        }
+                                        else
+                                        {
+                                            objectBase = JmapHelper.GetObjectBase(tokenData, SerializerOptions);
+                                        }
 
                                         // parse full data and store
-                                        JmapObjectBase objectBase = JmapHelper.GetObjectBase(tokenDataStr, SerializerOptions);
                                         if (objectBase is JmapEnum)
                                         {
                                             EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false };

@@ -9,32 +9,49 @@ namespace UAssetAPI.Unversioned
     // note that the following classes do not necessarily explicitly specify all the fields that jmap actually serializes, only fields relevant to us
     // all other fields are serialized in the Other dictionary
 
+    [JsonSourceGenerationOptions(WriteIndented = false)]
+    [JsonSerializable(typeof(JmapObjectBase))]
+    [JsonSerializable(typeof(JmapObject))]
+    [JsonSerializable(typeof(JmapPackage))]
+    [JsonSerializable(typeof(JmapStruct))]
+    [JsonSerializable(typeof(JmapScriptStruct))]
+    [JsonSerializable(typeof(JmapClass))]
+    [JsonSerializable(typeof(JmapFunction))]
+    [JsonSerializable(typeof(JmapEnum))]
+    [JsonSerializable(typeof(JmapPropertyBase))]
+    [JsonSerializable(typeof(JmapProperty))]
+    [JsonSerializable(typeof(JmapStructProperty))]
+    [JsonSerializable(typeof(JmapArrayProperty))]
+    [JsonSerializable(typeof(JmapEnumProperty))]
+    [JsonSerializable(typeof(JmapMapProperty))]
+    [JsonSerializable(typeof(JmapSetProperty))]
+    [JsonSerializable(typeof(JmapByteProperty))]
+    [JsonSerializable(typeof(JmapObjectProperty))]
+    [JsonSerializable(typeof(JmapClassProperty))]
+    [JsonSerializable(typeof(JmapWeakObjectProperty))]
+    [JsonSerializable(typeof(JmapSoftObjectProperty))]
+    [JsonSerializable(typeof(JmapSoftClassProperty))]
+    [JsonSerializable(typeof(JmapLazyObjectProperty))]
+    [JsonSerializable(typeof(JmapInterfaceProperty))]
+    [JsonSerializable(typeof(JmapOptionalProperty))]
+    internal partial class JmapSourceGenerationContext : JsonSerializerContext { }
+
     internal class JmapObjectBase
     {
         [JsonIgnore]
-        public string Type;
+        public string Type { get; set; }
 
         // from Object
         [JsonPropertyName("address")]
-        [JsonInclude]
-        public string Address;
+        public string Address { get; set; }
         [JsonPropertyName("vtable")]
-        [JsonInclude]
-        public string VTable;
+        public string VTable { get; set; }
         [JsonPropertyName("object_flags")]
-        [JsonInclude]
-        public string ObjectFlags;
+        public string ObjectFlags { get; set; }
         [JsonPropertyName("outer")]
-        [JsonInclude]
-        public string Outer;
+        public string Outer { get; set; }
         [JsonPropertyName("class")]
-        [JsonInclude]
-        public string Class;
-
-        // unserialized
-        [JsonExtensionData]
-        [JsonInclude]
-        public IDictionary<string, object> Other;
+        public string Class { get; set; }
     }
 
     internal class JmapObject : JmapObjectBase
@@ -52,11 +69,9 @@ namespace UAssetAPI.Unversioned
     {
         // from Struct
         [JsonPropertyName("super_struct")]
-        [JsonInclude]
-        public string SuperStruct;
+        public string SuperStruct { get; set; }
         [JsonPropertyName("properties")]
-        [JsonInclude]
-        public List<JmapPropertyBase> Properties;
+        public List<JmapPropertyBase> Properties { get; set; }
     }
 
     internal class JmapScriptStruct : JmapStruct
@@ -81,42 +96,29 @@ namespace UAssetAPI.Unversioned
     {
         // from Enum
         [JsonPropertyName("cpp_type")]
-        [JsonInclude]
-        public string CppType;
+        public string CppType { get; set; }
         [JsonPropertyName("enum_flags")]
-        [JsonInclude]
-        public string EnumFlags;
+        public string EnumFlags { get; set; }
         [JsonPropertyName("cpp_form")]
-        [JsonInclude]
-        public string CppForm;
+        public string CppForm { get; set; }
         [JsonPropertyName("names")]
-        [JsonInclude]
         [JsonConverter(typeof(JmapEnumNamesConverter))]
-        public Dictionary<long, string> Values;
+        public Dictionary<long, string> Values { get; set; }
     }
 
     internal class JmapPropertyBase
     {
         [JsonIgnore]
-        public string Type;
+        public string Type { get; set; }
 
         [JsonPropertyName("address")]
-        [JsonInclude]
-        public string Address;
+        public string Address { get; set; }
         [JsonPropertyName("name")]
-        [JsonInclude]
-        public string Name;
+        public string Name { get; set; }
         [JsonPropertyName("offset")]
-        [JsonInclude]
-        public long Offset;
+        public long Offset { get; set; }
         [JsonPropertyName("array_dim")]
-        [JsonInclude]
-        public int ArrayDim;
-
-        // unserialized
-        [JsonExtensionData]
-        [JsonInclude]
-        public IDictionary<string, object> Other;
+        public int ArrayDim { get; set; }
     }
 
     internal class JmapProperty : JmapPropertyBase
@@ -127,111 +129,93 @@ namespace UAssetAPI.Unversioned
     internal class JmapStructProperty : JmapPropertyBase
     {
         [JsonPropertyName("struct")]
-        [JsonInclude]
-        public string Struct;
+        public string Struct { get; set; }
     }
 
     internal class JmapArrayProperty : JmapPropertyBase
     {
         [JsonPropertyName("inner")]
-        [JsonInclude]
-        public JmapPropertyBase Inner;
+        public JmapPropertyBase Inner { get; set; }
     }
 
     internal class JmapEnumProperty : JmapPropertyBase
     {
         [JsonPropertyName("container")]
-        [JsonInclude]
-        public JmapPropertyBase Container;
+        public JmapPropertyBase Container { get; set; }
         [JsonPropertyName("enum")]
-        [JsonInclude]
-        public string Enum;
+        public string Enum { get; set; }
     }
 
     internal class JmapMapProperty : JmapPropertyBase
     {
         [JsonPropertyName("key_prop")]
-        [JsonInclude]
-        public JmapPropertyBase Key;
+        public JmapPropertyBase Key { get; set; }
         [JsonPropertyName("value_prop")]
-        [JsonInclude]
-        public JmapPropertyBase Value;
+        public JmapPropertyBase Value { get; set; }
     }
 
     internal class JmapSetProperty : JmapPropertyBase
     {
         [JsonPropertyName("key_prop")]
-        [JsonInclude]
-        public JmapPropertyBase Key;
+        public JmapPropertyBase Key { get; set; }
     }
 
     internal class JmapByteProperty : JmapPropertyBase
     {
         [JsonPropertyName("enum")]
-        [JsonInclude]
-        public string Enum;
+        public string Enum { get; set; }
     }
 
     internal class JmapObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
     }
 
     internal class JmapClassProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
         [JsonPropertyName("meta_class")]
-        [JsonInclude]
-        public string MetaClass;
+        public string MetaClass { get; set; }
     }
 
     internal class JmapWeakObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
     }
 
     internal class JmapSoftObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
     }
 
     internal class JmapSoftClassProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
         [JsonPropertyName("meta_class")]
-        [JsonInclude]
-        public string MetaClass;
+        public string MetaClass { get; set; }
     }
 
     internal class JmapLazyObjectProperty : JmapPropertyBase
     {
         [JsonPropertyName("property_class")]
-        [JsonInclude]
-        public string PropertyClass;
+        public string PropertyClass { get; set; }
     }
 
     internal class JmapInterfaceProperty : JmapPropertyBase
     {
         [JsonPropertyName("interface_class")]
-        [JsonInclude]
-        public string InterfaceClass;
+        public string InterfaceClass { get; set; }
     }
 
     internal class JmapOptionalProperty : JmapPropertyBase
     {
         [JsonPropertyName("inner")]
-        [JsonInclude]
-        public JmapPropertyBase Inner;
+        public JmapPropertyBase Inner { get; set; }
     }
 
     internal class JmapObjectConverter : JsonConverter<JmapObjectBase>
@@ -243,30 +227,57 @@ namespace UAssetAPI.Unversioned
 
         public override JmapObjectBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            using var jsonDoc = JsonDocument.ParseValue(ref reader);
-            if (!jsonDoc.RootElement.TryGetProperty("type", out var typeProp)) throw new JsonException();
-            string typeDiscriminator = typeProp.GetString();
+            Utf8JsonReader readerCopy = reader;
+
+            bool doneReading = false;
+            string typeDiscriminator = null;
+            int depth = 0;
+            while (readerCopy.Read())
+            {
+                switch (readerCopy.TokenType)
+                {
+                    case JsonTokenType.StartObject:
+                    case JsonTokenType.StartArray:
+                        depth++;
+                        break;
+                    case JsonTokenType.EndObject:
+                    case JsonTokenType.EndArray:
+                        if (--depth < 0) doneReading = true;
+                        break;
+                    case JsonTokenType.PropertyName:
+                        if (depth == 0 && readerCopy.ValueTextEquals("type"))
+                        {
+                            readerCopy.Read();
+                            typeDiscriminator = readerCopy.GetString();
+                            doneReading = true;
+                        }
+                        break;
+                }
+                if (doneReading) break;
+            }
+
+            if (typeDiscriminator == null) throw new JsonException();
 
             JmapObjectBase res = null;
             switch (typeDiscriminator)
             {
                 case "Object":
-                    res = JsonSerializer.Deserialize<JmapObject>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapObject>(ref reader, options);
                     break;
                 case "Package":
-                    res = JsonSerializer.Deserialize<JmapPackage>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapPackage>(ref reader, options);
                     break;
                 case "ScriptStruct":
-                    res = JsonSerializer.Deserialize<JmapScriptStruct>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapScriptStruct>(ref reader, options);
                     break;
                 case "Class":
-                    res = JsonSerializer.Deserialize<JmapClass>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapClass>(ref reader, options);
                     break;
                 case "Function":
-                    res = JsonSerializer.Deserialize<JmapFunction>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapFunction>(ref reader, options);
                     break;
                 case "Enum":
-                    res = JsonSerializer.Deserialize<JmapEnum>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapEnum>(ref reader, options);
                     break;
             }
 
@@ -290,57 +301,84 @@ namespace UAssetAPI.Unversioned
 
         public override JmapPropertyBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            using var jsonDoc = JsonDocument.ParseValue(ref reader);
-            if (!jsonDoc.RootElement.TryGetProperty("type", out var typeProp)) throw new JsonException();
-            string typeDiscriminator = typeProp.GetString();
+            Utf8JsonReader readerCopy = reader;
+
+            bool doneReading = false;
+            string typeDiscriminator = null;
+            int depth = 0;
+            while (readerCopy.Read())
+            {
+                switch (readerCopy.TokenType)
+                {
+                    case JsonTokenType.StartObject:
+                    case JsonTokenType.StartArray:
+                        depth++;
+                        break;
+                    case JsonTokenType.EndObject:
+                    case JsonTokenType.EndArray:
+                        if (--depth < 0) doneReading = true;
+                        break;
+                    case JsonTokenType.PropertyName:
+                        if (depth == 0 && readerCopy.ValueTextEquals("type"))
+                        {
+                            readerCopy.Read();
+                            typeDiscriminator = readerCopy.GetString();
+                            doneReading = true;
+                        }
+                        break;
+                }
+                if (doneReading) break;
+            }
+
+            if (typeDiscriminator == null) throw new JsonException();
 
             JmapPropertyBase res = null;
             switch(typeDiscriminator)
             {
                 case "StructProperty":
-                    res = JsonSerializer.Deserialize<JmapStructProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapStructProperty>(ref reader, options);
                     break;
                 case "ArrayProperty":
-                    res = JsonSerializer.Deserialize<JmapArrayProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapArrayProperty>(ref reader, options);
                     break;
                 case "EnumProperty":
-                    res = JsonSerializer.Deserialize<JmapEnumProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapEnumProperty>(ref reader, options);
                     break;
                 case "MapProperty":
-                    res = JsonSerializer.Deserialize<JmapMapProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapMapProperty>(ref reader, options);
                     break;
                 case "SetProperty":
-                    res = JsonSerializer.Deserialize<JmapSetProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapSetProperty>(ref reader, options);
                     break;
                 case "ByteProperty":
-                    res = JsonSerializer.Deserialize<JmapByteProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapByteProperty>(ref reader, options);
                     break;
                 case "ObjectProperty":
-                    res = JsonSerializer.Deserialize<JmapObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapObjectProperty>(ref reader, options);
                     break;
                 case "ClassProperty":
-                    res = JsonSerializer.Deserialize<JmapClassProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapClassProperty>(ref reader, options);
                     break;
                 case "WeakObjectProperty":
-                    res = JsonSerializer.Deserialize<JmapWeakObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapWeakObjectProperty>(ref reader, options);
                     break;
                 case "SoftObjectProperty":
-                    res = JsonSerializer.Deserialize<JmapSoftObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapSoftObjectProperty>(ref reader, options);
                     break;
                 case "SoftClassProperty":
-                    res = JsonSerializer.Deserialize<JmapSoftClassProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapSoftClassProperty>(ref reader, options);
                     break;
                 case "LazyObjectProperty":
-                    res = JsonSerializer.Deserialize<JmapLazyObjectProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapLazyObjectProperty>(ref reader, options);
                     break;
                 case "InterfaceProperty":
-                    res = JsonSerializer.Deserialize<JmapInterfaceProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapInterfaceProperty>(ref reader, options);
                     break;
                 case "OptionalProperty":
-                    res = JsonSerializer.Deserialize<JmapOptionalProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapOptionalProperty>(ref reader, options);
                     break;
                 default:
-                    res = JsonSerializer.Deserialize<JmapProperty>(jsonDoc.RootElement.GetRawText(), options);
+                    res = JsonSerializer.Deserialize<JmapProperty>(ref reader, options);
                     break;
             }
 
@@ -557,6 +595,8 @@ namespace UAssetAPI.Unversioned
         {
             return new JsonSerializerOptions()
             {
+                UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip,
+                TypeInfoResolver = JmapSourceGenerationContext.Default,
                 Converters =
                 {
                     new JmapObjectConverter(),
@@ -566,6 +606,11 @@ namespace UAssetAPI.Unversioned
         }
 
         public static JmapObjectBase GetObjectBase(string objectJSON, JsonSerializerOptions options = null)
+        {
+            return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, options ?? Usmap.SerializerOptions ?? JmapDefaultOptions());
+        }
+
+        public static JmapObjectBase GetObjectBase(ReadOnlySpan<byte> objectJSON, JsonSerializerOptions options = null)
         {
             return JsonSerializer.Deserialize<JmapObjectBase>(objectJSON, options ?? Usmap.SerializerOptions ?? JmapDefaultOptions());
         }
@@ -610,6 +655,11 @@ namespace UAssetAPI.Unversioned
 
         }
 
+        public static void ReadSchema(ReadOnlySpan<byte> objectJSON, UsmapSchema templateSchema)
+        {
+            ReadSchema(GetObjectBase(objectJSON), templateSchema);
+        }
+
         public static void ReadSchema(string objectJSON, UsmapSchema templateSchema)
         {
             ReadSchema(GetObjectBase(objectJSON), templateSchema);
@@ -621,11 +671,12 @@ namespace UAssetAPI.Unversioned
             {
                 templateSchema.EnumFlags = 0; // not used by UAssetAPI in practice, can populate if needed (need to convert string to int)
                 templateSchema._Values = new System.Collections.Concurrent.ConcurrentDictionary<long, string>(str.Values);
-                foreach (KeyValuePair<long, string> entry in str.Values)
-                {
-                    templateSchema._Values[entry.Key] = entry.Value;
-                }
             }
+        }
+
+        public static void ReadEnum(ReadOnlySpan<byte> objectJSON, UsmapEnum templateEnum)
+        {
+            ReadEnum(GetObjectBase(objectJSON), templateEnum);
         }
 
         public static void ReadEnum(string objectJSON, UsmapEnum templateEnum)

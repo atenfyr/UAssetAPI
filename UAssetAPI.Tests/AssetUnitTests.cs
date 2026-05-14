@@ -399,6 +399,17 @@ namespace UAssetAPI.Tests
             TestManyAssetsSubsection("Palia", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Palia", "Palia.usmap")));
             TestManyAssetsSubsection("F1Manager2023", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "F1Manager2023", "F1Manager2023.usmap")));
             TestManyAssetsSubsection("Palworld", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Palworld", "Palworld.usmap")));
+            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.usmap")));
+        }
+
+        /// <summary>
+        /// Tests assets using different jmap files for mappings.
+        /// </summary>
+        [TestMethod]
+        public void TestJMAP()
+        {
+            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.jmap")));
+            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.jmap.gz")));
         }
 
         /// <summary>
