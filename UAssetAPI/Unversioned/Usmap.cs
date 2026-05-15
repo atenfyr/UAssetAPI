@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.ExportTypes;
@@ -574,7 +573,7 @@ namespace UAssetAPI.Unversioned
         }
 
         /// <summary>
-        /// Whether or not to skip blueprint schemas serialized in this mappings file. Only useful for testing.
+        /// Whether or not to skip blueprint schemas serialized in this mappings file.
         /// </summary>
         [JsonIgnore]
         public bool SkipBlueprintSchemas = false;
@@ -878,8 +877,7 @@ namespace UAssetAPI.Unversioned
             while (schemaName != null && relevantSchema != null)
             {
                 res.AddRange(relevantSchema.Properties.Values);
-                schemaName = relevantSchema.SuperType;
-                relevantSchema = this.GetSchemaFromName(schemaName, asset);
+                relevantSchema = this.GetSchemaFromName(relevantSchema.SuperType, asset, relevantSchema.SuperTypeModulePath, false);
             }
             return res;
         }
