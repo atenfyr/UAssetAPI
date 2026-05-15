@@ -63,7 +63,7 @@ public class BytePropertyData : PropertyData
             {
                 EnumType = reader.ReadFName();
             }
-            
+
             this.ReadEndPropertyTag(reader);
         }
 
@@ -89,7 +89,7 @@ public class BytePropertyData : PropertyData
                     break;
             }
         }
-        
+
         if (useFailsafe)
         {
             switch (leng1)

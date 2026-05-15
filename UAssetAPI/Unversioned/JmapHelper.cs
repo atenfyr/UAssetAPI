@@ -333,7 +333,7 @@ namespace UAssetAPI.Unversioned
             if (typeDiscriminator == null) throw new JsonException();
 
             JmapPropertyBase res = null;
-            switch(typeDiscriminator)
+            switch (typeDiscriminator)
             {
                 case "StructProperty":
                     res = JsonSerializer.Deserialize<JmapStructProperty>(ref reader, options);

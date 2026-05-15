@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,22 +7,22 @@ namespace UAssetAPI.UnrealTypes
     public enum EObjectDataResourceVersion : uint
     {
         Invalid,
-		Initial,
+        Initial,
         AddedCookedIndex,
         LatestPlusOne,
-		Latest = LatestPlusOne - 1
-	}
+        Latest = LatestPlusOne - 1
+    }
 
     [Flags]
     public enum EObjectDataResourceFlags
     {
-        None					= 0,
-	    Inline					= (1 << 0),
-	    Streaming				= (1 << 1),
-	    Optional				= (1 << 2),
-	    Duplicate				= (1 << 3),
-	    MemoryMapped			= (1 << 4),
-	    DerivedDataReference	= (1 << 5),
+        None = 0,
+        Inline = (1 << 0),
+        Streaming = (1 << 1),
+        Optional = (1 << 2),
+        Duplicate = (1 << 3),
+        MemoryMapped = (1 << 4),
+        DerivedDataReference = (1 << 5),
     }
 
     /// <summary>

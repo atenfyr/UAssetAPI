@@ -1,4 +1,4 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -93,7 +93,7 @@ public class MovieSceneEvaluationKeyPropertyData : PropertyData<FMovieSceneEvalu
         {
             this.WriteEndPropertyTag(writer);
         }
-        
+
         return Value.Write(writer);
     }
 }

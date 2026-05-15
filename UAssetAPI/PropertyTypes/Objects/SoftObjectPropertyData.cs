@@ -120,7 +120,7 @@ public struct FSoftObjectPath : IEquatable<FSoftObjectPath>, IStruct<FSoftObject
             else
             {
                 AssetPath = new FTopLevelAssetPath(null, null);
-            } 
+            }
             SubPathString = reader.Asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() < FFortniteMainBranchObjectVersion.SoftObjectPathUtf8SubPaths
                 ? reader.ReadFString()
                 : reader.ReadUtf8String();

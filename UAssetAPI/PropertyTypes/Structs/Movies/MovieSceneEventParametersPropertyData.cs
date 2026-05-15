@@ -1,4 +1,4 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -55,7 +55,7 @@ public class MovieSceneEventParametersPropertyData : PropertyData<FMovieSceneEve
             this.ReadEndPropertyTag(reader);
         }
 
-        Value = new FMovieSceneEventParameters(reader); 
+        Value = new FMovieSceneEventParameters(reader);
     }
 
     public override int Write(AssetBinaryWriter writer, bool includeHeader, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)

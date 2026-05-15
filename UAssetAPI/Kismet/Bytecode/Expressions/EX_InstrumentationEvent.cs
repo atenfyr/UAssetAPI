@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
@@ -23,7 +23,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
 
         public EX_InstrumentationEvent()
         {
-            
+
         }
 
         /// <summary>
@@ -48,10 +48,13 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
         public override int Write(AssetBinaryWriter writer)
         {
             writer.Write((byte)EventType);
-            if (EventType.Equals(EScriptInstrumentationType.InlineEvent)) {
+            if (EventType.Equals(EScriptInstrumentationType.InlineEvent))
+            {
                 writer.XFER_FUNC_NAME(EventName);
                 return 1 + 2 * sizeof(int);
-            } else {
+            }
+            else
+            {
                 return 1;
             }
         }

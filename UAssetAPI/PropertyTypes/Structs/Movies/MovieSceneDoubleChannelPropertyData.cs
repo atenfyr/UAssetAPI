@@ -1,4 +1,4 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -29,7 +29,7 @@ public class MovieSceneDoubleChannelPropertyData : PropertyData<FMovieSceneDoubl
         {
             this.WriteEndPropertyTag(writer);
         }
-        
+
         var offset = writer.BaseStream.Position;
 
         Value.Write(writer, writer.Write);

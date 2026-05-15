@@ -11,7 +11,7 @@ namespace UAssetAPI.ExportTypes
         public int Import;
         [JsonConverter(typeof(TMapJsonConverter<FName, FString>))]
         public TMap<FName, FString> MetaData;
-        
+
         public ObjectMetaDataEntry(int import, TMap<FName, FString> metaData)
         {
             Import = import;

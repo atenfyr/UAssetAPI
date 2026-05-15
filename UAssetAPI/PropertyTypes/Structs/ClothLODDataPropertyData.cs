@@ -1,4 +1,4 @@
-﻿using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes;
 using UAssetAPI.PropertyTypes.Objects;
 
 namespace UAssetAPI.PropertyTypes.Structs;

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 

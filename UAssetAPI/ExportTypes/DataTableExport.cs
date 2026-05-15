@@ -134,7 +134,7 @@ namespace UAssetAPI.ExportTypes
                 // overrides here...
                 FName exportClassTypeName = this.GetExportClassType();
                 string exportClassType = exportClassTypeName.Value.Value;
-                switch(exportClassType)
+                switch (exportClassType)
                 {
                     case "CommonGenericInputActionDataTable":
                         decidedStructType = FName.DefineDummy(reader.Asset, "CommonInputActionDataBase");

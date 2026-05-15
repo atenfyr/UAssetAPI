@@ -175,12 +175,12 @@ public class UnrealBinaryReader : BinaryReader
                 {
                     var customVersionID = ReadGuid();
                     var customVersionNumber = ReadInt32();
-                    newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));                      
+                    newCustomVersionContainer.Add(new CustomVersion(customVersionID, customVersionNumber));
                     existingCustomVersions.Add(customVersionID);
                 }
                 break;
 
-        }    
+        }
 
         if (Mappings != null && Mappings.CustomVersionContainer != null && Mappings.CustomVersionContainer.Count > 0)
         {
@@ -214,7 +214,7 @@ public class AssetBinaryReader : UnrealBinaryReader
     {
         Asset = asset;
     }
-    
+
     public AssetBinaryReader(Stream stream, bool inLoadUexp, UAsset asset = null) : base(stream)
     {
         Asset = asset;

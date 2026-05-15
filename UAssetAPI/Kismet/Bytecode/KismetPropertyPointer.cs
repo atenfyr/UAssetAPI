@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.CustomVersions;

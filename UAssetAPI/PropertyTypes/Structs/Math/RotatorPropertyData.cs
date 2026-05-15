@@ -8,7 +8,7 @@ namespace UAssetAPI.PropertyTypes.Structs;
 /// All rotation values are stored in degrees.
 /// </summary>
 public class RotatorPropertyData : BasePropertyData<FRotator>
-{        
+{
     public RotatorPropertyData(FName name) : base(name) { }
 
     public RotatorPropertyData() { }

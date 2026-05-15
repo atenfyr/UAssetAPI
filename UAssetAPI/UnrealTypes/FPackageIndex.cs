@@ -110,7 +110,7 @@ public class FPackageIndex : IComparable
     public T ToExport<T>(UAsset asset) where T : Export
     {
         if (!IsExport() || Index > asset.Exports.Count) throw new InvalidOperationException("Index = " + Index + "; cannot call ToExport()");
-        return (T)asset.Exports[Index-1];
+        return (T)asset.Exports[Index - 1];
     }
 
     public override bool Equals(object obj)

@@ -1,4 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
+using System.Reflection.PortableExecutable;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;

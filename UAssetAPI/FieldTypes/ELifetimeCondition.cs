@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI.FieldTypes
+namespace UAssetAPI.FieldTypes
 {
     /// <summary>Secondary condition to check before considering the replication of a lifetime property.</summary>
     public enum ELifetimeCondition : byte

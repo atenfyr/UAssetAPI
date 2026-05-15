@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
@@ -14,7 +14,7 @@ public class FLevelSequenceLegacyObjectReference
         ObjectId = objectId;
         ObjectPath = objectPath;
     }
-    
+
     public FLevelSequenceLegacyObjectReference(AssetBinaryReader reader)
     {
         ObjectId = reader.ReadGuid();
@@ -39,7 +39,7 @@ public class LevelSequenceObjectReferenceMapPropertyData : PropertyData<TMap<Gui
     private static readonly FString CurrentPropertyType = new FString("LevelSequenceObjectReferenceMap");
     public override bool HasCustomStructSerialization => true;
     public override FString PropertyType => CurrentPropertyType;
-    
+
 
     public override void Read(AssetBinaryReader reader, bool includeHeader, long leng1, long leng2 = 0, PropertySerializationContext serializationContext = PropertySerializationContext.Normal)
     {

@@ -1,4 +1,4 @@
-﻿using UAssetAPI.PropertyTypes.Objects;
+using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
@@ -6,7 +6,7 @@ namespace UAssetAPI.PropertyTypes.Structs;
 public class MovieSceneSegmentPropertyData : PropertyData<FMovieSceneSegment>
 {
     public MovieSceneSegmentPropertyData(FName name) : base(name) { }
-    
+
     public MovieSceneSegmentPropertyData() { }
 
     private static readonly FString CurrentPropertyType = new FString("MovieSceneSegment");

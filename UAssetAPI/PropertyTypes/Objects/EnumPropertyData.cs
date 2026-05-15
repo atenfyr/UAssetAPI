@@ -75,7 +75,7 @@ public class EnumPropertyData : PropertyData<FName>
                 return;
             }
 
-            if (InnerType?.Value.Value == "Int8Property" || InnerType?.Value.Value == "Int16Property" || 
+            if (InnerType?.Value.Value == "Int8Property" || InnerType?.Value.Value == "Int16Property" ||
                 InnerType?.Value.Value == "IntProperty" || InnerType?.Value.Value == "Int64Property")
             {
                 long enumIndice = 0;
@@ -197,7 +197,7 @@ public class EnumPropertyData : PropertyData<FName>
             {
                 writer.Write(EnumType);
             }
-            
+
             this.WriteEndPropertyTag(writer);
         }
         writer.Write(Value);

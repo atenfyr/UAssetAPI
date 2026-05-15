@@ -9,8 +9,8 @@ namespace UAssetAPI.ExportTypes
     public enum ECppForm
     {
         Regular,
-		Namespaced,
-		EnumClass
+        Namespaced,
+        EnumClass
     }
 
     /// <summary>

@@ -65,16 +65,16 @@ namespace UAssetAPI.Tests
         {
             // Create a dummy asset for FName construction
             var dummyAsset = new UAsset(Path.Combine(TestFolder, "TestManyAssets", "Astroneer", "Augment_BroadBrush.uasset"), EngineVersion.VER_UE4_23);
-            
+
             // Create test instances
             var packageName1 = new FName(dummyAsset, "TestPackage");
             var assetName1 = new FName(dummyAsset, "TestAsset");
             var subPath1 = new FString("SubPath1");
-            
+
             var packageName2 = new FName(dummyAsset, "TestPackage");
             var assetName2 = new FName(dummyAsset, "TestAsset");
             var subPath2 = new FString("SubPath1");
-            
+
             var packageName3 = new FName(dummyAsset, "DifferentPackage");
             var assetName3 = new FName(dummyAsset, "DifferentAsset");
             var subPath3 = new FString("SubPath2");
@@ -106,28 +106,28 @@ namespace UAssetAPI.Tests
 
             // Test GetHashCode consistency
             Assert.IsTrue(path1.GetHashCode() == path2.GetHashCode(), "Equal paths should have equal hash codes");
-            
+
             // Test with null values
             var pathWithNullPackage = new FSoftObjectPath(new FTopLevelAssetPath(null, assetName1), subPath1);
             var pathWithNullAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, null), subPath1);
             var pathWithNullSubPath = new FSoftObjectPath(packageName1, assetName1, null);
-            
+
             Assert.IsFalse(path1.Equals(pathWithNullPackage), "Paths with null package should not equal non-null");
             Assert.IsFalse(path1.Equals(pathWithNullAsset), "Paths with null asset should not equal non-null");
             Assert.IsFalse(path1.Equals(pathWithNullSubPath), "Paths with null subpath should not equal non-null");
-            
+
             // Test null equality
             var pathAllNull = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
             var pathAllNull2 = new FSoftObjectPath(new FTopLevelAssetPath(null, null), null);
             Assert.IsTrue(pathAllNull.Equals(pathAllNull2), "Paths with all null values should be equal");
-            
+
             // Test partial equality scenarios
             var pathSamePackageAsset = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName1), subPath3);
             Assert.IsFalse(path1.Equals(pathSamePackageAsset), "Paths with same package/asset but different subpath should not be equal");
-            
+
             var pathSamePackageSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName1, assetName3), subPath1);
             Assert.IsFalse(path1.Equals(pathSamePackageSubPath), "Paths with same package/subpath but different asset should not be equal");
-            
+
             var pathSameAssetSubPath = new FSoftObjectPath(new FTopLevelAssetPath(packageName3, assetName1), subPath1);
             Assert.IsFalse(path1.Equals(pathSameAssetSubPath), "Paths with same asset/subpath but different package should not be equal");
         }
@@ -615,7 +615,7 @@ namespace UAssetAPI.Tests
             Assert.IsTrue(blueprint.VerifyBinaryEquality());
             AssertAllExportsParsedCorrectly(blueprint);
         }
-      
+
         /// <summary>
         /// In this test, we test several traditional assets specifically from Unreal Engine 5.3 games.
         /// Binary equality is expected.
@@ -650,7 +650,7 @@ namespace UAssetAPI.Tests
         {
             TestSubsection("BlankGame", TestFolder, "TestUE5_5", EngineVersion.VER_UE5_5, new Usmap(Path.Combine(TestFolder, "TestUE5_5", "BlankGame", "BlankUE5_5.usmap")));
         }
-        
+
         /// <summary>
         /// In this test, we test several traditional assets specifically from Unreal Engine 5.6 games.
         /// Binary equality is expected.
@@ -828,7 +828,8 @@ namespace UAssetAPI.Tests
             for (int i = 0; i < firstEntry.Value.Count; i++)
             {
                 var propData = firstEntry.Value[i];
-                if (propData is EnumPropertyData enumProp) {
+                if (propData is EnumPropertyData enumProp)
+                {
                     Console.WriteLine($"{i}: {propData.Name,-20} {propData.PropertyType,-15} {enumProp.InnerType?.Value?.Value,-15} {propData.RawValue,-10} {propData.Offset}");
                 }
                 else

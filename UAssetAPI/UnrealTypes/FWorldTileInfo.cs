@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;

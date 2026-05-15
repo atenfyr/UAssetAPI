@@ -697,7 +697,7 @@ namespace UAssetAPI.Unversioned
                     break;
                 case UsmapPropertyType.MapProperty:
                     converted1 = new UsmapMapData()
-                    { 
+                    {
                         InnerType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).KeyProp),
                         ValueType = ConvertFPropertyToUsmapPropertyData(exp, (entry as FMapProperty).ValueProp)
                     };
@@ -947,7 +947,7 @@ namespace UAssetAPI.Unversioned
             {
                 relevantSchema = this.Schemas[withoutModulePath];
             }
-            else 
+            else
             {
                 // note: this is probably not needed anymore since we now collate schemas on asset load
                 relevantSchema = Usmap.GetSchemaFromStructExport(nm, asset);
@@ -1248,7 +1248,7 @@ namespace UAssetAPI.Unversioned
             {
                 long endPos = reader.BaseStream.Position + extLeng;
 
-                switch(extId)
+                switch (extId)
                 {
                     case "PPTH": // Replaces MODL, reuses name map and added full names for Enums
                         byte ppthVer = reader.ReadByte();
@@ -1337,7 +1337,7 @@ namespace UAssetAPI.Unversioned
                 if (usmapExtensionsMagic == 0x54584543) // "CEXT"
                 {
                     UsmapExtensionLayoutVersion layoutVer = (UsmapExtensionLayoutVersion)reader.ReadByte();
-                    switch(layoutVer)
+                    switch (layoutVer)
                     {
                         case UsmapExtensionLayoutVersion.Initial:
                             int numExtensions = reader.ReadInt32();
@@ -1642,7 +1642,7 @@ namespace UAssetAPI.Unversioned
         {
             // check compression algorithms
             Stream fs = null;
-            switch(Path.GetExtension(path))
+            switch (Path.GetExtension(path))
             {
                 case ".jmap":
                     // uncompressed

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using UAssetAPI.JSON;
 
@@ -78,7 +78,7 @@ namespace UAssetAPI.UnrealTypes
             public DummyFNameSerializationException(FString dummy, INameMap map)
                 : base($"Attempt to serialize dummy FName '{dummy?.Value ?? "<null>"}' - this name was never added to the NameMap.")
             {
-                Dummy   = dummy;
+                Dummy = dummy;
                 NameMap = map;
             }
         }

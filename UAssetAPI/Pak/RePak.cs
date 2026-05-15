@@ -1,4 +1,4 @@
-﻿/*
+/*
     This code has been slightly adapted from code written by @trumank as part of the repak crate: https://github.com/trumank/repak
 
     MIT License

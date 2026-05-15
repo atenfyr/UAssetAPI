@@ -18,13 +18,13 @@ namespace UAssetAPI.PropertyTypes.Objects
     [Flags]
     public enum EPropertyTagFlags
     {
-        None						= 0x00,
-        HasArrayIndex				= 0x01,
-        HasPropertyGuid				= 0x02,
-        HasPropertyExtensions		= 0x04,
-        HasBinaryOrNativeSerialize	= 0x08,
-        BoolTrue					= 0x10,
-        SkippedSerialize            = 0x20,
+        None = 0x00,
+        HasArrayIndex = 0x01,
+        HasPropertyGuid = 0x02,
+        HasPropertyExtensions = 0x04,
+        HasBinaryOrNativeSerialize = 0x08,
+        BoolTrue = 0x10,
+        SkippedSerialize = 0x20,
     }
 
     [Flags]
@@ -40,7 +40,7 @@ namespace UAssetAPI.PropertyTypes.Objects
         /// <summary>
         /// no overridden operation was recorded on this property
         /// </summary>
-        None =	0,
+        None = 0,
         /// <summary>
         /// some sub property has recorded overridden operation
         /// </summary>

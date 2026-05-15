@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 

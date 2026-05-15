@@ -61,7 +61,7 @@ public struct FRichCurveKey : IStruct<FRichCurveKey>
         return sizeof(float) * 6 + sizeof(byte) * 3;
     }
 
-    public static FRichCurveKey Read(AssetBinaryReader reader) => new FRichCurveKey(reader); 
+    public static FRichCurveKey Read(AssetBinaryReader reader) => new FRichCurveKey(reader);
 
     public override string ToString()
     {

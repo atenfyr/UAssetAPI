@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,8 +30,8 @@ namespace UAssetAPI.ExportTypes
     public enum EExportFilterFlags : byte
     {
         None,
-	    NotForClient,
-	    NotForServer
+        NotForClient,
+        NotForServer
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ namespace UAssetAPI.ExportTypes
         {
             AssetBinaryWriter testWriter = new AssetBinaryWriter(new MemoryStream(127), asset);
             new Export().WriteExportMapEntry(testWriter);
-            
+
             long res = testWriter.BaseStream.Position;
             testWriter.Dispose();
             return res;

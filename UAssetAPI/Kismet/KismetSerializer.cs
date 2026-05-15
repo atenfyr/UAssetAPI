@@ -218,25 +218,29 @@ namespace UAssetAPI.Kismet
                         pin.PinCategory = PC_Interface;
                         pin.PinSubCategoryObject = GetFullName(finterface.InterfaceClass.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FClassProperty fclassprop:
                     {
                         pin.PinCategory = PC_Class;
                         pin.PinSubCategoryObject = GetFullName(fclassprop.MetaClass.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FSoftClassProperty fsoftclassprop:
                     {
                         pin.PinCategory = PC_SoftClass;
                         pin.PinSubCategoryObject = GetFullName(fsoftclassprop.MetaClass.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FSoftObjectProperty fsoftobjprop:
                     {
                         pin.PinCategory = PC_SoftObject;
                         pin.PinSubCategoryObject = GetFullName(fsoftobjprop.PropertyClass.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FObjectProperty fobjprop:
                     {
                         pin.PinCategory = PC_Object;
@@ -246,19 +250,22 @@ namespace UAssetAPI.Kismet
                             pin.bIsWeakPointer = true;
                         }
                         break;
-                    };
+                    }
+                    ;
                 case FStructProperty fstruct:
                     {
                         pin.PinCategory = PC_Struct;
                         pin.PinSubCategoryObject = GetFullName(fstruct.Struct.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FByteProperty fbyte:
                     {
                         pin.PinCategory = PC_Byte;
                         pin.PinSubCategoryObject = GetFullName(fbyte.Enum.Index);
                         break;
-                    };
+                    }
+                    ;
                 case FEnumProperty fenum:
                     {
                         if (!(fenum.UnderlyingProp is FByteProperty))
@@ -273,7 +280,8 @@ namespace UAssetAPI.Kismet
                     {
                         pin.PinCategory = PC_Boolean;
                         break;
-                    };
+                    }
+                    ;
                 case FGenericProperty fgeneric:
                     {
 
@@ -315,7 +323,8 @@ namespace UAssetAPI.Kismet
                                     break;
                                 }
                             default: break;
-                        };
+                        }
+                        ;
                         break;
                     }
 

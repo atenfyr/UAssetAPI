@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI.UnrealTypes;
+namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// This struct is serialized using native serialization so any changes to it require a package version bump.

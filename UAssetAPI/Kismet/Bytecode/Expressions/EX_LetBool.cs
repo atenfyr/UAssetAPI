@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 
@@ -8,7 +8,7 @@ namespace UAssetAPI.Kismet.Bytecode.Expressions
     /// A single Kismet bytecode instruction, corresponding to the <see cref="EExprToken.EX_LetBool"/> instruction.
     /// </summary>
     public class EX_LetBool : EX_LetBase
-	{
+    {
         /// <summary>
         /// The token of this expression.
         /// </summary>

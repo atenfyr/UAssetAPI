@@ -89,7 +89,7 @@ public abstract class MaterialInputPropertyData<T> : PropertyData<T>
                 writer.Write(ExpressionName);
                 totalSize += sizeof(int) * 2;
             }
-            
+
         }
         return totalSize;
     }

@@ -7,7 +7,7 @@ namespace UAssetAPI.UnrealTypes;
 /// <summary>
 /// A vector in 4-D space composed of components (X, Y, Z, W) with floating/double point precision.
 /// </summary>
-public struct FVector4: IStruct<FVector4>
+public struct FVector4 : IStruct<FVector4>
 {
     private float? _x1;
     private double _x2;

@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI.PropertyTypes.Structs;
 
-public enum ESectionEvaluationFlags : byte {
+public enum ESectionEvaluationFlags : byte
+{
     None = 0,
     PreRoll = 1,
     PostRoll = 2,
@@ -237,7 +238,7 @@ public struct FSectionEvaluationDataTree
 
 public struct FMovieSceneTrackFieldData(AssetBinaryReader reader)
 {
-    public TMovieSceneEvaluationTree<uint> Field = new (reader, reader.ReadUInt32);
+    public TMovieSceneEvaluationTree<uint> Field = new(reader, reader.ReadUInt32);
 
     public int Write(AssetBinaryWriter writer)
     {

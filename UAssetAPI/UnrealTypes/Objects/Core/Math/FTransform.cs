@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI.UnrealTypes;
+namespace UAssetAPI.UnrealTypes;
 
 /// <summary>
 /// Transform composed of Scale, Rotation (as a quaternion), and Translation.

@@ -50,7 +50,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
             {
                 ArrayType = reader.ReadFName();
             }
-                
+
             this.ReadEndPropertyTag(reader);
         }
 

@@ -1655,7 +1655,7 @@ namespace UAssetAPI.CustomVersions
 
         /// <summary>Added Extension to AssetPackageData.</summary>
         [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
-        AssetPackageDataHasExtension,		
+        AssetPackageDataHasExtension,
 
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,

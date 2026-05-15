@@ -140,7 +140,7 @@ namespace UAssetAPI.ExportTypes
 
             if (Asset.GetCustomVersion<FFrameworkObjectVersion>() < FFrameworkObjectVersion.RemoveUField_Next)
             {
-                if (Children.Length == 0) 
+                if (Children.Length == 0)
                 {
                     writer.Write(0);
                 }

@@ -705,7 +705,7 @@ namespace UAssetAPI.UnrealTypes
 
         /// <summary>Changed UE::AssetRegistry::WritePackageData to include PackageBuildDependencies</summary>
         ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES,
-        
+
         /// <summary>Added meta data serialization offset to for saved, versioned packages</summary>
         METADATA_SERIALIZATION_OFFSET,
 

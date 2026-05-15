@@ -39,7 +39,8 @@ public struct FURL
         Valid = reader.ReadInt32();
     }
 
-    public int Write(AssetBinaryWriter writer){
+    public int Write(AssetBinaryWriter writer)
+    {
 
         var offset = writer.BaseStream.Position;
         writer.Write(Protocol);
@@ -53,7 +54,7 @@ public struct FURL
         }
         writer.Write(Port);
         writer.Write(Valid);
-        return (int)(writer.BaseStream.Position-offset);
+        return (int)(writer.BaseStream.Position - offset);
     }
 }
 
@@ -75,7 +76,7 @@ public class LevelExport : NormalExport
 
     public LevelExport(UAsset asset, byte[] extras) : base(asset, extras) { }
 
-    public LevelExport(){ } 
+    public LevelExport() { }
 
     public override void Read(AssetBinaryReader reader, int nextStarting)
     {
@@ -87,10 +88,11 @@ public class LevelExport : NormalExport
         int numIndexEntries = reader.ReadInt32();
 
         Actors = new List<FPackageIndex>(numIndexEntries);
-        for (int i = 0; i < numIndexEntries; i++) {
+        for (int i = 0; i < numIndexEntries; i++)
+        {
             Actors.Add(new FPackageIndex(reader));
         }
-        
+
         URL = new FURL(reader);
 
         Model = new FPackageIndex(reader);
@@ -105,7 +107,7 @@ public class LevelExport : NormalExport
         LevelScriptActor = new FPackageIndex(reader);
         NavListStart = new FPackageIndex(reader);
         NavListEnd = new FPackageIndex(reader);
-        
+
         // TODO: Implement the rest of the properties
     }
 

@@ -1772,7 +1772,7 @@ namespace UAssetAPI
             }
 
             if (ObjectVersionUE5 < ObjectVersionUE5.PACKAGE_SAVED_HASH)
-            { 
+            {
                 SectionSixOffset = reader.ReadInt32(); // 24
             }
 
@@ -1841,7 +1841,7 @@ namespace UAssetAPI
 
             if (!IsFilterEditorOnly)
             {
-                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER 
+                PersistentGuid = ObjectVersion >= ObjectVersion.VER_UE4_ADDED_PACKAGE_OWNER
                     ? reader.ReadGuid()
                     : PackageGuid;
 
@@ -1989,7 +1989,7 @@ namespace UAssetAPI
 
                     var sourceString = reader.ReadFString();
                     var sourceStringMetaData = reader.ReadLocMetadataObject();
-                    var sourceData = new FTextSourceData {SourceString = sourceString, SourceStringMetaData = sourceStringMetaData};
+                    var sourceData = new FTextSourceData { SourceString = sourceString, SourceStringMetaData = sourceStringMetaData };
 
                     var contexts = new List<FTextSourceSiteContext>();
                     var contextsCount = reader.ReadInt32();
@@ -2014,7 +2014,7 @@ namespace UAssetAPI
                         contexts.Add(context);
                     }
 
-                    var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts};
+                    var textData = new FGatherableTextData { NamespaceName = namespaceName, SourceData = sourceData, SourceSiteContexts = contexts };
                     GatherableTextData.Add(textData);
                 }
             }
@@ -2293,7 +2293,7 @@ namespace UAssetAPI
                 SearchableNames = new SortedDictionary<FPackageIndex, List<FName>>();
                 reader.BaseStream.Seek(SearchableNamesOffset, SeekOrigin.Begin);
                 var searchableNamesCount = reader.ReadInt32();
-                
+
                 for (int i = 0; i < searchableNamesCount; i++)
                 {
                     var collectionIndex = reader.ReadInt32();

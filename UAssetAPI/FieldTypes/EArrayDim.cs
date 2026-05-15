@@ -1,4 +1,4 @@
-﻿namespace UAssetAPI.FieldTypes
+namespace UAssetAPI.FieldTypes
 {
     /// <summary>
     /// The type of array that this property represents. This is represented an integer in the engine.

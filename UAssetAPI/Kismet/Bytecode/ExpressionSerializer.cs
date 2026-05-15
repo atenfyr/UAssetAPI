@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UAssetAPI.Kismet.Bytecode.Expressions;
 using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;

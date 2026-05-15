@@ -1,4 +1,4 @@
-﻿using UAssetAPI.UnrealTypes;
+using UAssetAPI.UnrealTypes;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.CustomVersions;
 using UAssetAPI.Unversioned;

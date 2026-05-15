@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -97,7 +97,7 @@ namespace UAssetAPI.UnrealTypes
             return _compareFunction(arg1, arg2);
         }
     }
-    
+
     /// <summary>
     /// A concrete implementation of the abstract KeyedCollection class using lambdas for the
     /// implementation.
@@ -271,7 +271,7 @@ namespace UAssetAPI.UnrealTypes
         }
 
         #endregion
-        
+
         #region Constructors
 
         public TMap()
