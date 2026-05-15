@@ -1368,68 +1368,48 @@ namespace UAssetAPI.Unversioned
             }
         }
 
+        private static bool RefillBuffer(ref Utf8JsonReader reader, ref byte[] buffer, Stream fs, ref long bytesNotInBuffer)
+        {
+            JsonReaderState state = reader.CurrentState;
+            long bytesConsumed = reader.BytesConsumed;
+            long numberOfBytesToPreserve = buffer.LongLength - bytesConsumed;
+            long numberOfBytesToRead;
+
+            if (bytesConsumed == 0)
+            {
+                byte[] newBuffer = new byte[buffer.LongLength * 2];
+                Array.Copy(buffer, newBuffer, buffer.LongLength);
+                numberOfBytesToRead = buffer.LongLength;
+                buffer = newBuffer;
+            }
+            else
+            {
+                Array.Copy(buffer, bytesConsumed, buffer, 0, numberOfBytesToPreserve);
+                numberOfBytesToRead = buffer.LongLength - numberOfBytesToPreserve;
+                bytesNotInBuffer += bytesConsumed;
+            }
+
+            int bytesRead = fs.Read(buffer, (int)numberOfBytesToPreserve, (int)numberOfBytesToRead);
+            if (bytesRead == 0) return false;
+
+            reader = new Utf8JsonReader(buffer.AsSpan(0, (int)(numberOfBytesToPreserve + bytesRead)), bytesRead < numberOfBytesToRead, state);
+            return true;
+        }
+
         private bool ReadToken(ref Utf8JsonReader reader, ref byte[] buffer, Stream fs, ref long bytesNotInBuffer)
         {
-            bool success = false;
-            try
+            while (!reader.Read())
             {
-                success = reader.Read();
-            }
-            catch (System.Text.Json.JsonException)
-            {
-                success = false;
-            }
-
-            if (!success)
-            {
-                JsonReaderState state = reader.CurrentState;
-
-                long startIdx = reader.BytesConsumed;
-                long numberOfBytesToPreserve = buffer.LongLength - startIdx;
-                long numberOfBytesToRead = buffer.LongLength - numberOfBytesToPreserve;
-
-                Array.Copy(buffer, startIdx, buffer, 0, numberOfBytesToPreserve);
-                int bytesRead = fs.Read(buffer, (int)numberOfBytesToPreserve, (int)numberOfBytesToRead);
-                if (bytesRead == 0) return false;
-
-                reader = new Utf8JsonReader(buffer.AsSpan(0, (int)(numberOfBytesToPreserve + bytesRead)), bytesRead < numberOfBytesToRead, state);
-
-                bytesNotInBuffer += startIdx;
-
-                return reader.Read();
+                if (!RefillBuffer(ref reader, ref buffer, fs, ref bytesNotInBuffer)) return false;
             }
             return true;
         }
 
         private bool SkipToken(ref Utf8JsonReader reader, ref byte[] buffer, Stream fs, ref long bytesNotInBuffer)
         {
-            bool success = false;
-            try
+            while (!reader.TrySkip())
             {
-                success = reader.TrySkip();
-            }
-            catch (System.Text.Json.JsonException)
-            {
-                success = false;
-            }
-
-            if (!success)
-            {
-                JsonReaderState state = reader.CurrentState;
-
-                long startIdx = reader.BytesConsumed;
-                long numberOfBytesToPreserve = buffer.LongLength - startIdx;
-                long numberOfBytesToRead = buffer.LongLength - numberOfBytesToPreserve;
-
-                Array.Copy(buffer, startIdx, buffer, 0, numberOfBytesToPreserve);
-                int bytesRead = fs.Read(buffer, (int)numberOfBytesToPreserve, (int)numberOfBytesToRead);
-                if (bytesRead == 0) return false;
-
-                reader = new Utf8JsonReader(buffer.AsSpan(0, (int)(numberOfBytesToPreserve + bytesRead)), bytesRead < numberOfBytesToRead, state);
-
-                bytesNotInBuffer += startIdx;
-
-                return reader.TrySkip();
+                if (!RefillBuffer(ref reader, ref buffer, fs, ref bytesNotInBuffer)) return false;
             }
             return true;
         }
@@ -1551,6 +1531,7 @@ namespace UAssetAPI.Unversioned
                                 long bufferPosBefore = reader.TokenStartIndex;
                                 long startIdxIfOverflow = reader.BytesConsumed;
                                 long offset = bufferPosBefore + bytesNotInBuffer;
+                                long bytesNotInBufferBefore = bytesNotInBuffer;
                                 SkipToken(ref reader, ref buffer, fs, ref bytesNotInBuffer);
 
                                 // calculate total size. SkipToken can change bytesNotInBuffer (in case of buffer overflow) so we also add the delta here
@@ -1577,9 +1558,9 @@ namespace UAssetAPI.Unversioned
                                     }
                                     else
                                     {
-                                        // if bufferPosBefore + size is > the size of the buffer, then we overflowed, so we need to compensate for the data moving to the start of the buffer
+                                        // if SkipToken slid the buffer, the data has moved to the start of the buffer and we no longer have the StartObject byte
                                         bool addStartObjectTokenToString = false;
-                                        if (bufferPosBefore + size > buffer.Length)
+                                        if (bytesNotInBuffer != bytesNotInBufferBefore)
                                         {
                                             // the data is shifted left so that startIdxIfOverflow is now at 0
                                             bufferPosBefore = bufferPosBefore - startIdxIfOverflow;
