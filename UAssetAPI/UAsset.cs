@@ -671,37 +671,64 @@ namespace UAssetAPI
         }
 
         /// <summary>
-        /// Attempt to find another asset on disk given an asset path (i.e. one starting with /Game/).
+        /// Attempt to find another asset on disk given an asset path (starting with /Game/ or within a plugin).
         /// </summary>
         /// <param name="path">The asset path.</param>
         /// <returns>The path to the file on disk, or null if none could be found.</returns>
         public virtual string FindAssetOnDiskFromPath(string path)
         {
             if (!path.StartsWith("/") || path.StartsWith("/Script")) return null;
-            path = path.Substring(6) + ".uasset";
+            int firstIdxWithoutSlash = path.IndexOf('/') + 1;
+            int secondIdxWithoutSlash = path.IndexOf('/', firstIdxWithoutSlash) + 1;
+            string pathPrefixPart = path.Substring(firstIdxWithoutSlash, secondIdxWithoutSlash - firstIdxWithoutSlash - 1);
+            string pathNoPrefix = path.Substring(secondIdxWithoutSlash) + ".uasset";
 
             string mappedPathOnDisk = string.Empty;
             bool foundMappedPath = false;
 
+            string desiredPathRelativeToContent = null;
+            switch (pathPrefixPart)
+            {
+                case "Game":
+                    desiredPathRelativeToContent = pathNoPrefix.FixDirectorySeparatorsForDisk();
+                    break;
+                default:
+                    // presumably a plugin
+                    desiredPathRelativeToContent = ".." + Path.DirectorySeparatorChar + "Plugins" + Path.DirectorySeparatorChar + pathPrefixPart + Path.DirectorySeparatorChar + "Content" + Path.DirectorySeparatorChar + pathNoPrefix.FixDirectorySeparatorsForDisk();
+                    break;
+            }
+
             var contentPart = Path.DirectorySeparatorChar + "Content";
+            var pluginsPart = Path.DirectorySeparatorChar + "Plugins";
             if (!string.IsNullOrEmpty(FilePath))
             {
                 var fixedFilePath = FilePath.FixDirectorySeparatorsForDisk();
                 var contentIndex = fixedFilePath.LastIndexOf(contentPart);
+                var pluginsIndex = fixedFilePath.LastIndexOf(pluginsPart);
 
                 // let's see if the current path has Content in it, then we can re-orient ourselves
+                string contentDir = null;
                 if (!foundMappedPath && contentIndex > 0)
                 {
-                    var contentDir = fixedFilePath.Substring(0, contentIndex + contentPart.Length);
-                    mappedPathOnDisk = Path.Combine(contentDir, path.FixDirectorySeparatorsForDisk());
-                    foundMappedPath = File.Exists(mappedPathOnDisk); // not worrying too much about race condition, we'll put a try catch later
+                    contentDir = fixedFilePath.Substring(0, contentIndex + contentPart.Length);
+                }
+
+                // let's see if the current path has Plugins in it, then we can re-orient ourselves
+                if (!foundMappedPath && pluginsIndex > 0)
+                {
+                    contentDir = fixedFilePath.Substring(0, pluginsIndex + pluginsPart.Length) + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + "Content";
+                }
+
+                if (contentDir != null)
+                {
+                    mappedPathOnDisk = Path.Combine(contentDir, desiredPathRelativeToContent);
+                    foundMappedPath = File.Exists(mappedPathOnDisk); // not worrying too much about race condition, we put a try catch later in the code
                 }
 
                 if (!foundMappedPath)
                 {
                     // let's see if it exists in the same directory
-                    var rawFileName = Path.GetFileName(path);
-                    mappedPathOnDisk = Path.Combine(Directory.GetParent(FilePath).FullName, Path.GetFileName(path));
+                    mappedPathOnDisk = Path.Combine(Directory.GetParent(FilePath).FullName, Path.GetFileName(pathNoPrefix));
                     foundMappedPath = File.Exists(mappedPathOnDisk);
                 }
             }

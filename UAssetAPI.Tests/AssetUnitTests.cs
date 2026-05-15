@@ -35,6 +35,7 @@ namespace UAssetAPI.Tests
         /// <param name="tester">The asset to test.</param>
         public void AssertAllExportsParsedCorrectly(UAsset tester)
         {
+            Assert.IsTrue(tester.OtherAssetsFailedToAccess == null || tester.OtherAssetsFailedToAccess.Count == 0, $"OtherAssetsFailedToAccess in '{tester.FilePath}' is not empty: '{string.Join(", ", tester.OtherAssetsFailedToAccess)}'");
             foreach (Export testExport in tester.Exports)
             {
                 Assert.IsFalse(testExport is RawExport, $"Export '{testExport.ObjectName}' in '{tester.FilePath}' was not parsed correctly (RawExport)");
@@ -400,6 +401,7 @@ namespace UAssetAPI.Tests
             TestManyAssetsSubsection("F1Manager2023", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "F1Manager2023", "F1Manager2023.usmap")));
             TestManyAssetsSubsection("Palworld", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Palworld", "Palworld.usmap")));
             TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.usmap")));
+            TestManyAssetsSubsection("SN2", EngineVersion.VER_UE5_6, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "SN2", "SN2.usmap"))); // BP_SN2PlayerController tests plugin asset fetch
         }
 
         /// <summary>
@@ -408,8 +410,10 @@ namespace UAssetAPI.Tests
         [TestMethod]
         public void TestJMAP()
         {
-            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.jmap")));
+            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay_unminified.jmap")));
+            TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay_minified.jmap")));
             TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.jmap.gz")));
+            TestManyAssetsSubsection("SN2", EngineVersion.UNKNOWN, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "SN2", "SN2.jmap.gz"))); // test of jmap version auto-fill
         }
 
         /// <summary>
