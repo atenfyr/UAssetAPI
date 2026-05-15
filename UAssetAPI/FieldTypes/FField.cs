@@ -339,8 +339,8 @@ namespace UAssetAPI.FieldTypes
             ByteOffset = reader.ReadByte();
             ByteMask = reader.ReadByte();
             FieldMask = reader.ReadByte();
-            NativeBool = reader.ReadBoolean();
-            Value = reader.ReadBoolean();
+            NativeBool = reader.ReadBooleanByte();
+            Value = reader.ReadBooleanByte();
         }
 
         public override void Write(AssetBinaryWriter writer)

@@ -70,9 +70,26 @@ public class UnrealBinaryReader : BinaryReader
         return BitConverter.ToDouble(ReverseIfBigEndian(base.ReadBytes(8)), 0);
     }
 
+    [Obsolete("Deprecated due to potential confusion with ReadBooleanInt, use ReadBooleanByte instead for identical behavior")]
+    public new bool ReadBoolean()
+    {
+        return ReadBooleanByte();
+    }
+
     public bool ReadBooleanInt()
     {
         var i = ReadInt32();
+        return i switch
+        {
+            1 => true,
+            0 => false,
+            _ => throw new FormatException($"Invalid boolean value {i}")
+        };
+    }
+
+    public bool ReadBooleanByte()
+    {
+        var i = ReadByte();
         return i switch
         {
             1 => true,
@@ -94,7 +111,7 @@ public class UnrealBinaryReader : BinaryReader
     public virtual FString ReadFString()
     {
         int length = this.ReadInt32();
-        if (length > 1e6) throw new FormatException($"Invalid FString length: {length}"); // some parsing error is obviously occurring if we have extremely large strings
+        if (length > MainSerializer.MaxSerializedArrayLength) throw new InvalidOperationException($"Invalid FString length: {length}"); // some parsing error is obviously occurring if we have extremely large strings
         switch (length)
         {
             case < 0:
@@ -114,10 +131,11 @@ public class UnrealBinaryReader : BinaryReader
     public virtual FString ReadUtf8String()
     {
         int length = this.ReadInt32();
+        if (length > MainSerializer.MaxSerializedArrayLength) throw new InvalidOperationException($"Invalid UTF-8 string length: {length}");
         switch (length)
         {
             case < 0:
-                throw new FormatException("Invalid UTF-8 string length");
+                throw new FormatException($"Invalid UTF-8 string length: {length}");
             case > 0:
                 Span<byte> data = length < 512 ? stackalloc byte[length] : new byte[length];
                 BaseStream.ReadExactly(data);
@@ -226,7 +244,7 @@ public class AssetBinaryReader : UnrealBinaryReader
         if (Asset.HasUnversionedProperties) return null;
         if (Asset.ObjectVersion >= ObjectVersion.VER_UE4_PROPERTY_GUID_IN_PROPERTY_TAG)
         {
-            bool hasPropertyGuid = ReadBoolean();
+            bool hasPropertyGuid = ReadBooleanByte();
             if (hasPropertyGuid) return ReadGuid();
         }
         return null;
@@ -242,6 +260,7 @@ public class AssetBinaryReader : UnrealBinaryReader
     public T[] ReadArray<T>(int length, Func<T> readElement)
     {
         if (length == 0) return [];
+        if (length > MainSerializer.MaxSerializedArrayLength) throw new FormatException($"Invalid array length: {length}");
         T[] newData = new T[length];
         for (int i = 0; i < length; i++)
         {

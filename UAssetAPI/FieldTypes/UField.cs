@@ -358,7 +358,7 @@ public class UBoolProperty : UProperty
         base.Read(reader);
 
         ElementSize = reader.ReadByte();
-        NativeBool = reader.ReadBoolean();
+        NativeBool = reader.ReadBooleanByte();
     }
 
     public override void Write(AssetBinaryWriter writer)

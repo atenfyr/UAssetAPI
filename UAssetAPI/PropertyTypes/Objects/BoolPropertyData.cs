@@ -20,12 +20,12 @@ public class BoolPropertyData : PropertyData<bool>
     {
         if (reader.Asset.HasUnversionedProperties || reader.Asset.ObjectVersionUE5 < ObjectVersionUE5.PROPERTY_TAG_COMPLETE_TYPE_NAME)
         {
-            Value = reader.ReadBoolean();
+            Value = reader.ReadBooleanByte();
         }
         else
         {
             if (serializationContext is PropertySerializationContext.Map or PropertySerializationContext.Array)
-                Value = reader.ReadBoolean();
+                Value = reader.ReadBooleanByte();
             else
                 Value = this.PropertyTagFlags.HasFlag(EPropertyTagFlags.BoolTrue);
         }

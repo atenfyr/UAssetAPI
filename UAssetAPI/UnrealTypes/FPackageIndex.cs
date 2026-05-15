@@ -163,6 +163,7 @@ public class FPackageIndex : IComparable
     public FPackageIndex(AssetBinaryReader reader)
     {
         Index = reader.ReadInt32();
+        if ((reader?.Asset?.Exports != null && Index > reader.Asset.Exports.Count) || (reader?.Asset?.Imports != null && Index < -reader.Asset.Imports.Count)) throw new InvalidOperationException($"Invalid FPackageIndex value {Index} was read");
     }
 
     public int Write(AssetBinaryWriter writer)

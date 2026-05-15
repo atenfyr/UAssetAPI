@@ -42,7 +42,8 @@ namespace UAssetAPI
 #if DEBUGVERBOSE
         private static PropertyData lastType;
 #endif
-        public static string[] AdditionalPropertyRegistry = ["ClassProperty", "SoftClassProperty", "AssetClassProperty"];
+        internal static readonly string[] AdditionalPropertyRegistry = ["ClassProperty", "SoftClassProperty", "AssetClassProperty"];
+        internal static readonly long MaxSerializedArrayLength = 1024 * 1024;
 
         private static IDictionary<string, RegistryEntry> _propertyTypeRegistry;
 
@@ -65,7 +66,7 @@ namespace UAssetAPI
             return AppDomain.CurrentDomain.GetAssemblies().Where(a => GetNamesOfAssembliesReferencedBy(a).Contains(analyzedAssembly.FullName));
         }
 
-        public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
+        private static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
         {
             return assembly.GetReferencedAssemblies().Select(assemblyName => assemblyName.FullName);
         }

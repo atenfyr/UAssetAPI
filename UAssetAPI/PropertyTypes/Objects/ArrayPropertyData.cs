@@ -67,6 +67,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         }
 
         int numEntries = reader.ReadInt32();
+        if (numEntries > MainSerializer.MaxSerializedArrayLength) throw new InvalidOperationException("Invalid number of entries (" + numEntries + ") for array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
         if (ArrayType.Value.Value == "StructProperty" && ShouldSerializeStructsDifferently && !reader.Asset.HasUnversionedProperties)
         {
             var results = new PropertyData[numEntries];

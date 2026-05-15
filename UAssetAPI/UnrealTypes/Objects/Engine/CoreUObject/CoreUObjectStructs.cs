@@ -211,7 +211,7 @@ public struct FTimecode
         Minutes = reader.ReadInt32();
         Seconds = reader.ReadInt32();
         Frames = reader.ReadInt32();
-        bDropFrameFormat = reader.ReadBoolean();
+        bDropFrameFormat = reader.ReadBooleanByte();
     }
 
     public void Write(AssetBinaryWriter writer)
