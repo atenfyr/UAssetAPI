@@ -10,29 +10,7 @@ public static class MainSerializer
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [MainSerializer](./uassetapi.mainserializer.md)
 
-## Fields
-
-### **AdditionalPropertyRegistry**
-
-```csharp
-public static String[] AdditionalPropertyRegistry;
-```
-
 ## Methods
-
-### **GetNamesOfAssembliesReferencedBy(Assembly)**
-
-```csharp
-public static IEnumerable<string> GetNamesOfAssembliesReferencedBy(Assembly assembly)
-```
-
-#### Parameters
-
-`assembly` [Assembly](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.assembly)<br>
-
-#### Returns
-
-[IEnumerable&lt;String&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
 ### **GenerateUnversionedHeader(List`1&, FName, FName, UAsset)**
 

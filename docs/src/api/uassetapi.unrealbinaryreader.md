@@ -131,10 +131,36 @@ public double ReadDouble()
 
 [Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
 
+### **ReadBoolean()**
+
+#### Caution
+
+Deprecated due to potential confusion with ReadBooleanInt, use ReadBooleanByte instead for identical behavior
+
+---
+
+```csharp
+public bool ReadBoolean()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ### **ReadBooleanInt()**
 
 ```csharp
 public bool ReadBooleanInt()
+```
+
+#### Returns
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+### **ReadBooleanByte()**
+
+```csharp
+public bool ReadBooleanByte()
 ```
 
 #### Returns

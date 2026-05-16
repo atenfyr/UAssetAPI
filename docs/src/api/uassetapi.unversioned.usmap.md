@@ -58,7 +58,7 @@ public uint NetCL;
 
 ### **SkipBlueprintSchemas**
 
-Whether or not to skip blueprint schemas serialized in this mappings file. Only useful for testing.
+Whether or not to skip blueprint schemas serialized in this mappings file.
 
 ```csharp
 public bool SkipBlueprintSchemas;

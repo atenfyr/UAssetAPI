@@ -973,7 +973,7 @@ public void ResolveAncestries()
 
 ### **FindAssetOnDiskFromPath(String)**
 
-Attempt to find another asset on disk given an asset path (i.e. one starting with /Game/).
+Attempt to find another asset on disk given an asset path (starting with /Game/ or within a plugin).
 
 ```csharp
 public string FindAssetOnDiskFromPath(string path)
