@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# cd to script dir https://stackoverflow.com/a/17744637
-cd "$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+# cd to script dir
+cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd
 
 startdir="$(pwd)"
 (

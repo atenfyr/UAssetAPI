@@ -304,6 +304,7 @@
     - [UInt32PropertyData](api/uassetapi.propertytypes.objects.uint32propertydata.md)
     - [UInt64PropertyData](api/uassetapi.propertytypes.objects.uint64propertydata.md)
     - [UnknownPropertyData](api/uassetapi.propertytypes.objects.unknownpropertydata.md)
+    - [Utf8StrPropertyData](api/uassetapi.propertytypes.objects.utf8strpropertydata.md)
     - [WeakObjectPropertyData](api/uassetapi.propertytypes.objects.weakobjectpropertydata.md)
   - [UAssetAPI.PropertyTypes.Structs]()
     - [Box2DPropertyData](api/uassetapi.propertytypes.structs.box2dpropertydata.md)
