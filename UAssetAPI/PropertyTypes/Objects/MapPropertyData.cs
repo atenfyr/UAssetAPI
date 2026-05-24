@@ -148,6 +148,7 @@ public class MapPropertyData : PropertyData
         }
 
         int numKeysToRemove = reader.ReadInt32();
+        if (numKeysToRemove > MainSerializer.MaxSerializedArrayLength) throw new FormatException($"KeysToRemove length ({numKeysToRemove}) exceeds max length ({MainSerializer.MaxSerializedArrayLength})");
         KeysToRemove = new PropertyData[numKeysToRemove];
         for (int i = 0; i < numKeysToRemove; i++)
         {
@@ -155,6 +156,7 @@ public class MapPropertyData : PropertyData
         }
 
         int numEntries = reader.ReadInt32();
+        if (numEntries > MainSerializer.MaxSerializedArrayLength) throw new FormatException($"Value length ({numEntries}) exceeds max length ({MainSerializer.MaxSerializedArrayLength})");
         if (numEntries == 0)
         {
             KeyType = type1;
