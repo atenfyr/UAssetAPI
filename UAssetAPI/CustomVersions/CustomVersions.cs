@@ -2512,4 +2512,23 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
         LatestVersion = VersionPlusOne - 1
     };
+
+    /// <summary>
+    /// Custom serialization version for changes in FInstancedStruct
+    /// </summary>
+    public enum FInstancedStructCustomVersion : int
+    {
+        /// <summary>Before any version changes were made</summary>
+        [Introduced(EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE)]
+        BeforeCustomVersionWasAdded = -1,
+
+        // Before any version changes were made
+        [Introduced(EngineVersion.VER_UE5_3)]
+        CustomVersionAdded = 0,
+
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
+        VersionPlusOne,
+        [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
+        LatestVersion = VersionPlusOne - 1
+    };
 }
