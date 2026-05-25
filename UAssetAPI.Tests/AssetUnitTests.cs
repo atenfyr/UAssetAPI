@@ -402,6 +402,7 @@ namespace UAssetAPI.Tests
             TestManyAssetsSubsection("Palworld", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Palworld", "Palworld.usmap")));
             TestManyAssetsSubsection("Clay", EngineVersion.VER_UE5_1, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Clay", "Clay.usmap")));
             TestManyAssetsSubsection("SN2", EngineVersion.VER_UE5_6, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "SN2", "SN2.usmap"))); // BP_SN2PlayerController tests plugin asset fetch
+            TestManyAssetsSubsection("Bellwright", EngineVersion.VER_UE5_6, new Usmap(Path.Combine(TestFolder, "TestManyAssets", "Bellwright", "Bellwright.usmap"))); // FInstancedStruct
         }
 
         /// <summary>
