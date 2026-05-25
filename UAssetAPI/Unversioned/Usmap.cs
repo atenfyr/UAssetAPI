@@ -1107,23 +1107,16 @@ namespace UAssetAPI.Unversioned
             }
         }
 
-        internal static UsmapPropertyData InitPropData(UsmapPropertyType typ)
+        internal static UsmapPropertyData InitPropData(UsmapPropertyType type)
         {
-            switch (typ)
+            return type switch
             {
-                case UsmapPropertyType.EnumProperty:
-                    return new UsmapEnumData();
-                case UsmapPropertyType.StructProperty:
-                    return new UsmapStructData();
-                case UsmapPropertyType.SetProperty:
-                case UsmapPropertyType.ArrayProperty:
-                case UsmapPropertyType.OptionalProperty:
-                    return new UsmapArrayData(typ);
-                case UsmapPropertyType.MapProperty:
-                    return new UsmapMapData();
-            }
-
-            return new UsmapPropertyData(typ);
+                UsmapPropertyType.EnumProperty => new UsmapEnumData(),
+                UsmapPropertyType.StructProperty => new UsmapStructData(),
+                UsmapPropertyType.SetProperty or UsmapPropertyType.ArrayProperty or UsmapPropertyType.OptionalProperty => new UsmapArrayData(type),
+                UsmapPropertyType.MapProperty => new UsmapMapData(),
+                _ => new UsmapPropertyData(type),
+            };
         }
 
         private UsmapPropertyData DeserializePropData(UsmapBinaryReader reader)
