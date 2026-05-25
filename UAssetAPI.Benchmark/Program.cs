@@ -113,7 +113,7 @@ namespace UAssetAPI.Benchmark
                             timer.Start();
                             mappings = new Usmap(assetPath);
                             timer.Stop();
-                            Console.WriteLine("Mappings parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms");
+                            Console.WriteLine($"Mappings {Path.GetFileName(assetPath)} parsed in " + NumberToTwoDecimalPlaces(timer.Elapsed.TotalMilliseconds) + " ms");
                             break;
                         }
                     }
