@@ -76,7 +76,7 @@ namespace UAssetAPI.UnrealTypes
             public readonly INameMap NameMap;
 
             public DummyFNameSerializationException(FString dummy, INameMap map)
-                : base($"Attempt to serialize dummy FName '{dummy?.Value ?? "<null>"}' - this name was never added to the NameMap.")
+                : base($"Attempt to serialize dummy FName \"{dummy?.Value ?? "<null>"}\"")
             {
                 Dummy = dummy;
                 NameMap = map;
