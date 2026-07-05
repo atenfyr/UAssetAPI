@@ -296,6 +296,13 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
     public override void FromString(string[] d, UAsset asset)
     {
         if (d[4] != null) ArrayType = FName.FromString(asset, d[4]);
+        if (!string.IsNullOrWhiteSpace(d[0]))
+        {
+            DummyStruct = new StructPropertyData(this.Name, FName.FromString(asset, d[0]))
+            {
+                StructGUID = DummyStruct?.StructGUID ?? Guid.Empty
+            };
+        }
     }
 
     protected override void HandleCloned(PropertyData res)
