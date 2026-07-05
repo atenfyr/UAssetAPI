@@ -233,7 +233,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
 
                 if (arrayStructType == null)
                 {
-                    throw new InvalidOperationException("Unable to reconstruct DummyStruct within empty StructProperty array " + Name.Value.Value + " in class " + Ancestry.Parent.Value.Value);
+                    throw new InvalidOperationException("DummyStruct is null within empty StructProperty array \"" + Name.Value.Value + "\" in class \"" + Ancestry.Parent.Value.Value + "\"");
                 }
 
                 DummyStruct = new StructPropertyData(this.Name, arrayStructType)
@@ -298,7 +298,7 @@ public class ArrayPropertyData : PropertyData<PropertyData[]>
         if (d[4] != null) ArrayType = FName.FromString(asset, d[4]);
         if (!string.IsNullOrWhiteSpace(d[0]))
         {
-            DummyStruct = new StructPropertyData(this.Name, FName.FromString(asset, d[0]))
+            DummyStruct = d[0] == FString.NullCase ? null : new StructPropertyData(this.Name, FName.FromString(asset, d[0]))
             {
                 StructGUID = DummyStruct?.StructGUID ?? Guid.Empty
             };
