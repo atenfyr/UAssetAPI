@@ -2048,6 +2048,7 @@ namespace UAssetAPI
 
             if (MetaDataOffset > 0)
             {
+                reader.BaseStream.Seek(MetaDataOffset, SeekOrigin.Begin);
                 MetaData = new FMetaData(reader);
             }
 
