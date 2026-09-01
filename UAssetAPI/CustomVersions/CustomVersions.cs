@@ -935,6 +935,177 @@ namespace UAssetAPI.CustomVersions
         [Introduced(EngineVersion.VER_UE5_7)]
         LandscapeAdvancedWeightBlending,
 
+                /// <summary>Add support for FastGeo transformer setting assets</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        FastGeoTransformerSettingAssets,
+
+        /// <summary>UAF can now generate procedural systems for assets</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        UAFProceduralSystems,
+
+        /// <summary>Firefight: version 228 was introduced and backed out, adding it back to allow assets created in the meantime to load</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        Firefight_228,
+
+        /// <summary>Add default runtime state to FDataLayerInstanceDesc</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        WorldPartitionDataLayerDefaultRuntimeState,
+
+        /// <summary>Introducing FGuid to UAF variable entries</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        UAFVariablesGuid,
+
+        /// <summary>Introducing FGuid cached to FAnimNext(Soft)VariableReference</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        UAFVariableReferenceGUID,
+
+        /// <summary>Unified source color settings between img media &amp; media io</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        MediaColorSettingsUnification,
+
+        /// <summary>Changed behavior of the String Operation metadata node in PCG for Substring and Matches</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCGMetadataOpStringTypeChange,
+
+        /// <summary>Compress LiveLink SubSection data</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        LiveLinkCompressSubSectionData,
+
+        /// <summary>Added option to quantize chaos tri mesh BVH's per-face bounds</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        OptionalQuantizePerFaceBoundsInChaosTriMeshBVH,
+
+        /// <summary>Add Dataflow Graph Topology Guid to UE::Dataflow:FGraph</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        DataflowAddGraphTopologyGuid,
+
+        /// <summary>Add material usage flag for mesh deformers</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AddMeshDeformerUsageFlag,
+
+        /// <summary>Add landscape texture patch alpha override for height/weight patches</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        LandscapeTexturePatchAlphaOverride,
+
+        /// <summary>For SpawnActor/AddComponent, allow template to be used for the spawned actor.</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCGAllowTemplateWhenSpawningFromAttribute,
+
+        /// <summary>Chaos collision filters extension from 32 to 64 bit</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        CollisionFilter64Bit,
+
+        /// <summary>Add the concept of UAFAssetData</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        UAFAssetData,
+
+        /// <summary>Add an additional rotation offset to root motion modifier and deprecate the 'Opposite' rotation methods</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        RootMotionModifierRotationOffset,
+
+        /// <summary>Update PolyBezierSpline internal storage structure to use 3 control points per segment instead of 4</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PolyBezierSplineAnchorTripleLayout,
+
+        /// <summary>Repairing verse data where we introduced -0.0 value when we flipped the coordinate system</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        VerseRepairDataWithMinusZeroValue,
+
+        /// <summary>Add new enum property to composite (plugin) UCompositePassColorKeyer to control keying settings</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        CompositePassKeyerSource,
+
+        /// <summary>OpenColorIO library update to v2.5.1 which transitions from ACES 1.3 to ACES 2.0 defaults</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        OpenColorIOv251,
+
+        /// <summary>Reparameterize Spline in SplineComponent based on SplineCurves parameterization</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        SplineComponentReparameterizeOnLoad,
+
+        /// <summary>Deprecating support for external UPackage storing UAF asset entries</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        DeprecateUAFExternalPackages,
+
+        /// <summary>RigVM object pins hold an object ptr</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        RigVMPinDefaultValueObjectPtr,
+
+        /// <summary>AnimSequenceTracks now have timestamps</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AnimSequenceTrackTimestamps,
+
+        /// <summary>Outdated version bump that was kept for data integrity.</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCG_PropertyBagHierarchySupport_Outdated,
+
+        /// <summary>PCG Graph's Instanced Property Bags now support Hierarchy Editor, post loading existing data into new format</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCG_PropertyBagHierarchySupport,
+
+        /// <summary>Introduce per-proxy overridable landscape grass</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        OverridableLandscapeGrassTypes,
+
+        /// <summary>AnimSequenceTransformProviderData now has bounds.</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AnimSequenceTransformProviderBounds,
+
+        /// <summary>UEnum now have Underlyingtype</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        EnumUnderlyingType,
+
+        /// <summary>Composite layer name deprecation</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        Composite_LayerNameDeprecation,
+
+        /// <summary>FDynamicMeshAttributeSet has triangle labels</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        DynamicMeshAttributesTriangleLabels,
+
+        /// <summary>Remove RF_Public on entity components and subobjects</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        FixPublicEntityComponentsAndSubobjects,
+
+        /// <summary>Added override flag for Physical Material</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AddPhysMatOverrideFlag,
+
+        /// <summary>Added context DevNotes for translators to FText</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AddDevNotesToFText,
+
+        /// <summary>Added default color override for PCG Mesh Sampler and fix bounds in PCG Subdivide Spline</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCGMeshSamplerDefaultColorPCGSubdivideSplineBoundsFixes,
+
+        /// <summary>Serializable dynamic delegate payloads</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        DynamicDelegatePayloads,
+
+        /// <summary>Compact representation of serializable dynamic delegate payloads which avoids shifting binary data</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        CompactDynamicDelegatePayloads,
+
+        /// <summary>Added bone attachment serialization for UInstancedSkinnedMeshComponent</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        InstancedSkinnedMeshBoneAttachments,
+
+        /// <summary>Added toggle to show/hide per-pin attribute creation settings on PCG Custom HLSL nodes</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        PCGCustomHLSLAttributeCreationSettingsToggle,
+
+        /// <summary>Converting FPCGMetadataAttribute&lt;T&gt; to Generic attributes.</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        ConvertFPCGMetadataAttributeToGenericAttributes,
+
+        /// <summary>Merging PCG Metadata Attribute base and Generic ones.</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        MergePCGMetadataAttributeBaseAndGeneric,
+
+        /// <summary>AnimSequenceTransformProviderData supports multiple layers</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AnimSequenceTransformProviderLayers,
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION)]
@@ -1802,6 +1973,17 @@ namespace UAssetAPI.CustomVersions
         CommonUIPlatformNamingUpgradeOption,
 
         /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
+                /// <summary>Add new fictitious forces modes to the cloth simulation</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        ChaosClothAddNewFictitiousForcesModes,
+
+        /// <summary>Updated how blend spaces calculate the effective animation length of the sample point</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        BlendSpaceUpdatedSamplePointAnimationLengthDerivation,
+
+        /// <summary>Fix to make the override option to "Use Half Precision" work in Material Editor when the cvar r.Mobile.FloatPrecisionMode=2</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        MaterialHalfPrecisionFixup,
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
 
@@ -2060,6 +2242,33 @@ namespace UAssetAPI.CustomVersions
         AddSimulationPropertySupportToClothUSDImportNodeV2,
 
         /// <summary>-----new versions can be added above this line-------------------------------------------------</summary>
+                /// <summary>Audio section: add bRepeating property alongside legacy bLooping</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AudioSectionRepeating,
+
+        /// <summary>mesh_part: Serialize body/shape associations separately, new Verse interface serialization, enforce unique shape names</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        MeshPartAssetUserDataBodyShapeSeparateAndInterfaceFNameAndUniqueShapeNames,
+
+        /// <summary>USkeleton no longer serializes the FSmartNameContainer legacy payload; drained only for assets older than this version</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        RemovedSmartNameContainerPayload,
+
+        /// <summary>Composite plugin: UCompositeDepthMeshComponent's default StaticMesh is no longer set on the CDO</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        CompositeDepthMeshDefaultRemovedFromCDO,
+
+        /// <summary>Add RotationBlendSpace enum to FAnimNode_BlendProfileLayeredBlend, replacing bMeshSpaceRotationBlend</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        BlendProfileLayeredBlendRotationSpace,
+
+        /// <summary>Add guarding against negative blend times in AlphaBlends</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AlphaBlendNegativeBlendTimeGuard,
+
+        /// <summary>Audio section: add bPlayUntilFinished property and stop using CompletionMode for play/stop decisions</summary>
+        [Introduced(EngineVersion.VER_UE5_8)]
+        AudioSectionPlayUntilFinished,
         [Introduced(EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE)]
         VersionPlusOne,
 

@@ -18,10 +18,20 @@ namespace UAssetAPI.FieldTypes
         [JsonConverter(typeof(TMapJsonConverter<FName, FString>))]
         public TMap<FName, FString> MetaDataMap;
 
+        /// <summary>
+        /// Whether or not FField flags are serialized for the given asset.
+        /// As of UE 5.8, FField::Serialize no longer serializes FlagsPrivate into filter-editor-only (i.e. cooked) packages.
+        /// </summary>
+        public static bool SerializesFieldFlags(UAsset asset)
+        {
+            if (!asset.IsFilterEditorOnly) return true;
+            return asset.GetEngineVersion() < EngineVersion.VER_UE5_8;
+        }
+
         public virtual void Read(AssetBinaryReader reader)
         {
             Name = reader.ReadFName();
-            Flags = (EObjectFlags)reader.ReadUInt32();
+            Flags = SerializesFieldFlags(reader.Asset) ? (EObjectFlags)reader.ReadUInt32() : 0;
 
             if (!reader.Asset.IsFilterEditorOnly && !reader.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {
@@ -36,7 +46,7 @@ namespace UAssetAPI.FieldTypes
         public virtual void Write(AssetBinaryWriter writer)
         {
             writer.Write(Name);
-            writer.Write((uint)Flags);
+            if (SerializesFieldFlags(writer.Asset)) writer.Write((uint)Flags);
 
             if (!writer.Asset.IsFilterEditorOnly && !writer.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {

@@ -14,6 +14,21 @@ namespace UAssetAPI.ExportTypes
     }
 
     /// <summary>
+    /// The underlying type of an enum (UEnum::EUnderlyingType), serialized as of UE 5.8.
+    /// </summary>
+    public enum EEnumUnderlyingType : byte
+    {
+        int8,
+        int16,
+        int32,
+        int64,
+        uint8,
+        uint16,
+        uint32,
+        uint64
+    }
+
+    /// <summary>
     /// Reflection data for an enumeration.
     /// </summary>
     public class UEnum
@@ -23,6 +38,9 @@ namespace UAssetAPI.ExportTypes
 
         /// <summary>How the enum was originally defined.</summary>
         public ECppForm CppForm = ECppForm.Regular;
+
+        /// <summary>The underlying type of the enum. Serialized as of <see cref="FFortniteMainBranchObjectVersion.EnumUnderlyingType"/> (UE 5.8).</summary>
+        public EEnumUnderlyingType UnderlyingType = EEnumUnderlyingType.int64;
 
         public void Read(AssetBinaryReader reader, UAsset asset)
         {
@@ -65,6 +83,11 @@ namespace UAssetAPI.ExportTypes
             {
                 CppForm = (ECppForm)reader.ReadByte();
             }
+
+            if (asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.EnumUnderlyingType)
+            {
+                UnderlyingType = (EEnumUnderlyingType)reader.ReadByte();
+            }
         }
 
         public void Write(AssetBinaryWriter writer, UAsset asset)
@@ -103,6 +126,11 @@ namespace UAssetAPI.ExportTypes
             else
             {
                 writer.Write((byte)CppForm);
+            }
+
+            if (asset.GetCustomVersion<FFortniteMainBranchObjectVersion>() >= FFortniteMainBranchObjectVersion.EnumUnderlyingType)
+            {
+                writer.Write((byte)UnderlyingType);
             }
         }
 

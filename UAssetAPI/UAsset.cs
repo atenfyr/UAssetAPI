@@ -825,6 +825,11 @@ namespace UAssetAPI
         private static EngineVersion GetIntroducedFromCustomVersionValue(Type customVersionType, int val)
         {
             var nm = Enum.GetName(customVersionType, val);
+            if (nm == "VersionPlusOne" || nm == "LatestVersion")
+            {
+                // the LatestVersion/VersionPlusOne aliases can share values with real entries; prefer the real entry so its IntroducedAttribute is used
+                nm = Enum.GetNames(customVersionType).FirstOrDefault(candidate => candidate != "VersionPlusOne" && candidate != "LatestVersion" && (int)Enum.Parse(customVersionType, candidate) == val);
+            }
             if (nm == null) return EngineVersion.UNKNOWN;
             var attributes = customVersionType.GetMember(nm)?[0]?.GetCustomAttributes(typeof(IntroducedAttribute), false);
             if (attributes == null || attributes.Length <= 0) return EngineVersion.UNKNOWN;
@@ -900,15 +905,11 @@ namespace UAssetAPI
 
             // remove VersionPlusOne and LatestVersion entries, which are redundant
             // we absolutely need to remove LatestVersion because it's a duplicate of another entry, so the order of the two is not guaranteed; LatestVersion might come first
-            string[] allVals = new string[allValsRaw.Length - 2];
-            int j = 0;
-            for (int i = 0; i < allValsRaw.Length; i++)
-            {
-                if (allValsRaw[i] != "VersionPlusOne" && allValsRaw[i] != "LatestVersion")
-                {
-                    allVals[j++] = allValsRaw[i];
-                }
-            }
+            // sort by actual numeric value so we walk entries newest-first even for enums that don't start at 0 (Enum.GetNames sorts by unsigned value, which puts negative sentinels last)
+            var allVals = allValsRaw
+                .Where(nm => nm != "VersionPlusOne" && nm != "LatestVersion")
+                .OrderBy(nm => Convert.ToInt64(Enum.Parse(typ, nm)))
+                .ToArray();
 
             for (int i = allVals.Length - 1; i >= 0; i--)
             {
@@ -927,7 +928,7 @@ namespace UAssetAPI
                     cachedCustomVersionReflectionData[cacheKey] = attributeIntroducedVersion;
                 }
 
-                if (attributeIntroducedVersion != EngineVersion.UNKNOWN && chosenVersion >= attributeIntroducedVersion) return i;
+                if (attributeIntroducedVersion != EngineVersion.UNKNOWN && chosenVersion >= attributeIntroducedVersion) return Convert.ToInt32(Enum.Parse(typ, val));
             }
             return -1;
         }
