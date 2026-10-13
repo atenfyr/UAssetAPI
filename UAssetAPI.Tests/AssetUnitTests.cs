@@ -664,6 +664,7 @@ namespace UAssetAPI.Tests
         public void TestTraditionalUE5_6()
         {
             TestSubsection("BpThirdPerson", TestFolder, "TestUE5_6", EngineVersion.VER_UE5_6, new Usmap(Path.Combine(TestFolder, "TestUE5_6", "BpThirdPerson", "ExplicitEnumValuesExample.usmap")));
+            TestSubsection("Grounded2", TestFolder, "TestUE5_6", EngineVersion.VER_UE5_6, new Usmap(Path.Combine(TestFolder, "TestUE5_6", "Grounded2", "Mappings.usmap")));
         }
 
         /// <summary>
@@ -675,6 +676,7 @@ namespace UAssetAPI.Tests
         {
             TestSubsection("NanosWorld", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "NanosWorld", "NanosWorld.usmap")));
             TestSubsection("FarFarWest", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "FarFarWest", "FarFarWest.usmap")));
+            TestSubsection("Grounded2", TestFolder, "TestUE5_7", EngineVersion.VER_UE5_7, new Usmap(Path.Combine(TestFolder, "TestUE5_7", "Grounded2", "Grounded2_0.6.0.usmap")));
         }
 
         /// <summary>
