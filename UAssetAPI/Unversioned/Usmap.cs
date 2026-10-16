@@ -272,6 +272,7 @@ namespace UAssetAPI.Unversioned
 
     public class UsmapSchema
     {
+        public Usmap Parent = null;
         public string Name
         {
             get { PopulateIfNeeded(); return _Name; }
@@ -309,6 +310,11 @@ namespace UAssetAPI.Unversioned
             get { PopulateIfNeeded(); return _StructOrClassFlags; }
             set { _StructOrClassFlags = value; }
         }
+        public Dictionary<string, object> DefaultValues
+        {
+            get { PopulateIfNeeded(); return _DefaultValues; }
+            set { _DefaultValues = value; }
+        }
         [JsonIgnore]
         public bool FromAsset = false;
 
@@ -326,6 +332,8 @@ namespace UAssetAPI.Unversioned
         private UsmapStructKind _StructKind;
         [JsonIgnore]
         private int _StructOrClassFlags;
+        [JsonIgnore]
+        private Dictionary<string, object> _DefaultValues;
 
         [JsonConverter(typeof(UsmapSchemaPropertiesJsonConverter))]
         public IReadOnlyDictionary<int, UsmapProperty> Properties { get { PopulateIfNeeded(); return propertiesInternal; } }
@@ -363,22 +371,22 @@ namespace UAssetAPI.Unversioned
         internal void PopulateIfNeeded(ReadOnlySpan<byte> jsonData)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadSchema(jsonData, this);
             IsPopulated = true;
+            JmapHelper.ReadSchema(jsonData, this);
         }
 
         internal void PopulateIfNeeded(string jsonData)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadSchema(jsonData, this);
             IsPopulated = true;
+            JmapHelper.ReadSchema(jsonData, this);
         }
 
         internal void PopulateIfNeeded(JmapObjectBase objectBase)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadSchema(objectBase, this);
             IsPopulated = true;
+            JmapHelper.ReadSchema(objectBase, this);
         }
 
         public UsmapProperty GetProperty(string key, int dupIndex)
@@ -396,7 +404,7 @@ namespace UAssetAPI.Unversioned
             }
         }
 
-        public UsmapSchema(string name, string superType, int propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, bool fromAsset = false)
+        public UsmapSchema(string name, string superType, int propCount, ConcurrentDictionary<int, UsmapProperty> props, bool isCaseInsensitive, string superTypeModulePath, Usmap parent, bool fromAsset = false)
         {
             Name = name;
             SuperType = superType;
@@ -404,6 +412,7 @@ namespace UAssetAPI.Unversioned
             PropCount = propCount;
             propertiesInternal = props;
             FromAsset = fromAsset;
+            Parent = parent;
 
             ConstructPropertiesMap(isCaseInsensitive);
 
@@ -418,6 +427,7 @@ namespace UAssetAPI.Unversioned
 
     public class UsmapEnum
     {
+        public Usmap Parent = null;
         public string Name
         {
             get { PopulateIfNeeded(); return _Name; }
@@ -474,28 +484,29 @@ namespace UAssetAPI.Unversioned
         internal void PopulateIfNeeded(ReadOnlySpan<byte> jsonData)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadEnum(jsonData, this);
             IsPopulated = true;
+            JmapHelper.ReadEnum(jsonData, this);
         }
 
         internal void PopulateIfNeeded(string jsonData)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadEnum(jsonData, this);
             IsPopulated = true;
+            JmapHelper.ReadEnum(jsonData, this);
         }
 
         internal void PopulateIfNeeded(JmapObjectBase objectBase)
         {
             if (IsPopulated) return;
-            JmapHelper.ReadEnum(objectBase, this);
             IsPopulated = true;
+            JmapHelper.ReadEnum(objectBase, this);
         }
 
-        public UsmapEnum(string name, ConcurrentDictionary<long, string> values)
+        public UsmapEnum(string name, ConcurrentDictionary<long, string> values, Usmap parent)
         {
             Name = name;
             Values = values;
+            Parent = parent;
             IsPopulated = true;
         }
 
@@ -811,12 +822,12 @@ namespace UAssetAPI.Unversioned
             if (asset == null) throw new InvalidOperationException("Cannot evaluate struct export without package reference");
             foreach (var exp in asset.Exports)
             {
-                if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp, asset.Mappings?.AreFNamesCaseInsensitive ?? true);
+                if (exp.ObjectName.Value.Value == exportName && exp is StructExport sexp) return GetSchemaFromStructExport(sexp, asset.Mappings, asset.Mappings?.AreFNamesCaseInsensitive ?? true);
             }
             return null;
         }
 
-        public static UsmapSchema GetSchemaFromStructExport(StructExport exp, bool isCaseInsensitive)
+        public static UsmapSchema GetSchemaFromStructExport(StructExport exp, Usmap parent, bool isCaseInsensitive)
         {
             var res = new ConcurrentDictionary<int, UsmapProperty>();
             int idx = 0;
@@ -860,7 +871,7 @@ namespace UAssetAPI.Unversioned
 
             string ssName = exp.SuperStruct.IsImport() ? exp.SuperStruct.ToImport(exp.Asset).ObjectName.ToString() : null;
             string ssPath = (exp.SuperStruct.IsImport() && exp.SuperStruct.ToImport(exp.Asset).OuterIndex.IsImport()) ? exp.SuperStruct.ToImport(exp.Asset).OuterIndex.ToImport(exp.Asset).ObjectName.ToString() : null;
-            return new UsmapSchema(exp.ObjectName.ToString(), ssName, res.Count, res, isCaseInsensitive, ssPath, true);
+            return new UsmapSchema(exp.ObjectName.ToString(), ssName, res.Count, res, isCaseInsensitive, ssPath, parent, true);
         }
 
         /// <summary>
@@ -894,6 +905,7 @@ namespace UAssetAPI.Unversioned
         /// <returns>An annotated, human-readable text file containing the properties that the schema can reference.</returns>
         public string GetAllPropertiesAnnotated(string schemaName, UAsset asset, IDictionary<string, string> customAnnotations = null, bool recursive = true, string headerPrefix = "--- ", string headerSuffix = " ---")
         {
+            string tab = "    ";
             List<string> res = new List<string>();
             bool hasDoneFirst = false;
             UsmapSchema relevantSchema = this.GetSchemaFromName(schemaName, asset);
@@ -909,7 +921,18 @@ namespace UAssetAPI.Unversioned
                         if (prop.ArrayIndex > 0) continue;
                         string propAnnotation = customAnnotations != null && customAnnotations.ContainsKey(prop.Name) ? (" (" + customAnnotations[prop.Name] + ")") : string.Empty;
                         res.Add(prop.Name + propAnnotation);
-                        res.Add("\t" + (prop.PropertyData?.Type.ToString() ?? "Unknown type"));
+                        res.Add(tab + "Type: " + (prop.PropertyData?.Type.ToString() ?? "Unknown"));
+                        if (relevantSchema?.DefaultValues != null && relevantSchema.DefaultValues.ContainsKey(prop.Name))
+                        {
+                            object defValue = relevantSchema.DefaultValues[prop.Name];
+                            string defValueSerialized = System.Text.Json.JsonSerializer.Serialize(defValue, new JsonSerializerOptions { WriteIndented = true, IndentCharacter = tab[0], IndentSize = tab.Length }).Trim();
+                            if (defValueSerialized.Contains('\n'))
+                            {
+                                defValueSerialized = "\n" + tab + tab + defValueSerialized.Replace("\n", "\n" + tab + tab);
+                            }
+                            res.Add(tab + "Default: " + defValueSerialized);
+                        }
+                        res.Add(string.Empty);
                     }
                     if (relevantSchema.Properties.Values.Count() == 0) res.Add("N/A");
                     res.Add(string.Empty);
@@ -1170,7 +1193,7 @@ namespace UAssetAPI.Unversioned
             {
                 string enumName = reader.ReadName();
 
-                var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>());
+                var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>(), this);
                 int numEnumEntries = Version >= UsmapVersion.LargeEnums ? (int)reader.ReadInt16() : (int)reader.ReadByte();
 
                 if (Version >= UsmapVersion.ExplicitEnumValues)
@@ -1226,7 +1249,7 @@ namespace UAssetAPI.Unversioned
                     }
                 }
 
-                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props, this.AreFNamesCaseInsensitive, null);
+                var newSchema = new UsmapSchema(schemaName, schemaSuperName, numProps, props, this.AreFNamesCaseInsensitive, null, this);
                 schemaIndexMap[i] = newSchema;
 
                 if (SkipBlueprintSchemas && schemaName.Length >= 2 && schemaName.EndsWith("_C")) continue;
@@ -1531,10 +1554,11 @@ namespace UAssetAPI.Unversioned
                                 // we also add one to include the end object token "}"
                                 long size = reader.TokenStartIndex + bytesNotInBuffer - offset + 1;
 
-                                // we can skip some entries, most notably functions and cdos
+                                // we can skip some entries, most notably functions
+                                // [cdos (contains "Default__") can be skipped for perf too but we keep them so uag can dump default values]
                                 // most performant way to do this is to check the name, want to avoid having to parse the actual JSON
                                 bool skipping = false;
-                                if (schemaName.Contains(':') || schemaName.Contains("Default__"))
+                                if (schemaName.Contains(':'))
                                 {
                                     skipping = true;
                                 }
@@ -1544,8 +1568,8 @@ namespace UAssetAPI.Unversioned
                                     if (lazyRead)
                                     {
                                         // store with offset, size, and path to parse later
-                                        Schemas[schemaName] = new UsmapSchema() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false };
-                                        EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false };
+                                        Schemas[schemaName] = new UsmapSchema() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false, Parent = this };
+                                        EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, JmapPath = path, JmapOffset = offset, JmapSize = size, IsPopulated = false, Parent = this };
                                         Schemas[schemaNameNoPath] = Schemas[schemaName];
                                         EnumMap[schemaNameNoPath] = EnumMap[schemaName];
                                     }
@@ -1583,13 +1607,13 @@ namespace UAssetAPI.Unversioned
                                         // parse full data and store
                                         if (objectBase is JmapEnum)
                                         {
-                                            EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false };
+                                            EnumMap[schemaName] = new UsmapEnum() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false, Parent = this };
                                             EnumMap[schemaName].PopulateIfNeeded(objectBase);
                                             EnumMap[schemaNameNoPath] = EnumMap[schemaName];
                                         }
                                         else
                                         {
-                                            Schemas[schemaName] = new UsmapSchema() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false };
+                                            Schemas[schemaName] = new UsmapSchema() { Name = schemaNameNoPath, ModulePath = modulePath, IsPopulated = false, Parent = this };
                                             Schemas[schemaName].PopulateIfNeeded(objectBase);
                                             Schemas[schemaNameNoPath] = Schemas[schemaName];
                                         }

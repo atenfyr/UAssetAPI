@@ -26,7 +26,7 @@ public class UserDefinedStructExport : StructExport
 
         if (reader.Asset.Mappings?.Schemas != null && this.ObjectName?.Value?.Value != null)
         {
-            UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(this, reader.Asset.Mappings?.AreFNamesCaseInsensitive ?? true);
+            UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(this, reader.Asset.Mappings, reader.Asset.Mappings?.AreFNamesCaseInsensitive ?? true);
             reader.Asset.Mappings.Schemas[this.ObjectName.Value.Value] = newSchema;
         }
 

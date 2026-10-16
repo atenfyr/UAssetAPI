@@ -52,6 +52,9 @@ namespace UAssetAPI.Unversioned
         public string Outer { get; set; }
         [JsonPropertyName("class")]
         public string Class { get; set; }
+        [JsonPropertyName("property_values")]
+        [JsonConverter(typeof(JmapPropertyValuesConverter))]
+        public Dictionary<string, object> PropertyValues { get; set; }
     }
 
     internal class JmapObject : JmapObjectBase
@@ -83,7 +86,8 @@ namespace UAssetAPI.Unversioned
     internal class JmapClass : JmapStruct
     {
         // from Class
-        // (all these fields left unserialized)
+        [JsonPropertyName("class_default_object")]
+        public string ClassDefaultObject { get; set; }
     }
 
     internal class JmapFunction : JmapStruct
@@ -348,6 +352,93 @@ namespace UAssetAPI.Unversioned
         }
     }
 
+    internal class JmapPropertyValuesConverter : JsonConverter<Dictionary<string, object>>
+    {
+        private object ParsePrimitive(ref Utf8JsonReader reader)
+        {
+            object value = null;
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    value = reader.GetString();
+                    break;
+                case JsonTokenType.Number:
+                    if (reader.TryGetInt64(out long longValue))
+                    {
+                        value = longValue;
+                    }
+                    else if (reader.TryGetDouble(out double doubleValue))
+                    {
+                        value = doubleValue;
+                    }
+                    break;
+                case JsonTokenType.True:
+                case JsonTokenType.False:
+                    value = reader.GetBoolean();
+                    break;
+                case JsonTokenType.Null:
+                    value = null;
+                    break;
+            }
+            return value;
+        }
+
+        private List<object> ParseArray(ref Utf8JsonReader reader)
+        {
+            List<object> output = new List<object>();
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+            {
+                if (reader.TokenType == JsonTokenType.StartObject)
+                {
+                    output.Add(ParseObject(ref reader));
+                }
+                else if (reader.TokenType == JsonTokenType.StartArray)
+                {
+                    output.Add(ParseArray(ref reader));
+                }
+                else
+                {
+                    output.Add(ParsePrimitive(ref reader));
+                }
+            }
+            return output;
+        }
+
+        private Dictionary<string, object> ParseObject(ref Utf8JsonReader reader)
+        {
+            Dictionary<string, object> output = new Dictionary<string, object>();
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
+            {
+                string key = reader.GetString();
+                reader.Read();
+                if (reader.TokenType == JsonTokenType.StartObject)
+                {
+                    output[key] = ParseObject(ref reader);
+                }
+                else if (reader.TokenType == JsonTokenType.StartArray)
+                {
+                    output[key] = ParseArray(ref reader);
+                }
+                else
+                {
+                    output[key] = ParsePrimitive(ref reader);
+                }
+            }
+            return output;
+        }
+
+        public override Dictionary<string, object> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.StartObject) throw new JsonException();
+            return ParseObject(ref reader);
+        }
+
+        public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     internal class JmapEnumNamesConverter : JsonConverter<Dictionary<long, string>>
     {
         public override Dictionary<long, string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -541,6 +632,31 @@ namespace UAssetAPI.Unversioned
             }
 
             templateSchema.StructKind = (objectBase is JmapClass) ? UsmapStructKind.UClass : (objectBase is JmapScriptStruct ? UsmapStructKind.UScriptStruct : UsmapStructKind.None);
+
+            var defaultValues = objectBase?.PropertyValues ?? new Dictionary<string, object>();
+            templateSchema.DefaultValues = defaultValues;
+
+            // if this is a cdo, then populate class from this if it exists
+            if (templateSchema.Parent != null && defaultValues.Count > 0 && templateSchema.Parent.Schemas.TryGetValue(objectBase.Class, out UsmapSchema parentClass))
+            {
+                if (parentClass != templateSchema)
+                {
+                    parentClass.PopulateIfNeeded();
+                    if (parentClass.DefaultValues == null) parentClass.DefaultValues = new Dictionary<string, object>();
+                    foreach (KeyValuePair<string, object> entry in defaultValues) parentClass.DefaultValues[entry.Key] = entry.Value;
+                }
+            }
+
+            // if this has a cdo, then populate this from cdo if it exists
+            if (objectBase is JmapClass jclass && templateSchema.Parent != null && templateSchema.Parent.Schemas.TryGetValue(jclass.ClassDefaultObject, out UsmapSchema cdo))
+            {
+                if (cdo != templateSchema)
+                {
+                    cdo.PopulateIfNeeded();
+                    if (cdo.DefaultValues == null) cdo.DefaultValues = new Dictionary<string, object>();
+                    foreach (KeyValuePair<string, object> entry in cdo.DefaultValues) defaultValues[entry.Key] = entry.Value;
+                }
+            }
         }
 
         public static void ReadSchema(ReadOnlySpan<byte> objectJSON, UsmapSchema templateSchema)

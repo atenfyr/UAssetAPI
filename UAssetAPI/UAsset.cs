@@ -1083,7 +1083,7 @@ namespace UAssetAPI
                         if (fetchedStructExp.OuterIndex.IsImport()) outer = fetchedStructExp.OuterIndex.ToImport(this).ObjectName.ToString();
                         if (fetchedStructExp.OuterIndex.IsExport()) outer = fetchedStructExp.OuterIndex.ToExport(this).ObjectName.ToString();
 
-                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp, Mappings?.AreFNamesCaseInsensitive ?? true);
+                        UsmapSchema newSchema = Usmap.GetSchemaFromStructExport(fetchedStructExp, Mappings, Mappings?.AreFNamesCaseInsensitive ?? true);
                         if (newSchema != null)
                         {
                             newSchema.ModulePath = InternalAssetPath;
@@ -1099,7 +1099,7 @@ namespace UAssetAPI
                     string enumName = fetchedEnumExp.ObjectName?.ToString();
                     if (Mappings?.EnumMap != null && enumName != null)
                     {
-                        var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>());
+                        var newEnum = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>(), Mappings);
                         foreach (Tuple<FName, long> entry in fetchedEnumExp.Enum.Names)
                         {
                             newEnum.Values[entry.Item2] = entry.Item1.ToString();
