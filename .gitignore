@@ -1,0 +1,12 @@
+.vs
+docs/book
+docs/XMLDoc2Markdown
+packages
+TestResults
+UAssetAPI/git_commit.txt
+UAssetAPI/bin
+UAssetAPI/obj
+UAssetAPI.Benchmark/bin
+UAssetAPI.Benchmark/obj
+UAssetAPI.Tests/bin
+UAssetAPI.Tests/obj
