@@ -212,6 +212,37 @@ namespace UAssetAPI
     }
 
     /// <summary>
+    /// Diagnostic information captured when an export falls back to <see cref="RawExport"/>.
+    /// </summary>
+    public sealed class ExportParseFailure
+    {
+        public int ExportIndex;
+        public string ObjectName;
+        public string ClassType;
+        public long SerialOffset;
+        public long SerialSize;
+        public long ReaderPosition;
+        public string ExceptionType;
+        public string ExceptionMessage;
+        public string ExceptionDetails;
+        public string ExceptionStackTrace;
+    }
+
+    /// <summary>
+    /// Diagnostic information captured when unchanged serialization differs from the source bytes.
+    /// </summary>
+    public sealed class BinaryEqualityFailure
+    {
+        public long OriginalLength;
+        public long SerializedLength;
+        public long FirstDifferentOffset;
+        public int ExportIndex = -1;
+        public string ExportObjectName;
+        public byte? OriginalByte;
+        public byte? SerializedByte;
+    }
+
+    /// <summary>
     /// Represents an Unreal Engine asset.
     /// </summary>
     public class UAsset : INameMap
@@ -351,6 +382,25 @@ namespace UAssetAPI
         /// Map of object exports. UAssetAPI used to call these "categories."
         /// </summary>
         public List<Export> Exports;
+
+        /// <summary>
+        /// Parse failures that caused exports to be retained as raw bytes.
+        /// </summary>
+        [JsonIgnore]
+        public List<ExportParseFailure> ExportParseFailures { get; } = new List<ExportParseFailure>();
+
+        /// <summary>
+        /// Enum types referenced by this asset but absent from the supplied mappings.
+        /// Their numeric values are preserved with an explicit fallback name.
+        /// </summary>
+        [JsonIgnore]
+        public ISet<string> MissingEnumMappings { get; } = new HashSet<string>(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Details of the most recent failed <see cref="VerifyBinaryEquality"/> call.
+        /// </summary>
+        [JsonIgnore]
+        public BinaryEqualityFailure LastBinaryEqualityFailure { get; private set; }
 
         // TODO: sort in lexical order
         /// <summary>
@@ -744,12 +794,34 @@ namespace UAssetAPI
         public void SetEngineVersion(EngineVersion newVersion)
         {
             if (newVersion == EngineVersion.UNKNOWN) return;
+            SpecifiedEngineVersion = newVersion;
             if (!Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE4VersionToObjectVersion bridgeVer)) throw new InvalidOperationException("Invalid engine version specified");
             ObjectVersion = (ObjectVersion)(int)bridgeVer;
 
             if (Enum.TryParse(Enum.GetName(typeof(EngineVersion), newVersion), out UE5VersionToObjectVersion bridgeVer2)) ObjectVersionUE5 = (ObjectVersionUE5)(int)bridgeVer2;
 
             CustomVersionContainer = GetDefaultCustomVersionContainer(newVersion);
+        }
+
+        /// <summary>
+        /// The exact engine version explicitly supplied by the caller, before it is
+        /// reduced to object and custom versions that may be shared by multiple releases.
+        /// </summary>
+        [JsonIgnore]
+        internal EngineVersion SpecifiedEngineVersion { get; private set; } = EngineVersion.UNKNOWN;
+
+        /// <summary>
+        /// Supplies the exact serialization engine hint after JSON import without
+        /// replacing the asset's original object versions or custom version container.
+        /// UNKNOWN leaves the current runtime hint unchanged. This does not convert
+        /// the asset to another engine version.
+        /// </summary>
+        public void SetSerializationEngineVersion(EngineVersion engineVersion)
+        {
+            if (!Enum.IsDefined(typeof(EngineVersion), engineVersion))
+                throw new ArgumentOutOfRangeException(nameof(engineVersion));
+            if (engineVersion != EngineVersion.UNKNOWN)
+                SpecifiedEngineVersion = engineVersion;
         }
 
         public static EngineVersion GetEngineVersion(ObjectVersion objectVersion, ObjectVersionUE5 objectVersionUE5, List<CustomVersion> customVersionContainer)
@@ -986,6 +1058,7 @@ namespace UAssetAPI
         public void ConvertExportToChildExportAndRead(AssetBinaryReader reader, int i, bool read = true)
         {
 #pragma warning disable CS0168 // Variable is declared but never used
+            string exportClassType = null;
             try
             {
                 long nextStarting = -1;
@@ -1000,9 +1073,13 @@ namespace UAssetAPI
                 }
 
                 FName exportClassTypeName = Exports[i].GetExportClassType();
-                string exportClassType = exportClassTypeName.Value.Value;
+                exportClassType = exportClassTypeName.Value.Value;
                 switch (exportClassType)
                 {
+                    case "RigHierarchy":
+                    case "RigVM":
+                        Exports[i] = Exports[i].ConvertToChildExport<CustomSerializedExport>();
+                        break;
                     case "Level":
                         Exports[i] = Exports[i].ConvertToChildExport<LevelExport>();
                         break;
@@ -1125,6 +1202,29 @@ namespace UAssetAPI
             }
             catch (Exception ex)
             {
+                Export failedExport = Exports[i];
+                long readerPosition;
+                try
+                {
+                    readerPosition = reader.BaseStream.Position;
+                }
+                catch
+                {
+                    readerPosition = -1;
+                }
+                ExportParseFailures.Add(new ExportParseFailure
+                {
+                    ExportIndex = i,
+                    ObjectName = failedExport.ObjectName?.ToString(),
+                    ClassType = exportClassType,
+                    SerialOffset = failedExport.SerialOffset,
+                    SerialSize = failedExport.SerialSize,
+                    ReaderPosition = readerPosition,
+                    ExceptionType = ex.GetType().FullName,
+                    ExceptionMessage = ex.Message,
+                    ExceptionDetails = ex.ToString(),
+                    ExceptionStackTrace = ex.StackTrace
+                });
 #if DEBUGVERBOSE
                 Console.WriteLine("\nFailed to parse export " + (i + 1) + ": " + ex.ToString());
 #endif
@@ -1163,25 +1263,64 @@ namespace UAssetAPI
         /// <returns>Whether or not the asset maintained binary equality.</returns>
         public bool VerifyBinaryEquality()
         {
+            LastBinaryEqualityFailure = null;
             MemoryStream f = this.PathToStream(FilePath);
             f.Seek(0, SeekOrigin.Begin);
             MemoryStream newDataStream = WriteData();
             f.Seek(0, SeekOrigin.Begin);
 
-            if (f.Length != newDataStream.Length) return false;
-
             const int CHUNK_SIZE = 1024;
             byte[] buffer = new byte[CHUNK_SIZE];
             byte[] buffer2 = new byte[CHUNK_SIZE];
+            long comparedLength = 0;
             int lastRead1;
             while ((lastRead1 = f.Read(buffer, 0, buffer.Length)) > 0)
             {
                 int lastRead2 = newDataStream.Read(buffer2, 0, buffer2.Length);
-                if (lastRead1 != lastRead2) return false;
-                if (!buffer.SequenceEqual(buffer2)) return false;
+                int commonLength = Math.Min(lastRead1, lastRead2);
+                for (int i = 0; i < commonLength; i++)
+                {
+                    if (buffer[i] == buffer2[i]) continue;
+                    CaptureBinaryEqualityFailure(f.Length, newDataStream.Length, comparedLength + i, buffer[i], buffer2[i]);
+                    return false;
+                }
+                if (lastRead1 != lastRead2)
+                {
+                    long firstDifferentOffset = comparedLength + commonLength;
+                    CaptureBinaryEqualityFailure(
+                        f.Length,
+                        newDataStream.Length,
+                        firstDifferentOffset,
+                        commonLength < lastRead1 ? buffer[commonLength] : null,
+                        commonLength < lastRead2 ? buffer2[commonLength] : null);
+                    return false;
+                }
+                comparedLength += lastRead1;
+            }
+
+            if (f.Length != newDataStream.Length)
+            {
+                CaptureBinaryEqualityFailure(f.Length, newDataStream.Length, comparedLength, null, null);
+                return false;
             }
 
             return true;
+        }
+
+        private void CaptureBinaryEqualityFailure(long originalLength, long serializedLength, long offset, byte? originalByte, byte? serializedByte)
+        {
+            int exportIndex = Exports.FindIndex(export =>
+                offset >= export.SerialOffset && offset < export.SerialOffset + export.SerialSize);
+            LastBinaryEqualityFailure = new BinaryEqualityFailure
+            {
+                OriginalLength = originalLength,
+                SerializedLength = serializedLength,
+                FirstDifferentOffset = offset,
+                ExportIndex = exportIndex,
+                ExportObjectName = exportIndex >= 0 ? Exports[exportIndex].ObjectName?.ToString() : null,
+                OriginalByte = originalByte,
+                SerializedByte = serializedByte
+            };
         }
 
 
@@ -1332,6 +1471,7 @@ namespace UAssetAPI
 
                 // initial read to just fetch the FolderName
                 UAsset otherAsset = new UAsset(this.ObjectVersion, this.ObjectVersionUE5, this.CustomVersionContainer.Select(item => (CustomVersion)item.Clone()).ToList(), this.Mappings);
+                otherAsset.SpecifiedEngineVersion = SpecifiedEngineVersion;
                 AssetBinaryReader otherReader = otherAsset.PathToReader(pathOnDisk);
                 otherAsset.CustomSerializationFlags = CustomSerializationFlags.SkipLoadingExports | CustomSerializationFlags.SkipPreloadDependencyLoading;
                 otherAsset.FilePath = pathOnDisk;
@@ -1347,6 +1487,15 @@ namespace UAssetAPI
 
                 // loading the asset will automatically add any new schemas to the mappings in-situ
 
+                // Blueprint-generated schemas contain only properties declared by that class.
+                // Load the parent package as well so GetAllProperties can reconstruct the full
+                // unversioned-property index space when this class is used by another asset.
+                otherAsset.GetParentClass(out FName parentClassPath, out _);
+                if (parentClassPath != null)
+                {
+                    otherAsset.PullSchemasFromAnotherAsset(parentClassPath);
+                }
+
                 // add to failed map
                 if (otherAsset.OtherAssetsFailedToAccess != null && OtherAssetsFailedToAccess != null)
                 {
@@ -1355,11 +1504,21 @@ namespace UAssetAPI
                         OtherAssetsFailedToAccess.Add(entry);
                     }
                 }
+                success = otherAsset.OtherAssetsFailedToAccess == null || otherAsset.OtherAssetsFailedToAccess.Count == 0;
             }
             catch
             {
                 // if we fail to parse the other asset, that's perfectly fine; just move on
                 success = false;
+            }
+            finally
+            {
+                // A later GUI preload pass may have extracted a dependency that was
+                // missing during this attempt. Do not cache an incomplete schema walk.
+                if (!success)
+                {
+                    Mappings.PathsAlreadyProcessedForSchemas.TryRemove(assetPath, out _);
+                }
             }
 
             return success;
@@ -2723,8 +2882,7 @@ namespace UAssetAPI
                         writer.Write(this.Imports[i].ClassName);
                         writer.Write(this.Imports[i].OuterIndex.Index);
                         writer.Write(this.Imports[i].ObjectName);
-                        if (writer.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
-                            && !writer.Asset.IsFilterEditorOnly)
+                        if (Import.ShouldSerializePackageName(writer.Asset))
                             writer.Write(this.Imports[i].PackageName);
                         if (writer.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) writer.WriteBooleanInt(this.Imports[i].bImportOptional);
                     }

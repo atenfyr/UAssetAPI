@@ -12,6 +12,11 @@ namespace UAssetAPI.FieldTypes
     /// </summary>
     public class FField
     {
+        private static bool ShouldSerializeFlags(UAsset asset)
+        {
+            return !asset.IsFilterEditorOnly || asset.SpecifiedEngineVersion < EngineVersion.VER_UE5_8;
+        }
+
         public FName SerializedType;
         public FName Name;
         public EObjectFlags Flags;
@@ -21,7 +26,10 @@ namespace UAssetAPI.FieldTypes
         public virtual void Read(AssetBinaryReader reader)
         {
             Name = reader.ReadFName();
-            Flags = (EObjectFlags)reader.ReadUInt32();
+            if (ShouldSerializeFlags(reader.Asset))
+            {
+                Flags = (EObjectFlags)reader.ReadUInt32();
+            }
 
             if (!reader.Asset.IsFilterEditorOnly && !reader.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {
@@ -36,7 +44,10 @@ namespace UAssetAPI.FieldTypes
         public virtual void Write(AssetBinaryWriter writer)
         {
             writer.Write(Name);
-            writer.Write((uint)Flags);
+            if (ShouldSerializeFlags(writer.Asset))
+            {
+                writer.Write((uint)Flags);
+            }
 
             if (!writer.Asset.IsFilterEditorOnly && !writer.Asset.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
             {

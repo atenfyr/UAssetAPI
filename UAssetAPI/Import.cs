@@ -7,6 +7,12 @@ namespace UAssetAPI
     /// </summary>
     public class Import
     {
+        internal static bool ShouldSerializePackageName(UAsset asset)
+        {
+            return asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
+                && (!asset.IsFilterEditorOnly || asset.SpecifiedEngineVersion >= EngineVersion.VER_UE5_8);
+        }
+
         ///<summary>The name of the UObject represented by this resource.</summary>
         public FName ObjectName;
         ///<summary>Location of the resource for this resource's Outer (import/other export). 0 = this resource is a top-level UPackage</summary>
@@ -45,8 +51,7 @@ namespace UAssetAPI
             OuterIndex = new FPackageIndex(reader.ReadInt32());
             ObjectName = reader.ReadFName();
 
-            if (reader.Asset.ObjectVersion >= ObjectVersion.VER_UE4_NON_OUTER_PACKAGE_IMPORT
-                && !reader.Asset.IsFilterEditorOnly)
+            if (ShouldSerializePackageName(reader.Asset))
                 PackageName = reader.ReadFName();
 
             if (reader.Asset.ObjectVersionUE5 >= ObjectVersionUE5.OPTIONAL_RESOURCES) bImportOptional = reader.ReadInt32() == 1;

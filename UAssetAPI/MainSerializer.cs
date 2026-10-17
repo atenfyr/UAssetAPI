@@ -493,7 +493,18 @@ namespace UAssetAPI
                 ArrayIndex = reader.ReadInt32();
             }
 
-            PropertyData result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero, typeName);
+            PropertyData result;
+            try
+            {
+                result = TypeToClass(type, name, ancestry, parentName, parentModulePath, reader.Asset, reader, leng, propertyTagFlags, ArrayIndex, includeHeader, isZero, typeName);
+            }
+            catch (Exception exception)
+            {
+                throw new FormatException(
+                    "Failed to read property " + parentName + "." + name +
+                    " (" + type + ") at offset " + startingOffset,
+                    exception);
+            }
             if (structType != null && result is StructPropertyData strucProp) strucProp.StructType = FName.DefineDummy(reader.Asset, structType);
             result.Offset = startingOffset;
             //Debug.WriteLine(type);

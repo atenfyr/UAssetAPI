@@ -37,6 +37,10 @@ public class EnumPropertyData : PropertyData<FName>
         {
             EnumType = reader.Asset.HasUnversionedProperties ? FName.DefineDummy(reader.Asset, enumDat1.Name) : new FName(reader.Asset, enumDat1.Name);
             InnerType = reader.Asset.HasUnversionedProperties ? FName.DefineDummy(reader.Asset, enumDat1.InnerType.Type.ToString()) : new FName(reader.Asset, enumDat1.Name);
+            if (reader.Asset.Mappings.EnumMap.TryGetValue(enumDat1.Name, out UsmapEnum mappedEnum) && mappedEnum.IsPlaceholder)
+            {
+                reader.Asset.MissingEnumMappings.Add(enumDat1.Name);
+            }
         }
 
         if (reader.Asset.HasUnversionedProperties && serializationContext.IsNormal())
