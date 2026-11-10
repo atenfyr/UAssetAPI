@@ -467,6 +467,9 @@ namespace UAssetAPI.Unversioned
         [JsonIgnore]
         internal bool IsPopulated = false;
 
+        [JsonIgnore]
+        internal bool IsPlaceholder = false;
+
         internal void PopulateIfNeeded()
         {
             if (!IsPopulated && JmapOffset >= 0 && JmapSize >= 0 && JmapPath != null)
@@ -647,11 +650,10 @@ namespace UAssetAPI.Unversioned
                                 {
                                     return new UsmapEnumData(enumName, []) { InnerType = new UsmapPropertyData(UsmapPropertyType.ByteProperty) };
                                 }
-                                else
-                                {
-                                    throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
-                                }
+
+                                value = CreateMissingEnumPlaceholder(exp.Asset, enumName);
                             }
+                            if (value.IsPlaceholder) exp.Asset.MissingEnumMappings.Add(enumName);
                             var allNames = new List<string>();
                             foreach (var cosa in value.Values) allNames.Add(cosa.ToString());
                             converted1 = new UsmapEnumData(enumName, allNames) { InnerType = ConvertFPropertyToUsmapPropertyData(exp, underlyingProp) };
@@ -681,11 +683,10 @@ namespace UAssetAPI.Unversioned
                                 {
                                     return new UsmapEnumData(enumName, []) { InnerType = new UsmapPropertyData(UsmapPropertyType.ByteProperty) };
                                 }
-                                else
-                                {
-                                    throw new InvalidOperationException("Attempt to index into non-existent enum " + enumName);
-                                }
+
+                                value = CreateMissingEnumPlaceholder(exp.Asset, enumName);
                             }
+                            if (value.IsPlaceholder) exp.Asset.MissingEnumMappings.Add(enumName);
                             var allNames = new List<string>();
                             foreach (var cosa in value.Values) allNames.Add(cosa.ToString());
                             converted1 = new UsmapEnumData(enumName, allNames) { InnerType = new UsmapPropertyData(UsmapPropertyType.ByteProperty) };
@@ -718,6 +719,22 @@ namespace UAssetAPI.Unversioned
                     break;
             }
             return converted1;
+        }
+
+        private static UsmapEnum CreateMissingEnumPlaceholder(UAsset asset, string enumName)
+        {
+            if (string.IsNullOrEmpty(enumName))
+            {
+                throw new InvalidOperationException("Attempt to index into a missing enum with no name");
+            }
+
+            var placeholder = new UsmapEnum(enumName, new ConcurrentDictionary<long, string>())
+            {
+                IsPlaceholder = true
+            };
+            asset.Mappings.EnumMap[enumName] = placeholder;
+            asset.MissingEnumMappings.Add(enumName);
+            return placeholder;
         }
 
         private static UsmapPropertyData ConvertUPropertyToUsmapPropertyData(PropertyExport exp)

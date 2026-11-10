@@ -64,8 +64,8 @@
     <ProjectReference Include="..\UAssetAPI\UAssetAPI.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestAssets\**\*.*">
+    <Content Include="TestAssets\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 </Project>
